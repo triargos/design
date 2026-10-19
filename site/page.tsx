@@ -2,7 +2,8 @@ import { composeStories } from '@storybook/react-vite';
 import { use, type ComponentType, type MouseEvent } from 'react';
 import pages, { type DocsPage as DocsPageEntry } from 'virtual:docs-index';
 
-import { ExampleSourceContext } from '../storybook/kit/blocks';
+import { DocsModeContext, ExampleSourceContext } from '../storybook/kit/blocks';
+import { controlsOf, Playground, type PlaygroundMeta } from './playground';
 
 type StoryModule = Parameters<typeof composeStories>[0];
 type Story = ComponentType & { load: () => Promise<void> };
@@ -26,6 +27,8 @@ const sectionSlug = (title: string) =>
 interface LoadedPage {
   /** The story file's `Board` (a foundation's only story), composed with its meta. */
   readonly Board: Story | undefined;
+  readonly Playground: Story | undefined;
+  readonly meta: PlaygroundMeta;
   /** Example sources by file slug (`with-icon`). */
   readonly sources: ReadonlyMap<string, string>;
 }
@@ -54,7 +57,12 @@ export function loadPage(page: DocsPageEntry): Promise<LoadedPage> {
     const stories = composeStories(module) as Record<string, Story>;
     const Board = stories['Board'] ?? Object.values(stories)[0];
     await Board?.load();
-    const value: LoadedPage = { Board, sources: new Map(sources) };
+    const value: LoadedPage = {
+      Board,
+      Playground: stories['Playground'],
+      meta: ((module as { default?: PlaygroundMeta }).default ?? {}) as PlaygroundMeta,
+      sources: new Map(sources),
+    };
     // `use` reads a settled promise's `status` and `value` and renders without suspending: hydration and prefetched
     // navigation never show the fallback.
     Object.assign(tracked, { status: 'fulfilled', value });
@@ -77,15 +85,25 @@ const stayOnPage = (event: MouseEvent<HTMLDivElement>) => {
   if (link) event.preventDefault();
 };
 
-/** A page's `Board`, with each example's source behind "Show code". */
+/**
+ * A page. Foundations render their Board whole. Components and patterns render it in docs mode: the header, a live
+ * Playground where the story has one, then the examples with their code; the Board's spec sections stay in Storybook.
+ */
 export function DocsPage({ page }: { page: DocsPageEntry }) {
-  const { Board, sources } = use(loadPage(page));
+  const { Board, Playground: PlaygroundStory, meta, sources } = use(loadPage(page));
   if (Board === undefined) return null;
-  return (
+  const controls = controlsOf(meta);
+  const playground =
+    PlaygroundStory !== undefined && controls.length > 0 ? (
+      <Playground Story={PlaygroundStory} meta={meta} controls={controls} />
+    ) : undefined;
+  const board = (
     <ExampleSourceContext value={(section) => sources.get(sectionSlug(section))}>
       <div className='contents' onClickCapture={stayOnPage}>
         <Board />
       </div>
     </ExampleSourceContext>
   );
+  if (page.group === 'Foundations') return board;
+  return <DocsModeContext value={{ afterHeader: playground }}>{board}</DocsModeContext>;
 }

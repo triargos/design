@@ -7,11 +7,10 @@ import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '~/comp
 import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
 import { Skeleton } from '~/components/ui/skeleton';
 
-import { DEFAULT_BRANDING_THEME } from '~/lib/theme/branding';
-import { brandingThemeCss } from '~/lib/theme/branding-theme';
 import { cn } from '~/lib/utils';
 
 import { FoundationPage } from '../storybook/kit/blocks';
+import { CustomizationStyles } from './customize';
 import { Home } from './home';
 import { DocsSidebar, Wordmark } from './nav';
 import { DocsPage, pageAt, pathOf, prefetchPage } from './page';
@@ -51,7 +50,9 @@ function PageNav({ page }: { page: DocsPageEntry }) {
 
 function NotFound() {
   return (
-    <FoundationPage title='Page not found' description='This address has no page. Pick one from the menu, or search with ⌘K.'>
+    <FoundationPage
+      title='Page not found'
+      description='This address has no page. Pick one from the menu, or search with ⌘K.'>
       <div>
         <Button intent='neutral' emphasis='raised' render={<Link href='/' />}>
           Go to the introduction
@@ -100,7 +101,7 @@ export function App() {
 
   return (
     <>
-      <style data-branding>{brandingThemeCss(DEFAULT_BRANDING_THEME)}</style>
+      <CustomizationStyles />
       <SidebarProvider>
         <a
           href='#content'

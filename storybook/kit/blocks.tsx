@@ -25,9 +25,23 @@ import { cn } from '~/lib/utils';
 import { measureGaps, type GapBand } from './measure';
 
 /**
+ * How the docs site renders a Board: the examples only. Spec sections (`FoundationSection`: matrices, forced states,
+ * guidance) stay in Storybook; `afterHeader` (the docs Playground) goes below the page header. Storybook provides
+ * none, so Boards render whole there.
+ */
+export interface DocsMode {
+  readonly afterHeader?: ReactNode;
+}
+
+export const DocsModeContext = createContext<DocsMode | null>(null);
+
+/**
  * Story page layout, after Interfere's design pages: a centered column, the title and a hairline, then sections. Specimens
  * sit in the app's own card (`Preview`, `SpecimenList`), so they render on the surface they mostly live on.
  */
+/** The docs show a Board's lead sentence; the rest is spec, for Storybook. */
+const firstSentence = (text: string) => /^.+?[.!?](?=\s|$)/.exec(text)?.[0] ?? text;
+
 export function FoundationPage({
   title,
   description,
@@ -37,14 +51,20 @@ export function FoundationPage({
   description: string;
   children: ReactNode;
 }) {
+  const docs = use(DocsModeContext);
   return (
     <div className='mx-auto flex w-full max-w-3xl flex-col gap-page'>
       <header className='flex flex-col gap-tight'>
         <h1 className='text-heading'>{title}</h1>
-        <p className='max-w-prose text-body text-pretty text-muted-foreground'>{description}</p>
+        <p className='max-w-prose text-body text-pretty text-muted-foreground'>
+          {docs === null ? description : firstSentence(description)}
+        </p>
       </header>
       <Hairline />
-      <div className='flex flex-col gap-section'>{children}</div>
+      <div className='flex flex-col gap-section'>
+        {use(DocsModeContext)?.afterHeader}
+        {children}
+      </div>
     </div>
   );
 }
@@ -53,7 +73,14 @@ export function Hairline({ className }: { className?: string }) {
   return <div aria-hidden className={cn('h-px shrink-0 bg-border', className)} />;
 }
 
-export function FoundationSection({
+/** A spec section of a Board. The docs site leaves it out (`DocsModeContext`). */
+export function FoundationSection(props: { title: string; description?: ReactNode; children: ReactNode }) {
+  if (use(DocsModeContext) !== null) return null;
+  return <Section {...props} />;
+}
+
+/** A titled section: `FoundationSection` and `ExampleSection` share it. */
+export function Section({
   title,
   description,
   children,
@@ -112,7 +139,7 @@ export function Preview({
 export const ExampleSourceContext = createContext<((section: string) => string | undefined) | null>(null);
 
 /** "Show code" and copy, on the shell under an example; the source opens below. */
-function ExampleCode({ section }: { section: string }) {
+export function ExampleCode({ section }: { section: string }) {
   const source = use(ExampleSourceContext)?.(section)?.trimEnd();
   const [open, setOpen] = useState(false);
   const codeId = useId();
@@ -170,7 +197,7 @@ export function ExampleSection({
   children: ReactNode;
 }) {
   return (
-    <FoundationSection title={title} description={description}>
+    <Section title={title} description={description}>
       {bare ? (
         <div className='flex min-w-0 flex-col gap-tight'>
           <div lang='de' className={cn('min-w-0', className)}>
@@ -183,7 +210,7 @@ export function ExampleSection({
           {children}
         </Preview>
       )}
-    </FoundationSection>
+    </Section>
   );
 }
 
