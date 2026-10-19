@@ -43,14 +43,17 @@ export function useTheme() {
   const mode = useSyncExternalStore(subscribe, readMode, () => 'light' as const);
 
   useEffect(() => {
+    // `readMode()`, not `mode`: during hydration `mode` is the server snapshot ('light'), and applying it would flash a
+    // dark page light before the next render puts the real mode back.
+    const actual = readMode();
     const root = document.documentElement;
-    if (root.classList.contains('dark') === (mode === 'dark')) return;
+    if (root.classList.contains('dark') === (actual === 'dark')) return;
     // Every color transition would fire at once and smear the switch: off for the swap, back on the next frame.
     const freeze = document.createElement('style');
     freeze.textContent = '*,*::before,*::after{transition:none!important}';
     document.head.append(freeze);
-    root.classList.toggle('dark', mode === 'dark');
-    root.style.colorScheme = mode;
+    root.classList.toggle('dark', actual === 'dark');
+    root.style.colorScheme = actual;
     void window.getComputedStyle(root).opacity;
     requestAnimationFrame(() => freeze.remove());
   }, [mode]);

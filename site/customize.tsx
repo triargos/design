@@ -11,7 +11,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '~/components/ui/sheet';
 import { SidebarMenuButton } from '~/components/ui/sidebar';
 import { Slider } from '~/components/ui/slider';
@@ -198,8 +197,44 @@ function TokenSlider({
   );
 }
 
-/** "Customize" in the sidebar: a sheet with the brand colors and the token scales, saved in this browser. */
-export function Customize() {
+/**
+ * Whether the Customize sheet is open. Shared, not local to the trigger: on mobile the sidebar is a sheet that closes
+ * (and unmounts its content) when a menu button is tapped, so the sheet lives at the app root (`CustomizeSheet`) and
+ * the sidebar row only opens it.
+ */
+let sheetOpen = false;
+const OPEN_CHANGE = 'customizeopenchange';
+const setSheetOpen = (open: boolean) => {
+  sheetOpen = open;
+  window.dispatchEvent(new Event(OPEN_CHANGE));
+};
+const subscribeOpen = (onChange: () => void) => {
+  window.addEventListener(OPEN_CHANGE, onChange);
+  return () => window.removeEventListener(OPEN_CHANGE, onChange);
+};
+const useSheetOpen = () =>
+  useSyncExternalStore(
+    subscribeOpen,
+    () => sheetOpen,
+    () => false,
+  );
+
+/** "Customize" in the sidebar: opens the sheet; a dot marks a customized site. */
+export function CustomizeTrigger() {
+  const customization = useCustomization();
+  const customized = JSON.stringify(customization) !== JSON.stringify(DEFAULT);
+  return (
+    <SidebarMenuButton onClick={() => setSheetOpen(true)} aria-haspopup='dialog'>
+      <SlidersHorizontalIcon aria-hidden />
+      Customize
+      {customized && <span aria-label='(changed)' className='ms-auto size-1.5 rounded-full bg-primary-solid' />}
+    </SidebarMenuButton>
+  );
+}
+
+/** The sheet with the surface, the brand colors and the token scales, saved in this browser. At the app root. */
+export function CustomizeSheet() {
+  const open = useSheetOpen();
   const customization = useCustomization();
   const { branding, tokens } = customization;
   const setBranding = (next: Partial<BrandingTheme>) => write({ ...customization, branding: { ...branding, ...next } });
@@ -208,12 +243,7 @@ export function Customize() {
   const customized = JSON.stringify(customization) !== JSON.stringify(DEFAULT);
 
   return (
-    <Sheet>
-      <SheetTrigger render={<SidebarMenuButton />}>
-        <SlidersHorizontalIcon aria-hidden />
-        Customize
-        {customized && <span aria-label='(changed)' className='ms-auto size-1.5 rounded-full bg-primary-solid' />}
-      </SheetTrigger>
+    <Sheet open={open} onOpenChange={setSheetOpen}>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Customize</SheetTitle>
