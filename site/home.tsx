@@ -2,7 +2,6 @@ import { ArrowRightIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import pages from 'virtual:docs-index';
 
-import { InsetCard, InsetCardContent } from '~/components/ui/inset-card';
 import { Item, ItemContent, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 import { cn } from '~/lib/utils';
@@ -31,11 +30,13 @@ const pageBySlug = (slug: string) => {
 function Tile({ slug, className, children }: { slug: string; className?: string; children: ReactNode }) {
   const page = pageBySlug(slug);
   return (
-    <InsetCard className={cn('flex min-w-0 flex-col', className)}>
-      <InsetCardContent lang='de' className='flex min-h-40 flex-1 items-center justify-center p-group'>
+    <div className={cn('flex min-w-0 flex-col overflow-hidden rounded-card border border-border', className)}>
+      <div lang='de' className='flex min-h-40 flex-1 items-center justify-center bg-background p-group'>
         {children}
-      </InsetCardContent>
-      <Item render={<Link href={pathOf(page)} prefetch={prefetchPage(page)} />} className='mt-1 py-1.5'>
+      </div>
+      <Item
+        render={<Link href={pathOf(page)} prefetch={prefetchPage(page)} />}
+        className='rounded-none border-0 border-t border-border bg-shell py-1.5'>
         <ItemContent>
           <ItemTitle className='text-caption font-normal text-muted-foreground'>{page.name}</ItemTitle>
         </ItemContent>
@@ -43,7 +44,7 @@ function Tile({ slug, className, children }: { slug: string; className?: string;
           <ArrowRightIcon aria-hidden className='size-3.5 text-muted-foreground rtl:-scale-x-100' />
         </ItemMedia>
       </Item>
-    </InsetCard>
+    </div>
   );
 }
 

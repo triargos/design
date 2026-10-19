@@ -15,6 +15,7 @@ import {
 } from '~/components/ui/sheet';
 import { SidebarMenuButton } from '~/components/ui/sidebar';
 import { Slider } from '~/components/ui/slider';
+import { TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 import { BRAND_ANCHORS, type BrandColor } from '~/lib/theme/brand-anchors';
 import {
@@ -28,6 +29,7 @@ import { brandingThemeCss } from '~/lib/theme/branding-theme';
 import { toCss } from '~/lib/theme/color';
 import { cn } from '~/lib/utils';
 
+import { type DocsSurface } from '../storybook/kit/blocks';
 import {
   DEFAULT_TOKEN_GLOBALS,
   formatToken,
@@ -41,9 +43,13 @@ import {
 interface Customization {
   readonly branding: BrandingTheme;
   readonly tokens: Readonly<Record<string, number>>;
+  /** The surface the examples sit on: Storybook's surface toolbar. */
+  readonly surface: DocsSurface;
 }
 
-const DEFAULT: Customization = { branding: DEFAULT_BRANDING_THEME, tokens: DEFAULT_TOKEN_GLOBALS };
+const SURFACES: ReadonlyArray<DocsSurface> = ['page', 'card', 'popup'];
+
+const DEFAULT: Customization = { branding: DEFAULT_BRANDING_THEME, tokens: DEFAULT_TOKEN_GLOBALS, surface: 'page' };
 const KEY = 'customization';
 const CHANGE = 'customizationchange';
 
@@ -56,8 +62,11 @@ let cache: { readonly raw: string | null; readonly value: Customization } = { ra
 const read = (): Customization => {
   const raw = window.localStorage.getItem(KEY);
   if (raw === cache.raw) return cache.value;
-  let stored: Partial<{ branding: Partial<Record<keyof BrandingTheme, unknown>>; tokens: Record<string, unknown> }> =
-    {};
+  let stored: Partial<{
+    branding: Partial<Record<keyof BrandingTheme, unknown>>;
+    tokens: Record<string, unknown>;
+    surface: unknown;
+  }> = {};
   try {
     stored = raw === null ? {} : JSON.parse(raw);
   } catch {
@@ -79,6 +88,7 @@ const read = (): Customization => {
         tokenValue(stored.tokens ?? {}, token),
       ]),
     ),
+    surface: oneOf(SURFACES, stored.surface, DEFAULT.surface),
   };
   cache = { raw, value };
   return value;
@@ -100,7 +110,7 @@ const write = (next: Customization | null) => {
 };
 
 /** Prerendered with the defaults; the stored choice applies after hydration. */
-const useCustomization = () => useSyncExternalStore(subscribe, read, () => DEFAULT);
+export const useCustomization = () => useSyncExternalStore(subscribe, read, () => DEFAULT);
 
 /** The theme and token CSS, after `tailwind.css` so it wins. */
 export function CustomizationStyles() {
@@ -207,9 +217,29 @@ export function Customize() {
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Customize</SheetTitle>
-          <SheetDescription>Brand colors and token scales for every page. Saved in this browser.</SheetDescription>
+          <SheetDescription>
+            The surface, brand colors and token scales for every page. Saved in this browser.
+          </SheetDescription>
         </SheetHeader>
         <SheetBody className='flex flex-col gap-page'>
+          <div role='group' aria-labelledby='examples-on' className='flex flex-col gap-related'>
+            <span id='examples-on' className='text-body font-medium'>
+              Examples on
+            </span>
+            <TabsList
+              as='radio'
+              variant='segmented'
+              aria-labelledby='examples-on'
+              value={customization.surface}
+              onValueChange={(surface) => write({ ...customization, surface: surface as DocsSurface })}
+              className='w-full'>
+              {SURFACES.map((surface) => (
+                <TabsTrigger key={surface} value={surface} className='flex-1 capitalize'>
+                  {surface}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
           <Swatches
             legend='Primary'
             name='primary'

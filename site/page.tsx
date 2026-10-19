@@ -3,6 +3,7 @@ import { use, type ComponentType, type MouseEvent } from 'react';
 import pages, { type DocsPage as DocsPageEntry } from 'virtual:docs-index';
 
 import { DocsModeContext, ExampleSourceContext } from '../storybook/kit/blocks';
+import { useCustomization } from './customize';
 import { controlsOf, Playground, type PlaygroundMeta } from './playground';
 
 type StoryModule = Parameters<typeof composeStories>[0];
@@ -91,6 +92,7 @@ const stayOnPage = (event: MouseEvent<HTMLDivElement>) => {
  */
 export function DocsPage({ page }: { page: DocsPageEntry }) {
   const { Board, Playground: PlaygroundStory, meta, sources } = use(loadPage(page));
+  const { surface } = useCustomization();
   if (Board === undefined) return null;
   const controls = controlsOf(meta);
   const playground =
@@ -104,6 +106,6 @@ export function DocsPage({ page }: { page: DocsPageEntry }) {
       </div>
     </ExampleSourceContext>
   );
-  if (page.group === 'Foundations') return <DocsModeContext value={{}}>{board}</DocsModeContext>;
-  return <DocsModeContext value={{ afterHeader: playground, hideSpecs: true }}>{board}</DocsModeContext>;
+  if (page.group === 'Foundations') return <DocsModeContext value={{ surface }}>{board}</DocsModeContext>;
+  return <DocsModeContext value={{ afterHeader: playground, hideSpecs: true, surface }}>{board}</DocsModeContext>;
 }

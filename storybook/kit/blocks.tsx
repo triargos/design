@@ -35,7 +35,18 @@ export interface DocsMode {
   readonly afterHeader?: ReactNode;
   /** Component and pattern pages: spec sections out, the lead sentence only. Foundation pages keep both. */
   readonly hideSpecs?: boolean;
+  /** The surface examples render on; default `page`, as they would sit on a plain page. */
+  readonly surface?: DocsSurface;
 }
+
+export type DocsSurface = 'page' | 'card' | 'popup';
+
+/** Fill per surface; `data-surface` re-scopes the relative tokens (`bg-field`, `bg-muted`, edges) to it. */
+const STAGE_SURFACE: Record<DocsSurface, string> = {
+  page: 'bg-background',
+  card: 'bg-card',
+  popup: 'bg-popover text-popover-foreground',
+};
 
 export const DocsModeContext = createContext<DocsMode | null>(null);
 
@@ -132,6 +143,23 @@ export function Preview({
   footer?: ReactNode;
   children: ReactNode;
 }) {
+  const docs = use(DocsModeContext);
+  if (docs !== null) {
+    // The docs stage is flat: a hairline frame around the example on the page itself (or the chosen surface), not a
+    // card that lifts it. The code strip sits under a hairline.
+    const surface = docs.surface ?? 'page';
+    return (
+      <div data-slot='preview' data-title={title} className='min-w-0 overflow-hidden rounded-card border border-border'>
+        <div
+          lang='de'
+          data-surface={surface === 'page' ? undefined : surface}
+          className={cn('flex flex-wrap items-center gap-related p-group', STAGE_SURFACE[surface], className)}>
+          {children}
+        </div>
+        {footer !== undefined && <div className='border-t border-border bg-shell px-1 pb-1'>{footer}</div>}
+      </div>
+    );
+  }
   return (
     <InsetCard data-slot='preview' data-title={title} className='min-w-0'>
       {title !== undefined && (
