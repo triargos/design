@@ -55,7 +55,7 @@ export function BottomFloatMenuWithPanel() {
       label='Aktionen'
       panel={openPanel === 'actions' ? actions : openPanel === 'invitations' ? invitations : null}
       onPanelDismiss={dismiss}>
-      <span className='px-3 font-medium tabular-nums'>3 ausgewählt</span>
+      <span className='ps-4 pe-1 tabular-nums'>3 ausgewählt</span>
       <BottomFloatMenuItem>
         <Button type='button' intent='neutral' emphasis='raised' size='icon-lg' aria-label='Auswahl aufheben'>
           <XIcon />

@@ -285,7 +285,8 @@ const MorphingShell = ({ children, label, panel, onPanelDismiss, className }: Mo
       }}
       className={cn(
         '[--float-control:--spacing(10)] pointer-coarse:[--float-control:--spacing(11)]',
-        // The toast and popup surface; controls sit 4px in, so their `rounded-control-lg` is concentric with it.
+        // The toast and popup surface. The bar's controls sit 6px in and take `rounded-inner` (popup radius − 6px); the
+        // panel's rows sit 4px in, concentric the same way.
         'relative flex items-end justify-center overflow-hidden text-body',
         popupSurface,
       )}>
@@ -304,8 +305,9 @@ const MorphingShell = ({ children, label, panel, onPanelDismiss, className }: Mo
                 role='toolbar'
                 aria-label={label}
                 className={cn(
-                  'flex max-w-[calc(100vw-2rem)] float-menu-content-in items-center gap-1 p-1',
-                  '[&_[data-slot=button]]:h-(--float-control) [&_[data-slot=button]]:min-w-(--float-control)',
+                  // Room to breathe: 8px between controls, 6px around them.
+                  'flex max-w-[calc(100vw-2rem)] float-menu-content-in items-center gap-2 p-1.5 [--outer-inset:--spacing(1.5)]',
+                  '[&_[data-slot=button]]:h-(--float-control) [&_[data-slot=button]]:min-w-(--float-control) [&_[data-slot=button]]:rounded-inner',
                   className,
                 )}>
                 {children}

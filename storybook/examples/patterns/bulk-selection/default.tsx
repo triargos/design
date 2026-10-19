@@ -139,9 +139,7 @@ export function BulkSelectionDefault() {
         show={selected.size > 0}
         label='Auswahl'
         panel={panel === 'actions' ? actions : panel === 'delete' ? confirmDelete : null}
-        onPanelDismiss={dismiss}
-        // Room to breathe: 8px between controls, 6px around them, the count 16px in like card text.
-        className='gap-2 p-1.5'>
+        onPanelDismiss={dismiss}>
         <span className='ps-4 pe-1 tabular-nums'>{selected.size} ausgewählt</span>
         <BottomFloatMenuItem>
           <Button type='button' intent='neutral' emphasis='raised' onClick={() => setPanel('actions')}>
