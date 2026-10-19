@@ -1,8 +1,14 @@
-import { MailIcon, Trash2Icon, XIcon } from 'lucide-react';
+import { ArrowLeftIcon, CircleDotIcon, CommandIcon, DownloadIcon, MailIcon, Trash2Icon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
-import { BottomFloatMenu, BottomFloatMenuItem } from '~/components/ui/bottom-float-menu';
+import {
+  BottomFloatMenu,
+  type BottomFloatMenuDismissReason,
+  BottomFloatMenuItem,
+  type BottomFloatMenuPanel,
+  BottomFloatMenuRow,
+} from '~/components/ui/bottom-float-menu';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import { InsetCard, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
@@ -15,13 +21,18 @@ const APPLICATIONS = [
   { id: '4', child: 'Paul Wagner', group: 'Nachmittagsbetreuung', status: { label: 'Zugesagt', intent: 'success' } },
 ] as const;
 
+type Panel = 'actions' | 'delete' | null;
+
 /**
- * Select rows, act on all of them: a checkbox column with select-all, and a Bottom Float Menu with the count, clear
- * and the actions while anything is selected.
+ * Select rows, act on all of them: a checkbox column with select-all, and a Bottom Float Menu while anything is
+ * selected. The bar reads by weight: the count as text, "Aktionen" (every action, in a panel) as the one raised
+ * button, a quick action as a raised icon, and clear as a quiet ✕ at the end. Deleting asks in its own panel level.
  */
 export function BulkSelectionDefault() {
+  const [rows, setRows] = useState<ReadonlyArray<(typeof APPLICATIONS)[number]>>(APPLICATIONS);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set(['1', '3']));
-  const all = selected.size === APPLICATIONS.length;
+  const [panel, setPanel] = useState<Panel>(null);
+  const all = rows.length > 0 && selected.size === rows.length;
   const toggle = (id: string, checked: boolean) =>
     setSelected((current) => {
       const next = new Set(current);
@@ -29,6 +40,59 @@ export function BulkSelectionDefault() {
       else next.delete(id);
       return next;
     });
+  const clear = () => {
+    setPanel(null);
+    setSelected(new Set());
+  };
+
+  const actions: BottomFloatMenuPanel = {
+    key: 'actions',
+    label: 'Aktionen',
+    content: (
+      <>
+        <BottomFloatMenuRow icon={<MailIcon />} onClick={() => setPanel(null)}>
+          Nachricht senden
+        </BottomFloatMenuRow>
+        <BottomFloatMenuRow icon={<CircleDotIcon />} onClick={() => setPanel(null)}>
+          Status ändern
+        </BottomFloatMenuRow>
+        <BottomFloatMenuRow icon={<DownloadIcon />} onClick={() => setPanel(null)}>
+          Exportieren
+        </BottomFloatMenuRow>
+        <BottomFloatMenuRow icon={<Trash2Icon />} opensPanel onClick={() => setPanel('delete')}>
+          Löschen
+        </BottomFloatMenuRow>
+      </>
+    ),
+  };
+  const confirmDelete: BottomFloatMenuPanel = {
+    key: 'delete',
+    label: `${selected.size} Anmeldungen löschen`,
+    content: (
+      <>
+        <BottomFloatMenuRow icon={<ArrowLeftIcon />} onClick={() => setPanel('actions')}>
+          Zurück
+        </BottomFloatMenuRow>
+        <div className='p-1'>
+          <Button
+            type='button'
+            intent='destructive'
+            emphasis='solid'
+            className='w-full'
+            onClick={() => {
+              setRows((current) => current.filter((row) => !selected.has(row.id)));
+              clear();
+            }}>
+            <Trash2Icon data-icon='inline-start' />
+            {selected.size} endgültig löschen
+          </Button>
+        </div>
+      </>
+    ),
+  };
+  const dismiss = (reason: BottomFloatMenuDismissReason) =>
+    setPanel((current) => (reason === 'escape' && current === 'delete' ? 'actions' : null));
+
   return (
     <>
       <InsetCard className='w-full max-w-2xl'>
@@ -43,7 +107,7 @@ export function BulkSelectionDefault() {
                   aria-label='Alle auswählen'
                   checked={all}
                   indeterminate={selected.size > 0 && !all}
-                  onCheckedChange={(checked) => setSelected(new Set(checked ? APPLICATIONS.map((row) => row.id) : []))}
+                  onCheckedChange={(checked) => setSelected(new Set(checked ? rows.map((row) => row.id) : []))}
                 />
               </TableHead>
               <TableHead>Kind</TableHead>
@@ -52,7 +116,7 @@ export function BulkSelectionDefault() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {APPLICATIONS.map((row) => (
+            {rows.map((row) => (
               <TableRow key={row.id} data-state={selected.has(row.id) ? 'selected' : undefined}>
                 <TableCell>
                   <Checkbox
@@ -71,8 +135,23 @@ export function BulkSelectionDefault() {
           </TableBody>
         </Table>
       </InsetCard>
-      <BottomFloatMenu show={selected.size > 0} label='Auswahl'>
-        <span className='px-3 font-medium tabular-nums'>{selected.size} ausgewählt</span>
+      <BottomFloatMenu
+        show={selected.size > 0}
+        label='Auswahl'
+        panel={panel === 'actions' ? actions : panel === 'delete' ? confirmDelete : null}
+        onPanelDismiss={dismiss}>
+        <span className='px-3 tabular-nums'>{selected.size} ausgewählt</span>
+        <BottomFloatMenuItem>
+          <Button type='button' intent='neutral' emphasis='raised' onClick={() => setPanel('actions')}>
+            <CommandIcon data-icon='inline-start' />
+            Aktionen
+          </Button>
+        </BottomFloatMenuItem>
+        <BottomFloatMenuItem>
+          <Button type='button' intent='neutral' emphasis='raised' size='icon-lg' aria-label='Nachricht senden'>
+            <MailIcon />
+          </Button>
+        </BottomFloatMenuItem>
         <BottomFloatMenuItem>
           <Button
             type='button'
@@ -80,20 +159,8 @@ export function BulkSelectionDefault() {
             emphasis='ghost'
             size='icon-lg'
             aria-label='Auswahl aufheben'
-            onClick={() => setSelected(new Set())}>
+            onClick={clear}>
             <XIcon />
-          </Button>
-        </BottomFloatMenuItem>
-        <BottomFloatMenuItem>
-          <Button type='button' intent='neutral' emphasis='ghost'>
-            <MailIcon data-icon='inline-start' />
-            Nachricht
-          </Button>
-        </BottomFloatMenuItem>
-        <BottomFloatMenuItem>
-          <Button type='button' intent='destructive' emphasis='solid'>
-            <Trash2Icon data-icon='inline-start' />
-            Löschen
           </Button>
         </BottomFloatMenuItem>
       </BottomFloatMenu>
