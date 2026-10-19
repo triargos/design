@@ -126,7 +126,7 @@ function SearchSelectPick<Item, Key extends SearchSelectKey>(
   const popup = (
     <ComboboxContent anchor={props.multiple ? anchorRef : undefined}>
       <ComboboxEmpty>{empty}</ComboboxEmpty>
-      <VirtualizedComboboxList open={open} virtualizerRef={virtualizerRef}>
+      <VirtualizedComboboxList open={open} virtualizerRef={virtualizerRef} itemKey={itemKey}>
         {content}
       </VirtualizedComboboxList>
     </ComboboxContent>
@@ -176,7 +176,7 @@ function SearchSelectPick<Item, Key extends SearchSelectKey>(
   return (
     <Combobox
       virtualized
-      items={items}
+      items={selectedFirst(items, selected)}
       value={selected}
       onValueChange={(next: Item | null) => onValueChange(next === null ? null : itemKey(next))}
       itemToStringLabel={itemLabel}
@@ -198,6 +198,12 @@ function SearchSelectPick<Item, Key extends SearchSelectKey>(
       {popup}
     </Combobox>
   );
+}
+
+/** The selected entry leads the list, so a reopened select shows it first; the rest keep their order. */
+function selectedFirst<Entry>(entries: ReadonlyArray<Entry>, selected: Entry | null): ReadonlyArray<Entry> {
+  if (selected === null || !entries.includes(selected)) return entries;
+  return [selected, ...entries.filter((entry) => entry !== selected)];
 }
 
 /** A typed value: not an item, its text is the value. */
@@ -246,11 +252,11 @@ function SearchSelectCustom<Item>({
   // neither an item nor the custom value.
   const entries = React.useMemo((): ReadonlyArray<Entry> => {
     const typed = query.trim();
-    const extras: Array<CustomEntry> = [];
-    if (customEntry !== null) extras.push(customEntry);
-    if (typed !== '' && typed !== value && !labels.has(typed.toLowerCase())) extras.push(new CustomEntry(typed));
-    return extras.length > 0 ? [...items, ...extras] : items;
-  }, [items, labels, query, customEntry, value]);
+    const typedRow =
+      typed !== '' && typed !== value && !labels.has(typed.toLowerCase()) ? [new CustomEntry(typed)] : [];
+    const listed: ReadonlyArray<Entry> = customEntry !== null ? [...items, customEntry] : items;
+    return [...selectedFirst(listed, selected), ...typedRow];
+  }, [items, labels, query, customEntry, value, selected]);
 
   const label = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : itemLabel(entry));
   const isPicked = (entry: Entry) => entry instanceof CustomEntry && entry.text === value;
@@ -318,6 +324,7 @@ function SearchSelectCustom<Item>({
           <VirtualizedComboboxList
             open={open}
             virtualizerRef={virtualizerRef}
+            itemKey={(entry: Entry) => (entry instanceof CustomEntry ? `custom:${entry.text}` : itemKey(entry))}
             indicator={(entry: Entry) =>
               entry instanceof CustomEntry && !isPicked(entry) ? (
                 <PlusIcon className='text-muted-foreground' />

@@ -45,6 +45,8 @@ interface VirtualizedComboboxListProps<T> {
   className?: string;
   estimateSize?: number;
   overscan?: number;
+  /** Keys the size cache by item, not index: a row never inherits the size of whatever sat at its index before. */
+  itemKey?: (item: T) => React.Key;
 }
 
 function VirtualizedComboboxList<T>({
@@ -55,6 +57,7 @@ function VirtualizedComboboxList<T>({
   className,
   estimateSize = 36,
   overscan = 20,
+  itemKey,
 }: VirtualizedComboboxListProps<T>) {
   const listClassName = className
     ? `p-1 data-empty:p-0 overflow-hidden ${className}`
@@ -69,6 +72,7 @@ function VirtualizedComboboxList<T>({
         indicator={indicator}
         estimateSize={estimateSize}
         overscan={overscan}
+        itemKey={itemKey}
       />
     </ComboboxPrimitive.List>
   );
@@ -81,6 +85,7 @@ interface VirtualizedItemsProps<T> {
   indicator?: (item: T) => React.ReactNode;
   estimateSize: number;
   overscan: number;
+  itemKey?: (item: T) => React.Key;
 }
 
 function VirtualizedItems<T>({
@@ -90,6 +95,7 @@ function VirtualizedItems<T>({
   indicator,
   estimateSize,
   overscan,
+  itemKey,
 }: VirtualizedItemsProps<T>) {
   const filteredItems = ComboboxPrimitive.useFilteredItems<T>();
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
@@ -99,6 +105,10 @@ function VirtualizedItems<T>({
     count: filteredItems.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => estimateSize,
+    getItemKey: (index) => {
+      const item = filteredItems[index];
+      return itemKey && item !== undefined ? itemKey(item) : index;
+    },
     overscan,
     // No paddingStart/End: the listbox's `p-1` is the one inset, on every side, so a row's `rounded-inner` stays
     // concentric with the popup. Scroll padding keeps a keyboard-scrolled row clear of the edge.
@@ -152,7 +162,8 @@ function VirtualizedItems<T>({
                 top: 0,
                 left: 0,
                 width: '100%',
-                height: virtualItem.size,
+                // No height from the virtualizer: the row keeps its natural height and `measureElement` reads it. A
+                // height from the cache would make a stale size measure itself again and never shrink back.
                 transform: `translateY(${virtualItem.start}px)`,
               }}
               value={item}>
