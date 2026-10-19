@@ -13,8 +13,7 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from '~/components/ui/combobox';
-import { FieldDescription } from '~/components/ui/field';
-import { FieldReveal } from '~/components/ui/field-reveal';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import {
   useVirtualizedCombobox,
   VirtualizedComboboxList,
@@ -202,6 +201,29 @@ function SearchSelectPick<Item, Key extends SearchSelectKey>(
   );
 }
 
+/**
+ * Marks a custom value at the end of the field: a small pencil chip, its meaning in a tooltip. The input reads the same
+ * note through `aria-describedby`, so the chip itself stays out of the accessibility tree.
+ */
+function CustomValueMark({ label, note, noteId }: { label: string; note: string; noteId: string }) {
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger
+          render={<span />}
+          aria-hidden
+          className='inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground'>
+          <PencilLineIcon className='size-3' />
+        </TooltipTrigger>
+        <TooltipContent>{label}</TooltipContent>
+      </Tooltip>
+      <span id={noteId} className='sr-only'>
+        {note}
+      </span>
+    </>
+  );
+}
+
 /** A typed value: not an item, its text is the value. */
 class CustomEntry {
   constructor(readonly text: string) {}
@@ -313,6 +335,11 @@ function SearchSelectCustom<Item>({
           onBlur={onBlur}
           aria-invalid={invalid || undefined}
           aria-describedby={custom ? noteId : undefined}
+          endAddon={
+            custom ? (
+              <CustomValueMark label={strings.selectCustom} note={strings.selectCustomNote} noteId={noteId} />
+            ) : undefined
+          }
           disabled={disabled}
         />
         <ComboboxContent>
@@ -329,12 +356,6 @@ function SearchSelectCustom<Item>({
           </VirtualizedComboboxList>
         </ComboboxContent>
       </Combobox>
-      <FieldReveal show={custom}>
-        <FieldDescription id={noteId} className='flex items-center gap-1.5'>
-          <PencilLineIcon aria-hidden className='size-3.5 shrink-0' />
-          {strings.selectCustomNote}
-        </FieldDescription>
-      </FieldReveal>
     </div>
   );
 }

@@ -52,11 +52,14 @@ function ComboboxInput({
   showTrigger = true,
   showClear = false,
   startAddon,
+  endAddon,
   ...props
 }: ComboboxPrimitive.Input.Props & {
   showTrigger?: boolean;
   showClear?: boolean;
   startAddon?: React.ReactNode;
+  /** Before the trigger and clear button: a small mark about the value, such as `SearchSelect`'s custom-value chip. */
+  endAddon?: React.ReactNode;
 }) {
   const strings = useUiStrings();
   return (
@@ -68,6 +71,7 @@ function ComboboxInput({
       )}
       <ComboboxPrimitive.Input render={<InputGroupInput disabled={disabled} />} {...props} />
       <InputGroupAddon align='inline-end'>
+        {endAddon}
         {showTrigger && (
           <InputGroupButton
             size='icon-xs'

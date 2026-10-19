@@ -5,7 +5,7 @@ import { SearchSelect } from '~/components/ui/search-select';
 
 const TOWNS = ['Berlin', 'Bremen', 'Hamburg', 'Köln', 'München'].map((name) => ({ value: name, label: name }));
 
-/** `allowCustom`: a key from the list or the typed text; a custom value folds open a note below the field. */
+/** `allowCustom`: a key from the list or the typed text; a custom value shows a pencil chip at the end of the field. */
 export function SearchSelectCustomValue() {
   const [value, setValue] = useState<string | null>('Oldenburg');
   return (
