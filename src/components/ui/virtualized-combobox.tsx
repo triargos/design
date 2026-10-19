@@ -100,8 +100,8 @@ function VirtualizedItems<T>({
     getScrollElement: () => scrollRef.current,
     estimateSize: () => estimateSize,
     overscan,
-    paddingStart: 4,
-    paddingEnd: 4,
+    // No paddingStart/End: the listbox's `p-1` is the one inset, on every side, so a row's `rounded-inner` stays
+    // concentric with the popup. Scroll padding keeps a keyboard-scrolled row clear of the edge.
     scrollPaddingEnd: 4,
     scrollPaddingStart: 4,
   });
