@@ -58,8 +58,8 @@ export const Board: Story = {
         description={
           <>
             <Code>allowCustom</Code>: the value is a plain string, a key or the typed text. While the query names no
-            item, the last row takes it; Enter picks it once nothing else matches. A custom value shows a pencil chip at
-            the end of the field and reads „Eigene Angabe“ in its row.
+            item, the last row takes it; Enter picks it once nothing else matches. A custom value reads „Eigene Angabe“
+            in its row.
           </>
         }>
         <SearchSelectCustomValue />
