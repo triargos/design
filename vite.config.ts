@@ -1,7 +1,7 @@
 import { execFile } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
@@ -86,7 +86,7 @@ const prerender = (): Plugin => ({
   apply: 'build',
   applyToEnvironment: (environment) => environment.name === 'client',
   async closeBundle() {
-    const outDir = join(this.environment.config.root, this.environment.config.build.outDir);
+    const outDir = resolve(this.environment.config.root, this.environment.config.build.outDir);
     const server = await createServer({
       configFile: false,
       root: rootDir,
