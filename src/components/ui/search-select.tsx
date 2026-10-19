@@ -268,7 +268,8 @@ function SearchSelectCustom<Item>({
       return (
         <>
           <span className='truncate'>{entry.text}</span>
-          <span className='truncate text-caption text-muted-foreground in-data-highlighted:text-foreground'>
+          {/* At the row's end: the value truncates first, the hint keeps its width. */}
+          <span className='ms-auto shrink-0 text-caption text-muted-foreground in-data-highlighted:text-foreground'>
             {strings.selectCustom}
           </span>
         </>
