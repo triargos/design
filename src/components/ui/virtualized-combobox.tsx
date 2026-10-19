@@ -135,7 +135,10 @@ function VirtualizedItems<T>({
   }
 
   return (
-    <div role='presentation' ref={handleScrollRef} className='no-scrollbar max-h-72 overflow-y-auto overscroll-contain'>
+    <div
+      role='presentation'
+      ref={handleScrollRef}
+      className='no-scrollbar max-h-72 overflow-x-hidden overflow-y-auto overscroll-contain'>
       <div
         role='presentation'
         style={{

@@ -495,7 +495,10 @@
     text-transform: uppercase;
   }
 
-  .scrollbar-hide {
+  /* `no-scrollbar` is what the list scrollers use; it was never defined, so with always-visible scrollbars their
+     track showed and took height. */
+  .scrollbar-hide,
+  .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
 
