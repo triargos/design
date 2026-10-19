@@ -7,7 +7,7 @@ const GRADES: ReadonlyArray<SelectOption> = [
   { value: '7', label: 'Klasse 7' },
 ];
 
-/** Placeholder, invalid, disabled, `size='sm'`. */
+/** Placeholder, invalid, disabled, `size='sm'`; `aria-label` where no label is visible. */
 export function OptionSelectStates() {
   const common = {
     items: GRADES,
@@ -18,10 +18,10 @@ export function OptionSelectStates() {
   };
   return (
     <div className='grid w-56 gap-2'>
-      <OptionSelect {...common} value={null} />
-      <OptionSelect {...common} value={null} invalid />
-      <OptionSelect {...common} value='6' disabled />
-      <OptionSelect {...common} value='6' size='sm' />
+      <OptionSelect {...common} value={null} aria-label='Klasse' />
+      <OptionSelect {...common} value={null} invalid aria-label='Klasse, ungültig' />
+      <OptionSelect {...common} value='6' disabled aria-label='Klasse, deaktiviert' />
+      <OptionSelect {...common} value='6' size='sm' aria-label='Klasse, klein' />
     </div>
   );
 }

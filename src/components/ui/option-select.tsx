@@ -15,6 +15,8 @@ interface OptionSelectBaseProps<Item, Key extends OptionSelectKey> {
   readonly itemLabel: (item: Item) => string;
   readonly placeholder?: string;
   readonly id?: string;
+  /** Without a visible label, e.g. `size='sm'` in a toolbar. */
+  readonly 'aria-label'?: string;
   readonly invalid?: boolean;
   readonly disabled?: boolean;
   readonly onBlur?: () => void;
@@ -31,7 +33,7 @@ interface OptionSelectPickProps<Item, Key extends OptionSelectKey> extends Optio
 
 /**
  * The value is a plain string: an item's key or the typed text. The list ends, after a separator, in an „Andere
- * angeben …" row; picking it emits '' and folds open a text field, hung off the select, that takes focus. A value
+ * angeben …“ row; picking it emits '' and folds open a text field, hung off the select, that takes focus. A value
  * that is no item's key opens with the text field.
  */
 interface OptionSelectCustomProps<Item> extends OptionSelectBaseProps<Item, string> {
@@ -53,11 +55,12 @@ const OTHER = { other: true } as const;
 
 /**
  * A select over `items`, with SearchSelect's API, for short lists: no typing, no virtualization. `allowCustom` adds
- * an „Andere" row with a text field for a value outside the list. Not bound to a form: wire it through `Controller` +
+ * an „Andere“ row with a text field for a value outside the list. Not bound to a form: wire it through `Controller` +
  * `Field`. For long lists or a custom value typed in place, `SearchSelect`.
  */
 export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSelectProps<Item, Key>) {
   const { items, itemKey, itemLabel, placeholder, id, invalid, disabled, onBlur, size, className } = props;
+  const ariaLabel = props['aria-label'];
   type Choice = Item | typeof OTHER;
   const { t } = useTranslation('common');
   // The text last typed into the other field: a typed text that equals a key stays custom while it is typed.
@@ -107,6 +110,7 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
       disabled={disabled}>
       <SelectTrigger
         id={id}
+        aria-label={ariaLabel}
         size={size}
         onBlur={onBlur}
         aria-invalid={(invalid && !otherChosen) || undefined}

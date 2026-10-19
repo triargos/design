@@ -254,11 +254,24 @@ function SearchSelectCustom<Item>({
       return (
         <>
           <span className='truncate'>{entry.text}</span>
-          <span className='truncate text-caption text-muted-foreground'>{t(($) => $.select.custom)}</span>
+          <span className='truncate text-caption text-muted-foreground in-data-highlighted:text-foreground'>
+            {t(($) => $.select.custom)}
+          </span>
         </>
       );
     }
-    return <span className='truncate'>{t(($) => $.select.useCustom, { text: entry.text })}</span>;
+    // One line, as tall as the other rows: the typed text truncates, the verb stays. A virtualized row cannot widen
+    // the popup.
+    return (
+      // gap-1: a word space, not the row's 8px gap.
+      <span className='flex min-w-0 gap-1'>
+        {/* The quotes stay outside the truncation, so a cut text still closes. */}
+        <span className='flex min-w-0'>
+          „<span className='truncate'>{entry.text}</span>“
+        </span>
+        <span className='shrink-0'>{t(($) => $.select.useCustom)}</span>
+      </span>
+    );
   };
   const empty = pending ? t(($) => $.select.pending) : (emptyText ?? t(($) => $.select.noItems));
 

@@ -1,0 +1,204 @@
+import { OTPField as OTPFieldPrimitive } from '@base-ui/react/otp-field';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { inputSurfaceVariants } from '~/components/ui/input';
+
+import { cn } from '~/lib/utils';
+
+/** Odd and even run the same keyframes, so each new entry restarts the animation (as the toast upsert does). */
+type Parity = 'odd' | 'even';
+
+const flip = (parity: Parity | undefined): Parity => (parity === 'odd' ? 'even' : 'odd');
+
+interface OTPFieldContextValue {
+  invalid: boolean;
+  /** The slots the last typed, pasted or autofilled input wrote; more than one fill in sequence. */
+  entry: { from: number; to: number; parity: Parity } | null;
+  /** The slot that just refused a character. */
+  rejected: { index: number; parity: Parity } | null;
+}
+
+const OTPFieldContext = React.createContext<OTPFieldContextValue>({ invalid: false, entry: null, rejected: null });
+
+const slotSelector = 'input[data-slot=otp-field-input]';
+
+type OTPFieldProps = Omit<React.ComponentProps<typeof OTPFieldPrimitive.Root>, 'className'> & {
+  className?: string;
+  /** Marks the slots invalid and shakes the row once as it turns invalid. Incomplete: only the empty slots. */
+  'aria-invalid'?: boolean | 'true' | 'false';
+  /** `focus()` moves to the first empty slot, or the last; pass react-hook-form's `field.ref`. */
+  inputRef?: React.Ref<{ focus: () => void }>;
+};
+
+/**
+ * A one-time code, one real `<input>` per character (Base UI OTP Field). Numeric by default; typing, paste and
+ * autofill advance the focus. Motion: each character lands with a 96% press, a paste or autofill lands slot by slot,
+ * a refused character shakes its slot, the row shakes once as it turns invalid. Reduced motion: none of it; the
+ * invalid edge and `FieldError` carry the state.
+ */
+function OTPField({
+  className,
+  'aria-invalid': ariaInvalid,
+  inputRef,
+  value,
+  defaultValue,
+  onValueChange,
+  onValueInvalid,
+  ...props
+}: OTPFieldProps) {
+  const invalid = ariaInvalid === true || ariaInvalid === 'true';
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const latest = React.useRef(value ?? defaultValue ?? '');
+  const [entry, setEntry] = React.useState<OTPFieldContextValue['entry']>(null);
+  const [rejected, setRejected] = React.useState<OTPFieldContextValue['rejected']>(null);
+
+  // A controlled reset (cleared after a refused code) moves the baseline the next entry is diffed against.
+  React.useEffect(() => {
+    if (value !== undefined) latest.current = value;
+  }, [value]);
+
+  const slots = () => Array.from(rootRef.current?.querySelectorAll<HTMLInputElement>(slotSelector) ?? []);
+
+  React.useImperativeHandle(
+    inputRef,
+    () => ({
+      // Next frame: a reset in the same handler (`setValue('')` before `setError`) has rendered by then.
+      focus: () =>
+        requestAnimationFrame(() => {
+          const inputs = slots();
+          (inputs.find((input) => input.value === '') ?? inputs.at(-1))?.focus();
+        }),
+    }),
+    [],
+  );
+
+  const handleValueChange: NonNullable<OTPFieldProps['onValueChange']> = (next, details) => {
+    const previous = latest.current;
+    latest.current = next;
+    onValueChange?.(next, details);
+    // Deleting shifts the characters after it: that is not an entry.
+    if (details.reason !== 'input-change' && details.reason !== 'input-paste') {
+      setEntry(null);
+      return;
+    }
+    let from = -1;
+    let to = -1;
+    for (let index = 0; index < next.length; index++) {
+      if (next[index] === previous[index]) continue;
+      if (from < 0) from = index;
+      to = index;
+    }
+    setRejected(null);
+    setEntry((current) => (from < 0 ? null : { from, to, parity: flip(current?.parity) }));
+  };
+
+  const handleValueInvalid: NonNullable<OTPFieldProps['onValueInvalid']> = (attempted, details) => {
+    onValueInvalid?.(attempted, details);
+    // A paste drops separators (`123-456`) on purpose; only a typed character is refused.
+    if (details.reason !== 'input-change') return;
+    const index = slots().indexOf(details.event.target as HTMLInputElement);
+    if (index < 0) return;
+    setEntry(null);
+    setRejected((current) => ({ index, parity: flip(current?.parity) }));
+  };
+
+  const context = React.useMemo(() => ({ invalid, entry, rejected }), [invalid, entry, rejected]);
+
+  return (
+    <OTPFieldContext.Provider value={context}>
+      <OTPFieldPrimitive.Root
+        ref={rootRef}
+        data-slot='otp-field'
+        data-invalid={invalid || undefined}
+        value={value}
+        defaultValue={defaultValue}
+        onValueChange={handleValueChange}
+        onValueInvalid={handleValueInvalid}
+        className={cn(
+          'flex max-w-full items-center gap-2',
+          'data-invalid:animate-otp-shake motion-reduce:animate-none',
+          className,
+        )}
+        {...props}
+      />
+    </OTPFieldContext.Provider>
+  );
+}
+
+type OTPFieldInputProps = Omit<React.ComponentProps<typeof OTPFieldPrimitive.Input>, 'className' | 'render'> & {
+  className?: string;
+};
+
+/**
+ * One character. Slots follow DOM order (no `index`). Label the first with a `<label htmlFor>` on the root's `id`; the
+ * others name themselves „Stelle 2 von 6“.
+ */
+function OTPFieldInput({ className, ...props }: OTPFieldInputProps) {
+  const { t } = useTranslation('common');
+  const { invalid, entry, rejected } = React.useContext(OTPFieldContext);
+
+  return (
+    <OTPFieldPrimitive.Input
+      data-slot='otp-field-input'
+      className={cn(
+        inputSurfaceVariants({ scope: 'self' }),
+        // `Input`'s box: 40px, `text-control`, the field ring; touch: 44px and 16px text, so iOS does not zoom.
+        // `shrink` + `min-w-0`: in a narrow column (320px) the slots give up width; `flex-1` stretches them to one.
+        'relative size-10 min-w-0 shrink p-0 text-center text-control text-foreground tabular-nums',
+        'pointer-coarse:size-11 pointer-coarse:text-[1rem]',
+        // In an invalid `Field` the digits keep their color; only a slot flagged invalid turns them.
+        'aria-invalid:text-destructive',
+        // Focus selects the slot's character: the ring marks it, a selection box would only clutter the digit.
+        'selection:bg-transparent focus-visible:z-10',
+        'data-[entered=even]:animate-otp-fill-even data-[entered=odd]:animate-otp-fill-odd',
+        'data-[rejected=even]:animate-otp-reject-even data-[rejected=odd]:animate-otp-reject-odd',
+        'motion-reduce:animate-none',
+        className,
+      )}
+      render={(inputProps, state) => {
+        const entered = entry !== null && state.index >= entry.from && state.index <= entry.to;
+        const first = state.index === 0;
+        return (
+          <input
+            {...inputProps}
+            // Incomplete: the empty slots are what is missing. Complete: the code itself is wrong.
+            aria-invalid={invalid && !state.disabled && (state.complete || !state.filled) ? true : undefined}
+            aria-label={
+              first
+                ? inputProps['aria-label']
+                : t(($) => $.otpField.slot, { position: state.index + 1, length: state.length })
+            }
+            aria-labelledby={first ? inputProps['aria-labelledby'] : undefined}
+            data-entered={entered ? entry.parity : undefined}
+            data-rejected={rejected?.index === state.index ? rejected.parity : undefined}
+            // A paste or autofill lands slot by slot; the keyframes' `backwards` holds each one empty until its turn.
+            style={
+              entered
+                ? { ...inputProps.style, animationDelay: `${(state.index - entry.from) * 30}ms` }
+                : inputProps.style
+            }
+          />
+        );
+      }}
+      {...props}
+    />
+  );
+}
+
+type OTPFieldSeparatorProps = Omit<React.ComponentProps<typeof OTPFieldPrimitive.Separator>, 'className'> & {
+  className?: string;
+};
+
+/** Splits the slots into groups, as authenticator apps print the code (`123 456`). */
+function OTPFieldSeparator({ className, ...props }: OTPFieldSeparatorProps) {
+  return (
+    <OTPFieldPrimitive.Separator
+      data-slot='otp-field-separator'
+      className={cn('mx-1 h-0.5 w-3 shrink-0 rounded-full bg-border', className)}
+      {...props}
+    />
+  );
+}
+
+export { OTPField, OTPFieldInput, OTPFieldSeparator };

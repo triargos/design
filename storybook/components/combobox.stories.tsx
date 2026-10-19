@@ -85,7 +85,7 @@ export const Board: Story = {
           </SpecimenRow>
           <SpecimenRow name='List or own text' meta={<Code>OptionSelect · SearchSelect allowCustom</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
-              Short list, a custom value rare: <Code>OptionSelect allowCustom</Code>, an „Andere" row with a text field.
+              Short list, a custom value rare: <Code>OptionSelect allowCustom</Code>, an „Andere“ row with a text field.
               Longer list, or typing is the main path: <Code>SearchSelect allowCustom</Code>. Both hand over a plain
               string.
             </p>
