@@ -224,7 +224,7 @@ function SearchSelectCustom<Item>({
   onValueChange,
 }: SearchSelectCustomProps<Item>) {
   type Entry = Item | CustomEntry;
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState('');
   const virtualizerRef = React.useRef<VirtualizerInstance | null>(null);
@@ -254,13 +254,13 @@ function SearchSelectCustom<Item>({
       return (
         <>
           <span className='truncate'>{entry.text}</span>
-          <span className='truncate text-caption text-muted-foreground'>{t(($) => $.select.custom)}</span>
+          <span className='truncate text-caption text-muted-foreground'>{strings.selectCustom}</span>
         </>
       );
     }
-    return <span className='truncate'>{t(($) => $.select.useCustom, { text: entry.text })}</span>;
+    return <span className='truncate'>{strings.selectUseCustom(entry.text)}</span>;
   };
-  const empty = pending ? t(($) => $.select.pending) : (emptyText ?? t(($) => $.select.noItems));
+  const empty = pending ? strings.selectPending : (emptyText ?? strings.selectEmpty);
 
   return (
     <div className={className}>
@@ -309,7 +309,7 @@ function SearchSelectCustom<Item>({
       <FieldReveal show={custom}>
         <FieldDescription id={noteId} className='flex items-center gap-1.5'>
           <PencilLineIcon aria-hidden className='size-3.5 shrink-0' />
-          {t(($) => $.select.customNote)}
+          {strings.selectCustomNote}
         </FieldDescription>
       </FieldReveal>
     </div>

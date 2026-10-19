@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { FieldReveal } from '~/components/ui/field-reveal';
 import { Input } from '~/components/ui/input';
@@ -59,7 +59,7 @@ const OTHER = { other: true } as const;
 export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSelectProps<Item, Key>) {
   const { items, itemKey, itemLabel, placeholder, id, invalid, disabled, onBlur, size, className } = props;
   type Choice = Item | typeof OTHER;
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   // The text last typed into the other field: a typed text that equals a key stays custom while it is typed.
   const [typedOther, setTypedOther] = React.useState<string | null>(null);
   const otherInput = React.useRef<HTMLInputElement>(null);
@@ -93,7 +93,7 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
         else props.onValueChange(props.itemKey(item));
       }}
       itemToStringLabel={(choice) =>
-        choice === null ? '' : choice === OTHER ? t(($) => $.select.other) : itemLabel(choice as Item)
+        choice === null ? '' : choice === OTHER ? strings.selectOther : itemLabel(choice as Item)
       }
       isItemEqualToValue={(a, b) =>
         a === OTHER || b === OTHER || a === null || b === null ? a === b : itemKey(a as Item) === itemKey(b as Item)
@@ -111,7 +111,7 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
         onBlur={onBlur}
         aria-invalid={(invalid && !otherChosen) || undefined}
         className={props.allowCustom ? undefined : className}>
-        <SelectValue placeholder={placeholder ?? t(($) => $.select.placeholder)} />
+        <SelectValue placeholder={placeholder ?? strings.selectPlaceholder} />
       </SelectTrigger>
       <SelectContent>
         {items.map((item) => (
@@ -123,7 +123,7 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
           <>
             <SelectSeparator />
             {/* The row says what picking it does; the trigger then shows `select.other`. */}
-            <SelectItem value={OTHER}>{t(($) => $.select.otherOption)}</SelectItem>
+            <SelectItem value={OTHER}>{strings.selectOtherOption}</SelectItem>
           </>
         )}
       </SelectContent>
@@ -138,8 +138,8 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
       <FieldReveal show={otherChosen} elbow>
         <Input
           ref={otherInput}
-          aria-label={otherLabel ?? t(($) => $.select.otherLabel)}
-          placeholder={otherPlaceholder ?? t(($) => $.select.otherPlaceholder)}
+          aria-label={otherLabel ?? strings.selectOtherLabel}
+          placeholder={otherPlaceholder ?? strings.selectOtherPlaceholder}
           value={otherChosen ? (props.value ?? '') : ''}
           onChange={(event) => {
             setTypedOther(event.target.value);

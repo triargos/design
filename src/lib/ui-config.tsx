@@ -15,8 +15,21 @@ export interface UiStrings {
   readonly pageTabs: string;
   readonly decrease: string;
   readonly increase: string;
+  readonly selectPlaceholder: string;
   readonly selectPending: string;
   readonly selectEmpty: string;
+  readonly selectOpen: string;
+  readonly selectClear: string;
+  /** The value an `OptionSelect` shows once "other" is chosen. */
+  readonly selectOther: string;
+  /** The "other" row in an `OptionSelect` list. */
+  readonly selectOtherOption: string;
+  readonly selectOtherLabel: string;
+  readonly selectOtherPlaceholder: string;
+  /** Marks a `SearchSelect` value typed by the user, not picked from the list. */
+  readonly selectCustom: string;
+  readonly selectCustomNote: string;
+  readonly selectUseCustom: (text: string) => string;
   /** Between the keys of a chord shortcut: `G dann S`. */
   readonly chordSeparator: string;
   readonly colorPicker: {
@@ -50,8 +63,18 @@ export const UI_STRINGS_DE: UiStrings = {
   pageTabs: 'Seitenbereiche',
   decrease: 'Verringern',
   increase: 'Erhöhen',
+  selectPlaceholder: 'Auswählen...',
   selectPending: 'Elemente werden geladen...',
   selectEmpty: 'Keine Elemente gefunden',
+  selectOpen: 'Liste öffnen',
+  selectClear: 'Auswahl löschen',
+  selectOther: 'Andere',
+  selectOtherOption: 'Andere angeben …',
+  selectOtherLabel: 'Andere Angabe',
+  selectOtherPlaceholder: 'Bitte angeben',
+  selectCustom: 'Eigene Angabe',
+  selectCustomNote: 'Eigene Angabe, nicht aus der Liste',
+  selectUseCustom: (text) => `„${text}“ als eigene Angabe übernehmen`,
   chordSeparator: 'dann',
   colorPicker: {
     label: 'Farbe',

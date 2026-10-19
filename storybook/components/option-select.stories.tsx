@@ -41,8 +41,8 @@ export const Board: Story = {
         title='In a field'
         description={
           <>
-            Required: a non-empty check covers „Andere" without text (<Code>''</Code>); <Code>invalid</Code> then
-            marks the text field.
+            Required: a non-empty check covers „Andere" without text (<Code>''</Code>); <Code>invalid</Code> then marks
+            the text field.
           </>
         }>
         <OptionSelectInAField />
