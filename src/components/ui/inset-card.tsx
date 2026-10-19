@@ -55,6 +55,7 @@ function InsetCard({
 }: ComponentProps<'section'> & { tone?: 'default' | 'destructive' }) {
   return (
     <section
+      data-slot='inset-card'
       data-tone={tone}
       className={cn(
         'group/inset-card rounded-card bg-(--inset-card-shell) p-1 [--inset-card-shell:var(--shell)] [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-card)]',

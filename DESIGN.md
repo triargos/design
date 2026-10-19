@@ -56,6 +56,8 @@ One set per intent. A bare intent is never a fill.
 
 Never Tailwind's palette (`text-green-700`) or a literal color for brand or neutral surfaces.
 
+A colour the organization chose (category, submission status) is data, not an intent: it reaches the element as a CSS variable from `style`, never mapped onto an intent. A `color` prop on `StatusDot` / `Badge` and categorical tokens are planned (`docs/ui-adoption-spec.md`, D8).
+
 ## Typography
 
 - Family: `Inter Variable`. Roles (`--text-*` in `tailwind.css`) set size, line height, tracking and weight; they are the only sizes. Emphasis is `font-medium`, tone is a text level; neither is a new size.
@@ -110,7 +112,7 @@ Fixed steps (`rounded-xs` 2 … `rounded-5xl` 24), picked by role. Write the rol
 - Badges: `rounded-control-sm` to 28px, `rounded-control` at 32px; `shape='pill'` for counts and chips.
 - Control heights: `Button` 32 / 36 / 40 / 44 (`xs`, `sm`, default, `lg`; icon-only sizes match), fields 40, tabs and pills 32. On coarse pointers every control under 44px gets a 44px hit area (`hit-area` utility; checkbox, radio and switch extend with `after:`).
 - Card: `InsetCardHeader` is a one-line label strip on the shell (with `actions`: `min-h-11`, actions `xs` / `icon-xs`, ending on the same line as flush row actions). `InsetCardContent className='overflow-hidden'` only when a child paints to the card edge. Form card: `InsetCardContent className='p-4'` + `FieldGroup`.
-- Apply flow (`routes/apply/**`): `ApplyPageHeader`; `FadeIn className='space-y-8'`; one button size (`default`, icon-only `icon-lg`), one filled button per page, bottom-right; loading shows nothing, then `FadeIn`.
+- Apply flow (`routes/apply/**`): `ApplyPageHeader`; `FadeIn className='space-y-8'`; one button size (`default`, icon-only `icon-lg`), one filled button per page, bottom-right; a ghost Cancel sits on the left. Below `sm` the buttons go full width and stack, the filled one on top (`flex-col-reverse sm:flex-row`). Loading shows nothing, then `FadeIn`.
 
 ## Surfaces and elevation
 
@@ -151,17 +153,17 @@ Roles in `tailwind.css`, named by what moves (`Foundations/Motion`). Write the r
 
 | Need | Use |
 |---|---|
-| Page layout | `PageContent` with `PageHeaderGroup`, `PageHeader`, `PageDescription`; `PageSection`; page tabs `TabsList as='nav'` |
+| Page layout | `PageContent` with `PageHeaderGroup`, `PageHeader`, `PageDescription`; `PageSection`; page tabs `TabsList as='nav'`. Title with actions: `PageHeaderRow` > `PageHeaderGroup` + `PageHeaderTools`. Navigation above the title: `PageHeaderSection` > `PageHeaderBackLink` (never a hand `ChevronLeftIcon` link), then the group or row, then tabs. Status under the title: `PageHeaderMeta`. Without `PageContent`: a child route whose layout renders the header (person, address, application tabs), and full-bleed canvases (form builder, inbox) |
 | Content block | `InsetCard` → `InsetCardHeader` → `InsetCardContent` → optional `InsetCardFooter`; list rows `ItemList` (in `InsetCardContent className='overflow-hidden'`) |
-| Button | `intent` × `emphasis`. Pairs: `primary`/`solid` the one main action; `neutral`/`raised` every other; `neutral`/`ghost` header, row, toolbar, close; `destructive`/`solid` inside a confirmation and in a danger zone; `destructive`/`subtle` opens a confirmation anywhere else. `isLoading` holds the spinner at least 800ms. `variant` is deprecated |
+| Button | `intent` × `emphasis`. Pairs: `primary`/`solid` the one main action; `neutral`/`raised` every other; `neutral`/`ghost` header, row, toolbar, close; `destructive`/`solid` inside a confirmation and in a danger zone; `destructive`/`subtle` opens a confirmation anywhere else; `destructive`/`solid` also submits a form whose submit is the destructive act (reject with a reason). `isLoading` holds the spinner at least 800ms; a submit button takes `isLoading={form.formState.isSubmitting}`, not `disabled`. `variant` is deprecated |
 | Status | `Badge` (`intent`, `emphasis` subtle · solid · outline, `size` sm · md · lg · xl, `shape`). One pattern per intent: a state is a subtle `Badge`; a dot (`StatusDot intent`) or a hue only next to a label that names it |
 | Notice | `Callout` (`intent`, always subtle) with `CalloutContent`, `CalloutAction`. Never an icon: the intent says what kind of notice it is, the first line says the rest. `tone` is deprecated |
 | Tabs | `Tabs` + `TabsList variant` `segmented` (views of a page) · `underline` (sections in a card) · `pill` (filters); the indicator slides. `TabsList as`: `tabs` (default, Base UI with panels) · `nav` (route links, `TabsTrigger to`) · `radio` (single choice, `value`/`onValueChange`, defaults to `pill`) |
 | Tooltip | `TooltipContent appearance` `light` or `inverted` (compared in `Components/Tooltip`); opens after 200ms |
 | Fields | `Input`, `Textarea`, `SelectTrigger`, `InputGroup`, `PickerTrigger`; custom field surfaces use `inputSurfaceVariants({ scope })`. `Input`'s `className` styles the surface, every other prop goes to the native input |
-| Forms | `Field`, `FieldLabel`, `FieldDescription`, `FieldError` in a `FieldGroup`; with react-hook-form, `Controller` renders the `Field` (`data-invalid` from `fieldState`, the field name as the control's id, `FieldError errors={[fieldState.error]}`) |
+| Forms | `Field`, `FieldLabel`, `FieldDescription`, `FieldError` in a `FieldGroup`; with react-hook-form, `Controller` renders the `Field` (`data-invalid` from `fieldState`, the field name as the control's id, `FieldError errors={[fieldState.error]}` unguarded: it renders nothing without an error). Settings row (label and description left, control right): `Field orientation='horizontal'` > `FieldContent` + control, in the card's `FieldGroup`; never `ItemList` > `Item` > `Field`. Divider: `FieldSeparator`, with children for a labelled one („oder“). Unsaved changes: `UnsavedChangesToast` (`components/features/form`, on `BottomFloatMenu`; `Patterns/Settings Form`) |
 | Popups | `PopoverContent`, `DropdownMenuContent`, `SelectContent`; custom popups use `popupSurface`. A destructive menu item is `intent='destructive'`, last, after a separator |
-| Modal | One shape (`components/ui/modal.ts`): header and footer on the shell, content in a card. `Dialog`: `DialogHeader`, `DialogBody`, `DialogFooter`; a confirmation with no other content puts `DialogHeader` in `DialogBody`. `AlertDialog`: the header is the card. `Sheet`: `SheetHeader`, `SheetBody`, `SheetFooter`. `Drawer` is the touch bottom sheet |
+| Modal | One shape (`components/ui/modal.ts`): header and footer on the shell, content in a card. `Dialog`: `DialogHeader`, `DialogBody`, `DialogFooter`; a form wraps `DialogBody` and `DialogFooter` (`<form className='contents'>`), submit in the footer (`Components/Dialog` Default). Every confirmation is an `AlertDialog` (the header is the card), never a `Dialog`. `Sheet`: `SheetHeader`, `SheetBody`, `SheetFooter`. `Drawer` is the touch bottom sheet |
 | Choice | `Checkbox` (also `indeterminate`), `RadioGroup` + `RadioGroupItem`, `Switch` (a setting that applies at once); a few roomy options: `RadioGroup` + `ChoiceCard`. Checked takes `primary-solid` |
 | Date and time | `DateInput` (`IsoDate`; `variant='card'` with a label), `TimeInput` (`HH:mm`), `Calendar`; display with `intl-date` |
 | Combobox | Short list: `Combobox` (single, or `multiple` with `ComboboxChips`); long or loaded: `Combobox virtualized` + `VirtualizedComboboxList`; picking a value in a form: `SearchSelect` (`Components/Combobox`, `Components/Search Select`) |
@@ -170,13 +172,14 @@ Roles in `tailwind.css`, named by what moves (`Foundations/Motion`). Write the r
 | Copy | `CopyButton value` (ghost, icon-only by default; check for 2s; `onCopied` for a toast); in a field: `className={inputGroupButtonVariants({ size: 'icon-sm' })}` |
 | Keys | `Kbd`, `KbdGroup`; a control with a shortcut: `ShortcutTooltip` |
 | Person | `Avatar` (`size` `xxs` 12 · `xs` 16 · `sm` 20 · `md` 24 · `lg` 28 · `xl` 32 · `2xl` 40 · `3xl` 48 · `4xl` 80; `shape` circle · square for organizations) with `AvatarImage`, `AvatarFallback` (`getInitials`: two letters); initials on `muted`, never the brand fill. `AvatarGroup size shape` (sets its avatars; each is masked out of the next, no surface ring) + `AvatarGroupCount` |
-| Pending bar | `BottomFloatMenu` for a selection (bulk actions) or unsaved changes; controls in `BottomFloatMenuItem`, panels from `BottomFloatMenuRow`. It portals into `MainLayout`'s slot (`FloatMenuSlotContext`) |
+| Pending bar | `BottomFloatMenu` for a selection (bulk actions) or unsaved changes (`UnsavedChangesToast`; `UnsavedChangesIndicator` in a card footer is legacy); controls in `BottomFloatMenuItem`, panels from `BottomFloatMenuRow`. It portals into `MainLayout`'s slot (`FloatMenuSlotContext`) |
 | Sequence | `Stepper` (steps someone goes through), `Timeline` (events that happened); `Accordion` for sections opened in place |
 | Records | `Table` (`variant` `card` in an `InsetCard`, `flush` in `InsetCardContent`) |
 | Feedback | `toast` from `lib/toast` (`Toast` renders it) |
 | Files | `FileDropZone` (`size` default · compact); with uploads: `FileUploadDropzone` in `components/files` |
-| Danger zone | The last settings card: `InsetCard tone='destructive'` > `ItemList` > `Item` + `destructive`/`solid` button → `AlertDialog` (`Patterns/Danger Zone`) |
-| Empty, loading | `EmptyState`; `Skeleton`; `Loader` (spinner in `currentColor`); `Progress` for known progress; `FadeIn` for content arriving after a load |
+| Danger zone | The last settings card: `InsetCard tone='destructive'` > `ItemList` > `Item`. A destructive row: `destructive`/`solid` button → `AlertDialog`, type-to-confirm for what cannot be undone. Lifecycle rows that can be undone (publish, withdraw, archive, restore, impersonate) may sit here with a `neutral`/`raised` button (`Patterns/Danger Zone`) |
+| Not found, failed load | `ErrorState` with `ErrorStateActions` (a back `Button render={<Link/>}`), not `EmptyState`; in a route error boundary `RouteErrorState` (`components/error`, `Patterns/Route Error State`) |
+| Empty, loading | `EmptyState` (`size='sm'` inside a card, `bordered` for a dashed area, never `className='border'`); `Skeleton`; `Loader` (spinner in `currentColor`); `Progress` for known progress; `FadeIn` for content arriving after a load |
 
 ## Do / don't
 

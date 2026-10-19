@@ -3,8 +3,8 @@ import type { Browser } from 'playwright';
 import { PNG } from 'pngjs';
 
 import type { RunEnv } from './capture.ts';
-import { runPlan } from './capture.ts';
-import { type Diff, type Finding, hash, key, type Plan, type Rect, type Result, slug } from './model.ts';
+import { RENDER_VERSION, runPlan } from './capture.ts';
+import { type Diff, type Finding, hash, key, type Plan, type Rect, type Result, slug, sourceId } from './model.ts';
 import { fail, progress } from './output.ts';
 import { crop, padRect } from './png.ts';
 import { composeSheet, type Cell } from './sheet.ts';
@@ -40,8 +40,9 @@ import path from 'node:path';
 const git = (...args: ReadonlyArray<string>) =>
   execFileSync('git', args, { cwd: mainCheckout.root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 
-/** Per ref and per runtime: findings come from the runtime, so a changed check invalidates them. */
-const cacheDir = (sha: string, runtime: string) => path.join(shotsDir, 'baseline-cache', sha, hash(runtime, 8));
+/** Per ref, render version and runtime: a change to how pixels or findings are made invalidates the cache. */
+const cacheDir = (sha: string, runtime: string) =>
+  path.join(shotsDir, 'baseline-cache', sha, hash(`${RENDER_VERSION}:${runtime}`, 8));
 
 /** Caches and other per-checkout state that must not be shared with the main checkout. */
 const unshared = new Set(['.vite', '.cache', '.vite-storybook', '.tmp']);
@@ -167,9 +168,9 @@ export const baselineFor = (ref: string, makeEnv: (outDir: string) => Promise<Ru
         const url = await findStorybook(checkout);
         const known = new Set((await fetchStories(url)).map((story) => story.id));
         const baselineEnv = { ...env, outDir: dir, url, logTail: () => logTail(checkout), checks };
-        const present = missing.filter((capture) => known.has(capture.story));
+        const present = missing.filter((capture) => known.has(sourceId(capture.source)));
         for (const capture of missing) {
-          if (!known.has(capture.story)) cache.set(key(capture), { key: key(capture), absent: true });
+          if (!known.has(sourceId(capture.source))) cache.set(key(capture), { key: key(capture), absent: true });
         }
         for (const result of await runPlan(baselineEnv, present)) {
           const broken = result.file === undefined;
@@ -277,8 +278,11 @@ const compare = (beforeFile: string, afterFile: string): Compared => {
     };
   }
   const highlight = new PNG({ width: after.width, height: after.height });
+  // Both sides render in the same Chromium, so equal input gives equal pixels: every changed pixel counts, anti-aliased
+  // ones too (a 1px radius change only moves anti-aliasing).
   const pixels = pixelmatch(before.data, after.data, highlight.data, after.width, after.height, {
-    threshold: 0.1,
+    threshold: 0,
+    includeAA: true,
     diffColor: [...changedColor],
     diffColorAlt: [...darkerColor],
   });
@@ -322,7 +326,7 @@ export const regionSheets = async (
   const byStory = new Map<string, Array<Result>>();
   for (const result of results) {
     if (result.diff?.kind === 'changed' || result.diff?.kind === 'resized') {
-      byStory.set(result.capture.story, [...(byStory.get(result.capture.story) ?? []), result]);
+      byStory.set(sourceId(result.capture.source), [...(byStory.get(sourceId(result.capture.source)) ?? []), result]);
     }
   }
   const files: Array<string> = [];

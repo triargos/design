@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
  */
 
 export interface RuntimeOutlineEntry {
-  readonly kind: 'section' | 'preview';
+  readonly kind: 'section' | 'preview' | 'card';
   readonly title: string;
   readonly depth: number;
 }
@@ -21,6 +21,11 @@ export type RuntimeCheck = 'overflow' | 'target' | 'tokens' | 'align';
 
 interface ShotRuntime {
   outline(): ReadonlyArray<RuntimeOutlineEntry>;
+  markSection(
+    title: string,
+    nth: number | undefined,
+    mark: string,
+  ): { readonly ok: true } | { readonly ok: false; readonly several: ReadonlyArray<string> };
   overlay(kinds: ReadonlyArray<Overlay>, root: Element): Record<string, unknown>;
   clearOverlay(): void;
   measure(elements: ReadonlyArray<Element>, styles: ReadonlyArray<string>): ReadonlyArray<unknown>;

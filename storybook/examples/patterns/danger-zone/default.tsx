@@ -21,8 +21,9 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } 
 const NAME = 'Einschulung 2025';
 
 /**
- * The last card of a settings page: each row names the action, says what it costs, and offers one button. Reversible
- * actions are raised, destructive ones solid. For what cannot be undone, typing the name unlocks the confirmation.
+ * The last card of a settings page: each row names the action, says what it costs, and offers one button. Lifecycle
+ * actions that can be undone (withdraw, archive) are raised; only a destructive row takes the solid destructive button,
+ * behind an AlertDialog. For what cannot be undone, typing the name unlocks the confirmation.
  */
 export function DangerZoneDefault() {
   const inputId = useId();
@@ -51,7 +52,7 @@ export function DangerZoneDefault() {
               <ItemDescription>Aus der Liste entfernen. Lässt sich wiederherstellen.</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button type='button' intent='destructive' emphasis='solid' size='sm'>
+              <Button type='button' intent='neutral' emphasis='raised' size='sm'>
                 Archivieren
               </Button>
             </ItemActions>

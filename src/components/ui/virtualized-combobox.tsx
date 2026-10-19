@@ -40,6 +40,8 @@ interface VirtualizedComboboxListProps<T> {
   open: boolean;
   virtualizerRef: React.RefObject<VirtualizerInstance | null>;
   children: (item: T) => React.ReactNode;
+  /** The leading column for an item, in place of the selection check (e.g. a plus on a create row); `undefined` keeps the check. */
+  indicator?: (item: T) => React.ReactNode;
   className?: string;
   estimateSize?: number;
   overscan?: number;
@@ -49,6 +51,7 @@ function VirtualizedComboboxList<T>({
   open,
   virtualizerRef,
   children,
+  indicator,
   className,
   estimateSize = 36,
   overscan = 20,
@@ -63,6 +66,7 @@ function VirtualizedComboboxList<T>({
         open={open}
         virtualizerRef={virtualizerRef}
         renderItem={children}
+        indicator={indicator}
         estimateSize={estimateSize}
         overscan={overscan}
       />
@@ -74,11 +78,19 @@ interface VirtualizedItemsProps<T> {
   open: boolean;
   virtualizerRef: React.RefObject<VirtualizerInstance | null>;
   renderItem: (item: T) => React.ReactNode;
+  indicator?: (item: T) => React.ReactNode;
   estimateSize: number;
   overscan: number;
 }
 
-function VirtualizedItems<T>({ open, virtualizerRef, renderItem, estimateSize, overscan }: VirtualizedItemsProps<T>) {
+function VirtualizedItems<T>({
+  open,
+  virtualizerRef,
+  renderItem,
+  indicator,
+  estimateSize,
+  overscan,
+}: VirtualizedItemsProps<T>) {
   const filteredItems = ComboboxPrimitive.useFilteredItems<T>();
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -124,6 +136,7 @@ function VirtualizedItems<T>({ open, virtualizerRef, renderItem, estimateSize, o
         {virtualizer.getVirtualItems().map((virtualItem) => {
           const item = filteredItems[virtualItem.index];
           if (!item) return null;
+          const lead = indicator?.(item);
           return (
             <ComboboxPrimitive.Item
               key={virtualItem.key}
@@ -143,9 +156,13 @@ function VirtualizedItems<T>({ open, virtualizerRef, renderItem, estimateSize, o
                 transform: `translateY(${virtualItem.start}px)`,
               }}
               value={item}>
-              <ComboboxPrimitive.ItemIndicator className='col-start-1 flex'>
-                <CheckIcon />
-              </ComboboxPrimitive.ItemIndicator>
+              {lead === undefined ? (
+                <ComboboxPrimitive.ItemIndicator className='col-start-1 flex'>
+                  <CheckIcon />
+                </ComboboxPrimitive.ItemIndicator>
+              ) : (
+                <span className='col-start-1 flex'>{lead}</span>
+              )}
               <div className='col-start-2 flex min-w-0 items-center gap-2 truncate'>{renderItem(item)}</div>
             </ComboboxPrimitive.Item>
           );

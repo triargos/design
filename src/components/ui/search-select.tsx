@@ -1,3 +1,4 @@
+import { PencilLineIcon, PlusIcon } from 'lucide-react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +13,8 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from '~/components/ui/combobox';
+import { FieldDescription } from '~/components/ui/field';
+import { FieldReveal } from '~/components/ui/field-reveal';
 import {
   useVirtualizedCombobox,
   VirtualizedComboboxList,
@@ -43,19 +46,34 @@ interface SearchSelectBaseProps<Item, Key extends SearchSelectKey> {
 
 interface SearchSelectSingleProps<Item, Key extends SearchSelectKey> extends SearchSelectBaseProps<Item, Key> {
   readonly multiple?: false;
+  readonly allowCustom?: false;
   readonly value: Key | null;
   readonly onValueChange: (key: Key | null) => void;
 }
 
 interface SearchSelectMultipleProps<Item, Key extends SearchSelectKey> extends SearchSelectBaseProps<Item, Key> {
   readonly multiple: true;
+  readonly allowCustom?: false;
   readonly value: ReadonlyArray<Key>;
   readonly onValueChange: (keys: Key[]) => void;
 }
 
+/**
+ * One value, from the list or typed: the value is a plain string, an item's key or the typed text. A value that is no
+ * item's key is custom. While the query matches no item's label, the list ends in a row that takes the query; Enter
+ * picks it once nothing else matches. A custom value folds open a note below the field.
+ */
+interface SearchSelectCustomProps<Item> extends SearchSelectBaseProps<Item, string> {
+  readonly multiple?: false;
+  readonly allowCustom: true;
+  readonly value: string | null;
+  readonly onValueChange: (value: string | null) => void;
+}
+
 export type SearchSelectProps<Item, Key extends SearchSelectKey> =
   | SearchSelectSingleProps<Item, Key>
-  | SearchSelectMultipleProps<Item, Key>;
+  | SearchSelectMultipleProps<Item, Key>
+  | (Key extends string ? SearchSelectCustomProps<Item> : never);
 
 function DefaultItem({ label, item }: { label: string; item: unknown }) {
   const description =
@@ -72,10 +90,16 @@ function DefaultItem({ label, item }: { label: string; item: unknown }) {
 
 /**
  * A select you can type into, for any list length: the list is always virtualized. One value (`ComboboxInput`, clear
- * button) or many (`multiple`, chips in the field). Not bound to a form: wire it through `Controller` + `Field`. For
- * grouped lists or custom composition, build on `Combobox` + `ComboboxList` instead.
+ * button), many (`multiple`, chips in the field), or one that may be typed (`allowCustom`). Not bound to a form: wire
+ * it through `Controller` + `Field`. For grouped lists or custom composition, build on `Combobox` + `ComboboxList`.
  */
 export function SearchSelect<Item, Key extends SearchSelectKey>(props: SearchSelectProps<Item, Key>) {
+  return props.allowCustom ? <SearchSelectCustom {...props} /> : <SearchSelectPick {...props} />;
+}
+
+function SearchSelectPick<Item, Key extends SearchSelectKey>(
+  props: SearchSelectSingleProps<Item, Key> | SearchSelectMultipleProps<Item, Key>,
+) {
   const {
     items,
     itemKey,
@@ -175,5 +199,119 @@ export function SearchSelect<Item, Key extends SearchSelectKey>(props: SearchSel
       />
       {popup}
     </Combobox>
+  );
+}
+
+/** A typed value: not an item, its text is the value. */
+class CustomEntry {
+  constructor(readonly text: string) {}
+}
+
+function SearchSelectCustom<Item>({
+  items,
+  itemKey,
+  itemLabel,
+  renderItem,
+  placeholder,
+  emptyText,
+  pending = false,
+  id,
+  invalid,
+  disabled,
+  onBlur,
+  className,
+  value,
+  onValueChange,
+}: SearchSelectCustomProps<Item>) {
+  type Entry = Item | CustomEntry;
+  const { t } = useTranslation('common');
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState('');
+  const virtualizerRef = React.useRef<VirtualizerInstance | null>(null);
+  const { onItemHighlighted } = useVirtualizedCombobox({ open, virtualizerRef });
+  const noteId = React.useId();
+
+  const itemsByKey = React.useMemo(() => new Map(items.map((item) => [itemKey(item), item])), [items, itemKey]);
+  const labels = React.useMemo(() => new Set(items.map((item) => itemLabel(item).toLowerCase())), [items, itemLabel]);
+
+  const selected: Entry | null = !value ? null : (itemsByKey.get(value) ?? new CustomEntry(value));
+  const custom = selected instanceof CustomEntry;
+
+  // The typed row while the query names no item; else the custom value, so it shows selected in the list.
+  const entries = React.useMemo((): ReadonlyArray<Entry> => {
+    const typed = query.trim();
+    const extra = typed !== '' && !labels.has(typed.toLowerCase()) ? typed : custom ? value : null;
+    return extra ? [...items, new CustomEntry(extra)] : items;
+  }, [items, labels, query, custom, value]);
+
+  const label = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : itemLabel(entry));
+  const isPicked = (entry: Entry) => entry instanceof CustomEntry && entry.text === value;
+  const content = (entry: Entry) => {
+    if (!(entry instanceof CustomEntry)) {
+      return renderItem?.(entry) ?? <DefaultItem label={itemLabel(entry)} item={entry} />;
+    }
+    if (isPicked(entry)) {
+      return (
+        <>
+          <span className='truncate'>{entry.text}</span>
+          <span className='truncate text-caption text-muted-foreground'>{t(($) => $.select.custom)}</span>
+        </>
+      );
+    }
+    return <span className='truncate'>{t(($) => $.select.useCustom, { text: entry.text })}</span>;
+  };
+  const empty = pending ? t(($) => $.select.pending) : (emptyText ?? t(($) => $.select.noItems));
+
+  return (
+    <div className={className}>
+      <Combobox
+        virtualized
+        items={entries}
+        value={selected}
+        onValueChange={(next: Entry | null) =>
+          onValueChange(next === null ? null : next instanceof CustomEntry ? next.text : itemKey(next))
+        }
+        onInputValueChange={setQuery}
+        itemToStringLabel={label}
+        itemToStringValue={(entry: Entry) => (entry instanceof CustomEntry ? entry.text : itemKey(entry))}
+        isItemEqualToValue={(a: Entry, b: Entry) =>
+          a instanceof CustomEntry || b instanceof CustomEntry
+            ? a instanceof CustomEntry && b instanceof CustomEntry && a.text === b.text
+            : itemKey(a) === itemKey(b)
+        }
+        open={open}
+        onOpenChange={setOpen}
+        onItemHighlighted={onItemHighlighted}
+        disabled={disabled}>
+        <ComboboxInput
+          id={id}
+          placeholder={placeholder}
+          showClear
+          onBlur={onBlur}
+          aria-invalid={invalid || undefined}
+          aria-describedby={custom ? noteId : undefined}
+          disabled={disabled}
+        />
+        <ComboboxContent>
+          <ComboboxEmpty>{empty}</ComboboxEmpty>
+          <VirtualizedComboboxList
+            open={open}
+            virtualizerRef={virtualizerRef}
+            indicator={(entry: Entry) =>
+              entry instanceof CustomEntry && !isPicked(entry) ? (
+                <PlusIcon className='text-muted-foreground' />
+              ) : undefined
+            }>
+            {content}
+          </VirtualizedComboboxList>
+        </ComboboxContent>
+      </Combobox>
+      <FieldReveal show={custom}>
+        <FieldDescription id={noteId} className='flex items-center gap-1.5'>
+          <PencilLineIcon aria-hidden className='size-3.5 shrink-0' />
+          {t(($) => $.select.customNote)}
+        </FieldDescription>
+      </FieldReveal>
+    </div>
   );
 }

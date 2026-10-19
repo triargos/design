@@ -1,6 +1,7 @@
 import { Combobox as ComboboxPrimitive } from '@base-ui/react/combobox';
 import { CheckIcon, ChevronsUpDownIcon, XIcon } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
@@ -26,9 +27,11 @@ function ComboboxTrigger({ className, ...props }: ComboboxPrimitive.Trigger.Prop
 }
 
 function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
+  const { t } = useTranslation('common');
   return (
     <ComboboxPrimitive.Clear
       data-slot='combobox-clear'
+      aria-label={t(($) => $.select.clear)}
       render={<InputGroupButton variant='ghost' size='icon-xs' />}
       className={cn(className)}
       {...props}>
@@ -55,6 +58,7 @@ function ComboboxInput({
   showClear?: boolean;
   startAddon?: React.ReactNode;
 }) {
+  const { t } = useTranslation('common');
   return (
     <ComboboxPrimitive.InputGroup render={<InputGroup className={cn('w-auto', className)} />}>
       {startAddon && (
@@ -69,6 +73,7 @@ function ComboboxInput({
             size='icon-xs'
             variant='ghost'
             render={<ComboboxTrigger />}
+            aria-label={t(($) => $.select.open)}
             // ComboboxTrigger renders a native <button>; Button's render-prop heuristic
             // would set nativeButton=false and trip Base UI's mismatch warning.
             nativeButton

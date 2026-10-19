@@ -50,7 +50,6 @@ import { Textarea } from '~/components/ui/textarea';
 
 import { cn } from '~/lib/utils';
 
-import { DialogConfirmation } from '../examples/dialog/confirmation';
 import { DialogDefault } from '../examples/dialog/default';
 import { DialogNested } from '../examples/dialog/nested';
 import { DialogNoFooter } from '../examples/dialog/no-footer';
@@ -122,8 +121,10 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Dialog'
-      description='One modal shape: a shell with the header and footer on it, the content in a card. Dialog, confirmation and side panel share it (components/ui/modal.ts); the touch drawer has its own.'>
-      <ExampleSection title='Default' description='Header and footer on the shell, DialogBody is the card.'>
+      description='One modal shape: a shell with the header and footer on it, the content in a card. Dialog, alert dialog and side panel share it (components/ui/modal.ts); the touch drawer has its own.'>
+      <ExampleSection
+        title='Default'
+        description='Header and footer on the shell, DialogBody is the card. A form wraps DialogBody and DialogFooter (className="contents"); submit sits in the footer.'>
         <DialogDefault />
       </ExampleSection>
       <ExampleSection title='No footer' description='Without a footer the body ends the dialog.'>
@@ -148,11 +149,6 @@ export const Board: Story = {
         title='Opened from a menu'
         description='The menu item sets the dialog’s open; the dialog lives outside the menu.'>
         <DialogOpenedFromAMenu />
-      </ExampleSection>
-      <ExampleSection
-        title='Confirmation'
-        description='A dialog with nothing but a header puts the header in DialogBody and reads like an AlertDialog.'>
-        <DialogConfirmation />
       </ExampleSection>
 
       <FoundationSection
@@ -197,8 +193,8 @@ export const Board: Story = {
       </FoundationSection>
 
       <FoundationSection
-        title='Dialog or alert dialog'
-        description='AlertDialog: the header is the card, the actions sit on the shell; no close button. A Dialog with nothing but a header puts the header in DialogBody and reads the same.'>
+        title='Confirmation'
+        description='Every confirmation is an AlertDialog (Components/Alert Dialog): the header is the card, the actions sit on the shell; no close button.'>
         <div className='flex flex-col gap-group'>
           <Stage label={<Code>AlertDialog</Code>} className='h-[280px]'>
             {(container) => (
@@ -239,26 +235,6 @@ export const Board: Story = {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-            )}
-          </Stage>
-          <Stage label={<Code>Dialog · DialogBody {'>'} DialogHeader</Code>} className='h-[280px]'>
-            {(container) => (
-              <Dialog defaultOpen modal={false}>
-                <DialogContent container={container}>
-                  <DialogBody>
-                    <DialogHeader>
-                      <DialogTitle>Mitglied entfernen?</DialogTitle>
-                      <DialogDescription>Erika Mustermann verliert den Zugang zu dieser Schule.</DialogDescription>
-                    </DialogHeader>
-                  </DialogBody>
-                  <DialogFooter>
-                    <DialogClose render={<Button intent='neutral' emphasis='raised' />}>Abbrechen</DialogClose>
-                    <Button intent='destructive' emphasis='solid'>
-                      Entfernen
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
             )}
           </Stage>
         </div>
@@ -381,8 +357,4 @@ export const OpenedFromAMenu: Story = {
     { click: 'Aktionen', shows: 'Umbenennen…' },
     { click: 'Umbenennen…', role: 'menuitem', shows: 'Gruppe umbenennen' },
   ),
-};
-export const Confirmation: Story = {
-  render: () => <DialogConfirmation />,
-  play: open('click', 'Mitglied entfernen…', 'Erika Mustermann verliert den Zugang zu dieser Schule.'),
 };

@@ -30,7 +30,7 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 
 /**
  * A modal: `DialogHeader` and `DialogFooter` on the shell, the content in `DialogBody`, a card (`components/ui/modal.ts`).
- * A confirmation without other content puts its `DialogHeader` inside `DialogBody`.
+ * A form wraps `DialogBody` and `DialogFooter` (`className='contents'`). A confirmation is an `AlertDialog`.
  */
 function DialogContent({
   className,

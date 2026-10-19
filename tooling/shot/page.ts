@@ -7,20 +7,39 @@ import {
   type Page,
 } from 'playwright';
 
-import { describeTarget, type Rect, sectionTarget, type Step, type Target, type Variant } from './model.ts';
+import type { AppAccess } from './app.ts';
+import {
+  describeSource,
+  describeTarget,
+  type Rect,
+  sectionTarget,
+  type Source,
+  type Step,
+  type Target,
+  type Variant,
+} from './model.ts';
 import { fail } from './output.ts';
 import type { RuntimeOutlineEntry } from './runtime.ts';
 import { closest } from './story-index.ts';
 
 /**
- * One story page and its lifecycle:
+ * One page of a source and its lifecycle. A story:
  *
  *   loading ──rendered──▶ settling ──settled──▶ ready
  *      ├─ error display / "Error rendering story" ──▶ failed
  *      ├─ 504 Outdated Optimize Dep, failed dynamic import ──▶ stale-deps ──reload once──▶ loading (again: failed)
  *      └─ no render in 20s ──▶ timed-out
  *
- * Determinism is set up before navigation: a fixed clock, seeded Math.random, no caret, no scrollbars.
+ * A route of the app:
+ *
+ *   loading ──hydrated, navigation idle, network quiet──▶ settling ──settled──▶ ready
+ *      ├─ 5xx, a route error boundary ──▶ failed
+ *      ├─ redirected to /login ──▶ log in again once ──▶ loading (again: failed)
+ *      ├─ redirected elsewhere ──▶ failed (a 404 or a permission redirect)
+ *      └─ not ready in 20s ──▶ timed-out
+ *
+ * Stories are deterministic: a fixed clock and seeded Math.random. Routes keep the real clock: the server renders
+ * dates, and a frozen browser clock would break hydration. Both hide the caret and scrollbars.
  */
 
 const FIXED_TIME = '2026-01-15T09:00:00';
@@ -30,7 +49,10 @@ const targetPadding = 16;
 
 export interface PageEnv {
   readonly browser: Browser;
+  /** Storybook's URL. */
   readonly url: string;
+  /** The running app, for route sources; resolved on the first route. */
+  readonly app: () => Promise<AppAccess>;
   /** The bundled in-page runtime (`.storybook/shot-runtime.ts`). */
   readonly runtime: string;
   /** Storybook's log tail, for a timed-out render. */
@@ -42,6 +64,7 @@ export type Opened =
       readonly kind: 'ready';
       readonly page: Page;
       readonly context: BrowserContext;
+      /** Console and page errors, and blocked writes; live: steps add to it. */
       readonly consoleErrors: ReadonlyArray<string>;
       readonly close: () => Promise<void>;
     }
@@ -81,8 +104,7 @@ const storyUrl = (url: string, story: string, variant: Variant) => {
   return `${url}/iframe.html?id=${encodeURIComponent(story)}&viewMode=story&globals=${encodeURIComponent(param)}`;
 };
 
-/** Seeded `Math.random`, and the style that hides the caret and scrollbars. */
-const determinism = () => {
+const seededRandom = () => {
   let seed = 0x5eed;
   Math.random = () => {
     seed = (seed + 0x6d2b79f5) | 0;
@@ -90,6 +112,9 @@ const determinism = () => {
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4_294_967_296;
   };
+};
+
+const hideCaretAndScrollbars = () => {
   const style = () => {
     const element = document.createElement('style');
     element.textContent =
@@ -171,29 +196,39 @@ export const settle = async (page: Page, extraMs = 0) => {
   if (extraMs > 0) await sleep(extraMs);
 };
 
-export const openStory = async (
-  env: PageEnv,
-  story: string,
-  variant: Variant,
-  options: { readonly settle: boolean; readonly slowClock: boolean },
-): Promise<Opened> => {
+interface OpenOptions {
+  readonly settle: boolean;
+  readonly slowClock: boolean;
+}
+
+/** Errors in the order they happened, each once. */
+const errorLog = () => {
+  const errors: Array<string> = [];
+  return { errors, add: (error: string) => (errors.includes(error) ? undefined : errors.push(error)) };
+};
+
+export const openSource = (env: PageEnv, source: Source, variant: Variant, options: OpenOptions): Promise<Opened> =>
+  source.kind === 'story' ? openStory(env, source.id, variant, options) : openRoute(env, source, variant, options);
+
+const openStory = async (env: PageEnv, story: string, variant: Variant, options: OpenOptions): Promise<Opened> => {
   const context = await env.browser.newContext(contextOptions(variant));
-  await context.addInitScript(determinism);
+  await context.addInitScript(seededRandom);
+  await context.addInitScript(hideCaretAndScrollbars);
   if (options.slowClock) await context.addInitScript(slowClock);
   const page = await context.newPage();
   await page.clock.setFixedTime(new Date(FIXED_TIME));
 
-  const consoleErrors = new Set<string>();
+  const log = errorLog();
   let stale = false;
   page.on('console', (message) => {
     if (message.type() !== 'error') return;
     const text = message.text();
     if (/Failed to fetch dynamically imported module|Outdated Optimize Dep/.test(text)) stale = true;
-    else consoleErrors.add(text);
+    else log.add(text);
   });
   page.on('pageerror', (error) => {
     if (/Failed to fetch dynamically imported module|Outdated Optimize Dep/.test(error.message)) stale = true;
-    else consoleErrors.add(error.message);
+    else log.add(error.message);
   });
   page.on('response', (response) => {
     if (response.status() === 504 && /Outdated Optimize Dep/i.test(response.statusText())) stale = true;
@@ -225,15 +260,15 @@ export const openStory = async (
     }
     if (state.kind === 'failed') return failWith('failed', `${story} failed to render: ${state.message}`);
     if (state.kind === 'loading') {
-      const errors = [...consoleErrors].slice(0, 5).map((error) => `  console: ${error.split('\n')[0]}`);
-      const log = env
+      const errors = log.errors.slice(0, 5).map((error) => `  console: ${error.split('\n')[0]}`);
+      const tail = env
         .logTail()
         .split('\n')
         .slice(-8)
         .map((line) => `  log: ${line}`);
       return failWith(
         'timed-out',
-        [`${story} did not render within ${renderTimeoutMs / 1000}s.`, ...errors, ...log].join('\n'),
+        [`${story} did not render within ${renderTimeoutMs / 1000}s.`, ...errors, ...tail].join('\n'),
       );
     }
     break;
@@ -241,11 +276,180 @@ export const openStory = async (
 
   await page.addScriptTag({ content: env.runtime });
   if (options.settle) await settle(page);
-  return { kind: 'ready', page, context, consoleErrors: [...consoleErrors], close };
+  return { kind: 'ready', page, context, consoleErrors: log.errors, close };
 };
 
-/** What a story declares about itself: its outline and `parameters.shots`. */
-export const readStory = async (
+type RouteState =
+  | { readonly kind: 'loading' }
+  | { readonly kind: 'ready' }
+  | { readonly kind: 'failed'; readonly message: string };
+
+const readRouteState = (): RouteState => {
+  const routeError = document.querySelector('[data-route-error]');
+  if (routeError !== null) {
+    return {
+      kind: 'failed',
+      message: ((routeError as HTMLElement).innerText ?? '').trim().replaceAll(/\s+/g, ' ').slice(0, 300),
+    };
+  }
+  const root = document.documentElement;
+  return root.hasAttribute('data-hydrated') && root.dataset['navigation'] === 'idle'
+    ? { kind: 'ready' }
+    : { kind: 'loading' };
+};
+
+const writeMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+/** Same-origin requests in flight, without long-lived streams; resolves after 500ms with none (cap 10s). */
+const trackNetwork = (page: Page, origin: string) => {
+  const inFlight = new Set<unknown>();
+  let lastChange = Date.now();
+  const counts = (request: { url: () => string; resourceType: () => string }) =>
+    request.url().startsWith(origin) && !['eventsource', 'websocket'].includes(request.resourceType());
+  page.on('request', (request) => {
+    if (!counts(request)) return;
+    inFlight.add(request);
+    lastChange = Date.now();
+  });
+  const done = (request: unknown) => {
+    if (inFlight.delete(request)) lastChange = Date.now();
+  };
+  page.on('requestfinished', done);
+  page.on('requestfailed', done);
+  return async () => {
+    const deadline = Date.now() + 10_000;
+    while (Date.now() < deadline && (inFlight.size > 0 || Date.now() - lastChange < 500)) await sleep(50);
+  };
+};
+
+const openRoute = async (
+  env: PageEnv,
+  source: Extract<Source, { kind: 'route' }>,
+  variant: Variant,
+  options: OpenOptions,
+): Promise<Opened> => {
+  const app = await env.app();
+  const target = new URL(source.path, app.url);
+  const mode = variant.mode === 'dark' ? 'dark' : 'light';
+  const label = describeSource(source);
+
+  for (let attempt = 1; ; attempt++) {
+    const storageState = await app.session(source.as, source.org, attempt > 1);
+    const context = await env.browser.newContext({
+      ...contextOptions(variant),
+      ignoreHTTPSErrors: true,
+      storageState,
+      colorScheme: mode,
+    });
+    const close = () => context.close();
+    const failWith = async (kind: 'failed' | 'timed-out', message: string): Promise<Opened> => {
+      await close();
+      return { kind, message };
+    };
+    // The mode comes from the client hint, not from a theme the user picked.
+    await context.clearCookies({ name: '__elternportal_theme' });
+    await context.addCookies([{ name: 'CH-prefers-color-scheme', value: mode, url: app.url }]);
+    await context.addInitScript(hideCaretAndScrollbars);
+    if (options.slowClock) await context.addInitScript(slowClock);
+
+    const log = errorLog();
+    if (!app.allowWrites) {
+      await context.route(
+        (url) => url.origin === target.origin,
+        async (route) => {
+          const request = route.request();
+          if (!writeMethods.has(request.method())) return route.fallback();
+          log.add(`blocked ${request.method()} ${new URL(request.url()).pathname}; --allow-writes sends it`);
+          return route.abort('blockedbyclient');
+        },
+      );
+    }
+    const page = await context.newPage();
+    page.on('console', (message) => {
+      // The browser's echo of a blocked write, which is already reported.
+      if (message.type() === 'error' && !message.text().includes('ERR_BLOCKED_BY_CLIENT')) log.add(message.text());
+    });
+    page.on('pageerror', (error) => log.add(error.message));
+    const networkQuiet = trackNetwork(page, target.origin);
+
+    let response;
+    try {
+      response = await page.goto(target.href, { waitUntil: 'commit', timeout: renderTimeoutMs });
+    } catch (error) {
+      return failWith('failed', `${label}: could not load the page (${String(error).split('\n')[0]})`);
+    }
+    if (response !== null && response.status() >= 400) {
+      return failWith('failed', `${label}: the server answered ${response.status()}.`);
+    }
+    const deadline = Date.now() + renderTimeoutMs;
+    let state: RouteState = { kind: 'loading' };
+    while (state.kind === 'loading' && Date.now() < deadline) {
+      await sleep(100);
+      state = await page.evaluate(readRouteState).catch((): RouteState => ({ kind: 'loading' }));
+    }
+    const landed = new URL(page.url());
+    if (landed.pathname.startsWith('/login')) {
+      await close();
+      if (attempt === 1) continue;
+      return { kind: 'failed', message: `${label}: the app sent a fresh session back to ${landed.pathname}.` };
+    }
+    if (state.kind === 'failed') return failWith('failed', `${label}: route error: ${state.message}`);
+    if (state.kind === 'loading') {
+      const errors = log.errors.slice(0, 5).map((error) => `  console: ${error.split('\n')[0]}`);
+      return failWith(
+        'timed-out',
+        [`${label} was not ready within ${renderTimeoutMs / 1000}s (hydrated, navigation idle).`, ...errors].join('\n'),
+      );
+    }
+    if (landed.pathname !== target.pathname) {
+      return failWith('failed', `${label}: redirected to ${landed.pathname}${landed.search}.`);
+    }
+    await networkQuiet();
+    await page.addScriptTag({ content: env.runtime });
+    if (options.settle) await settle(page);
+    return { kind: 'ready', page, context, consoleErrors: log.errors, close };
+  }
+};
+
+const viewports = new WeakMap<Page, { readonly width: number; readonly height: number }>();
+
+/**
+ * The app scrolls inside its shell (`html` and `body` are `overflow-hidden`), so a full-page screenshot stops at the
+ * viewport. `expand` grows the viewport until the tallest scroller fits, so every target is on screen in page
+ * coordinates; otherwise the original viewport comes back.
+ */
+export const fitContent = async (page: Page, expand: boolean) => {
+  const original = viewports.get(page) ?? page.viewportSize();
+  if (original === null) return;
+  viewports.set(page, original);
+  if (!expand) {
+    const current = page.viewportSize();
+    if (current?.height !== original.height) {
+      await page.setViewportSize(original);
+      await settle(page);
+    }
+    return;
+  }
+  for (let round = 0; round < 3; round++) {
+    const hidden = await page.evaluate(() =>
+      Math.max(
+        0,
+        ...Array.from(document.querySelectorAll('*')).map((element) => {
+          const style = getComputedStyle(element);
+          const scrolls = /(auto|scroll|hidden)/.test(style.overflowY) && element !== document.documentElement;
+          return scrolls ? element.scrollHeight - element.clientHeight : 0;
+        }),
+      ),
+    );
+    if (hidden <= 1) return;
+    const current = page.viewportSize() ?? original;
+    await page.setViewportSize({ width: current.width, height: Math.min(12_000, current.height + hidden) });
+    await settle(page);
+  }
+};
+
+/** What a page declares about itself: its outline and, on stories, `parameters.shots`. */
+export const readDeclared = async (
   page: Page,
 ): Promise<{ readonly outline: ReadonlyArray<Outline>; readonly shots: unknown }> => ({
   outline: await outline(page),
@@ -311,8 +515,11 @@ type Outline = RuntimeOutlineEntry;
 
 const outline = (page: Page): Promise<ReadonlyArray<Outline>> => page.evaluate(() => window.__shot.outline());
 
+const outlineMarker: Record<Outline['kind'], string> = { section: '', preview: '· ', card: '▸ ' };
+
+/** Indented by nesting; `·` a Preview, `▸` an InsetCard. */
 export const formatOutline = (entries: ReadonlyArray<Outline>): string =>
-  entries.map((entry) => `${'  '.repeat(entry.depth)}${entry.kind === 'preview' ? '· ' : ''}${entry.title}`).join('\n');
+  entries.map((entry) => `${'  '.repeat(entry.depth)}${outlineMarker[entry.kind]}${entry.title}`).join('\n');
 
 export interface ResolvedTarget {
   /** Page coordinates to screenshot, padded for rings and shadows. */
@@ -321,58 +528,24 @@ export interface ResolvedTarget {
   readonly roots: ReadonlyArray<Locator>;
 }
 
-/**
- * Marks the section matching `title` in each panel with `data-shot-target`, by `data-title` (exact, else a single
- * substring match), or for refs without the attribute by a `FoundationSection` heading.
- */
-const markSections = (page: Page, title: string, nth: number | undefined, mark: string) =>
-  page.evaluate(
-    ({ title, nth, mark }) => {
-      const needle = title.toLowerCase();
-      const panels = Array.from(document.querySelectorAll('[data-frame-mode]'));
-      const scopes: ReadonlyArray<Element> = panels.length > 1 ? panels : [document.body];
-      const titled = (scope: Element) =>
-        Array.from(
-          scope.querySelectorAll('[data-slot=foundation-section][data-title], [data-slot=preview][data-title]'),
-        ).map((element) => ({ element, title: element.getAttribute('data-title') ?? '' }));
-      const headed = (scope: Element) =>
-        Array.from(scope.querySelectorAll('section')).flatMap((element) => {
-          const heading = element.querySelector(':scope > div > h2');
-          return heading === null ? [] : [{ element, title: heading.textContent?.trim() ?? '' }];
-        });
-      const results = scopes.map((scope) => {
-        const candidates = titled(scope).length > 0 ? titled(scope) : headed(scope);
-        const exact = candidates.filter((candidate) => candidate.title.toLowerCase() === needle);
-        const partial = candidates.filter((candidate) => candidate.title.toLowerCase().includes(needle));
-        const matching = exact.length > 0 ? exact : partial;
-        const chosen = nth === undefined ? matching : matching.slice(nth, nth + 1);
-        return { chosen, titles: candidates.map((candidate) => candidate.title) };
-      });
-      const counts = results.map((result) => result.chosen.length);
-      if (counts.every((count) => count === 1)) {
-        for (const result of results) result.chosen[0]!.element.setAttribute('data-shot-target', mark);
-        return { ok: true as const };
-      }
-      return {
-        ok: false as const,
-        several: counts.some((count) => count > 1) ? results[0]!.chosen.map((candidate) => candidate.title) : [],
-      };
-    },
-    { title, nth, mark },
-  );
-
 let markCount = 0;
 
 const sectionRoots = async (page: Page, title: string, nth?: number): Promise<ReadonlyArray<Locator>> => {
   const mark = `t${++markCount}`;
-  const result = await markSections(page, title, nth, mark);
+  const result = await page.evaluate(({ title, nth, mark }) => window.__shot.markSection(title, nth, mark), {
+    title,
+    nth,
+    mark,
+  });
   if (!result.ok) {
     const sections = formatOutline(await outline(page));
     const reason =
       result.several.length > 0
         ? `"${title}" matches ${result.several.length}: ${result.several.join(', ')}; add ' >> nth=<i>'`
         : `No section "${title}"${nth === undefined ? '' : ` >> nth=${nth}`}`;
-    fail(`${reason}. Sections and previews:\n${sections || '  (none: the story has no FoundationSection or Preview)'}`);
+    fail(
+      `${reason}. Sections:\n${sections || '  (none: no FoundationSection, PageSection, Preview or titled InsetCard)'}`,
+    );
   }
   const locator = page.locator(`[data-shot-target="${mark}"]`);
   return Array.from({ length: await locator.count() }, (_, index) => locator.nth(index));

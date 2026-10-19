@@ -498,25 +498,99 @@ const measure = (elements: ReadonlyArray<Element>, styles: ReadonlyArray<string>
     };
   });
 
-/** Section and preview titles in document order; in side-by-side mode, the first panel's. */
-const outline = (): ReadonlyArray<{ kind: 'section' | 'preview'; title: string; depth: number }> => {
-  const scope = document.querySelector('[data-frame-mode]') ?? document.body;
-  const selector = '[data-slot=foundation-section][data-title], [data-slot=preview][data-title]';
-  return Array.from(scope.querySelectorAll(selector)).map((element) => {
-    let depth = 0;
-    for (
-      let parent = element.parentElement?.closest(selector);
-      parent;
-      parent = parent.parentElement?.closest(selector)
-    ) {
-      depth++;
-    }
-    return {
-      kind: element.getAttribute('data-slot') === 'preview' ? 'preview' : 'section',
-      title: element.getAttribute('data-title') ?? '',
-      depth,
-    };
+/**
+ * What a section is, for stories and app routes alike: a titled block an agent can name with `--section`.
+ * `section`: `FoundationSection`, `PageSection`; `preview`: `Preview`; `card`: `InsetCard`.
+ */
+const SECTION_KINDS = {
+  'foundation-section': 'section',
+  'page-section': 'section',
+  preview: 'preview',
+  'inset-card': 'card',
+} as const;
+
+type SectionKind = (typeof SECTION_KINDS)[keyof typeof SECTION_KINDS];
+
+const SECTION_SELECTOR = Object.keys(SECTION_KINDS)
+  .map((slot) => `[data-slot=${slot}]`)
+  .join(', ');
+
+interface Section {
+  readonly element: Element;
+  readonly kind: SectionKind;
+  readonly title: string;
+}
+
+/** Its `data-title`, else its own first heading: not one that belongs to a section nested inside it. */
+const sectionTitle = (element: Element): string =>
+  element.getAttribute('data-title') ??
+  Array.from(element.querySelectorAll('h1, h2, h3'))
+    .find((heading) => heading.closest(SECTION_SELECTOR) === element)
+    ?.textContent?.trim() ??
+  '';
+
+/** Refs from before `data-slot`: a `FoundationSection` is a `section` whose first block holds an `h2`. */
+const legacySections = (scope: Element): ReadonlyArray<Section> =>
+  Array.from(scope.querySelectorAll('section')).flatMap((element) => {
+    const heading = element.querySelector(':scope > div > h2');
+    return heading === null ? [] : [{ element, kind: 'section' as const, title: heading.textContent?.trim() ?? '' }];
   });
+
+const sectionsIn = (scope: Element): ReadonlyArray<Section> => {
+  const slotted = Array.from(scope.querySelectorAll(SECTION_SELECTOR))
+    .map((element) => ({
+      element,
+      kind: SECTION_KINDS[element.getAttribute('data-slot') as keyof typeof SECTION_KINDS],
+      title: sectionTitle(element),
+    }))
+    .filter((section) => section.title !== '');
+  return slotted.length > 0 ? slotted : legacySections(scope);
+};
+
+/** One scope per panel side by side; the body otherwise. */
+const scopes = (): ReadonlyArray<Element> => {
+  const panels = Array.from(document.querySelectorAll('[data-frame-mode]'));
+  return panels.length > 1 ? panels : [document.body];
+};
+
+/** Section titles in document order, indented by nesting; side by side, the first panel's. */
+const outline = (): ReadonlyArray<{ kind: SectionKind; title: string; depth: number }> => {
+  const sections = sectionsIn(scopes()[0]!);
+  const elements = new Set(sections.map((section) => section.element));
+  return sections.map((section) => {
+    let depth = 0;
+    for (let parent = section.element.parentElement; parent !== null; parent = parent.parentElement) {
+      if (elements.has(parent)) depth++;
+    }
+    return { kind: section.kind, title: section.title, depth };
+  });
+};
+
+/**
+ * Marks the section titled `title` in each scope with `data-shot-target=mark`: exact (case-insensitive), else a single
+ * substring match; `nth` picks among equal titles.
+ */
+const markSection = (
+  title: string,
+  nth: number | undefined,
+  mark: string,
+): { readonly ok: true } | { readonly ok: false; readonly several: ReadonlyArray<string> } => {
+  const needle = title.toLowerCase();
+  const chosen = scopes().map((scope) => {
+    const sections = sectionsIn(scope);
+    const exact = sections.filter((section) => section.title.toLowerCase() === needle);
+    const matching =
+      exact.length > 0 ? exact : sections.filter((section) => section.title.toLowerCase().includes(needle));
+    return nth === undefined ? matching : matching.slice(nth, nth + 1);
+  });
+  if (chosen.every((matches) => matches.length === 1)) {
+    for (const matches of chosen) matches[0]!.element.setAttribute('data-shot-target', mark);
+    return { ok: true };
+  }
+  return {
+    ok: false,
+    several: chosen.some((matches) => matches.length > 1) ? chosen[0]!.map((section) => section.title) : [],
+  };
 };
 
 const finding = (
@@ -650,7 +724,7 @@ const CHECKS = { overflow: checkOverflow, target: checkTargets, tokens: checkTok
 const check = (ids: ReadonlyArray<keyof typeof CHECKS>, root: Element): ReadonlyArray<Finding> =>
   ids.flatMap((id) => CHECKS[id](root));
 
-const shot = { outline, overlay, clearOverlay, measure, check };
+const shot = { outline, markSection, overlay, clearOverlay, measure, check };
 
 declare global {
   interface Window {

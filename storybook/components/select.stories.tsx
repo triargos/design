@@ -21,7 +21,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Select'
-      description='A field that opens a list of options, on the field surface. For many options or search, Combobox or Search Select.'>
+      description='A field that opens a list of options, on the field surface: the parts to compose. Over a list of items, or with an „Andere" row, Option Select; for many options or search, Combobox or Search Select.'>
       <ExampleSection
         title='Default'
         description={
