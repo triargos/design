@@ -234,15 +234,25 @@ function SearchSelectCustom<Item>({
   const itemsByKey = React.useMemo(() => new Map(items.map((item) => [itemKey(item), item])), [items, itemKey]);
   const labels = React.useMemo(() => new Set(items.map((item) => itemLabel(item).toLowerCase())), [items, itemLabel]);
 
-  const selected: Entry | null = !value ? null : (itemsByKey.get(value) ?? new CustomEntry(value));
-  const custom = selected instanceof CustomEntry;
+  // One instance per custom text: Base UI compares values by identity and resets the input to the selected label when
+  // the value changes, so a fresh `CustomEntry` each render would undo every keystroke.
+  const customEntry = React.useMemo(
+    () => (value && !itemsByKey.has(value) ? new CustomEntry(value) : null),
+    [value, itemsByKey],
+  );
+  const selected: Entry | null = !value ? null : (itemsByKey.get(value) ?? customEntry);
+  const custom = customEntry !== null;
 
-  // The typed row while the query names no item; else the custom value, so it shows selected in the list.
+  // The selected custom value stays an item while the user types: Base UI resets the input to the selected label when
+  // the value drops out of `items`, which would undo every keystroke. The typed row comes last, while the query names
+  // neither an item nor the custom value.
   const entries = React.useMemo((): ReadonlyArray<Entry> => {
     const typed = query.trim();
-    const extra = typed !== '' && !labels.has(typed.toLowerCase()) ? typed : custom ? value : null;
-    return extra ? [...items, new CustomEntry(extra)] : items;
-  }, [items, labels, query, custom, value]);
+    const extras: Array<CustomEntry> = [];
+    if (customEntry !== null) extras.push(customEntry);
+    if (typed !== '' && typed !== value && !labels.has(typed.toLowerCase())) extras.push(new CustomEntry(typed));
+    return extras.length > 0 ? [...items, ...extras] : items;
+  }, [items, labels, query, customEntry, value]);
 
   const label = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : itemLabel(entry));
   const isPicked = (entry: Entry) => entry instanceof CustomEntry && entry.text === value;
