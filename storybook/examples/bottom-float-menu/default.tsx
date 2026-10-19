@@ -4,24 +4,13 @@ import { BottomFloatMenu, BottomFloatMenuItem } from '~/components/ui/bottom-flo
 import { Button } from '~/components/ui/button';
 
 /**
- * Direct actions on a selection. Floats over the bottom of the page; MainLayout provides the slot it portals into,
- * without one it is fixed to the viewport.
+ * Direct actions on a selection, read by weight: the count as text, the actions raised, the destructive one subtle
+ * (its confirmation is where the solid fill belongs), and clear as a quiet ✕ at the end.
  */
 export function BottomFloatMenuDefault() {
   return (
-    <BottomFloatMenu show className='max-w-[calc(100vw-2rem)] flex-wrap justify-center'>
-      <BottomFloatMenuItem>
-        <Button type='button' intent='neutral' emphasis='raised'>
-          <XIcon data-icon='inline-start' />
-          Auswahl aufheben
-        </Button>
-      </BottomFloatMenuItem>
-      <BottomFloatMenuItem>
-        <Button type='button' intent='destructive' emphasis='solid'>
-          <Trash2Icon data-icon='inline-start' />
-          Löschen
-        </Button>
-      </BottomFloatMenuItem>
+    <BottomFloatMenu show label='Auswahl' className='max-w-[calc(100vw-2rem)] flex-wrap justify-center'>
+      <span className='ps-4 pe-1 tabular-nums'>3 ausgewählt</span>
       <BottomFloatMenuItem>
         <Button type='button' intent='neutral' emphasis='raised'>
           <MailCheckIcon data-icon='inline-start' />
@@ -32,6 +21,17 @@ export function BottomFloatMenuDefault() {
         <Button type='button' intent='neutral' emphasis='raised'>
           <MailXIcon data-icon='inline-start' />
           Ungelesen
+        </Button>
+      </BottomFloatMenuItem>
+      <BottomFloatMenuItem>
+        <Button type='button' intent='destructive' emphasis='subtle'>
+          <Trash2Icon data-icon='inline-start' />
+          Löschen
+        </Button>
+      </BottomFloatMenuItem>
+      <BottomFloatMenuItem>
+        <Button type='button' intent='neutral' emphasis='ghost' size='icon-lg' aria-label='Auswahl aufheben'>
+          <XIcon />
         </Button>
       </BottomFloatMenuItem>
     </BottomFloatMenu>

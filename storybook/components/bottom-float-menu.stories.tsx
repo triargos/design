@@ -44,7 +44,10 @@ export const Board: Story = {
     <FoundationPage
       title='Bottom Float Menu'
       description='A bar that floats over the bottom of the page while something is pending: a selection, unsaved changes. It grows from a pill and its controls fade in one by one; a row opens a panel and the bar morphs into it. MainLayout provides the slot it portals into; each stage here provides its own. For unsaved changes, UnsavedChangesToast builds the bar: Patterns › Settings Form.'>
-      <ExampleSection title='Default' description='Direct actions on a selection: inbox, import rules.' bare>
+      <ExampleSection
+        title='Default'
+        description='Direct actions on a selection: inbox, import rules. The count, the actions, then clear at the end.'
+        bare>
         <PageStage>
           <BottomFloatMenuDefault />
         </PageStage>
@@ -53,8 +56,9 @@ export const Board: Story = {
         title='With panel'
         description={
           <>
-            A count, clear, and an actions panel with a nested panel. <Code>BottomFloatMenuRow opensPanel</Code> adds
-            the chevron. Click Aktionen.
+            A count, an actions panel with a nested panel, and clear at the end.{' '}
+            <Code>BottomFloatMenuRow opensPanel</Code>
+            adds the chevron. Click Aktionen.
           </>
         }
         bare>

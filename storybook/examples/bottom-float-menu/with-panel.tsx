@@ -11,7 +11,7 @@ import {
 import { Button } from '~/components/ui/button';
 
 /**
- * A count, clear, and an actions panel with a nested panel: a row opens a panel and the bar morphs into it.
+ * A count, an actions panel with a nested panel, and clear at the end: a row opens a panel and the bar morphs into it.
  * `opensPanel` adds the chevron; Escape in the nested panel goes back one level.
  */
 export function BottomFloatMenuWithPanel() {
@@ -57,14 +57,14 @@ export function BottomFloatMenuWithPanel() {
       onPanelDismiss={dismiss}>
       <span className='ps-4 pe-1 tabular-nums'>3 ausgewählt</span>
       <BottomFloatMenuItem>
-        <Button type='button' intent='neutral' emphasis='raised' size='icon-lg' aria-label='Auswahl aufheben'>
-          <XIcon />
-        </Button>
-      </BottomFloatMenuItem>
-      <BottomFloatMenuItem>
         <Button type='button' intent='neutral' emphasis='raised' onClick={() => setOpenPanel('actions')}>
           <CommandIcon data-icon='inline-start' />
           Aktionen
+        </Button>
+      </BottomFloatMenuItem>
+      <BottomFloatMenuItem>
+        <Button type='button' intent='neutral' emphasis='ghost' size='icon-lg' aria-label='Auswahl aufheben'>
+          <XIcon />
         </Button>
       </BottomFloatMenuItem>
     </BottomFloatMenu>
