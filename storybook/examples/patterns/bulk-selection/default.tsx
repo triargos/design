@@ -77,7 +77,7 @@ export function BulkSelectionDefault() {
           <Button
             type='button'
             intent='neutral'
-            emphasis='raised'
+            emphasis='ghost'
             size='icon-lg'
             aria-label='Auswahl aufheben'
             onClick={() => setSelected(new Set())}>
@@ -85,7 +85,7 @@ export function BulkSelectionDefault() {
           </Button>
         </BottomFloatMenuItem>
         <BottomFloatMenuItem>
-          <Button type='button' intent='neutral' emphasis='raised'>
+          <Button type='button' intent='neutral' emphasis='ghost'>
             <MailIcon data-icon='inline-start' />
             Nachricht
           </Button>

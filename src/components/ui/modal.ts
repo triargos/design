@@ -6,9 +6,13 @@ import { cardSurface } from '~/components/ui/inset-card';
  * shell can see whether the body ends the modal.
  */
 
-/** Dims and blurs the page behind every modal. */
+/**
+ * Dims and blurs the page behind every modal. The exit holds its last frame (`fill-mode-forwards`): a popup that leaves
+ * slower than the backdrop fades (Sheet: `duration-move`) keeps the portal mounted, and without the hold the backdrop
+ * would snap back to full blur until it unmounts.
+ */
 export const modalBackdrop =
-  'fixed inset-0 isolate z-50 bg-black/10 duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-xs';
+  'fixed inset-0 isolate z-50 bg-black/10 duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:fill-mode-forwards data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-xs';
 
 /**
  * The shell. Opaque: it sits over a blurred backdrop. The tint is a sized background image: when the body ends the

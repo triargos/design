@@ -11,7 +11,7 @@ import { AvatarGroupExample } from '../storybook/examples/avatar/group';
 import { BadgeStatus } from '../storybook/examples/badge/status';
 import { ButtonVariants } from '../storybook/examples/button/variants';
 import { CalendarDefault } from '../storybook/examples/calendar/default';
-import { InputOTPFourDigits } from '../storybook/examples/input-otp/four-digits';
+import { OTPFieldFourDigits } from '../storybook/examples/otp-field/four-digits';
 import { OptionSelectAllowCustom } from '../storybook/examples/option-select/allow-custom';
 import { SearchSelectCustomValue } from '../storybook/examples/search-select/custom-value';
 import { SliderWithLabelAndValue } from '../storybook/examples/slider/with-label-and-value';
@@ -91,8 +91,8 @@ export function Home() {
             <SliderWithLabelAndValue />
           </div>
         </Tile>
-        <Tile slug='input-otp' className='md:col-span-2'>
-          <InputOTPFourDigits />
+        <Tile slug='otp-field' className='md:col-span-2'>
+          <OTPFieldFourDigits />
         </Tile>
       </section>
     </div>

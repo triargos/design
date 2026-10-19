@@ -29,7 +29,6 @@
     "date-fns": "^4.4.0",
     "effect": "^4.0.5",
     "framer-motion": "13.4.4",
-    "input-otp": "^1.5.0",
     "lucide-react": "1.48.0",
     "luxon": "^3.7.2",
     "react": "19.3.0",

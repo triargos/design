@@ -266,7 +266,6 @@
   --text-4xl: 2.25rem;
   --text-5xl: 3rem;
 
-  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
   --animate-shimmer: shimmer 2s linear infinite;
   --animate-skeleton-carousel: skeleton-carousel 8.4s infinite;
   /* Toast upsert replay (`components/ui/toast.tsx`): odd and even run the same keyframes, so each update restarts them. */
@@ -274,6 +273,15 @@
   --animate-toast-success-even: toast-pulse-again 0.32s cubic-bezier(0.5, 1, 0.89, 1);
   --animate-toast-error-odd: toast-shake 0.28s cubic-bezier(0.5, 1, 0.89, 1);
   --animate-toast-error-even: toast-shake-again 0.28s cubic-bezier(0.5, 1, 0.89, 1);
+  /* `OTPField` (`components/ui/otp-field.tsx`). A character lands from the 96% press; a paste or autofill lands slot by
+     slot, 30ms apart (an inline `animation-delay`), `backwards` holding each slot empty until its turn. Odd and even
+     restart the keyframes on every entry. A refused character shakes its slot; the row shakes once, decaying, as it
+     turns invalid. */
+  --animate-otp-fill-odd: otp-fill var(--transition-duration-feedback) var(--ease-enter) backwards;
+  --animate-otp-fill-even: otp-fill-again var(--transition-duration-feedback) var(--ease-enter) backwards;
+  --animate-otp-reject-odd: otp-reject var(--transition-duration-move) var(--ease-enter);
+  --animate-otp-reject-even: otp-reject-again var(--transition-duration-move) var(--ease-enter);
+  --animate-otp-shake: otp-shake 320ms var(--ease-enter);
 
   @keyframes toast-pulse {
     0%,
@@ -326,6 +334,61 @@
     }
   }
 
+  @keyframes otp-fill {
+    from {
+      scale: 0.96;
+      color: transparent;
+    }
+  }
+  @keyframes otp-fill-again {
+    from {
+      scale: 0.96;
+      color: transparent;
+    }
+  }
+  @keyframes otp-reject {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    25% {
+      translate: -3px 0;
+    }
+    75% {
+      translate: 3px 0;
+    }
+  }
+  @keyframes otp-reject-again {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    25% {
+      translate: -3px 0;
+    }
+    75% {
+      translate: 3px 0;
+    }
+  }
+  @keyframes otp-shake {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    15% {
+      translate: -6px 0;
+    }
+    35% {
+      translate: 5px 0;
+    }
+    55% {
+      translate: -3px 0;
+    }
+    75% {
+      translate: 1px 0;
+    }
+  }
+
   /* Stepped loop over a duplicated 3-card set: hold, then spring one card slot
      with an overshoot curve. The 3 steps (−1/6, −2/6, −3/6) are baked into the
      percentages, so the track must render exactly 3 cards twice; −50% lands on
@@ -351,17 +414,6 @@
     }
   }
 
-  @keyframes caret-blink {
-    0%,
-    70%,
-    100% {
-      opacity: 1;
-    }
-    20%,
-    50% {
-      opacity: 0;
-    }
-  }
   @keyframes shimmer {
     0% {
       background-position: 200% 0;

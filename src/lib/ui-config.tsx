@@ -29,7 +29,10 @@ export interface UiStrings {
   /** Marks a `SearchSelect` value typed by the user, not picked from the list. */
   readonly selectCustom: string;
   readonly selectCustomNote: string;
-  readonly selectUseCustom: (text: string) => string;
+  /** The verb after the quoted typed text in a `SearchSelect` row: „Tante“ übernehmen. */
+  readonly selectUseCustom: string;
+  /** An `OTPField` slot's accessible name. */
+  readonly otpSlot: (values: { readonly position: number; readonly length: number }) => string;
   /** Between the keys of a chord shortcut: `G dann S`. */
   readonly chordSeparator: string;
   readonly colorPicker: {
@@ -74,7 +77,8 @@ export const UI_STRINGS_DE: UiStrings = {
   selectOtherPlaceholder: 'Bitte angeben',
   selectCustom: 'Eigene Angabe',
   selectCustomNote: 'Eigene Angabe, nicht aus der Liste',
-  selectUseCustom: (text) => `„${text}“ als eigene Angabe übernehmen`,
+  selectUseCustom: 'übernehmen',
+  otpSlot: ({ position, length }) => `Stelle ${position} von ${length}`,
   chordSeparator: 'dann',
   colorPicker: {
     label: 'Farbe',

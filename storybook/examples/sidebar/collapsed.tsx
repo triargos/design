@@ -53,7 +53,7 @@ export function SidebarCollapsed() {
       <SidebarProvider className='h-full' defaultOpen={false}>
         <div className='flex h-full min-h-0 w-full md:pt-3 md:pr-3 md:pb-3'>
           <Sidebar className='border-r-0!' collapsible='icon'>
-            <SidebarHeader className='px-5 pt-group'>
+            <SidebarHeader className='px-5 pt-group group-data-[collapsible=icon]:px-2'>
               <div className='flex items-center gap-2'>
                 <span className='flex size-8 shrink-0 items-center justify-center rounded-control-sm bg-primary-solid text-caption font-medium text-primary-solid-foreground'>
                   GS
@@ -63,7 +63,7 @@ export function SidebarCollapsed() {
             </SidebarHeader>
             <SidebarContent>
               {GROUPS.map((group) => (
-                <SidebarGroup key={group.title} className='px-5'>
+                <SidebarGroup key={group.title} className='px-5 group-data-[collapsible=icon]:px-2'>
                   <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu>
@@ -96,7 +96,7 @@ export function SidebarCollapsed() {
                 </SidebarGroup>
               ))}
             </SidebarContent>
-            <SidebarFooter className='px-5 pb-group'>
+            <SidebarFooter className='px-5 pb-group group-data-[collapsible=icon]:px-2'>
               <span className='truncate text-caption text-muted-foreground group-data-[collapsible=icon]:hidden'>
                 Erika Mustermann · Sekretariat
               </span>

@@ -10,7 +10,7 @@ import { open } from '../kit/play';
 
 const meta = {
   title: 'Components/Option Select',
-  parameters: { description: 'A select over a short list of items; optionally with an „Andere" row.' },
+  parameters: { description: 'A select over a short list of items; optionally with an „Andere“ row.' },
 } satisfies Meta;
 
 export default meta;
@@ -30,7 +30,7 @@ export const Board: Story = {
         title='Allow custom'
         description={
           <>
-            <Code>allowCustom</Code>: the value is a plain string, a key or the typed text. „Andere angeben …" stays
+            <Code>allowCustom</Code>: the value is a plain string, a key or the typed text. „Andere angeben …“ stays
             last, after a separator; picking it emits <Code>''</Code>, folds open a text field hung off the select and
             focuses it. A value that is no key opens with the field.
           </>
@@ -41,7 +41,7 @@ export const Board: Story = {
         title='In a field'
         description={
           <>
-            Required: a non-empty check covers „Andere" without text (<Code>''</Code>); <Code>invalid</Code> then marks
+            Required: a non-empty check covers „Andere“ without text (<Code>''</Code>); <Code>invalid</Code> then marks
             the text field.
           </>
         }>

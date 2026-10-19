@@ -59,7 +59,7 @@ export const Board: Story = {
           <>
             <Code>allowCustom</Code>: the value is a plain string, a key or the typed text. While the query names no
             item, the last row takes it; Enter picks it once nothing else matches. A custom value folds open a note
-            below the field and reads „Eigene Angabe" in its row.
+            below the field and reads „Eigene Angabe“ in its row.
           </>
         }>
         <SearchSelectCustomValue />
@@ -113,7 +113,7 @@ export const CustomValue: Story = {
     const field = canvas.getByRole('combobox', { name: 'Ort' });
     await userEvent.clear(field);
     await userEvent.type(field, 'Delmenhorst');
-    await screen.findByText('„Delmenhorst“ als eigene Angabe übernehmen');
+    await screen.findByText('Delmenhorst');
   },
 };
 
