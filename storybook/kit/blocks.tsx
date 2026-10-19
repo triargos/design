@@ -1,6 +1,8 @@
 import { ChevronRightIcon } from 'lucide-react';
 import {
   createContext,
+  Fragment,
+  isValidElement,
   use,
   useId,
   useLayoutEffect,
@@ -89,17 +91,30 @@ export function Section({
   description?: ReactNode;
   children: ReactNode;
 }) {
+  // The docs drop a description that only lists parts (`<Code>A</Code> · <Code>B</Code>`): the code below shows them.
+  const docs = use(DocsModeContext) !== null;
+  const shown = description !== undefined && !(docs && isCodeOnly(description));
   return (
     <section data-slot='foundation-section' data-title={title} className='flex flex-col gap-group'>
       <div className='flex flex-col gap-tight'>
         <h2 className='text-body font-medium'>{title}</h2>
-        {description !== undefined && (
-          <p className='max-w-prose text-body text-pretty text-muted-foreground'>{description}</p>
-        )}
+        {shown && <p className='max-w-prose text-body text-pretty text-muted-foreground'>{description}</p>}
       </div>
       {children}
     </section>
   );
+}
+
+/** Only `Code` and the punctuation between it: a list of parts, not a sentence. */
+function isCodeOnly(node: ReactNode): boolean {
+  if (node === null || node === undefined || typeof node === 'boolean') return true;
+  if (typeof node === 'string') return /^[\s·,/+&|()–-]*$/.test(node);
+  if (Array.isArray(node)) return node.every(isCodeOnly);
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    if (node.type === Code) return true;
+    if (node.type === Fragment) return isCodeOnly(node.props.children);
+  }
+  return false;
 }
 
 /** One specimen, or a row of them, in a card. `title` labels a usage: the composition it shows. */
@@ -196,9 +211,12 @@ export function ExampleSection({
   className?: string;
   children: ReactNode;
 }) {
+  // The docs frame every example alike: centered on the preview card, a bare one (a card itself) included, so none ends
+  // at its own width above a full-width code strip.
+  const docs = use(DocsModeContext) !== null;
   return (
     <Section title={title} description={description}>
-      {bare ? (
+      {bare && !docs ? (
         <div className='flex min-w-0 flex-col gap-tight'>
           <div lang='de' className={cn('min-w-0', className)}>
             {children}
@@ -206,7 +224,9 @@ export function ExampleSection({
           <ExampleCode section={title} />
         </div>
       ) : (
-        <Preview className={className} footer={<ExampleCode section={title} />}>
+        <Preview
+          className={cn(className, docs && 'min-h-36 justify-center px-page py-page')}
+          footer={<ExampleCode section={title} />}>
           {children}
         </Preview>
       )}
@@ -358,7 +378,9 @@ export function Tile({ name, meta, children }: { name: string; meta?: ReactNode;
   );
 }
 
+/** A prop, value or part name. Mono in Storybook's spec; in the docs' prose it reads as a word. */
 export function Code({ children }: { children: ReactNode }) {
+  if (use(DocsModeContext) !== null) return <span className='text-foreground'>{children}</span>;
   return <code className='font-mono text-caption text-muted-foreground'>{children}</code>;
 }
 
