@@ -1,0 +1,15 @@
+import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+
+/** A shell (the label strip) around a card (the content). Every block on a page is one. */
+export function InsetCardDefault() {
+  return (
+    <InsetCard className='w-full max-w-xl'>
+      <InsetCardHeader>
+        <InsetCardTitle>Dateien</InsetCardTitle>
+      </InsetCardHeader>
+      <InsetCardContent className='p-group'>
+        <p className='text-body text-muted-foreground'>Inhalt der Karte.</p>
+      </InsetCardContent>
+    </InsetCard>
+  );
+}

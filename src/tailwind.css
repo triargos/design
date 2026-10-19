@@ -1,0 +1,517 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Branded colors come from `<style data-organization-branding>` (`brandingThemeCss` in `lib/theme/branding-theme.ts`),
+   rendered by `root.tsx`. Only non-branded values live here. */
+:root {
+  /* Edges and elevation (DESIGN.md, Elevation). Every depth edge is a translucent ring outside the fill: it darkens (light)
+     or lightens (dark) whatever sits behind it, so it takes the color of the page, shell, card or a tinted callout instead
+     of drawing one gray, and no seam opens where an edge and a fill antialias against each other. Borders stay for
+     structure only (dividers, table rules, dashed drop zones) and for states (focus, invalid). In dark, drops vanish
+     and the white ring carries the edge. */
+  --edge: oklch(0 0 0 / 0.08);
+  --edge-hover: oklch(0 0 0 / 0.12);
+  /* Fields: a firmer ring, heavier at the bottom (light from above); dark lights the top edge instead. */
+  --edge-field: oklch(0 0 0 / 0.1);
+  --edge-field-top: oklch(0 0 0 / 0);
+  --edge-field-bottom: oklch(0 0 0 / 0.045);
+  --field-lift: oklch(0 0 0 / 0.05);
+  --raised-lift: oklch(0 0 0 / 0.08);
+  --raised-ambient: oklch(0 0 0 / 0.04);
+  --raised-lift-hover: oklch(0 0 0 / 0.1);
+  --raised-ambient-hover: oklch(0 0 0 / 0.06);
+  /* Popups: the ring heavier at the bottom, like fields; dark lights the top edge instead. */
+  --popup-edge-top: oklch(0 0 0 / 0);
+  --popup-edge-bottom: oklch(0 0 0 / 0.04);
+  --popup-drop: oklch(0 0 0 / 0.05);
+  --shadow-drop-soft: oklch(0 0 0 / 0.05);
+  --shadow-drop-far: oklch(0 0 0 / 0.15);
+
+  --chart-1: oklch(0.837 0.128 66.29);
+  --chart-2: oklch(0.705 0.213 47.604);
+  --chart-3: oklch(0.646 0.222 41.116);
+  --chart-4: oklch(0.553 0.195 38.402);
+  --chart-5: oklch(0.47 0.157 37.304);
+}
+
+/* The neutral intent, from the page's text colors. Re-declared under `.dark`, which sets its own `--foreground`. */
+:root,
+.dark {
+  --neutral: var(--muted-foreground);
+  --neutral-solid: var(--foreground);
+  --neutral-solid-foreground: var(--background);
+  --neutral-subtle: color-mix(in oklch, var(--foreground) 6%, transparent);
+  --neutral-subtle-foreground: var(--foreground);
+  --neutral-border: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+
+.dark {
+  --edge: oklch(1 0 0 / 0.08);
+  --edge-hover: oklch(1 0 0 / 0.13);
+  --edge-field: oklch(1 0 0 / 0.08);
+  --edge-field-top: oklch(1 0 0 / 0.055);
+  --edge-field-bottom: oklch(0 0 0 / 0);
+  --field-lift: oklch(0 0 0 / 0);
+  --raised-lift: oklch(0 0 0 / 0);
+  --raised-ambient: oklch(0 0 0 / 0);
+  --raised-lift-hover: oklch(0 0 0 / 0);
+  --raised-ambient-hover: oklch(0 0 0 / 0);
+  --popup-edge-top: oklch(1 0 0 / 0.06);
+  --popup-edge-bottom: oklch(0 0 0 / 0);
+  --popup-drop: oklch(0 0 0 / 0.05);
+  --shadow-drop-soft: oklch(0 0 0 / 0);
+  --shadow-drop-far: oklch(0 0 0 / 0.4);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  /* Intents (DESIGN.md, Color). `{i}` is the hue for text and icons, never a fill; `-solid` and `-subtle` are fills with
+     their `-foreground`; `-border` the edge. Generated in `themeToShadcnVars`. */
+  --color-primary-solid: var(--primary-solid);
+  --color-primary-solid-foreground: var(--primary-solid-foreground);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-subtle-foreground: var(--primary-subtle-foreground);
+  --color-primary-border: var(--primary-border);
+  --color-info: var(--info);
+  --color-info-solid: var(--info-solid);
+  --color-info-solid-foreground: var(--info-solid-foreground);
+  --color-info-subtle: var(--info-subtle);
+  --color-info-subtle-foreground: var(--info-subtle-foreground);
+  --color-info-border: var(--info-border);
+  --color-success: var(--success);
+  --color-success-solid: var(--success-solid);
+  --color-success-solid-foreground: var(--success-solid-foreground);
+  --color-success-subtle: var(--success-subtle);
+  --color-success-subtle-foreground: var(--success-subtle-foreground);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning);
+  --color-warning-solid: var(--warning-solid);
+  --color-warning-solid-foreground: var(--warning-solid-foreground);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-warning-subtle-foreground: var(--warning-subtle-foreground);
+  --color-warning-border: var(--warning-border);
+  --color-destructive: var(--destructive);
+  --color-destructive-solid: var(--destructive-solid);
+  --color-destructive-solid-foreground: var(--destructive-solid-foreground);
+  --color-destructive-subtle: var(--destructive-subtle);
+  --color-destructive-subtle-foreground: var(--destructive-subtle-foreground);
+  --color-destructive-border: var(--destructive-border);
+  /* Neutral reads on whatever surface it sits on: translucent subtle and border, inverted solid. */
+  --color-neutral: var(--neutral);
+  --color-neutral-solid: var(--neutral-solid);
+  --color-neutral-solid-foreground: var(--neutral-solid-foreground);
+  --color-neutral-subtle: var(--neutral-subtle);
+  --color-neutral-subtle-foreground: var(--neutral-subtle-foreground);
+  --color-neutral-border: var(--neutral-border);
+
+  /* Text levels and disabled. */
+  --color-faint-foreground: var(--faint-foreground);
+  --color-disabled-foreground: var(--disabled-foreground);
+  --color-disabled: var(--disabled);
+
+  /* Aliases until the app migrates: `primary` is still the brand fill, `secondary` / `accent` the old neutrals, and the
+     callout's `*-tint` / `*-text` and `destructive-strong` read the intent sets. */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive-strong: var(--destructive-solid);
+  --color-info-tint: var(--info-subtle);
+  --color-info-text: var(--info-subtle-foreground);
+  --color-success-tint: var(--success-subtle);
+  --color-success-text: var(--success-subtle-foreground);
+  --color-warning-tint: var(--warning-subtle);
+  --color-warning-text: var(--warning-subtle-foreground);
+  --color-destructive-tint: var(--destructive-subtle);
+  --color-destructive-text: var(--destructive-subtle-foreground);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-field-border: var(--field-border);
+  --color-field-border-top: var(--field-border-top);
+  --color-field-border-bottom: var(--field-border-bottom);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Elevation (DESIGN.md, Elevation): one ring (`--edge`) at every level, more drop the higher it sits. Inline, so the
+     colors resolve on the element and `.dark` reaches them. */
+  --shadow-border: 0 0 0 1px var(--edge);
+  --shadow-field:
+    0 0 0 1px var(--edge-field), 0 -1px 0 0 var(--edge-field-top), 0 1px 0 0 var(--edge-field-bottom),
+    0 1px 2px 0 var(--field-lift);
+  --shadow-field-flat:
+    0 0 0 1px var(--edge-field), 0 -1px 0 0 var(--edge-field-top), 0 1px 0 0 var(--edge-field-bottom);
+  --shadow-raised: 0 0 0 1px var(--edge), 0 1px 2px -1px var(--raised-lift), 0 2px 4px 0 var(--raised-ambient);
+  --shadow-raised-hover:
+    0 0 0 1px var(--edge-hover), 0 1px 2px -1px var(--raised-lift-hover), 0 2px 4px 0 var(--raised-ambient-hover);
+  --shadow-popup:
+    0 0 0 1px var(--edge), 0 -1px 0 0 var(--popup-edge-top), 0 1px 0 0 var(--popup-edge-bottom),
+    0 10px 15px -3px var(--popup-drop), 0 4px 6px -4px var(--popup-drop);
+  --shadow-modal: 0 0 0 1px var(--edge), 0 8px 40px 0 var(--shadow-drop-soft), 0 12px 32px -16px var(--shadow-drop-far);
+
+  /* Re-declared per `[data-surface]` (`surfaceVars` in `lib/theme/theme-to-css.ts`). `field` is the quiet fill
+     for file rows and inset boxes: opaque, so nested fills do not stack. Inputs sit on `surface` (`inputSurfaceVariants`). */
+  --color-surface: var(--surface);
+  --color-shell: var(--shell);
+  --color-field: var(--field);
+  /* A row under the pointer in a list, table or accordion: half a `muted` step, so it stays one step below the selected
+     row (`bg-muted`). Relative to the surface it sits on, like `muted`. */
+  --color-row-hover: color-mix(in oklab, var(--muted) 50%, transparent);
+
+  /* Concentric corners: the outer surface sets `--outer-radius` and `--outer-inset` (the gap to its content); the content
+     takes `rounded-inner`, or one corner of it (`rounded-ss-inner`, a table body's corner cells). Inline, so it
+     resolves on the element: something deeper in sets its own `--outer-inset`, its distance from the surface's edge. */
+  --radius-inner: max(0px, calc(var(--outer-radius, 0px) - var(--outer-inset, 0px)));
+}
+
+@theme {
+  --font-sans: 'Inter Variable', sans-serif;
+
+  /* Radius (DESIGN.md, Shape): fixed 2px steps, and the roles that pick from them. A control's radius follows its height;
+     nested corners use `rounded-inner`. Tunable in Storybook's Tokens panel. */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+  --radius-4xl: 20px;
+  --radius-5xl: 24px;
+  --radius-control-xs: 4px;
+  --radius-control-sm: 8px;
+  --radius-control: 10px;
+  --radius-control-lg: 12px;
+  --radius-popup: 16px;
+  --radius-card: 20px;
+  --radius-dialog: 20px;
+  --radius-panel: 20px;
+
+  /* Spacing scale (DESIGN.md, Spacing): `gap-group`, `p-group`, `space-y-tight`. Utilities read the variables, so
+     Storybook's Tokens panel can tune them. Register new steps in `cn` (`lib/utils.ts`). */
+  --spacing-tight: 0.25rem;
+  --spacing-related: 0.5rem;
+  --spacing-group: 1rem;
+  --spacing-page: 2rem;
+  --spacing-section: 3rem;
+
+  /* Motion (DESIGN.md, Motion): `duration-enter`, `ease-enter`. Named by what moves, not by the number. Register new
+     roles in `cn` (`lib/utils.ts`). Springs (interruptible motion) live in code: `insetCardRevealTransition`. */
+  --transition-duration-enter: 100ms;
+  --transition-duration-feedback: 150ms;
+  --transition-duration-move: 200ms;
+  --transition-duration-sheet: 500ms;
+  --ease-enter: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-move: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --text-*: initial;
+
+  /* Type roles (DESIGN.md, Typography). Each sets size, line height, tracking and weight; `font-medium`,
+     `leading-*` and `tracking-*` still override. Register new roles in `cn` (`lib/utils.ts`). */
+  --text-title: 1.75rem;
+  --text-title--line-height: 2.25rem;
+  --text-title--letter-spacing: -0.02em;
+  --text-title--font-weight: 500;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.5rem;
+  --text-heading--letter-spacing: -0.01em;
+  --text-heading--font-weight: 500;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.3125rem;
+  /* Buttons, fields, menus, tables. On touch, fields render 16px and scale to this (`--input-scale`), so iOS does not zoom. */
+  --text-control: 0.875rem;
+  --text-control--line-height: 1.25rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  /* Menu and group labels; `.text-overline` below adds the uppercase. */
+  --text-overline: 0.625rem;
+  --text-overline--line-height: 1rem;
+  --text-overline--letter-spacing: 0.06em;
+  --text-overline--font-weight: 500;
+
+  /* Legacy t-shirt sizes: removed once call sites move to the roles above. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-skeleton-carousel: skeleton-carousel 8.4s infinite;
+  /* Toast upsert replay (`components/ui/toast.tsx`): odd and even run the same keyframes, so each update restarts them. */
+  --animate-toast-success-odd: toast-pulse 0.32s cubic-bezier(0.5, 1, 0.89, 1);
+  --animate-toast-success-even: toast-pulse-again 0.32s cubic-bezier(0.5, 1, 0.89, 1);
+  --animate-toast-error-odd: toast-shake 0.28s cubic-bezier(0.5, 1, 0.89, 1);
+  --animate-toast-error-even: toast-shake-again 0.28s cubic-bezier(0.5, 1, 0.89, 1);
+
+  @keyframes toast-pulse {
+    0%,
+    100% {
+      scale: 1;
+    }
+    30% {
+      scale: 1.025;
+    }
+    60% {
+      scale: 0.99;
+    }
+  }
+  @keyframes toast-pulse-again {
+    0%,
+    100% {
+      scale: 1;
+    }
+    30% {
+      scale: 1.025;
+    }
+    60% {
+      scale: 0.99;
+    }
+  }
+  @keyframes toast-shake {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    25%,
+    75% {
+      translate: -3px 0;
+    }
+    50% {
+      translate: 3px 0;
+    }
+  }
+  @keyframes toast-shake-again {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    25%,
+    75% {
+      translate: -3px 0;
+    }
+    50% {
+      translate: 3px 0;
+    }
+  }
+
+  /* Stepped loop over a duplicated 3-card set: hold, then spring one card slot
+     with an overshoot curve. The 3 steps (−1/6, −2/6, −3/6) are baked into the
+     percentages, so the track must render exactly 3 cards twice; −50% lands on
+     the copy and the loop restart is invisible. */
+  @keyframes skeleton-carousel {
+    0%,
+    21% {
+      transform: translateX(0);
+      animation-timing-function: cubic-bezier(0.3, 1.35, 0.4, 1);
+    }
+    33.34%,
+    54.34% {
+      transform: translateX(-16.667%);
+      animation-timing-function: cubic-bezier(0.3, 1.35, 0.4, 1);
+    }
+    66.67%,
+    87.67% {
+      transform: translateX(-33.334%);
+      animation-timing-function: cubic-bezier(0.3, 1.35, 0.4, 1);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    touch-action: manipulation;
+  }
+
+  body {
+    @apply bg-sidebar text-foreground;
+  }
+}
+
+/* Touch hit area: a control under 44px grows an invisible 44px target on coarse pointers. Needs a positioned element. */
+@utility hit-area {
+  @media (pointer: coarse) {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: max(100%, 44px);
+      height: max(100%, 44px);
+      translate: -50% -50%;
+    }
+  }
+}
+
+/* The touch input scale: a field's text renders 16px on coarse pointers and is scaled down to the control size, so
+   iOS does not zoom on focus and fields look the same everywhere. On the native input inside a field surface.
+   Important: it overrides the input's own size and flex utilities, which would otherwise win by order. */
+@utility input-scale {
+  --input-scale: calc(14 / 16);
+  @media (pointer: coarse) {
+    flex: none !important;
+    width: calc(100% / var(--input-scale)) !important;
+    transform-origin: left center;
+    scale: var(--input-scale);
+    font-size: 1rem !important;
+  }
+}
+
+/* `BottomFloatMenu`: the children of a bar or panel fade in together, in place, once the shell is nearly open: the
+   shape leads, like the Dynamic Island, and earlier its growing edges would cut through the content. Together and
+   opacity only: a late or blurred child, above all a saturated one like the green Save button, reads as a flash. Per
+   child, so one mounted later (`Gespeichert`, panel rows) fades in too. Runs once on mount; `backwards` holds the
+   first frame through the delay. Plain `ease`, not `--ease-enter`: that curve does most of an opacity fade in one
+   frame, so the content popped in. */
+@utility float-menu-content-in {
+  & > * {
+    animation: float-menu-in 220ms ease 80ms backwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    & > * {
+      animation: none;
+    }
+  }
+}
+
+@keyframes float-menu-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .text-overline {
+    text-transform: uppercase;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted) transparent;
+
+    .dark & {
+      scrollbar-color: var(--secondary) var(--background);
+    }
+
+    ::-webkit-scrollbar {
+      background: var(--background);
+      height: 3px;
+      width: 0px;
+      border-radius: 0;
+
+      .dark & {
+        background: var(--border);
+      }
+    }
+
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px var(--border);
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+
+      .dark & {
+        -webkit-box-shadow: inset 0 0 6px var(--border);
+      }
+    }
+
+    ::-webkit-scrollbar-thumb {
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      background: var(--muted-foreground);
+
+      .dark & {
+        -webkit-box-shadow: inset 0 0 6px var(--border);
+      }
+    }
+  }
+
+  .animate-shimmer {
+    --shimmer-base: color-mix(in oklch, var(--card), var(--foreground) 8%);
+    --shimmer-highlight: color-mix(in oklch, var(--card), var(--foreground) 18%);
+    background-color: var(--shimmer-base);
+    background-image: linear-gradient(
+      90deg,
+      var(--shimmer-base) 0%,
+      var(--shimmer-base) 40%,
+      var(--shimmer-highlight) 50%,
+      var(--shimmer-base) 60%,
+      var(--shimmer-base) 100%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-shimmer {
+      animation: none;
+      background-image: none;
+    }
+  }
+}

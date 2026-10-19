@@ -1,0 +1,155 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, screen, waitFor, within } from 'storybook/test';
+
+import { SearchSelectDefault } from '../examples/search-select/default';
+import { SearchSelectInADialog } from '../examples/search-select/in-a-dialog';
+import { SearchSelectInAField } from '../examples/search-select/in-a-field';
+import { SearchSelectManyOptions } from '../examples/search-select/many-options';
+import { SearchSelectMultiple } from '../examples/search-select/multiple';
+import { SearchSelectPlaceholder } from '../examples/search-select/placeholder';
+import { SearchSelectStates } from '../examples/search-select/states';
+import { SearchSelectWithDescription } from '../examples/search-select/with-description';
+import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
+import { open } from '../kit/play';
+
+const meta = {
+  title: 'Components/Search Select',
+  parameters: { description: 'A select you can type into, for any list length; one value or many.' },
+} satisfies Meta;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Board: Story = {
+  parameters: { frame: 'page' },
+  render: () => (
+    <FoundationPage
+      title='Search Select'
+      description='The default picker: a select you can type into, for any list length. Type to filter, Enter picks the first match. One value with a clear button, or many as chips. The list is always virtualized. Not bound to a form: wire it through Controller + Field.'>
+      <ExampleSection title='Default'>
+        <SearchSelectDefault />
+      </ExampleSection>
+      <ExampleSection title='Placeholder'>
+        <SearchSelectPlaceholder />
+      </ExampleSection>
+      <ExampleSection
+        title='Multiple'
+        description={
+          <>
+            <Code>multiple</Code>: chips in the field.
+          </>
+        }>
+        <SearchSelectMultiple />
+      </ExampleSection>
+      <ExampleSection
+        title='With description'
+        description={
+          <>
+            A <Code>description</Code> on the item shows muted beside the label; <Code>renderItem</Code> for anything
+            else.
+          </>
+        }>
+        <SearchSelectWithDescription />
+      </ExampleSection>
+      <ExampleSection
+        title='Many options'
+        description='2,000 streets, the same every time: reference data at app size. The ManyOptions story is the perf check: its count control goes to 10,000.'>
+        <SearchSelectManyOptions />
+      </ExampleSection>
+      <ExampleSection title='In a field' description='Field, label and error around it; through Controller in the app.'>
+        <SearchSelectInAField />
+      </ExampleSection>
+      <ExampleSection title='In a dialog' description='The popup portals above the dialog and keeps focus in it.'>
+        <SearchSelectInADialog />
+      </ExampleSection>
+      <ExampleSection
+        title='States'
+        description={
+          <>
+            <Code>pending</Code>, <Code>invalid</Code>, <Code>disabled</Code>.
+          </>
+        }>
+        <SearchSelectStates />
+      </ExampleSection>
+    </FoundationPage>
+  ),
+};
+
+export const Default: Story = { render: () => <SearchSelectDefault /> };
+export const Placeholder: Story = {
+  render: () => <SearchSelectPlaceholder />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('combobox'));
+    await screen.findByText('Klasse 4b');
+  },
+};
+export const Multiple: Story = { render: () => <SearchSelectMultiple /> };
+export const WithDescription: Story = {
+  name: 'With description',
+  render: () => <SearchSelectWithDescription />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('combobox'));
+    await screen.findByText('Englisch, Kunst');
+  },
+};
+
+/** The most rows the open list may render: proof that it virtualizes. */
+const MAX_RENDERED_OPTIONS = 40;
+
+const measure = (name: string, start: string) => performance.measure(`search-select:${name}`, start);
+
+/**
+ * The perf check for the virtualized list. Asserts only what cannot flake: the list virtualizes, filtering finds the
+ * match, a pick lands in the field. Timing is measured, never asserted: `performance.getEntriesByType('measure')`
+ * holds `search-select:open` and one `search-select:filter` per keystroke. Budget, with 4× CPU throttling: open
+ * ≤ 100 ms, filter ≤ 50 ms per keystroke, no long task over 50 ms while scrolling.
+ */
+export const ManyOptions: StoryObj<typeof SearchSelectManyOptions> = {
+  args: { count: 2000, multiple: false },
+  argTypes: { count: { control: 'select', options: [100, 2000, 10000] } },
+  render: (args) => <SearchSelectManyOptions {...args} />,
+  play: async ({ args, canvas, userEvent }) => {
+    performance.clearMeasures();
+    const field = canvas.getByRole('combobox');
+
+    performance.mark('open');
+    await userEvent.click(field);
+    const listbox = await screen.findByRole('listbox');
+    await waitFor(() => expect(within(listbox).getAllByRole('option').length).toBeGreaterThan(0));
+    measure('open', 'open');
+    await expect(within(listbox).getAllByRole('option').length).toBeLessThanOrEqual(MAX_RENDERED_OPTIONS);
+
+    for (const key of 'berg') {
+      performance.mark('filter');
+      await userEvent.keyboard(key);
+      measure('filter', 'filter');
+    }
+    await waitFor(() => expect(within(listbox).getAllByRole('option')[0]).toHaveTextContent(/berg/i));
+
+    if (args.multiple) {
+      for (let pick = 0; pick < 3; pick++) {
+        await userEvent.click(within(await screen.findByRole('listbox')).getAllByRole('option')[pick]);
+      }
+      await waitFor(() =>
+        expect(canvas.getAllByText(/berg/i, { selector: '[data-slot=combobox-chip] *' })).toHaveLength(3),
+      );
+      return;
+    }
+    const first = within(listbox).getAllByRole('option')[0];
+    const label = first.querySelector('span')?.textContent ?? '';
+    await userEvent.click(first);
+    await expect(field).toHaveValue(label);
+  },
+};
+
+export const InAField: Story = {
+  name: 'In a field',
+  render: () => <SearchSelectInAField />,
+};
+export const InADialog: Story = {
+  name: 'In a dialog',
+  render: () => <SearchSelectInADialog />,
+  play: open('click', 'Klassen zuordnen', 'Klassen zuordnen'),
+};
+export const States: Story = { render: () => <SearchSelectStates /> };
