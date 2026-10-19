@@ -57,8 +57,7 @@ export const Board: Story = {
         description={
           <>
             A count, an actions panel with a nested panel, and clear at the end.{' '}
-            <Code>BottomFloatMenuRow opensPanel</Code>
-            adds the chevron. Click Aktionen.
+            <Code>BottomFloatMenuRow opensPanel</Code> adds the chevron. Click Aktionen.
           </>
         }
         bare>
