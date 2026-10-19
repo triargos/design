@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, screen, waitFor, within } from 'storybook/test';
 
+import { SearchSelectCustomValue } from '../examples/search-select/custom-value';
 import { SearchSelectDefault } from '../examples/search-select/default';
 import { SearchSelectInADialog } from '../examples/search-select/in-a-dialog';
 import { SearchSelectInAField } from '../examples/search-select/in-a-field';
@@ -53,6 +54,17 @@ export const Board: Story = {
         <SearchSelectWithDescription />
       </ExampleSection>
       <ExampleSection
+        title='Custom value'
+        description={
+          <>
+            <Code>allowCustom</Code>: the value is a plain string, a key or the typed text. While the query names no
+            item, the last row takes it; Enter picks it once nothing else matches. A custom value folds open a note
+            below the field and reads „Eigene Angabe" in its row.
+          </>
+        }>
+        <SearchSelectCustomValue />
+      </ExampleSection>
+      <ExampleSection
         title='Many options'
         description='2,000 streets, the same every time: reference data at app size. The ManyOptions story is the perf check: its count control goes to 10,000.'>
         <SearchSelectManyOptions />
@@ -91,6 +103,17 @@ export const WithDescription: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole('combobox'));
     await screen.findByText('Englisch, Kunst');
+  },
+};
+
+export const CustomValue: Story = {
+  name: 'Custom value',
+  render: () => <SearchSelectCustomValue />,
+  play: async ({ canvas, userEvent }) => {
+    const field = canvas.getByRole('combobox', { name: 'Ort' });
+    await userEvent.clear(field);
+    await userEvent.type(field, 'Delmenhorst');
+    await screen.findByText('„Delmenhorst“ als eigene Angabe übernehmen');
   },
 };
 

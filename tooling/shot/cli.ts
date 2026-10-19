@@ -1,8 +1,10 @@
 import { type Browser, chromium } from 'playwright';
 
+import { type AppAccess, appAccess, appDefaults, logout, saveAppDefaults } from './app.ts';
 import { type RunEnv, runPlan, writeManifest } from './capture.ts';
 import { baselineFor, diffResults, regionSheets, removeBaselines } from './diff.ts';
 import {
+  describeSource,
   describeTarget,
   type Finding,
   OVERLAYS,
@@ -10,11 +12,13 @@ import {
   type Plan,
   type Result,
   slug,
+  type Source,
   type Step,
 } from './model.ts';
 import { errorMessage, fail, print, progress } from './output.ts';
-import { formatOutline, openStory, readStory } from './page.ts';
+import { formatOutline, openSource, readDeclared } from './page.ts';
 import { DEFAULT_FLAGS, declaredPlan, defaultPlan, type Flags, isExplicit, modesFor, planFromFlags } from './plan.ts';
+import { affectedRoutes, appRoutes, relativeToApp, routeMatches } from './routes.ts';
 import { bundleRuntime } from './runtime.ts';
 import { composeSheet, closeSheets } from './sheet.ts';
 import {
@@ -42,7 +46,7 @@ import { readFileSync, rmSync, writeFileSync, existsSync, readdirSync } from 'no
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-const usage = `Render Storybook stories and verify them: screenshots, overlays, measurements, checks, diffs.
+const usage = `Render Storybook stories and app routes and verify them: screenshots, overlays, measurements, checks, diffs.
 
 Usage:
   pnpm -s shot verify [--ref r] [--story id …]   Shoot the stories your change affects, diff them against r
@@ -51,13 +55,26 @@ Usage:
   pnpm -s shot <story> [flags]                   Shoot one story: the flags' plan, or with no target, scene or
                                                  output flags the story's plan (one shot per FoundationSection,
                                                  plus parameters.shots). Prints one path per file.
-  pnpm -s shot outline <story>                   Section and preview titles, for --section.
+  pnpm -s shot </route> [flags]                  Shoot a route of the running dev app, logged in (--as, --org).
+                                                 Same flags as a story, except --mode side and brand globals;
+                                                 no --ref. Writes are blocked unless --allow-writes.
+  pnpm -s shot outline <story|/route>            Section titles (FoundationSection, PageSection, Preview ·,
+                                                 InsetCard ▸), for --section.
   pnpm -s shot list [filter]                     Stories by id, title, file, or component imported.
-  pnpm -s shot affected [--ref r]                Stories that import a file changed since r (default HEAD).
+  pnpm -s shot routes [filter]                   Route patterns and their modules.
+  pnpm -s shot affected [--ref r]                Stories, then route patterns, that import a file changed since r.
+  pnpm -s shot login --as <email> [--org <slug>] Log in and make the user (and organization) the routes' default.
+  pnpm -s shot logout [--as <email>]             Delete cached sessions.
   pnpm -s shot url | stop | clean [--all]        Storybook's URL; stop every Storybook shot started; delete
                                                  this session's files (--all: every session and baseline).
 
-<story> is a story id (components-callout--board) or a Storybook URL containing one.
+<story> is a story id (components-callout--board) or a Storybook URL containing one. </route> is a path with real
+ids (/settings/organization-profile, /app/persons/abc) or an app URL.
+
+Routes: the app runs on its own (ship up); shot finds it through ship, else BASE_URL in apps/dashboard/.env, or --url.
+It logs in through /login with DEV_FAST_LOGIN, reading the link from apps/dashboard/.dev/login-outbox/.
+  --as <email>                    the user; --org <slug|id> the organization (default: pnpm -s shot login's)
+  --allow-writes                  send POST/PUT/PATCH/DELETE; blocked ones are reported as console findings
 
 Variant (comma lists expand into every combination):
   --mode <light,dark|both|side>   default both; side = Storybook's side-by-side mode
@@ -141,6 +158,9 @@ const { values, positionals, tokens } = parseArgs({
     check: { type: 'boolean', default: false },
     ref: { type: 'string' },
     story: { type: 'string', multiple: true, default: [] },
+    as: { type: 'string' },
+    org: { type: 'string' },
+    'allow-writes': { type: 'boolean', default: false },
     sheet: { type: 'boolean', default: false },
     name: { type: 'string' },
     out: { type: 'string' },
@@ -256,9 +276,17 @@ const launchBrowser = async (): Promise<Browser> => {
   }
 };
 
+/** The running app, resolved once per run and only when a route needs it. */
+let appPromise: Promise<AppAccess> | undefined;
+const appFor = (browser: Browser, explicitUrl?: string): Promise<AppAccess> => {
+  appPromise ??= appAccess(browser, explicitUrl ?? values.url, values['allow-writes']);
+  return appPromise;
+};
+
 const runEnv = async (browser: Browser, url: string, logs: () => string, dir = outDir): Promise<RunEnv> => ({
   browser,
   url,
+  app: () => appFor(browser),
   runtime: await bundleRuntime(),
   logTail: logs,
   outDir: dir,
@@ -269,7 +297,7 @@ const runEnv = async (browser: Browser, url: string, logs: () => string, dir = o
 const relative = (file: string) => path.relative(process.cwd(), file) || file;
 
 const findingLine = (result: Result, finding: Finding) =>
-  `${finding.severity === 'error' ? 'error' : 'warn '} ${finding.check.padEnd(8)} ${result.capture.story} › ${
+  `${finding.severity === 'error' ? 'error' : 'warn '} ${finding.check.padEnd(8)} ${describeSource(result.capture.source)} › ${
     result.capture.name ?? describeTarget(result.capture.target)
   } (${result.capture.variant.mode}): ${finding.message}${finding.selector === '' ? '' : ` (${finding.selector})`}`;
 
@@ -297,22 +325,27 @@ const printFindings = (results: ReadonlyArray<Result>) => {
 const failing = (results: ReadonlyArray<Result>) =>
   results.some((result) => result.findings.some((finding) => finding.severity === 'error' && finding.known !== true));
 
-const storyPlan = async (env: RunEnv, story: string, flags: Flags): Promise<Plan> => {
-  if (isExplicit(flags)) return planFromFlags(story, flags);
-  const opened = await openStory(
+/** Loads the source once (light) to read what it declares: its sections and, for stories, `parameters.shots`. */
+const probe = async (env: RunEnv, source: Source, flags: Flags) => {
+  const opened = await openSource(
     env,
-    story,
-    { ...planFromFlags(story, flags)[0]!.variant, mode: 'light' },
+    source,
+    { ...planFromFlags(source, { ...flags, steps: [] })[0]!.variant, mode: 'light' },
     { settle: false, slowClock: false },
   );
   if (opened.kind !== 'ready') return fail(opened.message);
   try {
-    const declared = await readStory(opened.page);
-    const sections = declared.outline.filter((entry) => entry.kind === 'section').map((entry) => entry.title);
-    return [...defaultPlan(story, flags, sections), ...declaredPlan(story, flags, declared.shots)];
+    return await readDeclared(opened.page);
   } finally {
     await opened.close();
   }
+};
+
+const sourcePlan = async (env: RunEnv, source: Source, flags: Flags): Promise<Plan> => {
+  if (isExplicit(flags)) return planFromFlags(source, flags);
+  const declared = await probe(env, source, flags);
+  const sections = declared.outline.filter((entry) => entry.kind === 'section').map((entry) => entry.title);
+  return [...defaultPlan(source, flags, sections), ...declaredPlan(source, flags, declared.shots)];
 };
 
 const printResults = async (browser: Browser, results: ReadonlyArray<Result>) => {
@@ -322,7 +355,7 @@ const printResults = async (browser: Browser, results: ReadonlyArray<Result>) =>
       const sheet = await composeSheet(
         browser,
         stills.map((result) => ({ png: readFileSync(result.file!), label: slug(result.capture) })),
-        { title: [...new Set(stills.map((result) => result.capture.story))].join(', ') },
+        { title: [...new Set(stills.map((result) => describeSource(result.capture.source)))].join(', ') },
       );
       const file = path.join(outDir, `sheet-${stills[0]!.key}.png`);
       writeFileSync(file, sheet);
@@ -342,14 +375,40 @@ const printResults = async (browser: Browser, results: ReadonlyArray<Result>) =>
   printFindings(results);
 };
 
-const shoot = async (rawStory: string) => {
-  const url = await findStorybook(mainCheckout, values.url);
-  const stories = await fetchStories(url);
-  const story = requireStory(stories, storyIdFrom(rawStory)).id;
+/** A route when it is a path (`/app/persons`) or an app URL; a story id or Storybook URL otherwise. */
+const isRoute = (raw: string) =>
+  raw.startsWith('/') || (/^https?:\/\//.test(raw) && !/iframe\.html|[?&](path|id)=/.test(raw));
+
+/** The source `raw` names: a story checked against the index, or a route as `--as` in `--org` (or the host's defaults). */
+const resolveSource = async (browser: Browser, raw: string): Promise<{ source: Source; storybook: string }> => {
+  if (!isRoute(raw)) {
+    const storybook = await findStorybook(mainCheckout, values.url);
+    const story = requireStory(await fetchStories(storybook), storyIdFrom(raw)).id;
+    return { source: { kind: 'story', id: story }, storybook };
+  }
+  const url = raw.startsWith('/') ? undefined : new URL(raw);
+  const app = await appFor(browser, url?.origin);
+  const defaults = appDefaults(app.host);
+  const as =
+    values.as ??
+    defaults.as ??
+    fail(`Routes need a user: --as <email>, or set a default with pnpm -s shot login --as <email> [--org <slug>].`);
+  const org = values.org ?? defaults.org;
+  const routePath = url === undefined ? raw : `${url.pathname}${url.search}`;
+  if (routePath.includes('/:'))
+    fail(`${routePath} has a :param; fill it with a real id (pnpm -s shot routes lists patterns).`);
+  return { source: { kind: 'route', path: routePath, as, org }, storybook: '' };
+};
+
+const shoot = async (raw: string) => {
   const browser = await launchBrowser();
   try {
-    const env = { ...(await runEnv(browser, url, () => logTail(mainCheckout))), checks: values.check };
-    const plan = await storyPlan(env, story, flagsFrom());
+    const { source, storybook } = await resolveSource(browser, raw);
+    if (values.ref !== undefined && source.kind === 'route') {
+      fail('--ref diffs stories only; routes have no baseline yet (docs/shot-app-spec.md, phase 2).');
+    }
+    const env = { ...(await runEnv(browser, storybook, () => logTail(mainCheckout))), checks: values.check };
+    const plan = await sourcePlan(env, source, flagsFrom());
     let results = await runPlan(env, plan);
     if (values.ref !== undefined) {
       const baseline = baselineFor(values.ref, (dir) => runEnv(browser, '', () => '', dir));
@@ -365,35 +424,48 @@ const shoot = async (rawStory: string) => {
   }
 };
 
-const outline = async (rawStory: string) => {
-  const url = await findStorybook(mainCheckout, values.url);
-  const story = requireStory(await fetchStories(url), storyIdFrom(rawStory)).id;
+const outline = async (raw: string) => {
   const browser = await launchBrowser();
   try {
-    const env = await runEnv(browser, url, () => logTail(mainCheckout));
-    const opened = await openStory(
-      env,
-      story,
-      { ...planFromFlags(story, flagsFrom())[0]!.variant, mode: 'light' },
-      { settle: false, slowClock: false },
+    const { source, storybook } = await resolveSource(browser, raw);
+    const env = await runEnv(browser, storybook, () => logTail(mainCheckout));
+    const { outline } = await probe(env, source, flagsFrom());
+    print(
+      outline.length === 0
+        ? '(no FoundationSection, PageSection, Preview or titled InsetCard: shoot the page or --select)'
+        : formatOutline(outline),
     );
-    if (opened.kind !== 'ready') fail(opened.message);
-    else {
-      const { outline } = await readStory(opened.page);
-      print(
-        outline.length === 0
-          ? '(no FoundationSection or Preview titles: shoot the page or --select)'
-          : formatOutline(outline),
-      );
-      await opened.close();
-    }
   } finally {
     await browser.close();
   }
 };
 
-const affectedStories = async (url: string, ref: string): Promise<ReadonlyArray<Story>> =>
-  affected(await fetchStories(url), changedFiles(ref));
+/** Logs in fresh and makes the user and organization the defaults for this app. */
+const loginCommand = async () => {
+  const as = values.as ?? fail('Usage: pnpm -s shot login --as <email> [--org <slug>]');
+  const browser = await launchBrowser();
+  try {
+    const app = await appFor(browser);
+    await app.session(as, values.org, true);
+    saveAppDefaults(app.host, { as, org: values.org });
+    print(
+      `Logged in as ${as}${values.org === undefined ? '' : ` in ${values.org}`} at ${app.url}; default for routes on ${app.host}.`,
+    );
+  } finally {
+    await browser.close();
+  }
+};
+
+const logoutCommand = async () => {
+  const browser = await launchBrowser();
+  try {
+    const app = await appFor(browser);
+    const removed = logout(app.host, values.as);
+    print(`Removed ${removed} ${removed === 1 ? 'session' : 'sessions'} on ${app.host}.`);
+  } finally {
+    await browser.close();
+  }
+};
 
 const verify = async () => {
   const ref = values.ref ?? 'HEAD';
@@ -412,7 +484,9 @@ const verify = async () => {
   try {
     const env = { ...(await runEnv(browser, url, () => logTail(mainCheckout))), checks: true };
     const flags = flagsFrom();
-    const plan = (await Promise.all(chosen.map((story) => storyPlan(env, story.id, flags)))).flat();
+    const plan = (
+      await Promise.all(chosen.map((story) => sourcePlan(env, { kind: 'story', id: story.id }, flags)))
+    ).flat();
     const baseline = baselineFor(ref, (dir) => runEnv(browser, '', () => '', dir));
     const current = await runPlan(env, plan);
     const results = diffResults(current, await baseline.results(plan, true));
@@ -454,7 +528,7 @@ const clean = () => {
     return;
   }
   removeBaselines();
-  const kept = new Set(['storybook.json', 'storybook.log']);
+  const kept = new Set(['storybook.json', 'storybook.log', 'config.json']);
   for (const entry of existsSync(shotsDir) ? readdirSync(shotsDir) : []) {
     if (!kept.has(entry)) rmSync(path.join(shotsDir, entry), { recursive: true, force: true });
   }
@@ -484,9 +558,21 @@ try {
       print(`${story.id}  ${story.title} › ${story.name}  (uses ${filter})`);
   } else if (command === 'affected') {
     const url = await findStorybook(mainCheckout, values.url);
-    for (const story of await affectedStories(url, values.ref ?? 'HEAD')) print(story.id);
+    const changed = changedFiles(values.ref ?? 'HEAD');
+    for (const story of affected(await fetchStories(url), changed)) print(story.id);
+    for (const route of affectedRoutes(appRoutes(), changed)) print(route.pattern);
+  } else if (command === 'routes') {
+    const filter = rest[0];
+    const found = appRoutes().filter((route) => filter === undefined || routeMatches(route, filter));
+    if (found.length === 0) progress(`No route matches "${filter}".`);
+    const width = Math.max(0, ...found.map((route) => route.pattern.length));
+    for (const route of found) print(`${route.pattern.padEnd(width)}  ${relativeToApp(route.file)}`);
+  } else if (command === 'login') {
+    await loginCommand();
+  } else if (command === 'logout') {
+    await logoutCommand();
   } else if (command === 'outline') {
-    await outline(rest[0] ?? fail('Usage: pnpm -s shot outline <story>'));
+    await outline(rest[0] ?? fail('Usage: pnpm -s shot outline <story|/route>'));
   } else if (command === 'verify') {
     await verify();
   } else {

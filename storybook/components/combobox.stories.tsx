@@ -83,6 +83,13 @@ export const Board: Story = {
               custom content through <Code>renderItem</Code>.
             </p>
           </SpecimenRow>
+          <SpecimenRow name='List or own text' meta={<Code>OptionSelect · SearchSelect allowCustom</Code>}>
+            <p className='text-body text-pretty text-muted-foreground'>
+              Short list, a custom value rare: <Code>OptionSelect allowCustom</Code>, an „Andere" row with a text field.
+              Longer list, or typing is the main path: <Code>SearchSelect allowCustom</Code>. Both hand over a plain
+              string.
+            </p>
+          </SpecimenRow>
           <SpecimenRow name='Own composition' meta={<Code>Combobox · ComboboxList · ComboboxChips</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
               Grouped lists, a select-like trigger with search in the popup, a field addon, or a list inline in a dialog

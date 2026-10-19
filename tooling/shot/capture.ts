@@ -4,6 +4,7 @@ import { PNG } from 'pngjs';
 import { collapse, consoleFindings, renderFinding, runCaptureChecks } from './checks.ts';
 import {
   type Capture,
+  describeSource,
   describeTarget,
   extension,
   type Rect,
@@ -15,7 +16,7 @@ import {
   slug,
 } from './model.ts';
 import { errorMessage, fail, progress, ShotError } from './output.ts';
-import { type Opened, openStory, type PageEnv, resolveTarget, runStep, settle } from './page.ts';
+import { fitContent, type Opened, openSource, type PageEnv, resolveTarget, runStep, settle } from './page.ts';
 import { crop, padRect } from './png.ts';
 import { composeSheet, loupe } from './sheet.ts';
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
@@ -32,6 +33,9 @@ export interface RunEnv extends PageEnv {
 }
 
 const concurrency = 4;
+
+/** Bump when a change here alters pixels: cached baseline captures from an older version are rendered again. */
+export const RENDER_VERSION = 3;
 const tallWarning = 2000;
 
 const pngSize = (png: Buffer) => ({ width: png.readUInt32BE(16), height: png.readUInt32BE(20) });
@@ -72,11 +76,20 @@ const still = async (env: RunEnv, page: Page, capture: Capture): Promise<Produce
             root.evaluate((element, kinds) => window.__shot.overlay(kinds, element), overlays),
           ),
         );
-  let png = await page.screenshot(
-    resolved.clip === undefined
+  // Infinite animations (spinners, shimmer) cancel to their start: the same capture gives the same pixels. CSS and
+  // WAAPI through Playwright; SVG SMIL (`<animate>`, the `Loader`) paused at 0 here.
+  await page.evaluate(() => {
+    for (const svg of document.querySelectorAll('svg')) {
+      svg.pauseAnimations();
+      svg.setCurrentTime(0);
+    }
+  });
+  let png = await page.screenshot({
+    animations: 'disabled',
+    ...(resolved.clip === undefined
       ? { fullPage: capture.target.kind === 'page' }
-      : { fullPage: true, clip: resolved.clip },
-  );
+      : { fullPage: true, clip: resolved.clip }),
+  });
   if (overlays.length > 0) await page.evaluate(() => window.__shot.clearOverlay());
   if (capture.output.loupe !== undefined) png = await loupe(env.browser, png, capture.output.loupe);
   const data = measurements === undefined ? undefined : measurements.length === 1 ? measurements[0] : measurements;
@@ -178,13 +191,21 @@ const frames = async (env: RunEnv, opened: Extract<Opened, { kind: 'ready' }>, c
     label: `${index + 1} · ${ms}ms`,
   }));
   const sheet = await composeSheet(env.browser, cells, {
-    title: `${capture.story} ${slug(capture)} (every ${everyMs}ms, slow ${slow})`,
+    title: `${describeSource(capture.source)} ${slug(capture)} (every ${everyMs}ms, slow ${slow})`,
   });
   const measurements = { area, frames: shots.map(({ ms }, index) => ({ index: index + 1, ms })) };
   return { file: writeOutput(env, capture, sheet, measurements), measurements, findings: [] };
 };
 
-const produce = (env: RunEnv, opened: Extract<Opened, { kind: 'ready' }>, capture: Capture): Promise<Produced> => {
+const produce = async (
+  env: RunEnv,
+  opened: Extract<Opened, { kind: 'ready' }>,
+  capture: Capture,
+): Promise<Produced> => {
+  // Routes scroll inside the app shell: grow the viewport to the content, except for a viewport shot or frames.
+  if (capture.source.kind === 'route') {
+    await fitContent(opened.page, capture.target.kind !== 'viewport' && capture.output.kind !== 'frames');
+  }
   switch (capture.output.kind) {
     case 'still':
       return still(env, opened.page, capture);
@@ -209,7 +230,7 @@ const failed = (capture: Capture, findings: ReadonlyArray<Finding>): Result => (
 const runGroup = async (env: RunEnv, captures: ReadonlyArray<Capture>): Promise<ReadonlyArray<Result>> => {
   const first = captures[0]!;
   const isFrames = first.output.kind === 'frames';
-  const opened = await openStory(env, first.story, first.variant, {
+  const opened = await openSource(env, first.source, first.variant, {
     settle: !isFrames || first.scene.length > 1,
     slowClock: isFrames,
   });
@@ -268,7 +289,8 @@ export const runPlan = async (env: RunEnv, plan: Plan): Promise<ReadonlyArray<Re
     for (let group = pending.shift(); group !== undefined; group = pending.shift()) {
       for (const result of await runGroup(env, group)) byKey.set(result.key, result);
       done++;
-      if (groups.size > 1) progress(`[${done}/${groups.size}] ${group[0]!.story} ${group[0]!.variant.mode}`);
+      if (groups.size > 1)
+        progress(`[${done}/${groups.size}] ${describeSource(group[0]!.source)} ${group[0]!.variant.mode}`);
     }
   };
   await Promise.all(Array.from({ length: Math.min(concurrency, pending.length) }, worker));

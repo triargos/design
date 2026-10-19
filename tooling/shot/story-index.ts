@@ -170,7 +170,7 @@ const moduleInfo = (file: string): ModuleInfo => {
 };
 
 /** Every local file `file` imports, transitively, itself included. */
-const closure = (file: string): ReadonlySet<string> => {
+export const closure = (file: string): ReadonlySet<string> => {
   const seen = new Set<string>();
   const pending = [file];
   while (pending.length > 0) {

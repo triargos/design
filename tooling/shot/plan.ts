@@ -6,6 +6,8 @@ import {
   OVERLAYS,
   type Overlay,
   type Plan,
+  type Source,
+  sourceId,
   sectionTarget,
   type Step,
   type Target,
@@ -124,7 +126,7 @@ const ordered = (steps: ReadonlyArray<Step>): ReadonlyArray<Step> => [
 ];
 
 const cross = (
-  story: string,
+  source: Source,
   name: string | undefined,
   variantList: ReadonlyArray<Variant>,
   scene: ReadonlyArray<Step>,
@@ -132,16 +134,29 @@ const cross = (
   output: Output,
 ): Plan =>
   variantList.flatMap((variant) =>
-    targets.map((target): Capture => ({ story, name, variant, scene: ordered(scene), target, output })),
+    targets.map((target): Capture => ({ source, name, variant, scene: ordered(scene), target, output })),
   );
 
-export const planFromFlags = (story: string, flags: Flags): Plan =>
-  cross(story, flags.name, variants(flags), flags.steps, targetsFrom(flags), outputFrom(flags));
+/** Routes render the app as it is: no side-by-side mode, and branding is the organization's, not a global. */
+const checkRouteFlags = (source: Source, flags: Flags) => {
+  if (source.kind !== 'route') return;
+  if (flags.modes.includes('side')) fail('--mode side is Storybook only; routes take light and dark.');
+  if (flags.globals.some((globals) => Object.keys(globals).length > 0)) {
+    fail(
+      '--surface, --primary, --base, --destructive and --global are Storybook globals; a route uses its organization.',
+    );
+  }
+};
+
+export const planFromFlags = (source: Source, flags: Flags): Plan => {
+  checkRouteFlags(source, flags);
+  return cross(source, flags.name, variants(flags), flags.steps, targetsFrom(flags), outputFrom(flags));
+};
 
 /** One still per `FoundationSection`, or the page when the story has none. */
-export const defaultPlan = (story: string, flags: Flags, sections: ReadonlyArray<string>): Plan =>
+export const defaultPlan = (source: Source, flags: Flags, sections: ReadonlyArray<string>): Plan =>
   cross(
-    story,
+    source,
     undefined,
     variants(flags),
     [],
@@ -213,7 +228,8 @@ const outputFromSpec = (value: unknown, where: string): Output => {
 };
 
 /** Captures from `parameters.shots`; flags supply what a spec leaves out (modes, device, globals). */
-export const declaredPlan = (story: string, flags: Flags, shots: unknown): Plan => {
+export const declaredPlan = (source: Source, flags: Flags, shots: unknown): Plan => {
+  const story = sourceId(source);
   if (shots === undefined) return [];
   if (!Array.isArray(shots)) return fail(`${story}: parameters.shots must be an array of ShotSpec.`);
   return shots.flatMap((spec: unknown, index) => {
@@ -235,7 +251,7 @@ export const declaredPlan = (story: string, flags: Flags, shots: unknown): Plan 
       ? spec['scene'].map((step: unknown, stepIndex) => stepFromSpec(step, `${where}.scene[${stepIndex}]`))
       : [];
     return cross(
-      story,
+      source,
       string(spec['name'], `${where}.name`),
       variants(specFlags),
       scene,

@@ -49,8 +49,21 @@ export type Output =
   | { readonly kind: 'measure'; readonly styles: ReadonlyArray<string>; readonly all: boolean }
   | { readonly kind: 'aria' };
 
+/** Where a capture renders: a Storybook story, or a route of the running app as a user in an organization. */
+export type Source =
+  | { readonly kind: 'story'; readonly id: StoryId }
+  | {
+      readonly kind: 'route';
+      /** Concrete path with query, no `:params`: `/app/persons/abc?tab=contacts`. */
+      readonly path: string;
+      /** The user's email. */
+      readonly as: string;
+      /** Organization slug or id; undefined = the server's default for the user. */
+      readonly org: string | undefined;
+    };
+
 export interface Capture {
-  readonly story: StoryId;
+  readonly source: Source;
   /** A label from `--name` or `parameters.shots`; replaces the generated slug. */
   readonly name: string | undefined;
   readonly variant: Variant;
@@ -164,11 +177,23 @@ const outputSlug = (output: Output): ReadonlyArray<string> => {
   }
 };
 
-/** Readable part of the key: name or target, steps, device, non-default globals, output, mode. */
+/** The first part of a key: the story id, or `route-<path>`. */
+export const sourceId = (source: Source): string =>
+  source.kind === 'story' ? source.id : ['route', slugify(source.path)].filter((part) => part !== '').join('-');
+
+/** For people: the story id, or `/path as user in org`. */
+export const describeSource = (source: Source): string =>
+  source.kind === 'story'
+    ? source.id
+    : `${source.path} as ${source.as}${source.org === undefined ? '' : ` in ${source.org}`}`;
+
+/** Readable part of the key: name or target, steps, user and organization, device, non-default globals, output, mode. */
 export const slug = (capture: Capture): string =>
   [
     capture.name === undefined ? targetSlug(capture.target) : slugify(capture.name),
     ...(capture.name === undefined ? capture.scene.map((step) => step.kind) : []),
+    capture.source.kind === 'route' ? slugify(capture.source.as.split('@')[0]!) : undefined,
+    capture.source.kind === 'route' && capture.source.org !== undefined ? slugify(capture.source.org) : undefined,
     capture.variant.device === undefined ? undefined : slugify(capture.variant.device),
     ...Object.values(capture.variant.globals).map((value) => slugify(value)),
     ...outputSlug(capture.output),
@@ -177,8 +202,15 @@ export const slug = (capture: Capture): string =>
     .filter((part) => part !== undefined && part !== '')
     .join('-');
 
-/** `<story>--<slug>-<hash6>`: the same capture always gets the same key, different captures never share one. */
-export const key = (capture: Capture): string => `${capture.story}--${slug(capture)}-${hash(canonical(capture))}`;
+/** What the hash covers. A story capture keeps the shape it had before routes, so story keys stay stable. */
+const identity = (capture: Capture): unknown => {
+  const { source, ...rest } = capture;
+  return source.kind === 'story' ? { ...rest, story: source.id } : capture;
+};
+
+/** `<source>--<slug>-<hash6>`: the same capture always gets the same key, different captures never share one. */
+export const key = (capture: Capture): string =>
+  `${sourceId(capture.source)}--${slug(capture)}-${hash(canonical(identity(capture)))}`;
 
 export const extension = (output: Output): string => {
   switch (output.kind) {
@@ -192,10 +224,10 @@ export const extension = (output: Output): string => {
   }
 };
 
-/** Captures that share a page load: same story, variant and scene. Frames need their own load: they start unsettled. */
+/** Captures that share a page load: same source, variant and scene. Frames need their own load: they start unsettled. */
 export const groupKey = (capture: Capture): string =>
   canonical({
-    story: capture.story,
+    source: capture.source,
     variant: capture.variant,
     scene: capture.scene,
     frames: capture.output.kind === 'frames' ? capture : undefined,

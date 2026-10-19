@@ -80,7 +80,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Danger Zone'
-      description='The last card of a settings page. InsetCard tone="destructive" around an ItemList: each row names the action, says what it costs, and offers one button. Reversible actions are raised; destructive ones solid, and the confirmation repeats the solid button.'>
+      description='The last card of a settings page. InsetCard tone="destructive" around an ItemList: each row names the action, says what it costs, and offers one button. Lifecycle actions that can be undone (withdraw, archive) are raised; a destructive row is solid and opens an AlertDialog that repeats the solid button.'>
       <ExampleSection
         title='Default'
         description={
