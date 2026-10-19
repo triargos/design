@@ -1,15 +1,8 @@
-import type {
-  OrganizationBrandingBaseColor,
-  OrganizationBrandingDestructiveColor,
-  OrganizationBrandingPrimaryColor,
-} from '@elternportal/domain/organization-branding';
+import type { BrandBaseColor, BrandDestructiveColor, BrandPrimaryColor } from '~/lib/theme/branding';
 
 import type { Color } from './color';
 
-export type BrandColor =
-  | OrganizationBrandingBaseColor
-  | OrganizationBrandingPrimaryColor
-  | OrganizationBrandingDestructiveColor;
+export type BrandColor = BrandBaseColor | BrandPrimaryColor | BrandDestructiveColor;
 
 /**
  * The LCH (D50) anchor of each stored brand color name, converted from Tailwind 4.3's `oklch()` noted per entry.

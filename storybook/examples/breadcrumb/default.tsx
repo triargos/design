@@ -1,5 +1,3 @@
-import { Link } from 'react-router';
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,11 +12,11 @@ export function BreadcrumbDefault() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link to='/management' />}>Verwaltung</BreadcrumbLink>
+          <BreadcrumbLink href='/management'>Verwaltung</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link to='/management/applications' />}>Anmeldungen</BreadcrumbLink>
+          <BreadcrumbLink href='/management/applications'>Anmeldungen</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>

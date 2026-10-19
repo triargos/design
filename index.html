@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Triargos Design</title>
+    <meta name="description" content="Components, foundations and patterns for Triargos products." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/resources/fonts/inter/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      // The theme before the first paint, so a dark preference never flashes light. `site/theme.ts` keeps it in sync.
+      try {
+        var stored = localStorage.getItem('theme');
+        var dark = stored === 'dark' || (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+      } catch (error) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/site/main.tsx"></script>
+  </body>
+</html>

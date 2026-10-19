@@ -1,9 +1,9 @@
-import { NavLink, type NavLinkProps } from 'react-router';
-
+import { mergeProps } from '@base-ui/react/merge-props';
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
+import { useRender } from '@base-ui/react/use-render';
 import { cva } from 'class-variance-authority';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { cn } from '~/lib/utils';
 
@@ -143,14 +143,14 @@ function NavTabsList({
   children,
   ...props
 }: Extract<TabsListProps, { as: 'nav' }>) {
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   const context = React.useMemo(() => ({ as: 'nav' as const, variant, radio: null }), [variant]);
   return (
     <TabsListContext.Provider value={context}>
       <nav
         data-slot='tabs-list'
         data-variant={variant}
-        aria-label={t(($) => $.pageTabs.label)}
+        aria-label={strings.pageTabs}
         className={cn(tabsListVariants({ variant }), className)}
         {...props}>
         <SlidingIndicator activeSelector='[aria-current=page]' variant={variant} />
@@ -188,25 +188,43 @@ function RadioTabsList({
   );
 }
 
-type TabsLinkTriggerProps = Omit<NavLinkProps, 'className' | 'style' | 'children'> & {
-  className?: string;
-  children?: React.ReactNode;
+/**
+ * A link tab: an `<a>`, or the router's link through `render` (`render={<NavLink to='…' end />}`). The sliding
+ * indicator follows `aria-current='page'`: set `current`, or let a router link that sets it (`NavLink`) do it.
+ */
+type TabsLinkTriggerProps = useRender.ComponentProps<'a'> & {
+  value?: never;
+  current?: boolean;
 };
 
 type TabsValueTriggerProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'value'> & {
   value: string;
-  to?: never;
+  render?: never;
+  current?: never;
 };
 
-/** A tab. Takes `to` inside `TabsList as='nav'`, `value` otherwise. */
+function TabsLinkTrigger({ className, render, current, ...props }: TabsLinkTriggerProps) {
+  const { variant } = React.useContext(TabsListContext);
+  return useRender({
+    defaultTagName: 'a',
+    render,
+    props: mergeProps<'a'>(
+      {
+        'data-slot': 'tabs-trigger',
+        'aria-current': current ? 'page' : undefined,
+        className: cn(tabsTriggerVariants({ variant }), className),
+      } as React.ComponentProps<'a'>,
+      props,
+    ),
+  });
+}
+
+/** A tab. A link (`href` or `render`) inside `TabsList as='nav'`, `value` otherwise. */
 function TabsTrigger(props: TabsLinkTriggerProps | TabsValueTriggerProps) {
   const { as, variant, radio } = React.useContext(TabsListContext);
-  if (props.to !== undefined) {
-    const { className, ...rest } = props;
-    return <NavLink data-slot='tabs-trigger' className={cn(tabsTriggerVariants({ variant }), className)} {...rest} />;
-  }
+  if (props.value === undefined) return <TabsLinkTrigger {...props} />;
   if (as === 'radio' && radio !== null) return <RadioTabsTrigger {...props} variant={variant} radio={radio} />;
-  const { className, to: _to, ...rest } = props;
+  const { className, render: _render, current: _current, ...rest } = props;
   return (
     <TabsPrimitive.Tab data-slot='tabs-trigger' className={cn(tabsTriggerVariants({ variant }), className)} {...rest} />
   );
@@ -218,7 +236,8 @@ function RadioTabsTrigger({
   onClick,
   variant,
   radio,
-  to: _to,
+  render: _render,
+  current: _current,
   ...props
 }: TabsValueTriggerProps & { variant: TabsVariant; radio: RadioState }) {
   const checked = radio.value === value;

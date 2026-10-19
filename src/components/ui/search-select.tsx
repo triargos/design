@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import {
   Combobox,
@@ -90,7 +90,7 @@ export function SearchSelect<Item, Key extends SearchSelectKey>(props: SearchSel
     onBlur,
     className,
   } = props;
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   const [open, setOpen] = React.useState(false);
   const virtualizerRef = React.useRef<VirtualizerInstance | null>(null);
   const { onItemHighlighted } = useVirtualizedCombobox({ open, virtualizerRef });
@@ -99,7 +99,7 @@ export function SearchSelect<Item, Key extends SearchSelectKey>(props: SearchSel
   const itemsByKey = React.useMemo(() => new Map(items.map((item) => [itemKey(item), item])), [items, itemKey]);
   const isItemEqualToValue = (a: Item, b: Item) => itemKey(a) === itemKey(b);
   const content = (item: Item) => renderItem?.(item) ?? <DefaultItem label={itemLabel(item)} item={item} />;
-  const empty = pending ? t(($) => $.select.pending) : (emptyText ?? t(($) => $.select.noItems));
+  const empty = pending ? strings.selectPending : (emptyText ?? strings.selectEmpty);
 
   const popup = (
     <ComboboxContent anchor={props.multiple ? anchorRef : undefined}>

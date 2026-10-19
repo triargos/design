@@ -22,12 +22,12 @@ A custom theme is exactly `{ base, accent, contrast, sidebarInput? }`, shared as
 
 The presets. `brandingThemeInput` reuses the default presets' base lightness and contrast.
 
-| Preset              | base                         | accent                         | contrast |
-| ------------------- | ---------------------------- | ------------------------------ | -------- |
-| `darkDefault`       | `[5.52, 0.4, 272]`           | `[47.92, 59.30, 288.42]`       | 27       |
-| `darkHighContrast`  | `[8, 0.75, 272]`             | same                           | 90       |
-| `lightDefault`      | `[97.94, 0.5, 282]`          | `[53, 52.26, 286.91]`          | 30       |
-| `lightHighContrast` | `[98.7, 0.5, 282.86]`        | same                           | 90       |
+| Preset              | base                  | accent                   | contrast |
+| ------------------- | --------------------- | ------------------------ | -------- |
+| `darkDefault`       | `[5.52, 0.4, 272]`    | `[47.92, 59.30, 288.42]` | 27       |
+| `darkHighContrast`  | `[8, 0.75, 272]`      | same                     | 90       |
+| `lightDefault`      | `[97.94, 0.5, 282]`   | `[53, 52.26, 286.91]`    | 30       |
+| `lightHighContrast` | `[98.7, 0.5, 282.86]` | same                     | 90       |
 
 ## Color pipeline
 
@@ -60,32 +60,32 @@ The sign flip means one delta works in both modes: positive deltas move away fro
 
 Deltas are written as `light | dark`.
 
-| Token                                    | Derivation                                                                     |
-| ---------------------------------------- | ------------------------------------------------------------------------------ |
-| `bgBase`                                 | `base`                                                                         |
-| `bgBaseHover`                            | `surface(base, {l:3.5} \| {l:4.25,c:.5})`                                      |
-| `bgSub` / `Hover`                        | `surface(base, {l:3.5} \| {l:−3.25,c:0})`, then `+{l:5} \| {l:2.5,c:3}`        |
-| `bgShade` / `Hover`                      | `surface(base, {l:5.5} \| {l:2,c:.5})`, then `+{l:1.5} \| {l:1,c:.5}`          |
-| `bgFocus`                                | `surface(base, {l:5} \| {l:9,c:.5})`                                           |
-| `bgSelected` / `Hover`                   | `mix(base, accent, (1 + base.C/30)·(.18 \| .05))`, then `surface +{l:2} \| {l:2.5,c:2}` |
-| `bgSelectedBorder` / `Hover`             | `border(bgSelected, {l:3.5\|4.5, c:1})`                                        |
-| `bgModalOverlay`                         | black @ `clamp((.25 \| .4)·alphaBoost, 0, .8)`                                 |
-| `bgBorder` / `Hover` / `Thin`            | `border(base, l: 3.5/4.5/3 \| 4/5/6)`                                          |
-| `bgBorderFaint` / `Hover` / `Thin`       | `border(base, l: 1/2/3 \| 2/2.75/3.5)`                                         |
-| `bgBorderSolid` / `Hover` / `Thin`       | `border(base, l: 5/9/5 \| 5/7/10)`                                             |
-| `bgBorderStrong` / `Hover` / `Thin`      | `border(base, l: 17/21/17 \| 20/24/26)`                                        |
-| `bgBorder*Alpha*`                        | each border as black (light) or white (dark) at the alpha that reproduces it over `base` |
-| `labelTitle`                             | `text(base, {l: −10·textLScale \| 10}, {c:0})`                                 |
-| `labelBase` / `Muted` / `Faint`          | `text(base, {l: (−20 \| −10)/−40/−66 · textLScale, c:1})`                      |
-| `labelLink`                              | `text(base, {l: −45·textLScale}, {h: accent.H, c: 70})`                        |
-| `label{Title,Base,Muted}Hover`           | step `(30 \| 15)·(1 + max(contrast−30,0)/70)·|L − base.L|/100` away from base; flips near L=100 |
-| `controlPrimary` / `Hover` / `Label`     | `accent`; `surface +{l:6\|5, c:2}`; `text(accent, {}, {c: min(5, accent.C)})` |
-| `controlSecondary` / `Hover` / `Selected`| `control(base, {l:−6} \| {l:12,c:.75})`; `+{l:12,c:1}`; `+{l:15,c:1} \| {l:22,c:1}` |
-| `controlTertiary` / `Hover` / `Selected` | `control(base, l: −6/9/13 \| 12/22/29)`                                        |
-| `control*Label`                          | `labelBase`                                                                    |
-| `focusColor`                             | parent's focus, else `accent`; non-vivid → `adjustTo {l:70,c:90} \| {l:50,c:120}`, hue → purple when C < 20 |
-| `sidebarLinkBg` / `Active`               | `surface(base, {l:2.8\|4.9} \| {l:6.5\|12.5, c:1})`                           |
-| `chromeTab*`, `scrollbar*`, `scrollBackground`, `shadowColor`, `githubLogo` | see `theme-generator.ts` |
+| Token                                                                       | Derivation                                                                                                  |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `bgBase`                                                                    | `base`                                                                                                      |
+| `bgBaseHover`                                                               | `surface(base, {l:3.5} \| {l:4.25,c:.5})`                                                                   |
+| `bgSub` / `Hover`                                                           | `surface(base, {l:3.5} \| {l:−3.25,c:0})`, then `+{l:5} \| {l:2.5,c:3}`                                     |
+| `bgShade` / `Hover`                                                         | `surface(base, {l:5.5} \| {l:2,c:.5})`, then `+{l:1.5} \| {l:1,c:.5}`                                       |
+| `bgFocus`                                                                   | `surface(base, {l:5} \| {l:9,c:.5})`                                                                        |
+| `bgSelected` / `Hover`                                                      | `mix(base, accent, (1 + base.C/30)·(.18 \| .05))`, then `surface +{l:2} \| {l:2.5,c:2}`                     |
+| `bgSelectedBorder` / `Hover`                                                | `border(bgSelected, {l:3.5\|4.5, c:1})`                                                                     |
+| `bgModalOverlay`                                                            | black @ `clamp((.25 \| .4)·alphaBoost, 0, .8)`                                                              |
+| `bgBorder` / `Hover` / `Thin`                                               | `border(base, l: 3.5/4.5/3 \| 4/5/6)`                                                                       |
+| `bgBorderFaint` / `Hover` / `Thin`                                          | `border(base, l: 1/2/3 \| 2/2.75/3.5)`                                                                      |
+| `bgBorderSolid` / `Hover` / `Thin`                                          | `border(base, l: 5/9/5 \| 5/7/10)`                                                                          |
+| `bgBorderStrong` / `Hover` / `Thin`                                         | `border(base, l: 17/21/17 \| 20/24/26)`                                                                     |
+| `bgBorder*Alpha*`                                                           | each border as black (light) or white (dark) at the alpha that reproduces it over `base`                    |
+| `labelTitle`                                                                | `text(base, {l: −10·textLScale \| 10}, {c:0})`                                                              |
+| `labelBase` / `Muted` / `Faint`                                             | `text(base, {l: (−20 \| −10)/−40/−66 · textLScale, c:1})`                                                   |
+| `labelLink`                                                                 | `text(base, {l: −45·textLScale}, {h: accent.H, c: 70})`                                                     |
+| `label{Title,Base,Muted}Hover`                                              | step `(30 \| 15)·(1 + max(contrast−30,0)/70)·                                                               | L − base.L | /100` away from base; flips near L=100 |
+| `controlPrimary` / `Hover` / `Label`                                        | `accent`; `surface +{l:6\|5, c:2}`; `text(accent, {}, {c: min(5, accent.C)})`                               |
+| `controlSecondary` / `Hover` / `Selected`                                   | `control(base, {l:−6} \| {l:12,c:.75})`; `+{l:12,c:1}`; `+{l:15,c:1} \| {l:22,c:1}`                         |
+| `controlTertiary` / `Hover` / `Selected`                                    | `control(base, l: −6/9/13 \| 12/22/29)`                                                                     |
+| `control*Label`                                                             | `labelBase`                                                                                                 |
+| `focusColor`                                                                | parent's focus, else `accent`; non-vivid → `adjustTo {l:70,c:90} \| {l:50,c:120}`, hue → purple when C < 20 |
+| `sidebarLinkBg` / `Active`                                                  | `surface(base, {l:2.8\|4.9} \| {l:6.5\|12.5, c:1})`                                                         |
+| `chromeTab*`, `scrollbar*`, `scrollBackground`, `shadowColor`, `githubLogo` | see `theme-generator.ts`                                                                                    |
 
 `*Thin` borders only get their own step on 2x displays (`isHighDensityDisplay`); otherwise they equal the regular border. On the server the flag is always false.
 
@@ -108,14 +108,14 @@ The anchors are fixed and ignore the accent: purple `[48,59.31,288.43]`, blue `[
 
 Each nested surface reruns `generateTheme` with a new base, so all its tokens are relative to that surface. Results are memoized per input hash in an unbounded cache.
 
-| Method           | Base                                                    | Short-circuit                                            |
-| ---------------- | ------------------------------------------------------- | -------------------------------------------------------- |
-| `elevatedTheme`  | `surface(base, {l: −8 \| 4.125, c: light && !pureLight ? 0 : .5})` | `elevation == −1` → parent                    |
-| `subTheme`       | `bgSub` (returns a shallow copy)                        | `!pureLight && elevation == 1` → parent                  |
-| `menuTheme`      | `surface(base, {l: −8 \| 8, c: same as elevated})`      | nested (not base/elevated) → parent's menu               |
-| `selectedTheme`  | `bgSelected`                                            |                                                          |
-| `focusTheme`     | `bgFocus`                                               |                                                          |
-| `sidebarTheme`   | `sidebarInput` theme, else `subTheme()`                 | then overrides `controlSecondary`, `Hover`, `controlTertiaryHover` |
+| Method          | Base                                                               | Short-circuit                                                      |
+| --------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `elevatedTheme` | `surface(base, {l: −8 \| 4.125, c: light && !pureLight ? 0 : .5})` | `elevation == −1` → parent                                         |
+| `subTheme`      | `bgSub` (returns a shallow copy)                                   | `!pureLight && elevation == 1` → parent                            |
+| `menuTheme`     | `surface(base, {l: −8 \| 8, c: same as elevated})`                 | nested (not base/elevated) → parent's menu                         |
+| `selectedTheme` | `bgSelected`                                                       |                                                                    |
+| `focusTheme`    | `bgFocus`                                                          |                                                                    |
+| `sidebarTheme`  | `sidebarInput` theme, else `subTheme()`                            | then overrides `controlSecondary`, `Hover`, `controlTertiaryHover` |
 
 ## Known quirks
 

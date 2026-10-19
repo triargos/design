@@ -72,7 +72,7 @@ const SamplePage = () => (
     <PageContent
       header={
         <PageHeaderSection>
-          <PageHeaderBackLink to='/'>Anmeldungen</PageHeaderBackLink>
+          <PageHeaderBackLink href='/'>Anmeldungen</PageHeaderBackLink>
           <PageHeaderGroup>
             <PageHeader>Anmeldung zur Nachmittagsbetreuung</PageHeader>
             <PageDescription>Prüfen Sie die Angaben, bevor Sie die Anmeldung absenden.</PageDescription>

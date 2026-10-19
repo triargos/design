@@ -10,7 +10,7 @@ import { formatToken, TOKEN_GROUPS, type TokenGroup, tokenValue } from '../story
 addons.setConfig({
   theme: create({
     base: 'light',
-    brandTitle: 'Elternportal · Design system',
+    brandTitle: 'Triargos · Design system',
     fontBase: '"Inter Variable", Inter, ui-sans-serif, system-ui, sans-serif',
     fontCode: 'ui-monospace, SFMono-Regular, Menlo, monospace',
     colorPrimary: '#155cfb',
@@ -92,8 +92,8 @@ function TokensPanel() {
   );
 }
 
-addons.register('elternportal/tokens', () => {
-  addons.add('elternportal/tokens/panel', {
+addons.register('triargos/tokens', () => {
+  addons.add('triargos/tokens/panel', {
     type: types.PANEL,
     title: 'Tokens',
     render: ({ active }) => h(AddonPanel, { active: active ?? false, children: h(TokensPanel) }),

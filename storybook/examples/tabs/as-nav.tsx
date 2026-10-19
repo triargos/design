@@ -6,15 +6,15 @@ import { TabsList, TabsTrigger } from '~/components/ui/tabs';
 export function TabsAsNav() {
   return (
     <TabsList as='nav'>
-      <TabsTrigger to='/' end>
+      <TabsTrigger href='/' current>
         <InboxIcon />
         Übersicht
       </TabsTrigger>
-      <TabsTrigger to='/members'>
+      <TabsTrigger href='/members'>
         <UsersIcon />
         Mitglieder
       </TabsTrigger>
-      <TabsTrigger to='/settings'>
+      <TabsTrigger href='/settings'>
         <SettingsIcon />
         Einstellungen
       </TabsTrigger>

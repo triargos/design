@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
-
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useRender } from '@base-ui/react/use-render';
 import { ChevronLeftIcon } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
 
@@ -28,19 +28,30 @@ export const PageHeaderSection = ({ className, ...props }: ComponentProps<'heade
   return <header className={cn('flex flex-col gap-group', className)} {...props} />;
 };
 
-/** Link to the parent page above the title, inside a `PageHeaderSection`. `children` is the link text. */
-export const PageHeaderBackLink = ({ className, children, ...props }: ComponentProps<typeof Link>) => {
-  return (
-    <Link
-      className={cn(
-        'inline-flex min-h-6 items-center gap-1.5 self-start text-body text-muted-foreground transition-colors hover:text-foreground',
-        className,
-      )}
-      {...props}>
-      <ChevronLeftIcon aria-hidden className='size-4' />
-      {children}
-    </Link>
-  );
+/**
+ * Link to the parent page above the title, inside a `PageHeaderSection`. `children` is the link text. An `<a>`;
+ * pass `render={<Link to='…' />}` for a router link.
+ */
+export const PageHeaderBackLink = ({ className, children, render, ...props }: useRender.ComponentProps<'a'>) => {
+  return useRender({
+    defaultTagName: 'a',
+    render,
+    props: mergeProps<'a'>(
+      {
+        className: cn(
+          'inline-flex min-h-6 items-center gap-1.5 self-start text-body text-muted-foreground transition-colors hover:text-foreground',
+          className,
+        ),
+        children: (
+          <>
+            <ChevronLeftIcon aria-hidden className='size-4' />
+            {children}
+          </>
+        ),
+      },
+      props,
+    ),
+  });
 };
 
 /** Status and facts under the title, such as a badge and dates. Children are the items; separators are the caller's. */

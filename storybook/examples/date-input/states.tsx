@@ -1,4 +1,4 @@
-import { IsoDate } from '@elternportal/domain/iso-date';
+import { IsoDate } from '~/lib/iso-date';
 
 import { DateInput } from '~/components/ui/date-input';
 

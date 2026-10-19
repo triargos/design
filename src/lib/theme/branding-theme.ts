@@ -1,4 +1,4 @@
-import type { OrganizationBrandingTheme } from '@elternportal/domain/organization-branding';
+import type { BrandingTheme } from '~/lib/theme/branding';
 
 import { BRAND_ANCHORS } from './brand-anchors';
 import { toCss, type Color } from './color';
@@ -39,7 +39,7 @@ const PRIMARY_TINT_CHROMA: Record<ThemeMode, number> = { light: 0.5, dark: 0 };
  */
 const FILL_CHROMA: Record<ThemeMode, number> = { light: 1, dark: 0.5 };
 
-const fillTint = (theme: OrganizationBrandingTheme, mode: ThemeMode): FillTint => ({
+const fillTint = (theme: BrandingTheme, mode: ThemeMode): FillTint => ({
   c: FILL_CHROMA[mode],
   h: BRAND_ANCHORS[theme.primaryColor][2],
 });
@@ -53,7 +53,7 @@ function tintToward([chroma, hue]: [number, number], towardHue: number, tint: nu
 }
 
 export function brandingThemeInput(
-  theme: OrganizationBrandingTheme,
+  theme: BrandingTheme,
   mode: ThemeMode,
   contrast: number = CONTRAST[mode],
 ): ThemeInput {
@@ -89,7 +89,7 @@ const declarations = (vars: Record<string, string>): string =>
  * The page rule (`:root` or `.dark`) and one rule per nested surface. Dark surface selectors are prefixed with `.dark`,
  * so they outrank the light ones on the same element.
  */
-const modeCss = (theme: OrganizationBrandingTheme, mode: ThemeMode, contrast: number): string => {
+const modeCss = (theme: BrandingTheme, mode: ThemeMode, contrast: number): string => {
   const page = generateTheme(brandingThemeInput(theme, mode, contrast));
   const tint = fillTint(theme, mode);
   const pageVars = {
@@ -109,7 +109,7 @@ const cssCache = new Map<string, string>();
  * The `:root` (light) and `.dark` color rules for an organization's branding, each followed by its `[data-surface]`
  * rules, then the same at `CONTRAST_MORE` under `prefers-contrast: more`. Memoized per stored color names.
  */
-export function brandingThemeCss(theme: OrganizationBrandingTheme): string {
+export function brandingThemeCss(theme: BrandingTheme): string {
   const key = `${theme.baseColor}/${theme.primaryColor}/${theme.destructiveColor}`;
   const cached = cssCache.get(key);
   if (cached !== undefined) return cached;

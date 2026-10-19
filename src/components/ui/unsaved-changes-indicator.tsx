@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 interface UnsavedChangesIndicatorProps {
   show: boolean;
@@ -12,10 +12,10 @@ interface UnsavedChangesIndicatorProps {
 }
 
 export function UnsavedChangesIndicator({ show, animated = true }: UnsavedChangesIndicatorProps) {
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
 
   if (!animated) {
-    return show ? <span className='text-body text-muted-foreground'>{t(($) => $.form.unsavedChanges)}</span> : null;
+    return show ? <span className='text-body text-muted-foreground'>{strings.unsavedChanges}</span> : null;
   }
 
   return (
@@ -27,7 +27,7 @@ export function UnsavedChangesIndicator({ show, animated = true }: UnsavedChange
           exit={{ opacity: 0, x: 10, filter: 'blur(4px)' }}
           transition={{ type: 'spring', duration: 0.3, bounce: 0 }}
           className='text-body text-muted-foreground'>
-          {t(($) => $.form.unsavedChanges)}
+          {strings.unsavedChanges}
         </motion.span>
       )}
     </AnimatePresence>

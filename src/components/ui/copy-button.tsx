@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { CopyIcon } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
 import { PopCheck, usePop } from '~/components/ui/pop-check';
@@ -53,7 +53,7 @@ function CopyButton({
   emphasis = 'ghost',
   ...props
 }: CopyButtonProps) {
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -76,13 +76,13 @@ function CopyButton({
       intent={intent}
       emphasis={emphasis}
       {...props}
-      aria-label={text === undefined ? (label ?? t(($) => $.buttons.copy)) : label}
+      aria-label={text === undefined ? (label ?? strings.copy) : label}
       onClick={() => void copy()}>
       <CopyIconSwap copied={copied} />
       {text}
       {/* The label does not change on copy; this announces it. */}
       <span role='status' className='sr-only'>
-        {copied ? t(($) => $.buttons.copied) : ''}
+        {copied ? strings.copied : ''}
       </span>
     </Button>
   );

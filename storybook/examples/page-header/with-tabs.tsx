@@ -14,11 +14,11 @@ export function PageHeaderWithTabs() {
             <PageDescription>Anmeldungen für das Schuljahr 2025/26.</PageDescription>
           </PageHeaderGroup>
           <TabsList as='nav'>
-            <TabsTrigger to='/' end>
+            <TabsTrigger href='/' current>
               Übersicht
             </TabsTrigger>
-            <TabsTrigger to='/forms'>Formulare</TabsTrigger>
-            <TabsTrigger to='/settings'>Einstellungen</TabsTrigger>
+            <TabsTrigger href='/forms'>Formulare</TabsTrigger>
+            <TabsTrigger href='/settings'>Einstellungen</TabsTrigger>
           </TabsList>
         </PageHeaderSection>
       }>

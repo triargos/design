@@ -1,4 +1,4 @@
-@import '../app/tailwind.css';
+@import '../src/tailwind.css';
 
 /* Tailwind skips dot-directories when it scans for classes; the frame lives here. Stories, examples and kit: `storybook/`. */
 @source './';

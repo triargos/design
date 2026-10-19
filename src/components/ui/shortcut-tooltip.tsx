@@ -1,10 +1,10 @@
 import { Fragment, ReactElement } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { Kbd, KbdGroup } from '~/components/ui/kbd.tsx';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip.tsx';
 
-import { formatShortcut } from '~/actions/utils/format-shortcut.ts';
+import { formatShortcut } from '~/lib/format-shortcut';
 
 interface ShortcutTooltipProps {
   label: string;
@@ -15,7 +15,7 @@ interface ShortcutTooltipProps {
 }
 
 export function ShortcutTooltip({ label, shortcut, side, children }: ShortcutTooltipProps) {
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   const hasShortcut = shortcut !== undefined && shortcut.length > 0;
   return (
     <Tooltip>
@@ -26,11 +26,7 @@ export function ShortcutTooltip({ label, shortcut, side, children }: ShortcutToo
           <KbdGroup aria-hidden>
             {shortcut.map((key, index) => (
               <Fragment key={`${key}-${index}`}>
-                {index > 0 && (
-                  <span className='text-muted-foreground'>
-                    {t(($) => $.keyboardHelp.chordSeparator, { defaultValue: 'dann' })}
-                  </span>
-                )}
+                {index > 0 && <span className='text-muted-foreground'>{strings.chordSeparator}</span>}
                 <Kbd className='h-4 min-w-4'>{formatShortcut(key)}</Kbd>
               </Fragment>
             ))}

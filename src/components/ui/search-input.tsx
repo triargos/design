@@ -1,7 +1,7 @@
 import { SearchIcon, XIcon } from 'lucide-react';
 import { useRef } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
 
@@ -27,8 +27,8 @@ export const SearchInput = ({
   'aria-label': ariaLabel,
 }: SearchInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { t } = useTranslation();
-  const label = placeholder ?? t(($) => $.list.placeholders.search);
+  const strings = useUiStrings();
+  const label = placeholder ?? strings.search;
 
   useHotkeys('meta+f', () => inputRef.current?.focus(), { preventDefault: true });
 
@@ -52,7 +52,7 @@ export const SearchInput = ({
       </InputGroupAddon>
       {value !== '' && (
         <InputGroupAddon align='inline-end'>
-          <InputGroupButton size='icon-xs' aria-label={t(($) => $.buttons.clear)} onClick={() => onValueChange('')}>
+          <InputGroupButton size='icon-xs' aria-label={strings.clear} onClick={() => onValueChange('')}>
             <XIcon />
           </InputGroupButton>
         </InputGroupAddon>

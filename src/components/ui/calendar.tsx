@@ -27,14 +27,14 @@ function Calendar({
       locale={de}
       showOutsideDays={showOutsideDays}
       className={cn(
-        'group/calendar bg-background p-3 [--cell-size:2.25rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent',
+        'group/calendar bg-background p-3 [--cell-size:2.25rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=inset-card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent',
         String.raw`[.rdp-button\_next>svg]:**:rtl:rotate-180`,
         String.raw`[.rdp-button\_previous>svg]:**:rtl:rotate-180`,
         className,
       )}
       captionLayout={captionLayout}
       formatters={{
-        formatMonthDropdown: (date) => date.toLocaleString('default', { month: 'short' }),
+        formatMonthDropdown: (date) => date.toLocaleString(de.code, { month: 'short' }),
         ...formatters,
       }}
       classNames={{
@@ -138,7 +138,7 @@ function CalendarDayButton({ className, day, modifiers, ...props }: React.Compon
     <button
       ref={ref}
       type='button'
-      data-day={day.date.toLocaleDateString()}
+      data-day={day.date.toLocaleDateString(de.code)}
       data-selected-single={
         modifiers.selected && !modifiers.range_start && !modifiers.range_end && !modifiers.range_middle
       }

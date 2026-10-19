@@ -18,7 +18,7 @@ const IsoDateSchema = Schema.String.pipe(
       description: 'a calendar date in YYYY-MM-DD format',
     }),
   ),
-  Schema.brand('@elternportal/IsoDate'),
+  Schema.brand('IsoDate'),
 );
 
 /** Viewed in the environment's timezone — the zone a calendar picker and "today" mean. */

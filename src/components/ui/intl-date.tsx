@@ -1,11 +1,12 @@
-import type { IsoDate } from '@elternportal/domain/iso-date';
-
 import { DateTime, Interval } from 'luxon';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip.tsx';
 
-import { useLocale } from '~/hooks/use-locale.ts';
-import { useTimezone } from '~/hooks/use-timezone.ts';
+import type { IsoDate } from '~/lib/iso-date';
+import { useUiConfig } from '~/lib/ui-config';
+
+const useLocale = () => useUiConfig().locale;
+const useTimezone = () => useUiConfig().timeZone;
 
 type IntlDateProps = {
   date: Date;

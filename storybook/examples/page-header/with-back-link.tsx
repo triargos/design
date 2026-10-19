@@ -15,7 +15,7 @@ export function PageHeaderWithBackLink() {
     <PageContent
       header={
         <PageHeaderSection>
-          <PageHeaderBackLink to='/'>Anmeldungen</PageHeaderBackLink>
+          <PageHeaderBackLink href='/'>Anmeldungen</PageHeaderBackLink>
           <PageHeaderGroup>
             <PageHeader>Anmeldung von Mia Schmidt</PageHeader>
             <PageHeaderMeta>

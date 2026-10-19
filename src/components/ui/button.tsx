@@ -171,9 +171,9 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
       {/* The label's window: in flow for the width, the button's full height, clipped top and bottom.
           `gap-[inherit]`: the label's parts keep the button's gap. */}
       <span className='inline-flex gap-[inherit] self-stretch overflow-y-clip'>
+        {/* Hidden by motion only: the label stays the button's accessible name while it is pending (`aria-busy`). */}
         <motion.span
           data-slot='button-label'
-          aria-hidden={pending || undefined}
           className='inline-flex items-center justify-center gap-[inherit]'
           initial={false}
           animate={pending ? above : { opacity: 1, y: 0 }}

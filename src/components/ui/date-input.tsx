@@ -1,11 +1,11 @@
-import { IsoDate, IsoDateRange } from '@elternportal/domain/iso-date';
+import { IsoDate, IsoDateRange } from '~/lib/iso-date';
 
 import { CalendarDate, parseDate } from '@internationalized/date';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale/de';
 import { CalendarIcon } from 'lucide-react';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { Calendar } from '~/components/ui/calendar';
 import {
@@ -87,7 +87,7 @@ function DateInputCard({
   variant: _variant,
   ...rest
 }: CardProps) {
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   const [open, setOpen] = React.useState(false);
   const bounds = rangeOf(min, max);
 
@@ -106,7 +106,7 @@ function DateInputCard({
         <span className='flex flex-col items-start gap-0.5 text-left'>
           {label && <span className='text-caption text-muted-foreground'>{label}</span>}
           <span className={cn('text-control font-medium', !value && 'font-normal text-muted-foreground')}>
-            {value ? formatIso(value, CARD_DATE_FORMAT) : (placeholder ?? t(($) => $.emptyValue))}
+            {value ? formatIso(value, CARD_DATE_FORMAT) : (placeholder ?? strings.emptyValue)}
           </span>
         </span>
       </PopoverTrigger>
@@ -143,7 +143,7 @@ function DateInputTypeable({
   'aria-invalid': ariaInvalid,
   'aria-describedby': ariaDescribedBy,
 }: TypeableProps) {
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
   const bounds = rangeOf(min, max);
   const fieldRef = React.useRef<HTMLDivElement>(null);
   const labelId = useFieldLabel(id, fieldRef);
@@ -223,7 +223,7 @@ function DateInputTypeable({
                     variant='ghost'
                     size='icon-xs'
                     disabled={disabled}
-                    aria-label={t(($) => $.form.date.chooseDate)}
+                    aria-label={strings.chooseDate}
                   />
                 }>
                 <CalendarIcon />

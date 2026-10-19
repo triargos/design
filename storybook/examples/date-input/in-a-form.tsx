@@ -1,4 +1,4 @@
-import { IsoDate } from '@elternportal/domain/iso-date';
+import { IsoDate } from '~/lib/iso-date';
 
 import { useState } from 'react';
 

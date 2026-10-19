@@ -1,5 +1,3 @@
-import { Link } from 'react-router';
-
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -15,7 +13,7 @@ export function BreadcrumbWithEllipsis() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link to='/management' />}>Verwaltung</BreadcrumbLink>
+          <BreadcrumbLink href='/management'>Verwaltung</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>

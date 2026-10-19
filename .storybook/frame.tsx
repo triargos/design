@@ -1,10 +1,10 @@
 import {
-  DEFAULT_ORGANIZATION_BRANDING_THEME,
-  OrganizationBrandingBaseColor,
-  OrganizationBrandingDestructiveColor,
-  OrganizationBrandingPrimaryColor,
-  type OrganizationBrandingTheme,
-} from '@elternportal/domain/organization-branding';
+  DEFAULT_BRANDING_THEME,
+  BRAND_BASE_COLORS,
+  BRAND_DESTRUCTIVE_COLORS,
+  BRAND_PRIMARY_COLORS,
+  type BrandingTheme,
+} from '~/lib/theme/branding';
 
 import { useLayoutEffect, type ReactNode } from 'react';
 
@@ -35,7 +35,7 @@ export interface FrameSettings {
   readonly mode: FrameMode;
   readonly surface: FrameSurface;
   readonly layout: FrameLayout;
-  readonly branding: OrganizationBrandingTheme;
+  readonly branding: BrandingTheme;
   /**
    * The tuned scales as CSS (`tokenCss`, `storybook/kit/tokens.ts`), from the Tokens panel. Unlayered and after the
    * app's CSS, so it wins over `tailwind.css`.
@@ -61,20 +61,12 @@ export function frameSettings(globals: Record<string, unknown>, parameters: Reco
     surface: oneOf(FRAME_SURFACES, globals['surface'], 'page'),
     layout: oneOf(FRAME_LAYOUTS, parameters['frame'], 'centered'),
     branding: {
-      primaryColor: oneOf(
-        OrganizationBrandingPrimaryColor.literals,
-        globals['primaryColor'],
-        DEFAULT_ORGANIZATION_BRANDING_THEME.primaryColor,
-      ),
-      baseColor: oneOf(
-        OrganizationBrandingBaseColor.literals,
-        globals['baseColor'],
-        DEFAULT_ORGANIZATION_BRANDING_THEME.baseColor,
-      ),
+      primaryColor: oneOf(BRAND_PRIMARY_COLORS, globals['primaryColor'], DEFAULT_BRANDING_THEME.primaryColor),
+      baseColor: oneOf(BRAND_BASE_COLORS, globals['baseColor'], DEFAULT_BRANDING_THEME.baseColor),
       destructiveColor: oneOf(
-        OrganizationBrandingDestructiveColor.literals,
+        BRAND_DESTRUCTIVE_COLORS,
         globals['destructiveColor'],
-        DEFAULT_ORGANIZATION_BRANDING_THEME.destructiveColor,
+        DEFAULT_BRANDING_THEME.destructiveColor,
       ),
     },
     tokenCss: tokenCss(globals),

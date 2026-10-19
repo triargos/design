@@ -1,13 +1,11 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { FlatNamespace } from 'i18next';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Label } from '~/components/ui/label';
 import { Separator } from '~/components/ui/separator';
 
+import { useUiConfig } from '~/lib/ui-config';
 import { cn } from '~/lib/utils';
-import type { SelectorKey } from '~/modules/translation/msg';
 
 function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   return (
@@ -195,14 +193,12 @@ function FieldError({
   className,
   children,
   errors,
-  namespace,
   ...props
 }: React.ComponentProps<'div'> & {
+  /** Messages go through `UiConfig.message`: an app with i18n passes keys and translates them there. */
   errors?: Array<{ message?: string } | undefined>;
-  /** The i18n namespace the messages are keys of; default: the default namespace. */
-  namespace?: FlatNamespace;
 }) {
-  const { t } = useTranslation(namespace);
+  const t = useUiConfig().message;
 
   const content = useMemo(() => {
     if (children) {
@@ -217,14 +213,14 @@ function FieldError({
 
     if (uniqueErrors?.length == 1) {
       const message = uniqueErrors[0]?.message;
-      return message ? t(message as SelectorKey) : null;
+      return message ? t(message) : null;
     }
 
     return (
       <ul className='ml-4 flex list-disc flex-col gap-tight'>
         {uniqueErrors.map((error, index) => {
           const message = error?.message;
-          return message ? <li key={index}>{t(message as SelectorKey)}</li> : null;
+          return message ? <li key={index}>{t(message)}</li> : null;
         })}
       </ul>
     );

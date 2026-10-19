@@ -1,6 +1,6 @@
 import { MinusIcon, PlusIcon } from 'lucide-react';
 import type * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
 
@@ -19,7 +19,7 @@ interface IntegerStepperProps extends Omit<
 
 /** Non-negative whole numbers only. A cleared field reads as 0. */
 function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, className, ...props }: IntegerStepperProps) {
-  const { t } = useTranslation('common');
+  const strings = useUiStrings();
 
   return (
     <InputGroup className={className}>
@@ -28,7 +28,7 @@ function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, classNa
         <InputGroupButton
           size='icon-sm'
           variant='secondary'
-          aria-label={t(($) => $.decrease)}
+          aria-label={strings.decrease}
           disabled={disabled || value <= 0}
           onClick={() => onChange(value - 1)}>
           <MinusIcon />
@@ -62,7 +62,7 @@ function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, classNa
         <InputGroupButton
           size='icon-sm'
           variant='secondary'
-          aria-label={t(($) => $.increase)}
+          aria-label={strings.increase}
           disabled={disabled || (max !== undefined && value >= max)}
           onClick={() => onChange(value + 1)}>
           <PlusIcon />

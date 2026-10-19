@@ -2,7 +2,7 @@ import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { motion, type Transition, useReducedMotion } from 'framer-motion';
 import { type CSSProperties, type PointerEvent, useState } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
-import { useTranslation } from 'react-i18next';
+import { useUiStrings } from '~/lib/ui-config';
 
 import { inputControlClassName } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon } from '~/components/ui/input-group';
@@ -126,7 +126,7 @@ const PresetSwatch = ({ color, checked, label }: { color: string; checked: boole
 };
 
 const CustomSwatch = ({ value, isCustom }: { value: string | undefined; isCustom: boolean }) => {
-  const { t } = useTranslation('common', { keyPrefix: 'colorPicker' });
+  const t = useUiStrings().colorPicker;
   const { hovered, pressed, handlers } = useSwatchPointer();
   return (
     <PopoverTrigger
@@ -134,8 +134,8 @@ const CustomSwatch = ({ value, isCustom }: { value: string | undefined; isCustom
         <button
           type='button'
           data-checked={isCustom ? '' : undefined}
-          aria-label={isCustom ? t(($) => $.customValue, { value }) : t(($) => $.custom)}
-          title={t(($) => $.custom)}
+          aria-label={isCustom ? t.customValue(value ?? '') : t.custom}
+          title={t.custom}
           className={swatchClassName}
           style={swatchStyle(isCustom && value ? value : 'var(--foreground)')}
           {...handlers}
@@ -168,7 +168,7 @@ export const ColorPicker = ({
   onPresetSelect,
   'aria-labelledby': labelledBy,
 }: ColorPickerProps) => {
-  const { t } = useTranslation('common', { keyPrefix: 'colorPicker' });
+  const t = useUiStrings().colorPicker;
   const normalized = value?.toLowerCase();
   const preset = COLOR_PRESETS.find((color) => color.value === normalized);
   const isCustom = value !== undefined && !preset;
@@ -181,7 +181,7 @@ export const ColorPicker = ({
         onPresetSelect?.();
       }}
       aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : t(($) => $.label)}
+      aria-label={labelledBy ? undefined : t.label}
       className={cn(
         'flex flex-wrap gap-2 pointer-coarse:gap-3',
         custom === 'inline' && 'grid grid-cols-6 justify-between gap-y-2.5',
@@ -191,7 +191,7 @@ export const ColorPicker = ({
           key={color.value}
           color={color.value}
           checked={preset?.value === color.value}
-          label={t(($) => $.colors[color.name])}
+          label={t.colors[color.name] ?? color.name}
         />
       ))}
       {custom === 'popover' && (
@@ -217,7 +217,7 @@ export const ColorPicker = ({
 
 /** The free choice: a saturation/hue area and a hex field that takes typed or pasted values. */
 export const CustomColor = ({ value, onChange }: Pick<ColorPickerProps, 'value' | 'onChange'>) => {
-  const { t } = useTranslation('common', { keyPrefix: 'colorPicker' });
+  const t = useUiStrings().colorPicker;
   const color = value ?? DEFAULT_COLOR;
 
   return (
@@ -240,7 +240,7 @@ export const CustomColor = ({ value, onChange }: Pick<ColorPickerProps, 'value' 
         <span data-slot='input-group-input' className='flex h-full min-w-0 flex-1 items-center px-3.5 text-control'>
           <HexColorInput
             data-slot='input-group-control'
-            aria-label={t(($) => $.hex)}
+            aria-label={t.hex}
             prefixed
             color={color}
             onChange={(next) => onChange(next.toLowerCase())}

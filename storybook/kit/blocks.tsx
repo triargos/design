@@ -1,6 +1,24 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { ChevronRightIcon } from 'lucide-react';
+import {
+  createContext,
+  use,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Button } from '~/components/ui/button';
+import { CopyButton } from '~/components/ui/copy-button';
+import {
+  InsetCard,
+  InsetCardContent,
+  InsetCardFooter,
+  InsetCardHeader,
+  InsetCardTitle,
+} from '~/components/ui/inset-card';
 
 import { cn } from '~/lib/utils';
 
@@ -58,7 +76,18 @@ export function FoundationSection({
 }
 
 /** One specimen, or a row of them, in a card. `title` labels a usage: the composition it shows. */
-export function Preview({ title, className, children }: { title?: string; className?: string; children: ReactNode }) {
+export function Preview({
+  title,
+  className,
+  footer,
+  children,
+}: {
+  title?: string;
+  className?: string;
+  /** On the shell under the card: `ExampleCode`. */
+  footer?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <InsetCard data-slot='preview' data-title={title} className='min-w-0'>
       {title !== undefined && (
@@ -66,10 +95,60 @@ export function Preview({ title, className, children }: { title?: string; classN
           <InsetCardTitle className='text-caption text-muted-foreground'>{title}</InsetCardTitle>
         </InsetCardHeader>
       )}
-      <InsetCardContent className={cn('flex flex-wrap items-center gap-related p-group', className)}>
+      {/* The examples are German; the docs around them are English. */}
+      <InsetCardContent lang='de' className={cn('flex flex-wrap items-center gap-related p-group', className)}>
         {children}
       </InsetCardContent>
+      {footer}
     </InsetCard>
+  );
+}
+
+/**
+ * The source of the example an `ExampleSection` shows, by section title (`'With icon'` →
+ * `examples/<entry>/with-icon.tsx`). The docs site provides it, loaded with the page; Storybook does not, so it shows
+ * no code.
+ */
+export const ExampleSourceContext = createContext<((section: string) => string | undefined) | null>(null);
+
+/** "Show code" and copy, on the shell under an example; the source opens below. */
+function ExampleCode({ section }: { section: string }) {
+  const source = use(ExampleSourceContext)?.(section)?.trimEnd();
+  const [open, setOpen] = useState(false);
+  const codeId = useId();
+
+  if (source === undefined) return null;
+  return (
+    <div data-slot='example-code'>
+      <div className='flex items-center justify-between gap-related px-1 pt-1'>
+        <Button
+          type='button'
+          size='xs'
+          intent='neutral'
+          emphasis='ghost'
+          aria-expanded={open}
+          aria-controls={codeId}
+          onClick={() => setOpen((value) => !value)}
+          className='text-muted-foreground'>
+          <ChevronRightIcon
+            data-icon='inline-start'
+            aria-hidden
+            className={cn('transition-transform duration-150', open && 'rotate-90')}
+          />
+          {open ? 'Hide code' : 'Show code'}
+        </Button>
+        <CopyButton value={source} label='Copy code' size='icon-xs' />
+      </div>
+      <InsetCardFooter show={open} className='px-0 pt-1'>
+        <pre
+          id={codeId}
+          tabIndex={0}
+          aria-label={`${section} code`}
+          className='max-h-120 overflow-auto rounded-inner border border-(--edge) bg-card p-group font-mono text-caption text-foreground'>
+          <code>{source}</code>
+        </pre>
+      </InsetCardFooter>
+    </div>
   );
 }
 
@@ -93,9 +172,16 @@ export function ExampleSection({
   return (
     <FoundationSection title={title} description={description}>
       {bare ? (
-        <div className={cn('min-w-0', className)}>{children}</div>
+        <div className='flex min-w-0 flex-col gap-tight'>
+          <div lang='de' className={cn('min-w-0', className)}>
+            {children}
+          </div>
+          <ExampleCode section={title} />
+        </div>
       ) : (
-        <Preview className={className}>{children}</Preview>
+        <Preview className={className} footer={<ExampleCode section={title} />}>
+          {children}
+        </Preview>
       )}
     </FoundationSection>
   );
