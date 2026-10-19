@@ -33,6 +33,8 @@ import { measureGaps, type GapBand } from './measure';
  */
 export interface DocsMode {
   readonly afterHeader?: ReactNode;
+  /** Component and pattern pages: spec sections out, the lead sentence only. Foundation pages keep both. */
+  readonly hideSpecs?: boolean;
 }
 
 export const DocsModeContext = createContext<DocsMode | null>(null);
@@ -59,7 +61,7 @@ export function FoundationPage({
       <header className='flex flex-col gap-tight'>
         <h1 className='text-heading'>{title}</h1>
         <p className='max-w-prose text-body text-pretty text-muted-foreground'>
-          {docs === null ? description : firstSentence(description)}
+          {docs?.hideSpecs ? firstSentence(description) : description}
         </p>
       </header>
       <Hairline />
@@ -77,7 +79,7 @@ export function Hairline({ className }: { className?: string }) {
 
 /** A spec section of a Board. The docs site leaves it out (`DocsModeContext`). */
 export function FoundationSection(props: { title: string; description?: ReactNode; children: ReactNode }) {
-  if (use(DocsModeContext) !== null) return null;
+  if (use(DocsModeContext)?.hideSpecs) return null;
   return <Section {...props} />;
 }
 
@@ -92,7 +94,7 @@ export function Section({
   children: ReactNode;
 }) {
   // The docs drop a description that only lists parts (`<Code>A</Code> · <Code>B</Code>`): the code below shows them.
-  const docs = use(DocsModeContext) !== null;
+  const docs = use(DocsModeContext)?.hideSpecs === true;
   const shown = description !== undefined && !(docs && isCodeOnly(description));
   return (
     <section data-slot='foundation-section' data-title={title} className='flex flex-col gap-group'>
@@ -225,7 +227,13 @@ export function ExampleSection({
         </div>
       ) : (
         <Preview
-          className={cn(className, docs && 'min-h-36 justify-center px-page py-page')}
+          className={cn(
+            className,
+            docs && 'min-h-36 px-page py-page',
+            // A bare example is block content (a page stage, a capped card): block layout lets a stage fill the width
+            // and centers a capped card on its auto margins. The rest is a row of controls, centered.
+            docs && (bare ? 'block *:mx-auto' : 'justify-center'),
+          )}
           footer={<ExampleCode section={title} />}>
           {children}
         </Preview>
@@ -250,6 +258,7 @@ const LABEL_HEIGHT = 20;
  * is red. Measures again on resize and once entry animations settle.
  */
 export function GapRuler({ show, children }: { show: boolean; children: ReactNode }) {
+  const labelFont = useLabelFont();
   const ref = useRef<HTMLDivElement>(null);
   const [bands, setBands] = useState<ReadonlyArray<GapBand>>([]);
   useLayoutEffect(() => {
@@ -289,7 +298,8 @@ export function GapRuler({ show, children }: { show: boolean; children: ReactNod
           />
           <span
             className={cn(
-              'absolute right-0 flex min-w-26 items-center justify-between gap-2 rounded-full bg-background px-2 font-mono text-caption tabular-nums ring-1',
+              'absolute right-0 flex min-w-26 items-center justify-between gap-2 rounded-full bg-background px-2 text-caption tabular-nums ring-1',
+              labelFont,
               step === undefined ? 'text-destructive ring-destructive/40' : 'text-muted-foreground ring-border',
             )}
             style={{ top: labelTop, height: LABEL_HEIGHT }}>
@@ -328,6 +338,7 @@ export function Matrix({
   rows: ReadonlyArray<{ name: string; meta?: ReactNode; cells: ReadonlyArray<ReactNode> }>;
   columnWidth?: string;
 }) {
+  const labelFont = useLabelFont();
   const grid = { gridTemplateColumns: `8rem repeat(${columns.length}, minmax(${columnWidth}, 1fr))` };
   return (
     <InsetCard>
@@ -335,7 +346,7 @@ export function Matrix({
         <div className='grid min-w-fit items-center gap-x-related' style={grid}>
           <span />
           {columns.map((column) => (
-            <span key={column} className='px-1 pt-group pb-related font-mono text-caption text-muted-foreground'>
+            <span key={column} className={cn('px-1 pt-group pb-related text-caption text-muted-foreground', labelFont)}>
               {column}
             </span>
           ))}
@@ -367,18 +378,24 @@ export function TileGrid({ className, children }: { className?: string; children
 }
 
 export function Tile({ name, meta, children }: { name: string; meta?: ReactNode; children: ReactNode }) {
+  const labelFont = useLabelFont();
   return (
     <div className='flex min-w-0 flex-col gap-related'>
       {children}
       <div className='flex min-w-0 flex-col px-1'>
         <span className='text-body font-medium'>{name}</span>
-        {meta !== undefined && <span className='truncate font-mono text-caption text-muted-foreground'>{meta}</span>}
+        {meta !== undefined && (
+          <span className={cn('truncate text-caption text-muted-foreground', labelFont)}>{meta}</span>
+        )}
       </div>
     </div>
   );
 }
 
-/** A prop, value or part name. Mono in Storybook's spec; in the docs' prose it reads as a word. */
+/** Labels (token, part and prop names) are mono in Storybook; the docs set them in the page's sans. */
+const useLabelFont = () => (use(DocsModeContext) === null ? 'font-mono' : 'font-sans');
+
+/** A prop, value or part name. Mono in Storybook's spec; in the docs it reads as a word. */
 export function Code({ children }: { children: ReactNode }) {
   if (use(DocsModeContext) !== null) return <span className='text-foreground'>{children}</span>;
   return <code className='font-mono text-caption text-muted-foreground'>{children}</code>;
@@ -419,6 +436,7 @@ const swatchStyle = (token: string, kind: SwatchKind, on: string | undefined): C
 };
 
 export function Swatch({ token, role, kind = 'fill', on }: SwatchToken) {
+  const labelFont = useLabelFont();
   const [ref, value] = useCustomProperty(token);
   return (
     <div ref={ref} className='flex min-w-0 flex-col gap-related'>
@@ -433,7 +451,7 @@ export function Swatch({ token, role, kind = 'fill', on }: SwatchToken) {
       <div className='flex min-w-0 flex-col px-1'>
         <span className='text-body font-medium'>{token}</span>
         <span className='text-caption text-muted-foreground'>{role}</span>
-        <span className='truncate font-mono text-caption text-muted-foreground/70' title={value}>
+        <span className={cn('truncate text-caption text-muted-foreground/70', labelFont)} title={value}>
           {value}
         </span>
       </div>

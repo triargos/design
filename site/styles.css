@@ -3,3 +3,17 @@
 /* Classes used by the stories, examples and kit render here too. */
 @source '../storybook';
 @source './';
+
+/* Code blocks ("Show code", the Playground) in Geist Mono instead of the system mono. Docs only: the design system's
+   own tokens stay as they are. OFL, see public/resources/fonts/geist-mono/LICENSE.txt. */
+@font-face {
+  font-family: 'Geist Mono';
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+  src: url('/resources/fonts/geist-mono/GeistMono-Variable.woff2') format('woff2');
+}
+
+@theme {
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}

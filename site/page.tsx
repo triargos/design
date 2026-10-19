@@ -104,6 +104,6 @@ export function DocsPage({ page }: { page: DocsPageEntry }) {
       </div>
     </ExampleSourceContext>
   );
-  if (page.group === 'Foundations') return board;
-  return <DocsModeContext value={{ afterHeader: playground }}>{board}</DocsModeContext>;
+  if (page.group === 'Foundations') return <DocsModeContext value={{}}>{board}</DocsModeContext>;
+  return <DocsModeContext value={{ afterHeader: playground, hideSpecs: true }}>{board}</DocsModeContext>;
 }
