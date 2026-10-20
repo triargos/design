@@ -13,23 +13,22 @@ import {
 export function DropdownMenuDefault() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button type='button' intent='neutral' emphasis='raised' size='icon-sm' aria-label='Aktionen' />}>
+      <DropdownMenuTrigger render={<Button size='icon-sm' aria-label='Actions' />}>
         <MoreHorizontalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-56'>
-        <DropdownMenuLabel>Antrag 2024-118</DropdownMenuLabel>
+        <DropdownMenuLabel>Website redesign</DropdownMenuLabel>
         <DropdownMenuItem>
           <PencilIcon />
-          Bearbeiten
+          Edit
         </DropdownMenuItem>
         <DropdownMenuItem>
           <CopyIcon />
-          Duplizieren
+          Duplicate
         </DropdownMenuItem>
         <DropdownMenuItem disabled>
           <ArchiveIcon />
-          Archivieren
+          Archive
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

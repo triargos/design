@@ -7,7 +7,7 @@ import { CalloutInASection } from '../examples/callout/in-a-section';
 import { CalloutVariants } from '../examples/callout/variants';
 import { CalloutWithAction } from '../examples/callout/with-action';
 import { CalloutWithTitle } from '../examples/callout/with-title';
-import { Code, ExampleSection, FoundationPage, FoundationSection, SpecimenList, SpecimenRow } from '../kit/blocks';
+import { ExampleSection, FoundationPage, FoundationSection, SpecimenList, SpecimenRow } from '../kit/blocks';
 
 const meta = {
   title: 'Components/Callout',
@@ -23,32 +23,32 @@ const INTENTS = [
   {
     intent: 'info',
     use: 'Default. Plain information: how something works, what happens next.',
-    title: 'Neue Felder verfügbar',
-    body: 'Eltern sehen die Änderungen ab dem nächsten Schuljahr.',
+    title: 'New fields available',
+    body: 'Members see them after their next sign-in.',
   },
   {
     intent: 'success',
     use: 'A finished step the user should know about.',
-    title: 'Import abgeschlossen',
-    body: '248 Familien wurden übernommen.',
+    title: 'Import finished',
+    body: '248 tasks were added to the project.',
   },
   {
     intent: 'warning',
     use: 'Needs attention, but nothing is broken yet.',
-    title: 'Frist bis 31. März',
-    body: 'Danach können Eltern keine Anträge mehr stellen.',
+    title: 'Your trial ends on March 31',
+    body: 'Add a payment method to keep your projects.',
   },
   {
     intent: 'destructive',
     use: 'Something failed or will be lost.',
-    title: 'Synchronisierung fehlgeschlagen',
-    body: '3 Dateien konnten nicht übertragen werden.',
+    title: 'Sync failed',
+    body: '3 documents could not be uploaded.',
   },
   {
     intent: 'neutral',
     use: 'An aside that is not news, inside a dense surface.',
-    title: 'Nur für die Schulleitung sichtbar',
-    body: 'Lehrkräfte sehen diesen Bereich nicht.',
+    title: 'Only admins see this section',
+    body: 'Members cannot open it.',
   },
 ] as const;
 
@@ -61,14 +61,7 @@ export const Board: Story = {
       <ExampleSection title='Default' description='Info, body only.'>
         <CalloutDefault />
       </ExampleSection>
-      <ExampleSection
-        title='Variants'
-        description={
-          <>
-            The intent’s subtle fill and its text; no edge, no icon. The old <Code>tone='danger'</Code> is{' '}
-            <Code>intent='destructive'</Code>.
-          </>
-        }>
+      <ExampleSection title='Intents' description='The intent’s subtle fill and its text; no edge, no icon.'>
         <CalloutVariants />
       </ExampleSection>
       <ExampleSection

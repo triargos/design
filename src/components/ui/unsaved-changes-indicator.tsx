@@ -1,20 +1,20 @@
 import { AnimatePresence, motion } from 'framer-motion';
-
-import { useUiStrings } from '~/lib/ui-config';
+import type { ReactNode } from 'react';
 
 const textClassName = 'text-body text-muted-foreground';
 
+/** Says there are unsaved changes, next to the save action, while `show` is true. */
 export function UnsavedChangesIndicator({
   show,
   animated = true,
+  children = 'Unsaved changes',
 }: {
   show: boolean;
   /** Off inside a container that animates its own reveal (`InsetCardFooter`): a second entrance on top reads as wobble. */
   animated?: boolean;
+  children?: ReactNode;
 }) {
-  const strings = useUiStrings();
-
-  if (!animated) return show ? <span className={textClassName}>{strings.unsavedChanges}</span> : null;
+  if (!animated) return show ? <span className={textClassName}>{children}</span> : null;
 
   return (
     <AnimatePresence>
@@ -25,7 +25,7 @@ export function UnsavedChangesIndicator({
           exit={{ opacity: 0, x: 10, filter: 'blur(4px)' }}
           transition={{ type: 'spring', duration: 0.3, bounce: 0 }}
           className={textClassName}>
-          {strings.unsavedChanges}
+          {children}
         </motion.span>
       )}
     </AnimatePresence>

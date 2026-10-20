@@ -12,8 +12,6 @@ import { I18nProvider } from 'react-aria-components/I18nProvider';
 
 import { ToastProvider } from '~/components/ui/toast';
 
-import { UiConfigProvider } from '~/lib/ui-config';
-
 import { DEFAULT_TOKEN_GLOBALS } from '../storybook/kit/tokens';
 import '~/inter.css';
 
@@ -44,18 +42,16 @@ const brandToolbar = (title: string, icon: 'circle' | 'circlehollow' | 'alert', 
 const preview: Preview = {
   decorators: [
     (Story, context) => (
-      <UiConfigProvider locale='de'>
-        {/* react-aria's date and time segments follow this locale. */}
-        <I18nProvider locale='de'>
-          <div className='contents' onClickCapture={stayOnStory}>
-            <Frame settings={frameSettings(context.globals, context.parameters)}>
-              <Story />
-            </Frame>
-          </div>
-          {/* One toast viewport, outside the frame so side by side does not double it. */}
-          <ToastProvider />
-        </I18nProvider>
-      </UiConfigProvider>
+      // react-aria's date and time segments follow this locale.
+      <I18nProvider locale='en-US'>
+        <div className='contents' onClickCapture={stayOnStory}>
+          <Frame settings={frameSettings(context.globals, context.parameters)}>
+            <Story />
+          </Frame>
+        </div>
+        {/* One toast viewport, outside the frame so side by side does not double it. */}
+        <ToastProvider />
+      </I18nProvider>
     ),
   ],
   // A theme is these three names (`BrandingTheme`); `brandingThemeCss` turns them into tokens.

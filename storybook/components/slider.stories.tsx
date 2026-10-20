@@ -23,7 +23,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Slider'
-      description='A value on a continuous range, where the exact number matters less than the feel: zoom, a threshold. A 4px muted track, the brand fill for the chosen part. Disabled dims the whole control, the one place opacity stays.'>
+      description='A value on a continuous range, where the feel matters more than the exact number: zoom, volume. Name it with aria-label or a FieldLabel id; each thumb takes the name.'>
       <ExampleSection title='Default'>
         <SliderDefault />
       </ExampleSection>
@@ -36,9 +36,7 @@ export const Board: Story = {
         }>
         <SliderRange />
       </ExampleSection>
-      <ExampleSection
-        title='With label and value'
-        description='No SliderValue part yet: the field shows the controlled value.'>
+      <ExampleSection title='With label and value' description='The field shows the controlled value beside the label.'>
         <SliderWithLabelAndValue />
       </ExampleSection>
       <ExampleSection title='Disabled' description='Dims the whole control: the one place opacity stays.'>

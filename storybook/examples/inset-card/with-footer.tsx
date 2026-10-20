@@ -19,19 +19,19 @@ export function InsetCardWithFooter() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Profil</InsetCardTitle>
-        <InsetCardDescription>So sehen dich andere Eltern und die Schule.</InsetCardDescription>
+        <InsetCardTitle>Profile</InsetCardTitle>
+        <InsetCardDescription>How your teammates see you.</InsetCardDescription>
       </InsetCardHeader>
       <InsetCardContent className='p-group'>
         <Field>
           <FieldLabel htmlFor='card-name'>Name</FieldLabel>
-          <Input id='card-name' defaultValue='Erika Mustermann' onChange={() => setDirty(true)} />
+          <Input id='card-name' defaultValue='Jordan Lee' onChange={() => setDirty(true)} />
         </Field>
       </InsetCardContent>
       <InsetCardFooter show={dirty} className='flex items-center justify-end gap-3'>
         <UnsavedChangesIndicator show={dirty} animated={false} />
-        <Button type='button' size='sm' onClick={() => setDirty(false)}>
-          Speichern
+        <Button intent='primary' size='sm' onClick={() => setDirty(false)}>
+          Save
         </Button>
       </InsetCardFooter>
     </InsetCard>

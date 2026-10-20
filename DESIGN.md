@@ -21,7 +21,7 @@ Look at every UI change rendered before reporting it done: `verify-ui` skill (`p
 
 ## Color
 
-Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), rendered by `root.tsx` as `<style data-organization-branding>`: `themeToShadcnVars` (`lib/theme/theme-to-css.ts`) projects the generated theme onto the tokens; `tailwind.css` maps them with `@theme inline`. A third block, generated at a higher contrast, applies under `prefers-contrast: more`. Generator internals: `lib/theme/README.md`.
+Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), rendered into a `<style>` by the page: `themeToCssVars` (`lib/theme/theme-to-css.ts`) projects the generated theme onto the tokens; `tailwind.css` maps them with `@theme inline`. A third block, generated at a higher contrast, applies under `prefers-contrast: more`. Generator internals: `lib/theme/README.md`.
 
 ### Intents
 
@@ -36,7 +36,7 @@ One set per intent. A bare intent is never a fill.
 
 - `primary` and `destructive` follow the brand (`primaryColor`, `destructiveColor`); `info`, `success`, `warning` are fixed hues (`INTENT_HUE`). `neutral` reads on any surface: translucent subtle and border, inverted solid.
 - Components take `intent` and `emphasis` through `intentVariants` (`components/ui/intent-variants.ts`), which sets `--intent-*` from the intent and paints with them per emphasis. Write tokens directly only outside a component.
-- Aliases until the app migrates: `bg-primary` is still the brand fill (`primary-solid`); `destructive-strong` → `destructive-solid`; `*-tint` / `*-text` → `*-subtle` / `*-subtle-foreground`. New code writes the new names, never `bg-{status}/10`.
+- `primary` is the brand hue for text and icons, like every bare intent; the brand fill is `primary-solid`. Never `bg-{intent}/10`.
 
 ### Text, fills, lines
 
@@ -73,7 +73,7 @@ A colour the organization chose (category, submission status) is data, not an in
 | `text-overline` | 10 / 16 · 500, uppercase | Menu and group labels | |
 
 - Touch: a text input renders 16px and scales to `text-control` (`input-scale` utility on the native input inside `Input` / `InputGroupInput`), so iOS does not zoom and fields look the same everywhere. Multi-line and segmented fields (`Textarea`, date and time segments) render 16px on coarse pointers.
-- The t-shirt sizes (`text-xs` … `text-5xl`) are legacy. A new role goes in `tailwind.css` and in `cn` (`lib/utils.ts`), or `cn` drops the text color next to it.
+- Only the roles exist; `text-sm` and the other t-shirt sizes do not compile. A new role goes in `tailwind.css` and in `cn` (`lib/utils.ts`), or `cn` drops the text color next to it.
 
 ## Spacing
 
@@ -192,7 +192,7 @@ Roles in `tailwind.css`, named by what moves (`Foundations/Motion`). Write the r
 - Don't add `dark:` color overrides to card surfaces; fix the token.
 - Don't put an icon in a `Callout`; there is no slot for one.
 - Don't write `var(--color-*)` in arbitrary values; write the raw token (`var(--card)`, `var(--info-subtle)`). `--color-*` resolves on `:root`, so it misses a nested `.dark` (Storybook side by side) and `[data-surface]` overrides.
-- Don't read generator tokens (`bgShade`, `labelMuted`, …) in components; promote one in `themeToShadcnVars` and map it in `@theme inline`. Don't add `*Thin` generator tokens (they differ between server and client).
+- Don't read generator tokens (`bgShade`, `labelMuted`, …) in components; promote one in `themeToCssVars` and map it in `@theme inline`. Don't add `*Thin` generator tokens (they differ between server and client).
 
 ## Agent quick reference
 
@@ -208,5 +208,5 @@ elevation     shadow-border · shadow-field · shadow-raised · shadow-popup · 
 block         InsetCard > InsetCardHeader > InsetCardContent [> ItemList]
 modal         DialogContent > DialogHeader · DialogBody (card) · DialogFooter
 motion        duration-enter 100 · feedback 150 · move 200 · sheet 500 · ease-enter · ease-move · ease-sheet
-new color     themeToShadcnVars + @theme inline, never a literal
+new color     themeToCssVars + @theme inline, never a literal
 ```

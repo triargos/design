@@ -17,11 +17,10 @@ import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/compo
 import { PageContent } from '~/components/ui/page-content';
 import {
   PageDescription,
-  PageHeader,
   PageHeaderBackLink,
   PageHeaderGroup,
-  PageHeaderSection,
   PageSection,
+  PageTitle,
 } from '~/components/ui/page-header';
 
 import { Code, FoundationPage, FoundationSection, GapRuler, SpecimenList, SpecimenRow } from '../kit/blocks';
@@ -45,25 +44,25 @@ type Story = StoryObj<SpacingArgs>;
 const usage: Record<SpacingStepName, { relation: string; owners: string }> = {
   tight: {
     relation: 'A title and its description: one unit',
-    owners: 'PageHeaderGroup, SectionHeaderGroup, ItemContent, FieldContent, DialogHeader, EmptyState',
+    owners: 'PageHeaderGroup, PageSection (title → description), ItemContent, FieldContent, DialogHeader, EmptyState',
   },
-  related: { relation: 'Items that work together', owners: 'Field (label → control), PageHeaderTools, ItemActions' },
+  related: { relation: 'Items that work together', owners: 'Field (label → control), PageHeaderActions, ItemActions' },
   group: {
     relation: 'Peer blocks; a heading → its content; padding inside a surface',
     owners:
-      'PageContent, PageSection, FieldGroup, FieldSet, PageHeaderSection (back link → title), FieldLegend, InsetCardContent, InsetCardHeader (inline), DialogBody, SheetBody',
+      'PageContent (back link → title), PageSection, FieldGroup, FieldSet, FieldLegend, InsetCardContent, InsetCardHeader (inline), DialogBody, SheetBody',
   },
   page: { relation: 'Page title → content', owners: 'PageContent' },
   section: { relation: 'Section ↔ section', owners: 'PageContent (around a PageSection)' },
 };
 
-const Guardian = ({ name, detail }: { name: string; detail: string }) => (
+const Row = ({ name, detail }: { name: string; detail: string }) => (
   <Item>
     <ItemContent>
       <ItemTitle>{name}</ItemTitle>
       <ItemDescription>{detail}</ItemDescription>
     </ItemContent>
-    <Badge variant='success'>Bestätigt</Badge>
+    <Badge intent='success'>Active</Badge>
   </Item>
 );
 
@@ -71,52 +70,52 @@ const SamplePage = () => (
   <div className='rounded-3xl bg-background px-5 pt-10 pb-10 ring-1 ring-border/50 md:px-10'>
     <PageContent
       header={
-        <PageHeaderSection>
-          <PageHeaderBackLink href='/'>Anmeldungen</PageHeaderBackLink>
+        <>
+          <PageHeaderBackLink href='/'>Projects</PageHeaderBackLink>
           <PageHeaderGroup>
-            <PageHeader>Anmeldung zur Nachmittagsbetreuung</PageHeader>
-            <PageDescription>Prüfen Sie die Angaben, bevor Sie die Anmeldung absenden.</PageDescription>
+            <PageTitle>Website redesign</PageTitle>
+            <PageDescription>Review the details before you share the project with the team.</PageDescription>
           </PageHeaderGroup>
-        </PageHeaderSection>
+        </>
       }>
       <Callout>
         <CalloutContent>
-          <p className='font-medium'>Frist bis 31. März</p>
-          <p>Danach meldet sich die Schule bei Ihnen.</p>
+          <p className='font-medium'>Due March 31</p>
+          <p>After that, the project moves to review.</p>
         </CalloutContent>
       </Callout>
-      <PageSection title='Familie' description='Diese Angaben sieht nur die Schulleitung.'>
+      <PageSection title='Team' description='Only admins see these details.'>
         <InsetCard>
           <InsetCardHeader>
-            <InsetCardTitle>Erziehungsberechtigte</InsetCardTitle>
-            <InsetCardDescription>Erhalten alle Nachrichten der Schule.</InsetCardDescription>
+            <InsetCardTitle>Members</InsetCardTitle>
+            <InsetCardDescription>They get every project update.</InsetCardDescription>
           </InsetCardHeader>
           <InsetCardContent className='overflow-hidden'>
             <ItemList>
-              <Guardian name='Anna Schmidt' detail='anna.schmidt@example.de' />
-              <Guardian name='Jonas Schmidt' detail='jonas.schmidt@example.de' />
+              <Row name='Anna Schmidt' detail='anna@example.com' />
+              <Row name='Jonas Weber' detail='jonas@example.com' />
             </ItemList>
           </InsetCardContent>
         </InsetCard>
         <InsetCard>
           <InsetCardHeader>
-            <InsetCardTitle>Kinder</InsetCardTitle>
+            <InsetCardTitle>Owner</InsetCardTitle>
           </InsetCardHeader>
           <InsetCardContent className='overflow-hidden'>
             <ItemList>
-              <Guardian name='Mia Schmidt' detail='Klasse 3b' />
+              <Row name='Mia Chen' detail='Project lead' />
             </ItemList>
           </InsetCardContent>
         </InsetCard>
       </PageSection>
-      <PageSection title='Dokumente'>
+      <PageSection title='Documents'>
         <InsetCard>
           <InsetCardHeader>
-            <InsetCardTitle>Nachweise</InsetCardTitle>
+            <InsetCardTitle>Files</InsetCardTitle>
           </InsetCardHeader>
           <InsetCardContent className='overflow-hidden'>
             <ItemList>
-              <Guardian name='Arbeitgeberbescheinigung.pdf' detail='Hochgeladen am 12. März' />
+              <Row name='project-brief.pdf' detail='Uploaded March 12' />
             </ItemList>
           </InsetCardContent>
         </InsetCard>
@@ -132,7 +131,7 @@ export const Spacing: Story = {
       description='Five steps, named by relationship. Peer blocks and a heading and its content share one gap; sections sit three times as far apart (48), and the page header between the two (32). Padding inside rows and controls follows their height (Shape), not this scale.'>
       <FoundationSection
         title='Scale'
-        description='Each gap is drawn at its real size. Tune the steps in the Tokens panel; every story follows.'>
+        description='Each gap is drawn at its real size. Tune the steps in Customize; every page follows.'>
         <SpecimenList>
           {SPACING_STEPS.map((step) => (
             <SpecimenRow
@@ -160,7 +159,7 @@ export const Spacing: Story = {
 
       <FoundationSection
         title='Page'
-        description='PageContent, PageSection and InsetCard place every gap; the page writes none. Turn off “Show gaps” in the controls to see it plain.'>
+        description='PageContent, PageSection and InsetCard place every gap; the page writes none.'>
         <GapRuler show={gaps}>
           <SamplePage />
         </GapRuler>
@@ -172,18 +171,18 @@ export const Spacing: Story = {
             <GapRuler show={gaps}>
               <InsetCard className='max-w-lg'>
                 <InsetCardHeader>
-                  <InsetCardTitle>Kontakt</InsetCardTitle>
-                  <InsetCardDescription>So erreicht Sie die Schule.</InsetCardDescription>
+                  <InsetCardTitle>Contact</InsetCardTitle>
+                  <InsetCardDescription>How your team reaches you.</InsetCardDescription>
                 </InsetCardHeader>
                 <InsetCardContent className='p-4'>
                   <FieldGroup>
                     <Field>
-                      <FieldLabel htmlFor='spacing-email'>E-Mail</FieldLabel>
-                      <Input id='spacing-email' defaultValue='anna.schmidt@example.de' />
-                      <FieldDescription>Für Bestätigungen und Rückfragen.</FieldDescription>
+                      <FieldLabel htmlFor='spacing-email'>Email</FieldLabel>
+                      <Input id='spacing-email' defaultValue='anna@example.com' />
+                      <FieldDescription>For confirmations and questions.</FieldDescription>
                     </Field>
                     <Field>
-                      <FieldLabel htmlFor='spacing-phone'>Telefon</FieldLabel>
+                      <FieldLabel htmlFor='spacing-phone'>Phone</FieldLabel>
                       <Input id='spacing-phone' placeholder='Optional' />
                     </Field>
                   </FieldGroup>
@@ -194,12 +193,10 @@ export const Spacing: Story = {
           <SpecimenRow name='Empty state' meta={<Code>media → title 16 · title → description 4 · → actions 24</Code>}>
             <GapRuler show={gaps}>
               <EmptyState>
-                <EmptyStateTitle>Noch keine Anmeldungen</EmptyStateTitle>
-                <EmptyStateDescription>Sobald eine Familie sich anmeldet, erscheint sie hier.</EmptyStateDescription>
+                <EmptyStateTitle>No projects yet</EmptyStateTitle>
+                <EmptyStateDescription>Projects you create show up here.</EmptyStateDescription>
                 <EmptyStateContent>
-                  <Button type='button' variant='secondary'>
-                    Link teilen
-                  </Button>
+                  <Button>New project</Button>
                 </EmptyStateContent>
               </EmptyState>
             </GapRuler>

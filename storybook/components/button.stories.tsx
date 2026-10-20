@@ -43,35 +43,31 @@ const TEXT_SIZES: ReadonlyArray<{ size: Size; height: number; radius: string }> 
 
 const ICON_SIZES: ReadonlyArray<Size> = ['icon-xs', 'icon-sm', 'icon', 'icon-lg'];
 
-/** The pairs to reach for, with the old `variant` each one replaces. */
+/** The pairs to reach for, with the props that select each one. */
 const PAIRS: ReadonlyArray<{
-  intent: ButtonProps['intent'];
-  emphasis: ButtonProps['emphasis'];
+  intent: NonNullable<ButtonProps['intent']>;
+  emphasis: NonNullable<ButtonProps['emphasis']>;
+  props: string;
   use: string;
-  alias?: string;
 }> = [
-  { intent: 'primary', emphasis: 'solid', use: 'The one main action of a page, card or dialog.', alias: 'default' },
   {
-    intent: 'neutral',
-    emphasis: 'raised',
-    use: 'Every other action, on any surface.',
-    alias: 'secondary · outline · surface',
+    intent: 'primary',
+    emphasis: 'solid',
+    props: "intent='primary'",
+    use: 'The one main action of a page, card or dialog.',
   },
-  {
-    intent: 'neutral',
-    emphasis: 'ghost',
-    use: 'Header, row, toolbar and close actions.',
-    alias: 'ghost · muted · toolbar',
-  },
+  { intent: 'neutral', emphasis: 'raised', props: 'no props', use: 'Every other action, on any surface.' },
+  { intent: 'neutral', emphasis: 'ghost', props: "emphasis='ghost'", use: 'Header, row, toolbar and close actions.' },
   {
     intent: 'destructive',
     emphasis: 'solid',
+    props: "intent='destructive'",
     use: 'An irreversible action, inside its confirmation; every danger-zone action.',
-    alias: 'destructive',
   },
   {
     intent: 'destructive',
     emphasis: 'subtle',
+    props: "intent='destructive' emphasis='subtle'",
     use: 'A destructive action that opens its confirmation, outside a danger zone.',
   },
 ];
@@ -80,14 +76,13 @@ const meta = {
   title: 'Components/Button',
   component: Button,
   parameters: {
-    description: 'Runs an action: an intent (what it means) at an emphasis (how much it weighs), at a size.',
+    description: 'Runs an action: an intent at an emphasis, at a size.',
   },
-  args: { type: 'button', children: 'Speichern', intent: 'primary', emphasis: 'solid' },
+  args: { children: 'Edit project' },
   argTypes: {
     intent: { control: 'select', options: INTENTS },
     emphasis: { control: 'select', options: EMPHASES },
     size: { control: 'select', options: [...TEXT_SIZES.map(({ size }) => size), ...ICON_SIZES] },
-    variant: { table: { disable: true } },
   },
 } satisfies Meta<typeof Button>;
 
@@ -120,7 +115,7 @@ function SurfaceColumn() {
   return (
     <Stack gap='related' align='start'>
       {PAIRS.map(({ intent, emphasis }) => (
-        <Button key={`${intent}-${emphasis}`} type='button' intent={intent} emphasis={emphasis} size='sm'>
+        <Button key={`${intent}-${emphasis}`} intent={intent} emphasis={emphasis} size='sm'>
           {intent}/{emphasis}
         </Button>
       ))}
@@ -133,13 +128,11 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Button'
-      description='An intent (what the action means) at an emphasis (how much it weighs), at a size (where it sits). Five pairs cover the app; the matrix shows the rest of the grid they come from.'>
-      <ExampleSection title='Default'>
+      description='An intent (what the action means) at an emphasis (how much it weighs), at a size (where it sits). Without props a button is neutral/raised, every ordinary action. Five pairs cover every use; the matrix shows the rest of the grid they come from.'>
+      <ExampleSection title='Default' description='No props: neutral/raised.'>
         <ButtonDefault />
       </ExampleSection>
-      <ExampleSection
-        title='Variants'
-        description='The five pairs the app uses. Pairs, below, says when each one fits.'>
+      <ExampleSection title='Intent and emphasis' description='The five pairs. Pairs, below, says when each one fits.'>
         <ButtonVariants />
       </ExampleSection>
       <ExampleSection title='Sizes' description='32 / 36 / 40 / 44px, the field heights.'>
@@ -167,7 +160,7 @@ export const Board: Story = {
         title='As link'
         description={
           <>
-            <Code>render</Code> swaps the element: a router Link in the app.
+            <Code>render</Code> swaps the element, e.g. for a router link.
           </>
         }>
         <ButtonAsLink />
@@ -204,39 +197,37 @@ export const Board: Story = {
         <ButtonDisabled />
       </ExampleSection>
 
-      <FoundationSection title='Pairs' description='Reach for these. The old variant names still render as the pair.'>
+      <FoundationSection
+        title='Pairs'
+        description='Reach for these. emphasis defaults to raised for neutral and to solid for every other intent.'>
         <SpecimenList>
-          {PAIRS.map(({ intent, emphasis, use, alias }) => (
+          {PAIRS.map(({ intent, emphasis, props, use }) => (
             <SpecimenRow
               key={`${intent}-${emphasis}`}
               name={`${intent} / ${emphasis}`}
               meta={
                 <>
                   {use}
-                  {alias !== undefined && (
-                    <>
-                      <br />
-                      <Code>{`was variant='${alias}'`}</Code>
-                    </>
-                  )}
+                  <br />
+                  <Code>{props}</Code>
                 </>
               }>
               <Inline wrap gap='related'>
-                <Button type='button' intent={intent} emphasis={emphasis}>
-                  Speichern
+                <Button intent={intent} emphasis={emphasis}>
+                  Save
                 </Button>
-                <Button type='button' intent={intent} emphasis={emphasis}>
+                <Button intent={intent} emphasis={emphasis}>
                   <PlusIcon data-icon='inline-start' />
-                  Hinzufügen
+                  New task
                 </Button>
-                <Button type='button' intent={intent} emphasis={emphasis} size='icon' aria-label='Mehr'>
+                <Button intent={intent} emphasis={emphasis} size='icon' aria-label='More'>
                   <MoreHorizontalIcon />
                 </Button>
-                <Button type='button' intent={intent} emphasis={emphasis} disabled>
-                  Deaktiviert
+                <Button intent={intent} emphasis={emphasis} disabled>
+                  Disabled
                 </Button>
-                <Button type='button' intent={intent} emphasis={emphasis} isLoading>
-                  Speichern
+                <Button intent={intent} emphasis={emphasis} isLoading>
+                  Save
                 </Button>
               </Inline>
             </SpecimenRow>
@@ -251,8 +242,8 @@ export const Board: Story = {
           rows={INTENTS.map((intent) => ({
             name: intent,
             cells: EMPHASES.map((emphasis) => (
-              <Button key={emphasis} type='button' intent={intent} emphasis={emphasis} size='sm'>
-                Aktion
+              <Button key={emphasis} intent={intent} emphasis={emphasis} size='sm'>
+                Action
               </Button>
             )),
           }))}
@@ -269,24 +260,18 @@ export const Board: Story = {
             name: size,
             meta: <Code>{`${height}px · rounded-${radius}`}</Code>,
             cells: [
-              <Button key='p' type='button' size={size}>
-                Speichern
+              <Button key='p' intent='primary' size={size}>
+                Save
               </Button>,
-              <Button key='r' type='button' size={size} intent='neutral' emphasis='raised'>
-                Weiter
+              <Button key='r' size={size}>
+                Next
                 <ArrowRightIcon data-icon='inline-end' />
               </Button>,
-              <Button key='g' type='button' size={size} intent='neutral' emphasis='ghost'>
+              <Button key='g' emphasis='ghost' size={size}>
                 <PlusIcon data-icon='inline-start' />
-                Neu
+                New
               </Button>,
-              <Button
-                key='i'
-                type='button'
-                size={ICON_SIZES[index]}
-                intent='neutral'
-                emphasis='raised'
-                aria-label='Mehr'>
+              <Button key='i' size={ICON_SIZES[index]} aria-label='More'>
                 <MoreHorizontalIcon />
               </Button>,
             ],
@@ -314,23 +299,17 @@ export const Board: Story = {
       <FoundationSection title='Usages' description='The pairs where they live.'>
         <div className='grid gap-group md:grid-cols-2'>
           <Preview title='Form footer' className='justify-end'>
-            <Button type='button' intent='neutral' emphasis='raised'>
-              Abbrechen
-            </Button>
-            <Button type='button'>Speichern</Button>
+            <Button>Cancel</Button>
+            <Button intent='primary'>Save</Button>
           </Preview>
           <Preview title='Confirmation' className='justify-end'>
-            <Button type='button' intent='neutral' emphasis='raised'>
-              Behalten
-            </Button>
-            <Button type='button' intent='destructive' emphasis='solid'>
-              Endgültig löschen
-            </Button>
+            <Button>Keep</Button>
+            <Button intent='destructive'>Delete forever</Button>
           </Preview>
           <InsetCard>
             <InsetCardHeader
               actions={
-                <Button type='button' intent='neutral' emphasis='ghost' size='icon-sm' aria-label='Bearbeiten'>
+                <Button emphasis='ghost' size='icon-sm' aria-label='Edit'>
                   <PencilIcon />
                 </Button>
               }>
@@ -340,11 +319,11 @@ export const Board: Story = {
               <ItemList>
                 <Item className='px-4'>
                   <ItemContent>
-                    <ItemTitle>Anna Schmidt</ItemTitle>
+                    <ItemTitle>Website redesign</ItemTitle>
                     <ItemDescription>Row actions: ghost</ItemDescription>
                   </ItemContent>
                   <ItemActions>
-                    <Button type='button' intent='neutral' emphasis='ghost' size='icon-sm' aria-label='Mehr'>
+                    <Button emphasis='ghost' size='icon-sm' aria-label='More'>
                       <MoreHorizontalIcon />
                     </Button>
                   </ItemActions>
@@ -353,9 +332,9 @@ export const Board: Story = {
             </InsetCardContent>
           </InsetCard>
           <Preview title='Danger zone' className='justify-between'>
-            <span className='text-body text-muted-foreground'>Schule und alle Daten löschen</span>
-            <Button type='button' intent='destructive' emphasis='solid' size='sm'>
-              Löschen…
+            <span className='text-body text-muted-foreground'>Delete the workspace and all its data</span>
+            <Button intent='destructive' size='sm'>
+              Delete…
             </Button>
           </Preview>
         </div>

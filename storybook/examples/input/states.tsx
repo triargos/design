@@ -4,9 +4,9 @@ import { Input } from '~/components/ui/input';
 export function InputStates() {
   return (
     <div className='grid w-72 gap-2'>
-      <Input aria-label='Nur lesen' readOnly defaultValue='Erika Mustermann' />
-      <Input aria-label='Ungültig' aria-invalid defaultValue='erika@' />
-      <Input aria-label='Deaktiviert' disabled defaultValue='Erika Mustermann' />
+      <Input aria-label='Read-only' readOnly defaultValue='Maya Chen' />
+      <Input aria-label='Invalid' aria-invalid defaultValue='maya@' />
+      <Input aria-label='Disabled' disabled defaultValue='Maya Chen' />
     </div>
   );
 }

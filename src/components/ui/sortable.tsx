@@ -37,15 +37,20 @@ export const SortableItem = ({ id, render, ...props }: SortableItemProps) => {
 };
 
 /**
- * The grip; give it an `aria-label`. As an `ItemMedia`, it pulls in so the dots, not the button, sit on the row's
- * content edge, and lays out at 16px tall so it centres on the title's line.
+ * The grip; name the row in its `aria-label` (`Move Design review`). As an `ItemMedia`, it pulls in so the dots, not
+ * the button, sit on the row's content edge, and lays out at 16px tall so it centres on the title's line.
  */
-export const SortableItemHandle = ({ className, ...props }: ComponentProps<'button'>) => {
+export const SortableItemHandle = ({
+  className,
+  'aria-label': ariaLabel = 'Drag to reorder',
+  ...props
+}: ComponentProps<'button'>) => {
   const handle = use(SortableItemHandleContext);
 
   return (
     <button
       type='button'
+      aria-label={ariaLabel}
       className={cn(
         'hit-area relative flex size-6 shrink-0 cursor-grab items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-1 in-data-[slot=item-media]:-mr-1 in-data-[slot=item-media]:-ml-2',
         className,

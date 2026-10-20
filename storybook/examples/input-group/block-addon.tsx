@@ -1,18 +1,17 @@
 import { BoldIcon, ItalicIcon, LinkIcon } from 'lucide-react';
 
-import { InputGroup, InputGroupAddon, InputGroupButton } from '~/components/ui/input-group';
-import { Textarea } from '~/components/ui/textarea';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '~/components/ui/input-group';
 
-/** `align='block-end'`: a toolbar under a ghost textarea. */
+/** `align='block-end'`: a toolbar under the text. */
 export function InputGroupBlockAddon() {
   return (
     <InputGroup className='w-96'>
-      <Textarea variant='ghost' placeholder='Nachricht schreiben' className='px-3.5 py-2.5' />
+      <InputGroupTextarea placeholder='Add a comment' aria-label='Comment' />
       <InputGroupAddon align='block-end' className='border-t'>
-        <InputGroupButton size='icon-xs' aria-label='Fett'>
+        <InputGroupButton size='icon-xs' aria-label='Bold'>
           <BoldIcon />
         </InputGroupButton>
-        <InputGroupButton size='icon-xs' aria-label='Kursiv'>
+        <InputGroupButton size='icon-xs' aria-label='Italic'>
           <ItalicIcon />
         </InputGroupButton>
         <InputGroupButton size='icon-xs' aria-label='Link'>

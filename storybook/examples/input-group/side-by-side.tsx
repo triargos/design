@@ -5,10 +5,8 @@ import { Input } from '~/components/ui/input';
 export function InputGroupSideBySide() {
   return (
     <div className='flex w-96 items-center gap-2'>
-      <Input placeholder='name@schule.de' aria-label='E-Mail' className='flex-1' />
-      <Button type='button' intent='neutral' emphasis='raised'>
-        Einladen
-      </Button>
+      <Input placeholder='name@example.com' aria-label='Email' className='flex-1' />
+      <Button type='button'>Invite</Button>
     </div>
   );
 }

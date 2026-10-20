@@ -1,17 +1,17 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 
 const STATUSES = [
-  { value: 'open', label: 'Offen' },
-  { value: 'review', label: 'In Prüfung' },
-  { value: 'done', label: 'Erledigt' },
-] as const;
+  { value: 'todo', label: 'To do' },
+  { value: 'in-progress', label: 'In progress' },
+  { value: 'done', label: 'Done' },
+];
 
 /** `size='sm'` (36px) in toolbars and filters, next to sm buttons. */
 export function SelectSizes() {
   return (
     <div className='flex items-center gap-2'>
-      <Select items={STATUSES} defaultValue='open'>
-        <SelectTrigger size='sm' aria-label='Status, klein' className='w-40'>
+      <Select items={STATUSES} defaultValue='todo'>
+        <SelectTrigger size='sm' aria-label='Status, small' className='w-40'>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -22,7 +22,7 @@ export function SelectSizes() {
           ))}
         </SelectContent>
       </Select>
-      <Select items={STATUSES} defaultValue='open'>
+      <Select items={STATUSES} defaultValue='todo'>
         <SelectTrigger aria-label='Status' className='w-40'>
           <SelectValue />
         </SelectTrigger>

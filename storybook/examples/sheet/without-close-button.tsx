@@ -10,20 +10,20 @@ import {
   SheetTrigger,
 } from '~/components/ui/sheet';
 
-/** `showCloseButton={false}`: the footer closes it. */
+/** `showCloseButton={false}`: no ✕, the footer action closes it. */
 export function SheetWithoutCloseButton() {
   return (
     <Sheet>
-      <SheetTrigger render={<Button intent='neutral' emphasis='raised' />}>Filter</SheetTrigger>
+      <SheetTrigger render={<Button />}>Filter</SheetTrigger>
       <SheetContent showCloseButton={false}>
         <SheetHeader>
           <SheetTitle>Filter</SheetTitle>
         </SheetHeader>
         <SheetBody>
-          <p className='text-body text-muted-foreground'>Klasse, Status und Zeitraum.</p>
+          <p className='text-body text-muted-foreground'>Project, assignee and due date.</p>
         </SheetBody>
         <SheetFooter>
-          <SheetClose render={<Button />}>Anwenden</SheetClose>
+          <SheetClose render={<Button intent='primary' />}>Apply</SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>

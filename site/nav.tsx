@@ -1,6 +1,6 @@
 import pages from 'virtual:docs-index';
 
-import { TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { TabsRadio, TabsRadioGroup } from '~/components/ui/tabs';
 import {
   Sidebar,
   SidebarContent,
@@ -42,19 +42,18 @@ export function Wordmark() {
 function ThemePicker() {
   const [theme, setTheme] = useTheme();
   return (
-    <TabsList
-      as='radio'
+    <TabsRadioGroup
       variant='segmented'
       aria-label='Theme'
       value={theme}
       onValueChange={(value) => setTheme(value as ThemePreference)}
       className='w-full'>
       {THEMES.map(({ value, label }) => (
-        <TabsTrigger key={value} value={value} className='flex-1'>
+        <TabsRadio key={value} value={value} className='flex-1'>
           {label}
-        </TabsTrigger>
+        </TabsRadio>
       ))}
-    </TabsList>
+    </TabsRadioGroup>
   );
 }
 
@@ -62,7 +61,7 @@ function ThemePicker() {
 export function DocsSidebar() {
   const { pathname } = useRouter();
   return (
-    <Sidebar className='border-e-0!'>
+    <Sidebar>
       <SidebarHeader className='px-3 pt-group'>
         <header className='flex flex-col gap-group'>
           <div className='px-2'>
@@ -76,9 +75,7 @@ export function DocsSidebar() {
           <SidebarGroup>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={pathname === '/'}
-                  render={<Link href='/' aria-current={pathname === '/' ? 'page' : undefined} />}>
+                <SidebarMenuButton current={pathname === '/'} render={<Link href='/' />}>
                   Introduction
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -94,14 +91,8 @@ export function DocsSidebar() {
                     .map((page) => (
                       <SidebarMenuItem key={page.slug}>
                         <SidebarMenuButton
-                          isActive={pathname === pathOf(page)}
-                          render={
-                            <Link
-                              href={pathOf(page)}
-                              prefetch={prefetchPage(page)}
-                              aria-current={pathname === pathOf(page) ? 'page' : undefined}
-                            />
-                          }>
+                          current={pathname === pathOf(page)}
+                          render={<Link href={pathOf(page)} prefetch={prefetchPage(page)} />}>
                           {page.name}
                         </SidebarMenuButton>
                       </SidebarMenuItem>

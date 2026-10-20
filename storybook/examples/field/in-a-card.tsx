@@ -22,23 +22,23 @@ export function FieldInACard() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Profil</InsetCardTitle>
-        <InsetCardDescription>So sehen dich andere Eltern und die Schule.</InsetCardDescription>
+        <InsetCardTitle>Profile</InsetCardTitle>
+        <InsetCardDescription>What other members of the workspace see.</InsetCardDescription>
       </InsetCardHeader>
       <InsetCardContent className='p-group'>
         <FieldGroup>
           <FieldGroup columns={2}>
             <Field>
-              <FieldLabel htmlFor='profile-first'>Vorname</FieldLabel>
-              <Input id='profile-first' defaultValue='Erika' onChange={() => setDirty(true)} />
+              <FieldLabel htmlFor='profile-first'>First name</FieldLabel>
+              <Input id='profile-first' defaultValue='Maya' onChange={() => setDirty(true)} />
             </Field>
             <Field>
-              <FieldLabel htmlFor='profile-last'>Nachname</FieldLabel>
-              <Input id='profile-last' defaultValue='Mustermann' onChange={() => setDirty(true)} />
+              <FieldLabel htmlFor='profile-last'>Last name</FieldLabel>
+              <Input id='profile-last' defaultValue='Chen' onChange={() => setDirty(true)} />
             </Field>
           </FieldGroup>
           <Field>
-            <FieldLabel htmlFor='profile-email'>E-Mail</FieldLabel>
+            <FieldLabel htmlFor='profile-email'>Email</FieldLabel>
             <InputGroup>
               <InputGroupAddon>
                 <AtSignIcon />
@@ -46,22 +46,22 @@ export function FieldInACard() {
               <InputGroupInput
                 id='profile-email'
                 type='email'
-                defaultValue='erika@schule.de'
+                defaultValue='maya@example.com'
                 onChange={() => setDirty(true)}
               />
             </InputGroup>
-            <FieldDescription>An diese Adresse schicken wir Nachrichten der Schule.</FieldDescription>
+            <FieldDescription>Task updates and invoices go to this address.</FieldDescription>
           </Field>
           <Field>
-            <FieldLabel htmlFor='profile-note'>Notiz für die Klassenleitung</FieldLabel>
-            <Textarea id='profile-note' placeholder='Optional' rows={3} onChange={() => setDirty(true)} />
+            <FieldLabel htmlFor='profile-bio'>Bio</FieldLabel>
+            <Textarea id='profile-bio' placeholder='Optional' rows={3} onChange={() => setDirty(true)} />
           </Field>
         </FieldGroup>
       </InsetCardContent>
       <InsetCardFooter show={dirty} className='flex items-center justify-end gap-3'>
         <UnsavedChangesIndicator show={dirty} animated={false} />
-        <Button type='button' size='sm' onClick={() => setDirty(false)}>
-          Speichern
+        <Button intent='primary' size='sm' onClick={() => setDirty(false)}>
+          Save
         </Button>
       </InsetCardFooter>
     </InsetCard>

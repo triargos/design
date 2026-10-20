@@ -14,30 +14,30 @@ export function ContextMenuGrouped() {
   return (
     <ContextMenu>
       <ContextMenuTrigger className='flex h-40 w-72 items-center justify-center rounded-control-lg border border-dashed border-border text-body text-muted-foreground'>
-        Rechtsklick auf die Datei
+        Right-click the file
       </ContextMenuTrigger>
       <ContextMenuContent className='w-52'>
         <ContextMenuGroup>
-          <ContextMenuLabel>Datei</ContextMenuLabel>
+          <ContextMenuLabel>File</ContextMenuLabel>
           <ContextMenuItem>
             <PencilIcon />
-            Umbenennen
+            Rename
           </ContextMenuItem>
           <ContextMenuItem>
             <DownloadIcon />
-            Herunterladen
+            Download
           </ContextMenuItem>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuGroup>
-          <ContextMenuLabel>Teilen</ContextMenuLabel>
+          <ContextMenuLabel>Share</ContextMenuLabel>
           <ContextMenuItem>
             <CopyIcon />
-            Link kopieren
+            Copy link
           </ContextMenuItem>
           <ContextMenuItem>
             <ShareIcon />
-            Mit Eltern teilen
+            Share with the team
           </ContextMenuItem>
         </ContextMenuGroup>
       </ContextMenuContent>

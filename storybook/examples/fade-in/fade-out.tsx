@@ -9,12 +9,12 @@ export function FadeInFadeOut() {
   const [show, setShow] = useState(true);
   return (
     <div className='flex w-full max-w-md flex-col items-start gap-4'>
-      <Button type='button' intent='neutral' emphasis='raised' size='sm' onClick={() => setShow(!show)}>
-        {show ? 'Ausblenden' : 'Einblenden'}
+      <Button size='sm' onClick={() => setShow(!show)}>
+        {show ? 'Hide' : 'Show'}
       </Button>
       <FadeOut show={show} className='w-full'>
         <Callout>
-          <CalloutContent>Die Synchronisierung ist abgeschlossen.</CalloutContent>
+          <CalloutContent>Sync finished.</CalloutContent>
         </Callout>
       </FadeOut>
     </div>

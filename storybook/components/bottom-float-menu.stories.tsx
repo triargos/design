@@ -20,8 +20,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * A page column with the float-menu slot at its bottom, as `MainLayout` provides it (`FloatMenuSlotContext`). Without
- * a provider the menu portals to `body`, fixed to the viewport: what the example stories show.
+ * A page column with the float-menu slot at its bottom (`FloatMenuSlotContext`). Without a provider the menu portals
+ * to `body`, fixed to the viewport: what the example stories show.
  */
 function PageStage({ height = 'h-48', children }: { height?: string; children: ReactNode }) {
   const [slot, setSlot] = useState<HTMLDivElement | null>(null);
@@ -43,10 +43,10 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Bottom Float Menu'
-      description='A bar that floats over the bottom of the page while something is pending: a selection, unsaved changes. It grows from a pill and its controls fade in one by one; a row opens a panel and the bar morphs into it. MainLayout provides the slot it portals into; each stage here provides its own. For unsaved changes, UnsavedChangesToast builds the bar: Patterns › Settings Form.'>
+      description='A bar that floats over the bottom of the page while something is pending: a selection, unsaved changes. It grows from a pill and its controls fade in; a row opens a panel and the bar morphs into it. It portals into the page’s float-menu slot (FloatMenuSlotContext), or fixed to the viewport without one; each stage here provides its own.'>
       <ExampleSection
         title='Default'
-        description='Direct actions on a selection: inbox, import rules. The count, the actions, then clear at the end.'
+        description='Direct actions on a selection: the count, the actions, then clear at the end.'
         bare>
         <PageStage>
           <BottomFloatMenuDefault />
@@ -57,7 +57,7 @@ export const Board: Story = {
         description={
           <>
             A count, an actions panel with a nested panel, and clear at the end.{' '}
-            <Code>BottomFloatMenuRow opensPanel</Code> adds the chevron. Click Aktionen.
+            <Code>BottomFloatMenuRow opensPanel</Code> adds the chevron. Click Actions.
           </>
         }
         bare>
@@ -78,6 +78,6 @@ export const Default: Story = { render: () => <BottomFloatMenuDefault /> };
 export const WithPanel: Story = {
   name: 'With panel',
   render: () => <BottomFloatMenuWithPanel />,
-  play: clickThrough({ click: 'Aktionen', shows: 'Eltern einladen' }),
+  play: clickThrough({ click: 'Actions', shows: 'Move to project' }),
 };
 export const Status: Story = { render: () => <BottomFloatMenuStatus /> };

@@ -14,19 +14,19 @@ interface Payment {
 }
 
 const PAYMENTS: Array<Payment> = [
-  { id: '1', item: 'Klassenfahrt Berlin', status: 'paid', group: 'Klasse 7b', amount: 12500 },
-  { id: '2', item: 'Schulbuchausleihe', status: 'open', group: 'Klasse 5a', amount: 8750 },
-  { id: '3', item: 'Mensa Oktober', status: 'pending', group: 'Klasse 6c', amount: 5200 },
-  { id: '4', item: 'Theaterbesuch', status: 'paid', group: 'Klasse 8a', amount: 3800 },
+  { id: '1', item: 'INV-2041', status: 'paid', group: 'Website redesign', amount: 12500 },
+  { id: '2', item: 'INV-2042', status: 'open', group: 'Mobile app', amount: 8750 },
+  { id: '3', item: 'INV-2043', status: 'pending', group: 'Brand refresh', amount: 5200 },
+  { id: '4', item: 'INV-2044', status: 'paid', group: 'Website redesign', amount: 3800 },
 ];
 
 const STATUS = {
-  paid: { label: 'Bezahlt', intent: 'success' },
-  open: { label: 'Offen', intent: 'neutral' },
-  pending: { label: 'In Prüfung', intent: 'warning' },
+  paid: { label: 'Paid', intent: 'success' },
+  open: { label: 'Open', intent: 'neutral' },
+  pending: { label: 'In review', intent: 'warning' },
 } as const;
 
-const euro = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 const features = tableFeatures({ rowSelectionFeature });
 const column = createColumnHelper<typeof features, Payment>();
@@ -36,7 +36,7 @@ const columns = column.columns([
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        aria-label='Alle auswählen'
+        aria-label='Select all'
         checked={table.getIsAllRowsSelected()}
         indeterminate={table.getIsSomeRowsSelected()}
         onCheckedChange={(checked) => table.toggleAllRowsSelected(checked)}
@@ -44,7 +44,7 @@ const columns = column.columns([
     ),
     cell: ({ row }) => (
       <Checkbox
-        aria-label='Zeile auswählen'
+        aria-label='Select row'
         checked={row.getIsSelected()}
         disabled={!row.getCanSelect()}
         onCheckedChange={(checked) => row.toggleSelected(checked)}
@@ -52,21 +52,21 @@ const columns = column.columns([
     ),
   }),
   column.accessor('item', {
-    header: 'Posten',
+    header: 'Invoice',
     cell: ({ getValue }) => <span className='font-medium'>{getValue()}</span>,
   }),
   column.accessor('status', {
     header: 'Status',
     cell: ({ getValue }) => <Badge intent={STATUS[getValue()].intent}>{STATUS[getValue()].label}</Badge>,
   }),
-  column.accessor('group', { header: 'Gruppe' }),
+  column.accessor('group', { header: 'Project' }),
   column.accessor('amount', {
-    header: () => <div className='text-right'>Betrag</div>,
-    cell: ({ getValue }) => <div className='text-right tabular-nums'>{euro.format(getValue())}</div>,
+    header: () => <div className='text-right'>Amount</div>,
+    cell: ({ getValue }) => <div className='text-right tabular-nums'>{usd.format(getValue())}</div>,
   }),
 ]);
 
-/** TanStack Table v9: `useTable` with `rowSelectionFeature`; a selected row sets `data-state='selected'`. */
+/** TanStack Table v9: `useTable` with `rowSelectionFeature`; a selected row is `selected`. */
 export function TableWithSelection() {
   const table = useTable(
     { features, columns, data: PAYMENTS, getRowId: (row) => row.id, initialState: { rowSelection: { '2': true } } },
@@ -88,7 +88,7 @@ export function TableWithSelection() {
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
+            <TableRow key={row.id} selected={row.getIsSelected()}>
               {row.getAllCells().map((cell) => (
                 <TableCell key={cell.id}>
                   <table.FlexRender cell={cell} />

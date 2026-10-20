@@ -18,7 +18,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Unsaved Changes Indicator'
-      description='Says there are unsaved changes, next to the save action. It slides in on its own; in a card footer, which animates its own reveal, it does not.'>
+      description='Says there are unsaved changes, next to the save action. It slides in on its own; in a card footer, which animates its own reveal, it does not. The text defaults to “Unsaved changes”; children replace it.'>
       <ExampleSection title='Default' description='Click the button to toggle.'>
         <UnsavedChangesIndicatorDefault />
       </ExampleSection>

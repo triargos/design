@@ -2,40 +2,34 @@ import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
 import * as React from 'react';
 
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from '~/components/ui/drawer';
 import {
-  MobileDropdownMenu,
-  MobileDropdownMenuContent,
-  MobileDropdownMenuItem,
-  MobileDropdownMenuSub,
-  MobileDropdownMenuSubContent,
-  MobileDropdownMenuSubTrigger,
-  MobileDropdownMenuTrigger,
-} from '~/components/ui/mobile-dropdown-menu';
-import { popupSurface } from '~/components/ui/popover';
+  menuContent,
+  menuIndicator,
+  menuIndicatorItem,
+  menuItem,
+  menuItemDestructive,
+  menuLabel,
+  menuSeparator,
+  menuShortcut,
+  menuSubTrigger,
+} from '~/components/ui/menu';
 
 import { useIsMobile } from '~/hooks/use-mobile';
 import { cn } from '~/lib/utils';
 
-/** Below 768px the menu renders as a bottom drawer (`MobileDropdownMenu`); the parts read which one they are in. */
+/**
+ * Below 768px the menu opens as a bottom drawer: every part reads `IsMobileMenu` and renders its drawer version, a
+ * button row instead of a Base UI menu item. Picking a row closes the drawer (`CloseMenu`), nested ones with it.
+ */
 const IsMobileMenu = React.createContext(false);
+const CloseMenu = React.createContext<() => void>(() => {});
+/** The radio group's value, for the drawer's radio rows (Base UI's menu context is not there). */
+const MobileRadioGroup = React.createContext<{ value: string; onValueChange: (value: string) => void } | null>(null);
 
-/** Parts that also render in the drawer take string class names. */
-type WithStringClassName<Props> = Omit<Props, 'className'> & { className?: string };
-
-const itemClassName =
-  "relative flex cursor-default items-center gap-2 rounded-inner px-2.5 py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
-/** `inset`: the text lines up with items that have an icon or indicator. */
-const insetClassName = 'pl-8.5';
-const mobileItemClassName = '[&>svg]:size-4';
-/** `intent='destructive'`: the item and its icon take the destructive hue; highlighted, its subtle fill. */
-const destructiveItemClassName =
-  'text-destructive data-highlighted:bg-destructive-subtle data-highlighted:text-destructive *:[svg]:text-destructive!';
-const indicatorItemClassName =
-  'relative flex cursor-default items-center rounded-inner py-2 pr-2.5 pl-8.5 text-control outline-hidden transition-colors select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground';
-/** The check or dot of a checkbox or radio item, in the inset gutter. */
-const indicatorClassName = 'absolute left-2.5 flex size-4 items-center justify-center';
-const contentClassName =
-  'max-h-(--available-height) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto p-1 duration-enter ease-enter outline-none data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2';
+const mobileItem =
+  'flex w-full items-center gap-2 rounded-control-lg bg-muted p-3 text-left font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/24 disabled:text-disabled-foreground [&>svg]:size-4 [&>svg]:shrink-0';
+const mobileList = 'no-scrollbar flex min-h-0 flex-col gap-2 overflow-y-auto';
 
 function DropdownMenu({
   children,
@@ -45,7 +39,7 @@ function DropdownMenu({
   return (
     <IsMobileMenu value={isMobile}>
       {isMobile ? (
-        <MobileDropdownMenu>{children}</MobileDropdownMenu>
+        <MenuDrawer>{children}</MenuDrawer>
       ) : (
         <MenuPrimitive.Root data-slot='dropdown-menu' {...props}>
           {children}
@@ -55,18 +49,29 @@ function DropdownMenu({
   );
 }
 
+function MenuDrawer({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <CloseMenu value={() => setOpen(false)}>
+      <Drawer open={open} onOpenChange={setOpen}>
+        {children}
+      </Drawer>
+    </CloseMenu>
+  );
+}
+
 function DropdownMenuTrigger({
   className,
   render,
   nativeButton,
   children,
   ...props
-}: WithStringClassName<Omit<MenuPrimitive.Trigger.Props, 'render'>> & { render?: React.ReactElement }) {
+}: Omit<MenuPrimitive.Trigger.Props, 'render' | 'className'> & { className?: string; render?: React.ReactElement }) {
   if (React.use(IsMobileMenu)) {
     return (
-      <MobileDropdownMenuTrigger className={className} render={render} nativeButton={nativeButton}>
+      <DrawerTrigger className={className} render={render} nativeButton={nativeButton}>
         {children}
-      </MobileDropdownMenuTrigger>
+      </DrawerTrigger>
     );
   }
   return (
@@ -81,84 +86,60 @@ function DropdownMenuTrigger({
   );
 }
 
-function DropdownMenuGroup(props: MenuPrimitive.Group.Props) {
-  return <MenuPrimitive.Group data-slot='dropdown-menu-group' {...props} />;
+interface DropdownMenuContentProps {
+  align?: MenuPrimitive.Positioner.Props['align'];
+  side?: MenuPrimitive.Positioner.Props['side'];
+  /** The drawer's accessible name below 768px. */
+  label?: string;
+  /** For the desktop popup (its width); the drawer ignores it. */
+  className?: string;
+  children?: React.ReactNode;
 }
-
-function DropdownMenuSub({
-  children,
-  ...props
-}: Omit<MenuPrimitive.SubmenuRoot.Props, 'children'> & { children?: React.ReactNode }) {
-  if (React.use(IsMobileMenu)) return <MobileDropdownMenuSub>{children}</MobileDropdownMenuSub>;
-  return (
-    <MenuPrimitive.SubmenuRoot data-slot='dropdown-menu-sub' {...props}>
-      {children}
-    </MenuPrimitive.SubmenuRoot>
-  );
-}
-
-function DropdownMenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
-  return <MenuPrimitive.RadioGroup data-slot='dropdown-menu-radio-group' {...props} />;
-}
-
-function DropdownMenuSubTrigger({
-  className,
-  inset,
-  children,
-  ...props
-}: WithStringClassName<MenuPrimitive.SubmenuTrigger.Props> & { inset?: boolean }) {
-  if (React.use(IsMobileMenu)) {
-    return (
-      <MobileDropdownMenuSubTrigger className={cn(mobileItemClassName, className)}>
-        {children}
-      </MobileDropdownMenuSubTrigger>
-    );
-  }
-  return (
-    <MenuPrimitive.SubmenuTrigger
-      data-slot='dropdown-menu-sub-trigger'
-      className={cn(
-        itemClassName,
-        'data-popup-open:bg-foreground/6 data-popup-open:text-foreground',
-        inset && insetClassName,
-        className,
-      )}
-      {...props}>
-      {children}
-      <ChevronRightIcon className='ml-auto' />
-    </MenuPrimitive.SubmenuTrigger>
-  );
-}
-
-type DropdownMenuContentProps = WithStringClassName<MenuPrimitive.Popup.Props> &
-  Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>;
 
 function DropdownMenuContent({
   // Explicit: Base UI infers different defaults when a menu sits in another menu or a context menu.
   align = 'center',
-  alignOffset = 0,
   side = 'bottom',
-  sideOffset = 4,
+  label = 'Menu',
   className,
   children,
-  ...props
 }: DropdownMenuContentProps) {
   if (React.use(IsMobileMenu)) {
-    return <MobileDropdownMenuContent className={className}>{children}</MobileDropdownMenuContent>;
+    return (
+      // `className` sizes the desktop popup (`w-56`); the drawer is always full width.
+      <DrawerContent className='h-max max-h-[95%] min-h-[65%] space-y-2 p-4'>
+        <DrawerTitle className='sr-only'>{label}</DrawerTitle>
+        <div className={mobileList}>{children}</div>
+      </DrawerContent>
+    );
   }
   return (
+    <MenuPopup
+      slot='dropdown-menu-content'
+      align={align}
+      alignOffset={0}
+      side={side}
+      sideOffset={4}
+      className={className}>
+      {children}
+    </MenuPopup>
+  );
+}
+
+function MenuPopup({
+  slot,
+  className,
+  children,
+  ...position
+}: Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> & {
+  slot: string;
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  return (
     <MenuPrimitive.Portal>
-      <MenuPrimitive.Positioner
-        className='isolate z-50 outline-none'
-        align={align}
-        alignOffset={alignOffset}
-        side={side}
-        sideOffset={sideOffset}>
-        <MenuPrimitive.Popup
-          data-slot='dropdown-menu-content'
-          data-surface='popup'
-          className={cn(popupSurface, contentClassName, className)}
-          {...props}>
+      <MenuPrimitive.Positioner className='isolate z-50 outline-none' {...position}>
+        <MenuPrimitive.Popup data-slot={slot} data-surface='popup' className={cn(menuContent, className)}>
           {children}
         </MenuPrimitive.Popup>
       </MenuPrimitive.Positioner>
@@ -166,76 +147,100 @@ function DropdownMenuContent({
   );
 }
 
-function DropdownMenuSubContent({
-  align = 'start',
-  alignOffset = -4,
-  side = 'right',
-  sideOffset = 0,
-  children,
-  ...props
-}: DropdownMenuContentProps) {
-  if (React.use(IsMobileMenu)) return <MobileDropdownMenuSubContent>{children}</MobileDropdownMenuSubContent>;
-  return (
-    <DropdownMenuContent
-      data-slot='dropdown-menu-sub-content'
-      align={align}
-      alignOffset={alignOffset}
-      side={side}
-      sideOffset={sideOffset}
-      {...props}>
-      {children}
-    </DropdownMenuContent>
-  );
+interface DropdownMenuItemProps {
+  intent?: 'neutral' | 'destructive';
+  disabled?: boolean;
+  /** Picking it closes the menu. */
+  closeOnClick?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+  className?: string;
+  children?: React.ReactNode;
 }
 
 function DropdownMenuItem({
-  className,
-  inset,
   intent = 'neutral',
-  children,
+  disabled,
+  closeOnClick = true,
   onClick,
-  ...props
-}: WithStringClassName<MenuPrimitive.Item.Props> & {
-  inset?: boolean;
-  intent?: 'neutral' | 'destructive';
-}) {
-  const intentClassName = intent === 'destructive' && destructiveItemClassName;
+  className,
+  children,
+}: DropdownMenuItemProps) {
+  const close = React.use(CloseMenu);
+  const intentClassName = intent === 'destructive' && menuItemDestructive;
   if (React.use(IsMobileMenu)) {
     return (
-      <MobileDropdownMenuItem
-        className={cn(mobileItemClassName, 'group', intentClassName, className)}
-        onClick={onClick}>
+      <button
+        type='button'
+        disabled={disabled}
+        className={cn(mobileItem, intentClassName, className)}
+        onClick={(event) => {
+          onClick?.(event);
+          if (closeOnClick) close();
+        }}>
         {children}
-      </MobileDropdownMenuItem>
+      </button>
     );
   }
   return (
     <MenuPrimitive.Item
       data-slot='dropdown-menu-item'
       data-intent={intent}
-      className={cn(itemClassName, 'group', inset && insetClassName, intentClassName, className)}
+      disabled={disabled}
+      closeOnClick={closeOnClick}
       onClick={onClick}
-      {...props}>
+      className={cn(menuItem, intentClassName, className)}>
       {children}
     </MenuPrimitive.Item>
   );
 }
 
+interface DropdownMenuCheckboxItemProps {
+  checked: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+  disabled?: boolean;
+  /** Toggling it closes the menu. */
+  closeOnClick?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
+
 function DropdownMenuCheckboxItem({
+  checked,
+  onCheckedChange,
+  disabled,
+  closeOnClick = true,
   className,
   children,
-  closeOnClick = true,
-  ...props
-}: MenuPrimitive.CheckboxItem.Props) {
+}: DropdownMenuCheckboxItemProps) {
+  const close = React.use(CloseMenu);
+  if (React.use(IsMobileMenu)) {
+    return (
+      <button
+        type='button'
+        role='checkbox'
+        aria-checked={checked}
+        disabled={disabled}
+        className={cn(mobileItem, className)}
+        onClick={() => {
+          onCheckedChange?.(!checked);
+          if (closeOnClick) close();
+        }}>
+        {children}
+        {checked && <CheckIcon className='ml-auto' />}
+      </button>
+    );
+  }
   return (
     <MenuPrimitive.CheckboxItem
       data-slot='dropdown-menu-checkbox-item'
-      className={cn(indicatorItemClassName, className)}
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      disabled={disabled}
       closeOnClick={closeOnClick}
-      {...props}>
-      <span className={indicatorClassName}>
+      className={cn(menuIndicatorItem, className)}>
+      <span className={menuIndicator}>
         <MenuPrimitive.CheckboxItemIndicator>
-          <CheckIcon className='size-4' />
+          <CheckIcon />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -243,14 +248,73 @@ function DropdownMenuCheckboxItem({
   );
 }
 
-function DropdownMenuRadioItem({ className, children, closeOnClick = true, ...props }: MenuPrimitive.RadioItem.Props) {
+function DropdownMenuRadioGroup({
+  value,
+  onValueChange,
+  children,
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  children?: React.ReactNode;
+}) {
+  if (React.use(IsMobileMenu)) {
+    return (
+      <MobileRadioGroup value={{ value, onValueChange }}>
+        <div role='radiogroup' className='flex flex-col gap-2'>
+          {children}
+        </div>
+      </MobileRadioGroup>
+    );
+  }
+  return (
+    <MenuPrimitive.RadioGroup data-slot='dropdown-menu-radio-group' value={value} onValueChange={onValueChange}>
+      {children}
+    </MenuPrimitive.RadioGroup>
+  );
+}
+
+function DropdownMenuRadioItem({
+  value,
+  disabled,
+  closeOnClick = true,
+  className,
+  children,
+}: {
+  value: string;
+  disabled?: boolean;
+  /** Picking it closes the menu. */
+  closeOnClick?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  const close = React.use(CloseMenu);
+  const group = React.use(MobileRadioGroup);
+  if (React.use(IsMobileMenu)) {
+    const checked = group?.value === value;
+    return (
+      <button
+        type='button'
+        role='radio'
+        aria-checked={checked}
+        disabled={disabled}
+        className={cn(mobileItem, className)}
+        onClick={() => {
+          group?.onValueChange(value);
+          if (closeOnClick) close();
+        }}>
+        {children}
+        {checked && <CircleIcon className='ml-auto size-2! fill-current' />}
+      </button>
+    );
+  }
   return (
     <MenuPrimitive.RadioItem
       data-slot='dropdown-menu-radio-item'
-      className={cn(indicatorItemClassName, className)}
+      value={value}
+      disabled={disabled}
       closeOnClick={closeOnClick}
-      {...props}>
-      <span className={indicatorClassName}>
+      className={cn(menuIndicatorItem, className)}>
+      <span className={menuIndicator}>
         <MenuPrimitive.RadioItemIndicator>
           <CircleIcon className='size-2 fill-current' />
         </MenuPrimitive.RadioItemIndicator>
@@ -260,50 +324,106 @@ function DropdownMenuRadioItem({ className, children, closeOnClick = true, ...pr
   );
 }
 
-/** A plain heading: Base UI's `GroupLabel` must sit inside a `Group`, which call sites do not use. */
-function DropdownMenuLabel({ className, inset, ...props }: React.ComponentProps<'div'> & { inset?: boolean }) {
+function DropdownMenuGroup({ className, children }: { className?: string; children?: React.ReactNode }) {
+  if (React.use(IsMobileMenu)) {
+    return (
+      <div role='group' className={cn('flex flex-col gap-2', className)}>
+        {children}
+      </div>
+    );
+  }
+  return (
+    <MenuPrimitive.Group data-slot='dropdown-menu-group' className={className}>
+      {children}
+    </MenuPrimitive.Group>
+  );
+}
+
+/** A plain heading: Base UI's `GroupLabel` must sit inside a `Group`, which call sites do not always use. */
+function DropdownMenuLabel({ className, ...props }: React.ComponentProps<'div'>) {
+  const isMobile = React.use(IsMobileMenu);
   return (
     <div
       data-slot='dropdown-menu-label'
-      className={cn('px-2.5 py-1.5 text-body font-medium', inset && insetClassName, className)}
+      className={cn(isMobile ? 'px-3 pt-1 text-body font-medium text-muted-foreground' : menuLabel, className)}
       {...props}
     />
   );
 }
 
-function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.Props) {
-  return (
-    <MenuPrimitive.Separator
-      data-slot='dropdown-menu-separator'
-      className={cn('-mx-2 my-4 h-px sm:my-1 sm:bg-border', className)}
-      {...props}
-    />
-  );
+function DropdownMenuSeparator({ className }: { className?: string }) {
+  if (React.use(IsMobileMenu)) return <div role='separator' className={cn('mx-3 h-px bg-border', className)} />;
+  return <MenuPrimitive.Separator data-slot='dropdown-menu-separator' className={cn(menuSeparator, className)} />;
 }
 
+/** The item's keyboard shortcut. Hidden in the drawer: a touch screen has no keyboard to press it on. */
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<'span'>) {
+  if (React.use(IsMobileMenu)) return null;
+  return <span data-slot='dropdown-menu-shortcut' className={cn(menuShortcut, className)} {...props} />;
+}
+
+/** One level of submenu: beside the menu on desktop, a drawer stacked on the menu's below 768px. */
+function DropdownMenuSub({ children }: { children?: React.ReactNode }) {
+  if (React.use(IsMobileMenu)) return <Drawer>{children}</Drawer>;
+  return <MenuPrimitive.SubmenuRoot data-slot='dropdown-menu-sub'>{children}</MenuPrimitive.SubmenuRoot>;
+}
+
+function DropdownMenuSubTrigger({ className, children }: { className?: string; children?: React.ReactNode }) {
+  if (React.use(IsMobileMenu)) {
+    return (
+      <DrawerTrigger className={cn(mobileItem, className)}>
+        {children}
+        <ChevronRightIcon className='ml-auto text-muted-foreground' />
+      </DrawerTrigger>
+    );
+  }
   return (
-    <span
-      data-slot='dropdown-menu-shortcut'
-      className={cn('ml-auto text-caption tracking-widest text-faint-foreground', className)}
-      {...props}
-    />
+    <MenuPrimitive.SubmenuTrigger data-slot='dropdown-menu-sub-trigger' className={cn(menuSubTrigger, className)}>
+      {children}
+      <ChevronRightIcon className='ml-auto' />
+    </MenuPrimitive.SubmenuTrigger>
+  );
+}
+
+function DropdownMenuSubContent({
+  label = 'Menu',
+  className,
+  children,
+}: Omit<DropdownMenuContentProps, 'align' | 'side'>) {
+  if (React.use(IsMobileMenu)) {
+    return (
+      <DrawerContent className='h-max max-h-[95%] min-h-[55%] space-y-2 p-2'>
+        <DrawerTitle className='sr-only'>{label}</DrawerTitle>
+        <div className={mobileList}>{children}</div>
+      </DrawerContent>
+    );
+  }
+  return (
+    <MenuPopup
+      slot='dropdown-menu-sub-content'
+      align='start'
+      alignOffset={-4}
+      side='right'
+      sideOffset={0}
+      className={className}>
+      {children}
+    </MenuPopup>
   );
 }
 
 export {
   DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuCheckboxItem,
-  DropdownMenuRadioItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuGroup,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuRadioGroup,
+  DropdownMenuTrigger,
 };

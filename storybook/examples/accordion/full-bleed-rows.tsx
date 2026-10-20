@@ -3,20 +3,19 @@ import { InsetCard, InsetCardContent } from '~/components/ui/inset-card';
 
 const QUESTIONS = [
   {
-    value: 'sick',
-    question: 'Wie melde ich mein Kind krank?',
-    answer:
-      'Unter Abwesenheiten auf „Neue Abwesenheit“ tippen, Kind und Grund wählen, absenden. Die Schule sieht es sofort.',
+    value: 'invite',
+    question: 'How do I invite a teammate?',
+    answer: 'Open Members, choose Invite and enter their email. They join as soon as they accept.',
   },
   {
     value: 'documents',
-    question: 'Wo finde ich Elternbriefe?',
-    answer: 'Alle Nachrichten der Schule liegen im Posteingang; Anhänge öffnen sich direkt im Browser.',
+    question: 'Where do shared documents live?',
+    answer: 'Every project has a Documents tab; files open right in the browser.',
   },
   {
-    value: 'contact',
-    question: 'Wie ändere ich meine Telefonnummer?',
-    answer: 'Unter Konto → Profil. Die Schule bestätigt die Änderung, bevor sie gilt.',
+    value: 'billing',
+    question: 'How do I change the billing email?',
+    answer: 'Under Settings → Billing. Invoices go to the new address from the next cycle.',
   },
 ] as const;
 

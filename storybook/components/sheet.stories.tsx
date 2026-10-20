@@ -28,7 +28,7 @@ export const Board: Story = {
         title='Without close button'
         description={
           <>
-            <Code>showCloseButton={'{false}'}</Code>: the footer closes it.
+            <Code>showCloseButton={'{false}'}</Code>: no ✕, the footer action closes it.
           </>
         }>
         <SheetWithoutCloseButton />
@@ -48,14 +48,14 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <SheetDefault />,
-  play: open('click', 'Mitglied einladen', 'Wir schicken eine E-Mail mit einem persönlichen Link.'),
+  play: open('click', 'Invite member', 'We’ll email them a link to join the workspace.'),
 };
 export const WithoutCloseButton: Story = {
   name: 'Without close button',
   render: () => <SheetWithoutCloseButton />,
-  play: open('click', 'Filter', 'Klasse, Status und Zeitraum.'),
+  play: open('click', 'Filter', 'Project, assignee and due date.'),
 };
 export const Directions: Story = {
   render: () => <SheetDirections />,
-  play: open('click', 'Links', 'Navigation und Ordner.'),
+  play: open('click', 'Left', 'Navigation and folders.'),
 };

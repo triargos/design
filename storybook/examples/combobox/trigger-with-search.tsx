@@ -1,46 +1,41 @@
-import { ChevronsUpDownIcon, SearchIcon } from 'lucide-react';
-
 import {
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxSearch,
   ComboboxTrigger,
   ComboboxValue,
 } from '~/components/ui/combobox';
-import { selectTriggerVariants } from '~/components/ui/select';
 
-interface Town {
+interface Project {
   readonly value: string;
   readonly label: string;
 }
 
-const TOWNS: ReadonlyArray<Town> = [
-  { value: 'berlin', label: 'Berlin' },
-  { value: 'bremen', label: 'Bremen' },
-  { value: 'hamburg', label: 'Hamburg' },
-  { value: 'koeln', label: 'Köln' },
-  { value: 'muenchen', label: 'München' },
+const PROJECTS: ReadonlyArray<Project> = [
+  { value: 'atlas', label: 'Atlas' },
+  { value: 'beacon', label: 'Beacon' },
+  { value: 'comet', label: 'Comet' },
+  { value: 'delta', label: 'Delta' },
+  { value: 'orbit', label: 'Orbit' },
 ];
 
 /** A select-like trigger; the search field sits in the popup. */
 export function ComboboxTriggerWithSearch() {
   return (
-    <Combobox items={TOWNS} defaultValue={TOWNS[0]} itemToStringLabel={(town: Town) => town.label}>
-      <ComboboxTrigger
-        render={<button type='button' aria-label='Ort' className={selectTriggerVariants({ className: 'w-64' })} />}>
+    <Combobox items={PROJECTS} defaultValue={PROJECTS[0]} itemToStringLabel={(project: Project) => project.label}>
+      <ComboboxTrigger aria-label='Project' className='w-64'>
         <ComboboxValue />
-        <ChevronsUpDownIcon />
       </ComboboxTrigger>
-      <ComboboxContent aria-label='Ort wählen'>
-        <ComboboxInput placeholder='Ort suchen' showTrigger={false} startAddon={<SearchIcon />} />
-        <ComboboxEmpty>Kein Ort gefunden</ComboboxEmpty>
+      <ComboboxContent aria-label='Choose a project'>
+        <ComboboxSearch placeholder='Search projects' />
+        <ComboboxEmpty>No projects found</ComboboxEmpty>
         <ComboboxList>
-          {(town: Town) => (
-            <ComboboxItem key={town.value} value={town}>
-              {town.label}
+          {(project: Project) => (
+            <ComboboxItem key={project.value} value={project}>
+              {project.label}
             </ComboboxItem>
           )}
         </ComboboxList>

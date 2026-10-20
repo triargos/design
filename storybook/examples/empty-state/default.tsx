@@ -9,18 +9,16 @@ export function EmptyStateDefault() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Dateien</InsetCardTitle>
+        <InsetCardTitle>Documents</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='p-4'>
         <EmptyState>
-          <EmptyStateTitle>Noch keine Dateien</EmptyStateTitle>
-          <EmptyStateDescription>
-            Hochgeladene Dateien erscheinen hier, bereit zum Teilen und Ordnen.
-          </EmptyStateDescription>
+          <EmptyStateTitle>No documents yet</EmptyStateTitle>
+          <EmptyStateDescription>Uploaded documents show up here, ready to share with the team.</EmptyStateDescription>
           <EmptyStateContent>
-            <Button type='button' intent='neutral' emphasis='raised'>
+            <Button>
               <UploadIcon data-icon='inline-start' />
-              Dateien hochladen
+              Upload documents
             </Button>
           </EmptyStateContent>
         </EmptyState>

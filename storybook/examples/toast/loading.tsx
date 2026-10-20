@@ -1,6 +1,5 @@
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -8,14 +7,11 @@ const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, 
 export function ToastLoading() {
   return (
     <Button
-      type='button'
-      intent='neutral'
-      emphasis='raised'
       onClick={() => {
-        const id = toast.loading('Antrag wird übernommen …');
-        void wait(1500).then(() => toast.success('Antrag übernommen', { id }));
+        const id = toast.loading('Importing tasks…');
+        void wait(1500).then(() => toast.success('Tasks imported', { id }));
       }}>
-      Antrag übernehmen
+      Import tasks
     </Button>
   );
 }

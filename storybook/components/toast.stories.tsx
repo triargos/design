@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Toast } from '@base-ui/react/toast';
 import { useEffect, useState, type ReactNode } from 'react';
 
-import { ToastPrimitive, ToastProvider } from '~/components/ui/toast';
-
-import { makeToast } from '~/lib/toast/toast';
+import { ToastProvider, makeToast } from '~/components/ui/toast';
 
 import { ToastDedupe } from '../examples/toast/dedupe';
 import { ToastDefault } from '../examples/toast/default';
@@ -20,8 +19,8 @@ import { open } from '../kit/play';
 
 /**
  * Toasts report the outcome of something the user did: saved, failed, still running. Show them with `toast` from
- * `~/lib/toast/toast` (`Toaster` in Effect code); `root.tsx` renders the one `ToastProvider`. A repeat of the same type,
- * title and description updates the open toast instead of stacking a copy.
+ * `components/ui/toast`; the app renders one `ToastProvider`. A repeat of the same type, title and description updates
+ * the open toast instead of stacking a copy.
  */
 const meta = {
   title: 'Components/Toast',
@@ -36,38 +35,38 @@ type StageToast = ReturnType<typeof makeToast>;
 
 /**
  * A toast stack confined to a box: its own manager, its portal inside the box (`transform-gpu` makes the fixed
- * viewport position against it), no timeout, so the toasts stay for the screenshot.
+ * viewport position against it), no timeout, so the toasts stay open. The box is toast-wide, so the stack sits in it.
  */
 function Stage({ show, height = 'h-28' }: { show: (stageToast: StageToast) => void; height?: string }) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
-  const [manager] = useState(() => ToastPrimitive.createToastManager());
+  const [manager] = useState(() => Toast.createToastManager());
   useEffect(() => {
     if (container) show(makeToast(manager));
   }, [container, manager, show]);
   return (
-    <div ref={setContainer} className={`relative ${height} transform-gpu overflow-hidden rounded-card bg-background`}>
-      {container && (
-        <ToastProvider toastManager={manager} timeout={0} position='bottom-center' portalProps={{ container }} />
-      )}
+    <div
+      ref={setContainer}
+      className={`relative ${height} w-full max-w-104 transform-gpu overflow-hidden rounded-card bg-background`}>
+      {container && <ToastProvider toastManager={manager} timeout={0} container={container} />}
     </div>
   );
 }
 
 const TYPES: ReadonlyArray<{ name: string; use: string; show: (stageToast: StageToast) => void }> = [
-  { name: 'toast', use: 'Neutral news', show: (t) => t('Entwurf wiederhergestellt') },
-  { name: 'toast.success', use: 'Saved, sent, done', show: (t) => t.success('Änderungen gespeichert') },
-  { name: 'toast.error', use: 'The action failed', show: (t) => t.error('Speichern fehlgeschlagen') },
+  { name: 'toast', use: 'Neutral news', show: (t) => t('Draft restored') },
+  { name: 'toast.success', use: 'Saved, sent, done', show: (t) => t.success('Changes saved') },
+  { name: 'toast.error', use: 'The action failed', show: (t) => t.error('Couldn’t save changes') },
   {
     name: 'toast.info',
     use: 'Something changed underneath',
-    show: (t) => t.info('Das Formular wurde aktualisiert'),
+    show: (t) => t.info('A newer version of this document is available'),
   },
   {
     name: 'toast.warning',
     use: 'Done, with a catch',
-    show: (t) => t.warning('Veröffentlicht, 2 Regeln ausgelassen'),
+    show: (t) => t.warning('Published, 2 tasks skipped'),
   },
-  { name: 'toast.loading', use: 'Still running; stays open', show: (t) => t.loading('Antrag wird übernommen …') },
+  { name: 'toast.loading', use: 'Still running; stays open', show: (t) => t.loading('Importing tasks…') },
 ];
 
 const CONTENT: ReadonlyArray<{ name: string; meta: ReactNode; height?: string; show: (t: StageToast) => void }> = [
@@ -75,30 +74,29 @@ const CONTENT: ReadonlyArray<{ name: string; meta: ReactNode; height?: string; s
     name: 'Description',
     meta: <Code>{'{ description }'}</Code>,
     height: 'h-36',
-    show: (t) => t.error('Übernahme fehlgeschlagen', { description: 'Die Person wurde in Procurat nicht gefunden.' }),
+    show: (t) => t.error('Import failed', { description: 'The file has no task names in its first column.' }),
   },
   {
     name: 'Action',
     meta: <Code>{'{ action, timeout: 0 }'}</Code>,
-    show: (t) =>
-      t('Entwurf wiederhergestellt', { timeout: 0, action: { label: 'Verwerfen', onClick: () => undefined } }),
+    show: (t) => t('Draft restored', { timeout: 0, action: { label: 'Discard', onClick: () => undefined } }),
   },
   {
     name: 'Description and action',
     meta: <Code>{'{ description, action }'}</Code>,
     height: 'h-36',
     show: (t) =>
-      t.success('Antrag gespeichert', {
-        description: 'Die Änderungen sind für die Schule sichtbar.',
-        action: { label: 'Öffnen', onClick: () => undefined },
+      t.success('Invoice sent', {
+        description: 'Globex gets it by email in a few minutes.',
+        action: { label: 'Open', onClick: () => undefined },
       }),
   },
 ];
 
 const showStack = (t: StageToast) => {
-  t.success('Änderungen gespeichert');
-  t.info('Das Formular wurde aktualisiert');
-  t.error('Speichern fehlgeschlagen', { description: 'Bitte versuche es erneut.' });
+  t.success('Changes saved');
+  t.info('A newer version of this document is available');
+  t.error('Couldn’t save changes', { description: 'Check your connection and try again.' });
 };
 
 export const Board: Story = {
@@ -201,42 +199,42 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <ToastDefault />,
-  play: open('click', 'Entwurf wiederherstellen', 'Entwurf wiederhergestellt'),
+  play: open('click', 'Restore draft', 'Draft restored'),
 };
 export const Success: Story = {
   render: () => <ToastSuccess />,
-  play: open('click', 'Speichern', 'Änderungen gespeichert'),
+  play: open('click', 'Save', 'Changes saved'),
 };
 export const Error: Story = {
   render: () => <ToastError />,
-  play: open('click', 'Speichern', 'Speichern fehlgeschlagen'),
+  play: open('click', 'Save', 'Couldn’t save changes'),
 };
 export const Warning: Story = {
   render: () => <ToastWarning />,
-  play: open('click', 'Veröffentlichen', 'Veröffentlicht, 2 Regeln ausgelassen'),
+  play: open('click', 'Publish', 'Published, 2 tasks skipped'),
 };
 export const Info: Story = {
   render: () => <ToastInfo />,
-  play: open('click', 'Formular neu laden', 'Das Formular wurde aktualisiert'),
+  play: open('click', 'Check for updates', 'A newer version of this document is available'),
 };
 export const Loading: Story = {
   render: () => <ToastLoading />,
-  play: open('click', 'Antrag übernehmen', 'Antrag wird übernommen …'),
+  play: open('click', 'Import tasks', 'Importing tasks…'),
 };
 export const Promise: Story = {
   render: () => <ToastPromise />,
-  play: open('click', 'Datei hochladen', 'Datei wird hochgeladen …'),
+  play: open('click', 'Upload invoice', 'Uploading invoice…'),
 };
 export const WithAction: Story = {
   name: 'With action',
   render: () => <ToastWithAction />,
-  play: open('click', 'Entwurf wiederherstellen', 'Verwerfen'),
+  play: open('click', 'Restore draft', 'Discard'),
 };
 export const Stack: Story = {
   render: () => <ToastStack />,
-  play: open('click', 'Drei Toasts', 'Speichern fehlgeschlagen'),
+  play: open('click', 'Show three toasts', 'Couldn’t save changes'),
 };
 export const Dedupe: Story = {
   render: () => <ToastDedupe />,
-  play: open('click', 'Zweimal klicken', 'Speichern fehlgeschlagen'),
+  play: open('click', 'Click twice', 'Couldn’t save changes'),
 };

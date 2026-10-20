@@ -52,7 +52,7 @@ export function controlsOf(meta: PlaygroundMeta): ReadonlyArray<Control> {
 
 const label = (name: string) => (name === 'children' ? 'Content' : name.replace(/([a-z])([A-Z])/g, '$1 $2'));
 
-/** The JSX the controls describe: \`<Button intent='neutral'>Speichern</Button>\`. */
+/** The JSX the controls describe: \`<Button emphasis='solid'>Speichern</Button>\`. */
 const jsxOf = (component: string, args: Args) => {
   const { children, ...props } = args;
   const attributes = Object.entries(props)

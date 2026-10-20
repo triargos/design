@@ -17,7 +17,7 @@ const meta = {
   title: 'Components/Copy Button',
   parameters: { description: 'Copies a value to the clipboard; the icon springs into a check.' },
   component: CopyButton,
-  args: { value: 'https://eltern.example/?org=gs-am-see' },
+  args: { value: 'https://acme.example/invite/k3f9' },
   // Headless browsers deny clipboard writes; a denied write would never show the check. Real copies still go through.
   beforeEach: () => {
     const clipboard = navigator.clipboard;
@@ -31,7 +31,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const LOGIN_URL = 'https://eltern.example/?org=gs-am-see';
+const INVITE_LINK = 'https://acme.example/invite/k3f9';
 const SIZES = ['icon-xs', 'icon-sm', 'icon'] as const;
 
 /** Keeps its button in the copied state: clicks it now and again before the 2s reset. */
@@ -55,7 +55,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Copy Button'
-      description='Copies a value to the clipboard; the icon springs into a check that draws itself, then springs back after two seconds. Reduced motion cross-fades. Icon-only and ghost by default, so it sits quietly next to what it copies. Click one to see the check.'>
+      description='Copies a value to the clipboard; the icon springs into a check that draws itself, then springs back after two seconds. Reduced motion cross-fades. Icon-only and ghost by default, so it sits quietly next to what it copies. label names the icon-only button (default “Copy”); copiedLabel is announced after a copy (default “Copied”).'>
       <ExampleSection
         title='Default'
         description='Icon-only and ghost, so it sits quietly next to what it copies. Click it to see the check.'>
@@ -106,10 +106,10 @@ export const Board: Story = {
           rows={SIZES.map((size) => ({
             name: size,
             cells: [
-              <CopyButton key='g' value={LOGIN_URL} size={size} />,
-              <CopyButton key='r' value={LOGIN_URL} size={size} emphasis='raised' />,
+              <CopyButton key='g' value={INVITE_LINK} size={size} />,
+              <CopyButton key='r' value={INVITE_LINK} size={size} emphasis='raised' />,
               <Copied key='c'>
-                <CopyButton value={LOGIN_URL} size={size} />
+                <CopyButton value={INVITE_LINK} size={size} />
               </Copied>,
             ],
           }))}
@@ -128,11 +128,11 @@ export const Board: Story = {
                   <KeyRoundIcon />
                 </ItemMedia>
                 <ItemContent>
-                  <ItemTitle>API-Schlüssel</ItemTitle>
-                  <ItemDescription className='font-mono'>ep_live_4f9a…c21e</ItemDescription>
+                  <ItemTitle>API key</ItemTitle>
+                  <ItemDescription className='font-mono'>sk_live_4f9a…c21e</ItemDescription>
                 </ItemContent>
                 <ItemActions>
-                  <CopyButton value='ep_live_4f9a2b7dc21e' label='API-Schlüssel kopieren' />
+                  <CopyButton value='sk_live_4f9a2b7dc21e' label='Copy API key' />
                 </ItemActions>
               </Item>
             </ItemList>

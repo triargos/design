@@ -2,12 +2,12 @@
 
 Generates a full light and dark palette from a base color, an accent and a contrast level. The algorithm follows [Linear](https://linear.app)'s theme generator.
 
-| File                                    | Holds                                                                          |
-| --------------------------------------- | ------------------------------------------------------------------------------ |
-| `color.ts`                              | LCH color math: conversion, mixing, contrast                                   |
-| `theme-generator.ts`                    | `generateTheme`: input → tokens, plus nested themes                            |
-| `theme-to-css.ts`                       | `themeToShadcnVars`: projects tokens onto shadcn vars                          |
-| `brand-anchors.ts`, `branding-theme.ts` | organization branding → generator input → `<style data-organization-branding>` |
+| File                                    | Holds                                                             |
+| --------------------------------------- | ----------------------------------------------------------------- |
+| `color.ts`                              | LCH color math: conversion, mixing, contrast                      |
+| `theme-generator.ts`                    | `generateTheme`: input → tokens, plus nested themes               |
+| `theme-to-css.ts`                       | `themeToCssVars`: projects tokens onto the CSS variables          |
+| `brand-anchors.ts`, `branding-theme.ts` | branding theme → generator input → CSS rules (`brandingThemeCss`) |
 
 ## Inputs
 

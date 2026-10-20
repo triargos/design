@@ -8,16 +8,16 @@ export function EmptyStateSizes() {
       <InsetCard>
         <InsetCardContent className='p-4'>
           <EmptyState>
-            <EmptyStateTitle>Keine Termine</EmptyStateTitle>
-            <EmptyStateDescription>Termine der Schule erscheinen hier.</EmptyStateDescription>
+            <EmptyStateTitle>No invoices</EmptyStateTitle>
+            <EmptyStateDescription>Invoices for this workspace show up here.</EmptyStateDescription>
           </EmptyState>
         </InsetCardContent>
       </InsetCard>
       <InsetCard>
         <InsetCardContent className='p-4'>
           <EmptyState size='sm'>
-            <EmptyStateTitle>Keine Termine</EmptyStateTitle>
-            <EmptyStateDescription>Termine der Schule erscheinen hier.</EmptyStateDescription>
+            <EmptyStateTitle>No invoices</EmptyStateTitle>
+            <EmptyStateDescription>Invoices for this workspace show up here.</EmptyStateDescription>
           </EmptyState>
         </InsetCardContent>
       </InsetCard>

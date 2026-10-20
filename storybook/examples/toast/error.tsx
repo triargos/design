@@ -1,16 +1,12 @@
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 /** The action failed; a description says why or what next. */
 export function ToastError() {
   return (
     <Button
-      type='button'
-      intent='neutral'
-      emphasis='raised'
-      onClick={() => toast.error('Speichern fehlgeschlagen', { description: 'Bitte versuche es erneut.' })}>
-      Speichern
+      onClick={() => toast.error('Couldn’t save changes', { description: 'Check your connection and try again.' })}>
+      Save
     </Button>
   );
 }

@@ -9,18 +9,16 @@ export function EmptyStateCarousel() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Dateien</InsetCardTitle>
+        <InsetCardTitle>Images</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='p-4'>
         <EmptyState variant='carousel'>
-          <EmptyStateTitle>Noch keine Fotos</EmptyStateTitle>
-          <EmptyStateDescription>
-            Fotos aus deinen Gruppen erscheinen hier, sobald jemand sie teilt.
-          </EmptyStateDescription>
+          <EmptyStateTitle>No images yet</EmptyStateTitle>
+          <EmptyStateDescription>Images attached to tasks in this project show up here.</EmptyStateDescription>
           <EmptyStateContent>
-            <Button type='button' intent='neutral' emphasis='raised'>
+            <Button>
               <ImageIcon data-icon='inline-start' />
-              Foto teilen
+              Add image
             </Button>
           </EmptyStateContent>
         </EmptyState>

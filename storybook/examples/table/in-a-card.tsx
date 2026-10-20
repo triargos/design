@@ -3,20 +3,20 @@ import { InsetCard } from '~/components/ui/inset-card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '~/components/ui/table';
 
 const PAYMENTS = [
-  { id: '1', item: 'Klassenfahrt Berlin', status: 'paid', group: 'Klasse 7b', amount: 12500 },
-  { id: '2', item: 'Schulbuchausleihe', status: 'open', group: 'Klasse 5a', amount: 8750 },
-  { id: '3', item: 'Mensa Oktober', status: 'pending', group: 'Klasse 6c', amount: 5200 },
+  { id: '1', item: 'INV-2041', status: 'paid', group: 'Website redesign', amount: 12500 },
+  { id: '2', item: 'INV-2042', status: 'open', group: 'Mobile app', amount: 8750 },
+  { id: '3', item: 'INV-2043', status: 'pending', group: 'Brand refresh', amount: 5200 },
 ] as const;
 
 const STATUS = {
-  paid: { label: 'Bezahlt', intent: 'success' },
-  open: { label: 'Offen', intent: 'neutral' },
-  pending: { label: 'In Prüfung', intent: 'warning' },
+  paid: { label: 'Paid', intent: 'success' },
+  open: { label: 'Open', intent: 'neutral' },
+  pending: { label: 'In review', intent: 'warning' },
 } as const;
 
-const euro = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
-const total = euro.format(PAYMENTS.reduce((sum, payment) => sum + payment.amount, 0));
+const total = usd.format(PAYMENTS.reduce((sum, payment) => sum + payment.amount, 0));
 
 /** `variant='card'` straight in an InsetCard, in place of InsetCardContent: header and footer rows on the shell. */
 export function TableInACard() {
@@ -25,10 +25,10 @@ export function TableInACard() {
       <Table variant='card'>
         <TableHeader>
           <TableRow>
-            <TableHead>Posten</TableHead>
+            <TableHead>Invoice</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Gruppe</TableHead>
-            <TableHead className='text-right'>Betrag</TableHead>
+            <TableHead>Project</TableHead>
+            <TableHead className='text-right'>Amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -39,13 +39,13 @@ export function TableInACard() {
                 <Badge intent={STATUS[payment.status].intent}>{STATUS[payment.status].label}</Badge>
               </TableCell>
               <TableCell>{payment.group}</TableCell>
-              <TableCell className='text-right tabular-nums'>{euro.format(payment.amount)}</TableCell>
+              <TableCell className='text-right tabular-nums'>{usd.format(payment.amount)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={3}>Summe</TableCell>
+            <TableCell colSpan={3}>Total</TableCell>
             <TableCell className='text-right tabular-nums'>{total}</TableCell>
           </TableRow>
         </TableFooter>

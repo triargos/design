@@ -1,16 +1,7 @@
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 /** Something changed underneath. */
 export function ToastInfo() {
-  return (
-    <Button
-      type='button'
-      intent='neutral'
-      emphasis='raised'
-      onClick={() => toast.info('Das Formular wurde aktualisiert')}>
-      Formular neu laden
-    </Button>
-  );
+  return <Button onClick={() => toast.info('A newer version of this document is available')}>Check for updates</Button>;
 }

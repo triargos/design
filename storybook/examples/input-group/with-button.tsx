@@ -10,26 +10,26 @@ export function InputGroupWithButton() {
   return (
     <div className='grid w-96 gap-2'>
       <InputGroup>
-        <InputGroupInput type='password' defaultValue='sk_live_123456' aria-label='API-Schlüssel' />
+        <InputGroupInput type='password' defaultValue='sk_live_123456' aria-label='API key' />
         <InputGroupAddon align='inline-end'>
-          <InputGroupButton size='icon-xs' aria-label='Anzeigen'>
+          <InputGroupButton size='icon-xs' aria-label='Show'>
             <EyeIcon />
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>
       <InputGroup>
-        <InputGroupInput readOnly defaultValue='https://elternportal.de/einladung/7f3a' aria-label='Einladungslink' />
+        <InputGroupInput readOnly defaultValue='https://example.com/invite/7f3a' aria-label='Invite link' />
         <InputGroupAddon align='inline-end'>
           <InputGroupButton>
             <CopyIcon />
-            Kopieren
+            Copy
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>
       <InputGroup>
-        <InputGroupInput type='email' placeholder='name@schule.de' aria-label='E-Mail' />
+        <InputGroupInput type='email' placeholder='name@example.com' aria-label='Email' />
         <InputGroupAddon align='inline-end'>
-          <InputGroupButton size='action'>Einladen</InputGroupButton>
+          <InputGroupButton size='action'>Invite</InputGroupButton>
         </InputGroupAddon>
       </InputGroup>
     </div>

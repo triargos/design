@@ -17,27 +17,27 @@ import { Textarea } from '~/components/ui/textarea';
 export function SheetDefault() {
   return (
     <Sheet>
-      <SheetTrigger render={<Button intent='neutral' emphasis='raised' />}>Mitglied einladen</SheetTrigger>
+      <SheetTrigger render={<Button />}>Invite member</SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Mitglied einladen</SheetTitle>
-          <SheetDescription>Wir schicken eine E-Mail mit einem persönlichen Link.</SheetDescription>
+          <SheetTitle>Invite member</SheetTitle>
+          <SheetDescription>We’ll email them a link to join the workspace.</SheetDescription>
         </SheetHeader>
         <SheetBody>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor='invite-email'>E-Mail</FieldLabel>
-              <Input id='invite-email' type='email' placeholder='name@schule.de' />
+              <FieldLabel htmlFor='invite-email'>Email</FieldLabel>
+              <Input id='invite-email' type='email' placeholder='name@company.com' />
             </Field>
             <Field>
-              <FieldLabel htmlFor='invite-note'>Nachricht</FieldLabel>
+              <FieldLabel htmlFor='invite-note'>Message</FieldLabel>
               <Textarea id='invite-note' rows={3} placeholder='Optional' />
-              <FieldDescription>Steht über dem Link in der Einladung.</FieldDescription>
+              <FieldDescription>Shown above the link in the invitation.</FieldDescription>
             </Field>
           </FieldGroup>
         </SheetBody>
         <SheetFooter>
-          <Button type='button'>Einladen</Button>
+          <Button intent='primary'>Send invite</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

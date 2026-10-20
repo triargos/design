@@ -1,32 +1,23 @@
 import { StatusDot } from '~/components/ui/status-dot';
 
+const STATES = [
+  { intent: 'neutral', label: 'Draft' },
+  { intent: 'primary', label: 'Selected' },
+  { intent: 'info', label: 'In review' },
+  { intent: 'success', label: 'Done' },
+  { intent: 'warning', label: 'Blocked' },
+  { intent: 'destructive', label: 'Overdue' },
+] as const;
+
 export function StatusDotVariants() {
   return (
     <div className='flex flex-wrap items-center gap-4 text-body'>
-      <span className='flex items-center gap-1.5'>
-        <StatusDot intent='neutral' />
-        Entwurf
-      </span>
-      <span className='flex items-center gap-1.5'>
-        <StatusDot intent='primary' />
-        Ausgewählt
-      </span>
-      <span className='flex items-center gap-1.5'>
-        <StatusDot intent='info' />
-        Neu
-      </span>
-      <span className='flex items-center gap-1.5'>
-        <StatusDot intent='success' />
-        Genehmigt
-      </span>
-      <span className='flex items-center gap-1.5'>
-        <StatusDot intent='warning' />
-        Ausstehend
-      </span>
-      <span className='flex items-center gap-1.5'>
-        <StatusDot intent='destructive' />
-        Abgelehnt
-      </span>
+      {STATES.map(({ intent, label }) => (
+        <span key={intent} className='flex items-center gap-1.5'>
+          <StatusDot intent={intent} />
+          {label}
+        </span>
+      ))}
     </div>
   );
 }

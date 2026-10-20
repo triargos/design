@@ -14,10 +14,10 @@ const portrait = (background: string, figure: string) =>
   )}`;
 
 const PEOPLE = [
-  { name: 'Mia Schmidt', photo: portrait('#fde68a', '#d97706') },
-  { name: 'Leon Weber', photo: portrait('#c7d2fe', '#6366f1') },
-  { name: 'Emma Fischer', photo: portrait('#bbf7d0', '#16a34a') },
-  { name: 'Paul Wagner', photo: portrait('#fecdd3', '#e11d48') },
+  { name: 'Lena Park', photo: portrait('#fde68a', '#d97706') },
+  { name: 'Omar Haddad', photo: portrait('#c7d2fe', '#6366f1') },
+  { name: 'Sofia Rossi', photo: portrait('#bbf7d0', '#16a34a') },
+  { name: 'Jonas Berg', photo: portrait('#fecdd3', '#e11d48') },
 ] as const;
 
 /** Each avatar is cut out of the one before it, so the gap reads on any surface. A count pill takes the rest. */

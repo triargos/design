@@ -9,14 +9,7 @@ import {
   InsetCardTitle,
 } from '~/components/ui/inset-card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
-import {
-  PageDescription,
-  PageHeader,
-  PageHeaderGroup,
-  SectionDescription,
-  SectionHeaderGroup,
-  SectionTitle,
-} from '~/components/ui/page-header';
+import { PageDescription, PageHeaderGroup, PageSection, PageTitle } from '~/components/ui/page-header';
 
 import { Code, FoundationPage, FoundationSection, SpecimenList, SpecimenRow } from '../kit/blocks';
 import { formatToken, TYPE_ROLES, type TypeRole, tokenValue, typeLineHeightToken, typeSizeToken } from '../kit/tokens';
@@ -30,7 +23,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** Size / line height · weight · tracking, at the values tuned in the Tokens panel. */
+/** Size / line height · weight · tracking, at the values tuned in Customize. */
 const typeSpec = (globals: Record<string, unknown>, name: TypeRole['name']): string => {
   const role = TYPE_ROLES.find((candidate) => candidate.name === name);
   if (role === undefined) return '';
@@ -45,13 +38,13 @@ const roles = [
     className: 'text-title',
     role: 'title',
     use: 'Page title; stat values with tabular-nums',
-    owner: 'PageHeader',
+    owner: 'PageTitle',
   },
   {
     className: 'text-heading',
     role: 'heading',
     use: 'Section, dialog, sheet and empty-state titles',
-    owner: 'SectionTitle, DialogTitle, SheetTitle, EmptyStateTitle, FieldLegend',
+    owner: 'PageSection, DialogTitle, SheetTitle, EmptyStateTitle',
   },
   {
     className: 'text-body',
@@ -69,9 +62,9 @@ const roles = [
   { className: 'text-overline', role: 'overline', use: 'Menu and group labels, uppercase', owner: 'MenuLabel' },
 ] as const;
 
-const sentence = 'Anmeldung zur Nachmittagsbetreuung';
+const sentence = 'Website redesign kickoff';
 const paragraph =
-  'Bitte prüfen Sie die Angaben zu Ihrem Kind, bevor Sie die Anmeldung absenden. Änderungen sind bis zum Ende der Frist möglich; danach meldet sich die Schule bei Ihnen.';
+  'Review the scope and the timeline before you share the project. You can change both until the deadline; after that, the project moves to review.';
 
 const tones = [
   { name: 'foreground', className: 'text-foreground' },
@@ -103,9 +96,7 @@ export const Typography: Story = {
                   <Code>{owner}</Code>
                 </>
               }>
-              <p className={`${className} text-balance`}>
-                {className === 'text-overline' ? 'Erziehungsberechtigte' : sentence}
-              </p>
+              <p className={`${className} text-balance`}>{className === 'text-overline' ? 'Members' : sentence}</p>
             </SpecimenRow>
           ))}
         </SpecimenList>
@@ -133,47 +124,42 @@ export const Typography: Story = {
 
       <FoundationSection title='In context' description='Page → section → card → row. Each level is one step down.'>
         <div className='flex flex-col gap-8 rounded-card bg-background p-6 shadow-border'>
-          <PageHeaderGroup className='pb-0'>
-            <PageHeader>{sentence}</PageHeader>
+          <PageHeaderGroup>
+            <PageTitle>{sentence}</PageTitle>
             <PageDescription>{paragraph}</PageDescription>
           </PageHeaderGroup>
-          <section className='flex flex-col gap-4'>
-            <SectionHeaderGroup>
-              <SectionTitle>Angaben zum Kind</SectionTitle>
-              <SectionDescription>Diese Angaben sieht nur die Schulleitung.</SectionDescription>
-            </SectionHeaderGroup>
+          <PageSection title='Project details' description='Only admins see these details.'>
             <InsetCard>
               <InsetCardHeader>
-                <InsetCardTitle>Erziehungsberechtigte</InsetCardTitle>
-                <InsetCardDescription>Diese Personen erhalten alle Nachrichten der Schule.</InsetCardDescription>
+                <InsetCardTitle>Members</InsetCardTitle>
+                <InsetCardDescription>They get every project update.</InsetCardDescription>
               </InsetCardHeader>
               <InsetCardContent className='overflow-hidden'>
                 <ItemList>
                   <Item className='px-4'>
                     <ItemContent>
                       <ItemTitle>Anna Schmidt</ItemTitle>
-                      <ItemDescription>anna.schmidt@example.de</ItemDescription>
+                      <ItemDescription>anna@example.com</ItemDescription>
                     </ItemContent>
-                    <Badge variant='success'>Bestätigt</Badge>
+                    <Badge intent='success'>Active</Badge>
                   </Item>
                   <Item className='px-4'>
                     <ItemContent>
-                      <ItemTitle>Jonas Schmidt</ItemTitle>
-                      <ItemDescription>Eingeladen am 12. März</ItemDescription>
+                      <ItemTitle>Jonas Weber</ItemTitle>
+                      <ItemDescription>Invited March 12</ItemDescription>
                     </ItemContent>
-                    <span className='text-caption text-muted-foreground tabular-nums'>vor 3 Tagen</span>
+                    <span className='text-caption text-muted-foreground tabular-nums'>3 days ago</span>
                   </Item>
                 </ItemList>
               </InsetCardContent>
             </InsetCard>
-          </section>
-          <section className='flex flex-col gap-4'>
-            <SectionTitle>Übersicht</SectionTitle>
+          </PageSection>
+          <PageSection title='Overview'>
             <div className='grid grid-cols-3 gap-4'>
               {[
-                ['Anmeldungen', '1.284'],
-                ['Offen', '86'],
-                ['Abgelehnt', '12'],
+                ['Tasks', '1,284'],
+                ['Open', '86'],
+                ['Blocked', '12'],
               ].map(([label, value]) => (
                 <div key={label} className='flex flex-col gap-1'>
                   <span className='text-caption text-muted-foreground'>{label}</span>
@@ -181,7 +167,7 @@ export const Typography: Story = {
                 </div>
               ))}
             </div>
-          </section>
+          </PageSection>
         </div>
       </FoundationSection>
     </FoundationPage>

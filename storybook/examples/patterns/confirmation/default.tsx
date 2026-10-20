@@ -10,8 +10,7 @@ import {
   AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 /**
  * A destructive action outside a danger zone: destructive/subtle opens the AlertDialog, destructive/solid confirms,
@@ -21,22 +20,17 @@ export function ConfirmationDefault() {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button intent='destructive' emphasis='subtle' />}>
-        Ankündigung löschen…
+        Delete document…
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Ankündigung löschen?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Eltern sehen sie nicht mehr. Gelesen-Status und Antworten gehen verloren.
-          </AlertDialogDescription>
+          <AlertDialogTitle>Delete document?</AlertDialogTitle>
+          <AlertDialogDescription>Members lose access to it. Its comments and history are lost.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-          <AlertDialogAction
-            intent='destructive'
-            emphasis='solid'
-            onClick={() => toast.success('Ankündigung gelöscht')}>
-            Löschen
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction intent='destructive' onClick={() => toast.success('Document deleted')}>
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

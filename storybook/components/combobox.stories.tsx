@@ -25,13 +25,7 @@ export const Board: Story = {
     <FoundationPage
       title='Combobox'
       description='A field that filters a list as you type: Base UI Combobox on the field surface, the list a popup. Search Select covers picking from a list; compose these parts when a list needs its own shape.'>
-      <ExampleSection
-        title='Default'
-        description={
-          <>
-            <Code>ComboboxInput showClear</Code> with a value.
-          </>
-        }>
+      <ExampleSection title='Default' description='With a value, a clear button takes the place of the ⇅ button.'>
         <ComboboxDefault />
       </ExampleSection>
       <ExampleSection title='Placeholder'>
@@ -41,7 +35,7 @@ export const Board: Story = {
         title='Multiple'
         description={
           <>
-            <Code>ComboboxChips</Code>: 32px chips, 4px in, rounded-inner.
+            <Code>ComboboxChips</Code>: 32px chips, 4px in, rounded-inner. The popup anchors to the chips field.
           </>
         }>
         <ComboboxMultiple />
@@ -58,20 +52,29 @@ export const Board: Story = {
       </ExampleSection>
       <ExampleSection
         title='Trigger with search'
-        description='A select-like trigger; the search field sits in the popup.'>
+        description={
+          <>
+            <Code>ComboboxTrigger</Code> looks like a select; <Code>ComboboxSearch</Code> sits in the popup.
+          </>
+        }>
         <ComboboxTriggerWithSearch />
       </ExampleSection>
       <ExampleSection
         title='Virtualized'
         description={
           <>
-            <Code>virtualized</Code> + <Code>VirtualizedComboboxList</Code>: 2,100 streets, only the rows in view
-            render.
+            <Code>virtualized</Code> + <Code>ComboboxVirtualizedList</Code>: 2,100 tasks, only the rows in view render.
           </>
         }>
         <ComboboxVirtualized />
       </ExampleSection>
-      <ExampleSection title='States' description='Invalid and disabled. With no match the list shows ComboboxEmpty.'>
+      <ExampleSection
+        title='States'
+        description={
+          <>
+            Invalid and disabled. With no match the list shows <Code>ComboboxEmpty</Code>.
+          </>
+        }>
         <ComboboxStates />
       </ExampleSection>
 
@@ -79,21 +82,20 @@ export const Board: Story = {
         <SpecimenList>
           <SpecimenRow name='Pick from a list' meta={<Code>SearchSelect</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
-              Any length, one value or many: forms, reference data (streets, nationalities), groups. Rows and chips take
-              custom content through <Code>renderItem</Code>.
+              Any length, one value or many: members, projects, labels.
             </p>
           </SpecimenRow>
           <SpecimenRow name='List or own text' meta={<Code>OptionSelect · SearchSelect allowCustom</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
-              Short list, a custom value rare: <Code>OptionSelect allowCustom</Code>, an „Andere“ row with a text field.
+              Short list, a custom value rare: <Code>OptionSelect allowCustom</Code>, an “Other…” row with a text field.
               Longer list, or typing is the main path: <Code>SearchSelect allowCustom</Code>. Both hand over a plain
               string.
             </p>
           </SpecimenRow>
           <SpecimenRow name='Own composition' meta={<Code>Combobox · ComboboxList · ComboboxChips</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
-              Grouped lists, a select-like trigger with search in the popup, a field addon, or a list inline in a dialog
-              (<Code>inline</Code>). Add <Code>virtualized</Code> + <Code>VirtualizedComboboxList</Code> for long lists.
+              Grouped lists, rows with their own content, or a select-like trigger with search in the popup. Add{' '}
+              <Code>virtualized</Code> + <Code>ComboboxVirtualizedList</Code> for long lists.
             </p>
           </SpecimenRow>
         </SpecimenList>
@@ -102,20 +104,26 @@ export const Board: Story = {
   ),
 };
 
-export const Default: Story = { render: () => <ComboboxDefault />, play: open('click', 'Ort', 'Bremen', 'combobox') };
+export const Default: Story = {
+  render: () => <ComboboxDefault />,
+  play: open('click', 'Project', 'Beacon', 'combobox'),
+};
 export const Placeholder: Story = {
   render: () => <ComboboxPlaceholder />,
-  play: open('click', 'Ort', 'Bremen', 'combobox'),
+  play: open('click', 'Project', 'Beacon', 'combobox'),
 };
 export const Multiple: Story = { render: () => <ComboboxMultiple /> };
-export const Grouped: Story = { render: () => <ComboboxGrouped />, play: open('click', 'Ort', 'Nord', 'combobox') };
+export const Grouped: Story = {
+  render: () => <ComboboxGrouped />,
+  play: open('click', 'Project', 'Engineering', 'combobox'),
+};
 export const TriggerWithSearch: Story = {
   name: 'Trigger with search',
   render: () => <ComboboxTriggerWithSearch />,
-  play: open('click', 'Ort', 'Hamburg', 'combobox'),
+  play: open('click', 'Project', 'Comet', 'combobox'),
 };
 export const Virtualized: Story = {
   render: () => <ComboboxVirtualized />,
-  play: open('click', 'Straße', 'Hauptstraße 4', 'combobox'),
+  play: open('click', 'Task', 'Settings task 4', 'combobox'),
 };
 export const States: Story = { render: () => <ComboboxStates /> };

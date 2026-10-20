@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, CommandIcon, MailCheckIcon, MailIcon, XIcon } from 'lucide-react';
+import { ArrowLeftIcon, CommandIcon, FolderIcon, FolderInputIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import {
@@ -10,60 +10,61 @@ import {
 } from '~/components/ui/bottom-float-menu';
 import { Button } from '~/components/ui/button';
 
+const PROJECTS = ['Website redesign', 'Mobile app'];
+
 /**
  * A count, an actions panel with a nested panel, and clear at the end: a row opens a panel and the bar morphs into it.
  * `opensPanel` adds the chevron; Escape in the nested panel goes back one level.
  */
 export function BottomFloatMenuWithPanel() {
-  const [openPanel, setOpenPanel] = useState<'actions' | 'invitations' | null>(null);
+  const [openPanel, setOpenPanel] = useState<'actions' | 'move' | null>(null);
   const actions: BottomFloatMenuPanel = {
     key: 'actions',
-    label: 'Aktionen',
+    label: 'Actions',
     content: (
       <>
-        <BottomFloatMenuRow icon={<MailIcon />} opensPanel onClick={() => setOpenPanel('invitations')}>
-          Eltern einladen
+        <BottomFloatMenuRow icon={<FolderInputIcon />} opensPanel onClick={() => setOpenPanel('move')}>
+          Move to project
         </BottomFloatMenuRow>
         <BottomFloatMenuRow icon={<CommandIcon />} onClick={() => setOpenPanel(null)}>
-          Alle Aktionen
+          All actions
         </BottomFloatMenuRow>
       </>
     ),
   };
-  const invitations: BottomFloatMenuPanel = {
-    key: 'invitations',
-    label: 'Eltern einladen',
+  const move: BottomFloatMenuPanel = {
+    key: 'move',
+    label: 'Move to project',
     content: (
       <>
         <BottomFloatMenuRow icon={<ArrowLeftIcon />} onClick={() => setOpenPanel('actions')}>
-          Zurück
+          Back
         </BottomFloatMenuRow>
-        <BottomFloatMenuRow icon={<MailIcon />} onClick={() => setOpenPanel(null)}>
-          An noch nicht Eingeladene
-        </BottomFloatMenuRow>
-        <BottomFloatMenuRow icon={<MailCheckIcon />} onClick={() => setOpenPanel(null)}>
-          An alle
-        </BottomFloatMenuRow>
+        {PROJECTS.map((project) => (
+          <BottomFloatMenuRow key={project} icon={<FolderIcon />} onClick={() => setOpenPanel(null)}>
+            {project}
+          </BottomFloatMenuRow>
+        ))}
       </>
     ),
   };
   const dismiss = (reason: BottomFloatMenuDismissReason) =>
-    setOpenPanel((current) => (reason === 'escape' && current === 'invitations' ? 'actions' : null));
+    setOpenPanel((current) => (reason === 'escape' && current === 'move' ? 'actions' : null));
   return (
     <BottomFloatMenu
       show
-      label='Aktionen'
-      panel={openPanel === 'actions' ? actions : openPanel === 'invitations' ? invitations : null}
+      label='Selection'
+      panel={openPanel === 'actions' ? actions : openPanel === 'move' ? move : null}
       onPanelDismiss={dismiss}>
-      <span className='ps-4 pe-1 tabular-nums'>3 ausgewählt</span>
+      <span className='ps-4 pe-1 tabular-nums'>3 selected</span>
       <BottomFloatMenuItem>
-        <Button type='button' intent='neutral' emphasis='raised' onClick={() => setOpenPanel('actions')}>
+        <Button onClick={() => setOpenPanel('actions')}>
           <CommandIcon data-icon='inline-start' />
-          Aktionen
+          Actions
         </Button>
       </BottomFloatMenuItem>
       <BottomFloatMenuItem>
-        <Button type='button' intent='neutral' emphasis='ghost' size='icon-lg' aria-label='Auswahl aufheben'>
+        <Button emphasis='ghost' size='icon-lg' aria-label='Clear selection'>
           <XIcon />
         </Button>
       </BottomFloatMenuItem>

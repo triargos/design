@@ -81,16 +81,16 @@ function TableFooter({ className, ...props }: ComponentProps<'tfoot'>) {
   );
 }
 
-// Card rows separate collapsed borders, so row state paints on the cells (`tableCellVariants`). Mark a selected row
-// `data-state='selected'`.
-function TableRow({ className, ...props }: ComponentProps<'tr'>) {
+// Card rows separate collapsed borders, so row state paints on the cells (`tableCellVariants`).
+function TableRow({ className, selected = false, ...props }: ComponentProps<'tr'> & { selected?: boolean }) {
   const variant = use(TableVariantContext);
   const section = use(TableSectionContext);
   return (
     <tr
       data-slot='table-row'
+      data-selected={selected || undefined}
       className={cn(
-        variant !== 'card' && 'border-b border-border-subtle transition-colors data-[state=selected]:bg-muted',
+        variant !== 'card' && 'border-b border-border-subtle transition-colors data-selected:bg-muted',
         variant !== 'card' && section === 'body' && 'hover:bg-row-hover',
         className,
       )}
@@ -150,7 +150,7 @@ const tableCellVariants = cva('py-2.5 align-middle', {
         'bg-(--table-cell-fill) bg-clip-padding transition-colors [--table-cell-fill:var(--card)]',
         'shadow-[2px_0_0_-1px_var(--table-cell-fill)] last:shadow-none',
         'in-[tr:hover]:[--table-cell-fill:color-mix(in_oklch,var(--muted)_50%,var(--card))]',
-        'in-[tr[data-state=selected]]:[--table-cell-fill:var(--muted)]',
+        'in-[tr[data-selected]]:[--table-cell-fill:var(--muted)]',
         'border-b border-b-border-subtle in-[tr:last-child]:border-b-(--edge)',
         'in-[tr:first-child]:border-t in-[tr:first-child]:border-t-(--edge)',
         'first:border-s first:border-s-(--edge) first:ps-group last:border-e last:border-e-(--edge) last:pe-group',

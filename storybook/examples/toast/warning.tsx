@@ -1,16 +1,7 @@
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 /** Done, with a catch. */
 export function ToastWarning() {
-  return (
-    <Button
-      type='button'
-      intent='neutral'
-      emphasis='raised'
-      onClick={() => toast.warning('Veröffentlicht, 2 Regeln ausgelassen')}>
-      Veröffentlichen
-    </Button>
-  );
+  return <Button onClick={() => toast.warning('Published, 2 tasks skipped')}>Publish</Button>;
 }

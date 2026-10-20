@@ -6,16 +6,16 @@ import { Button } from '~/components/ui/button';
 export function ButtonIconOnly() {
   return (
     <div className='flex flex-wrap items-center gap-2'>
-      <Button type='button' intent='neutral' emphasis='raised' size='icon-xs' aria-label='Mehr'>
+      <Button size='icon-xs' aria-label='More'>
         <MoreHorizontalIcon />
       </Button>
-      <Button type='button' intent='neutral' emphasis='raised' size='icon-sm' aria-label='Mehr'>
+      <Button size='icon-sm' aria-label='More'>
         <MoreHorizontalIcon />
       </Button>
-      <Button type='button' intent='neutral' emphasis='raised' size='icon' aria-label='Mehr'>
+      <Button size='icon' aria-label='More'>
         <MoreHorizontalIcon />
       </Button>
-      <Button type='button' intent='neutral' emphasis='raised' size='icon-lg' aria-label='Mehr'>
+      <Button size='icon-lg' aria-label='More'>
         <MoreHorizontalIcon />
       </Button>
     </div>

@@ -113,7 +113,6 @@ const lines: ReadonlyArray<SwatchToken> = [
   { token: 'border-subtle', role: 'Row separators: lists, tables, accordions', kind: 'line' },
   { token: 'border', role: 'Hairlines, separators', kind: 'line' },
   { token: 'border-strong', role: 'Edges that must read: checkboxes, dividers in dense UI', kind: 'line' },
-  { token: 'field-border', role: 'Field edge; pure black/white', kind: 'line' },
   { token: 'ring', role: 'Focus ring', kind: 'line' },
 ];
 
@@ -122,22 +121,11 @@ const charts: ReadonlyArray<SwatchToken> = [1, 2, 3, 4, 5].map((step) => ({
   role: `Series ${step}; static, not branded`,
 }));
 
-/** Old names that still render, and the token each reads. */
-const ALIASES: ReadonlyArray<[string, string]> = [
-  ['bg-primary', 'primary-solid (the brand fill)'],
-  ['bg-destructive-strong', 'destructive-solid'],
-  ['bg-{intent}-tint', '{intent}-subtle'],
-  ['text-{intent}-text', '{intent}-subtle-foreground'],
-  ['bg-{status}/10', '{intent}-subtle'],
-  ['bg-secondary · bg-accent', 'neutral-subtle, or a raised button'],
-  ['disabled:opacity-50', 'disabled · disabled-foreground'],
-];
-
 export const Color: Story = {
   render: () => (
     <FoundationPage
       title='Color'
-      description='Every value is generated from the organization’s three brand names. Components pick an intent (what it means) and an emphasis (how loud); text picks a level. Switch the brand, mode and surface in the toolbar.'>
+      description='Every value is generated from three brand names. Components pick an intent (what it means) and an emphasis (how loud); text picks a level. Switch the brand, mode and surface in Customize.'>
       <FoundationSection
         title='Intents'
         description='One set per intent. The bare name is the hue for text and icons, never a fill; solid and subtle are fills with their own text; border is the edge. Primary and destructive follow the brand.'>
@@ -174,11 +162,11 @@ export const Color: Story = {
         <SpecimenList>
           <SpecimenRow name='Badge' meta={<Code>intent · emphasis='subtle'</Code>}>
             <div className='flex flex-wrap gap-related'>
-              <Badge intent='success'>Genehmigt</Badge>
-              <Badge intent='warning'>Ausstehend</Badge>
-              <Badge intent='info'>Neu</Badge>
-              <Badge intent='destructive'>Abgelehnt</Badge>
-              <Badge intent='neutral'>Entwurf</Badge>
+              <Badge intent='success'>Done</Badge>
+              <Badge intent='warning'>In review</Badge>
+              <Badge intent='info'>New</Badge>
+              <Badge intent='destructive'>Blocked</Badge>
+              <Badge intent='neutral'>Draft</Badge>
             </div>
           </SpecimenRow>
         </SpecimenList>
@@ -202,18 +190,6 @@ export const Color: Story = {
 
       <FoundationSection title='Charts'>
         <SwatchGrid tokens={charts} />
-      </FoundationSection>
-
-      <FoundationSection
-        title='Aliases'
-        description='Old names keep rendering until the app migrates. Write the new name in new code.'>
-        <SpecimenList>
-          {ALIASES.map(([old, next]) => (
-            <SpecimenRow key={old} name={old}>
-              <Code>{next}</Code>
-            </SpecimenRow>
-          ))}
-        </SpecimenList>
       </FoundationSection>
     </FoundationPage>
   ),

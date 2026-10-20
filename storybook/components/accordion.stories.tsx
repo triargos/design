@@ -19,9 +19,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Accordion'
-      description='Sections that open in place, for content people scan by title: FAQs, changelog entries. One open at a time by default; a plus folds into a minus while open; rows divide with a hairline.'>
+    <FoundationPage title='Accordion' description='Sections that open in place, for content people scan by title.'>
       <ExampleSection title='Default' description='One open at a time.'>
         <AccordionDefault />
       </ExampleSection>

@@ -11,22 +11,22 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 
-/** Toggles that stay in the menu: `DropdownMenuCheckboxItem`. */
+/** Toggles in the menu: `DropdownMenuCheckboxItem`, controlled with `checked` and `onCheckedChange`. */
 export function DropdownMenuCheckbox() {
-  const [columns, setColumns] = useState({ class: true, status: true, submitted: false });
+  const [columns, setColumns] = useState({ assignee: true, status: true, due: false });
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button type='button' intent='neutral' emphasis='raised' size='sm' />}>
+      <DropdownMenuTrigger render={<Button size='sm' />}>
         <SlidersHorizontalIcon data-icon='inline-start' />
-        Spalten
+        Columns
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Sichtbare Spalten</DropdownMenuLabel>
+          <DropdownMenuLabel>Visible columns</DropdownMenuLabel>
           <DropdownMenuCheckboxItem
-            checked={columns.class}
-            onCheckedChange={(checked) => setColumns({ ...columns, class: checked })}>
-            Klasse
+            checked={columns.assignee}
+            onCheckedChange={(checked) => setColumns({ ...columns, assignee: checked })}>
+            Assignee
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
             checked={columns.status}
@@ -34,9 +34,9 @@ export function DropdownMenuCheckbox() {
             Status
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
-            checked={columns.submitted}
-            onCheckedChange={(checked) => setColumns({ ...columns, submitted: checked })}>
-            Eingereicht am
+            checked={columns.due}
+            onCheckedChange={(checked) => setColumns({ ...columns, due: checked })}>
+            Due date
           </DropdownMenuCheckboxItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

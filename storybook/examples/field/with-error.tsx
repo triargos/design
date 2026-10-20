@@ -1,16 +1,16 @@
 import { Field, FieldDescription, FieldError, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
 
-/** `data-invalid` on the field, `aria-invalid` on the control, `FieldError` last. */
+/** `invalid` on the field, `aria-invalid` on the control, `FieldError` last. */
 export function FieldWithError() {
   return (
-    <Field data-invalid className='w-80'>
+    <Field invalid className='w-80'>
       <FieldLabel htmlFor='field-required-name' required>
-        Name
+        Project name
       </FieldLabel>
-      <Input id='field-required-name' placeholder='Max Mustermann' aria-invalid />
-      <FieldDescription>So erscheinst du in Nachrichten an die Klasse.</FieldDescription>
-      <FieldError>Bitte gib deinen Namen ein.</FieldError>
+      <Input id='field-required-name' placeholder='Website redesign' required aria-invalid />
+      <FieldDescription>Members see it in the sidebar.</FieldDescription>
+      <FieldError>Enter a project name.</FieldError>
     </Field>
   );
 }

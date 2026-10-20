@@ -4,10 +4,10 @@ export function TextareaTall() {
   return (
     <Textarea
       rows={6}
-      aria-label='Nachricht'
+      aria-label='Project brief'
       className='w-96'
       defaultValue={
-        'Liebe Eltern,\n\nder Elternabend der Klasse 5a beginnt am Donnerstag um 19 Uhr in Raum 104.\n\nViele Grüße\nErika Mustermann'
+        'Goal: ship the new pricing page by the end of the quarter.\n\nScope: copy, layout and the checkout link.\n\nOut of scope: billing changes.'
       }
     />
   );

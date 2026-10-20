@@ -6,7 +6,7 @@ import { Code, ExampleSection, FoundationPage, FoundationSection, SpecimenList, 
 
 const meta = {
   title: 'Components/Chart',
-  parameters: { description: 'Recharts in ChartContainer, in our type and popup surface.', frame: 'column' },
+  parameters: { description: 'Recharts in ChartContainer, in our type and tooltip surface.', frame: 'column' },
 } satisfies Meta;
 
 export default meta;
@@ -14,11 +14,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const SERIES = [
-  { key: 'parents', label: 'Eltern', color: 'var(--chart-1)' },
-  { key: 'teachers', label: 'Lehrkräfte', color: 'var(--chart-2)' },
-  { key: 'office', label: 'Sekretariat', color: 'var(--chart-3)' },
-  { key: 'admins', label: 'Leitung', color: 'var(--chart-4)' },
-  { key: 'guests', label: 'Gäste', color: 'var(--chart-5)' },
+  { key: 'engineering', label: 'Engineering', color: 'var(--chart-1)' },
+  { key: 'design', label: 'Design', color: 'var(--chart-2)' },
+  { key: 'marketing', label: 'Marketing', color: 'var(--chart-3)' },
+  { key: 'sales', label: 'Sales', color: 'var(--chart-4)' },
+  { key: 'support', label: 'Support', color: 'var(--chart-5)' },
 ] as const;
 
 export const Board: Story = {
@@ -26,7 +26,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Chart'
-      description='Recharts inside ChartContainer, which maps a config to --color-<key> and draws the tooltip and legend in our type and popup surface. Series colors are chart-1 … chart-5: static, not branded.'>
+      description='Recharts inside ChartContainer, which maps a config to --color-<key> and draws the tooltip and legend in our type and on the tooltip surface. Series colors are chart-1 … chart-5: static, not branded. ChartTooltipContent formats values with its locale prop (default en-US).'>
       <ExampleSection title='Default' description='Stacked bars, the tooltip on hover, a legend.' bare>
         <ChartDefault />
       </ExampleSection>

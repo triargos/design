@@ -19,10 +19,7 @@ import { DangerZoneDefault } from '../examples/patterns/danger-zone/default';
 import { Code, ExampleSection, FoundationPage, FoundationSection } from '../kit/blocks';
 import { open } from '../kit/play';
 
-/**
- * The last card on a settings page: actions that are hard or impossible to undo. Every `*-danger-zone.tsx` in the app
- * has this shape.
- */
+/** The last card on a settings page: actions that are hard or impossible to undo. */
 const meta = {
   title: 'Patterns/Danger Zone',
   parameters: { description: 'The last card of a settings page: actions that cost something.' },
@@ -32,7 +29,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const NAME = 'Einschulung 2025';
+const NAME = 'Website redesign';
 
 /** Type the name to confirm; the name sits above the field with a CopyButton. */
 function ConfirmDelete({ container }: { container: HTMLElement }) {
@@ -42,10 +39,10 @@ function ConfirmDelete({ container }: { container: HTMLElement }) {
     <AlertDialog defaultOpen>
       <AlertDialogContent container={container}>
         <AlertDialogHeader>
-          <AlertDialogTitle>Anmeldung löschen?</AlertDialogTitle>
-          <AlertDialogDescription>„{NAME}“ und alle Einreichungen werden endgültig gelöscht.</AlertDialogDescription>
+          <AlertDialogTitle>Delete project?</AlertDialogTitle>
+          <AlertDialogDescription>“{NAME}” and all its tasks are deleted for good.</AlertDialogDescription>
           <Field className='mt-group'>
-            <FieldLabel htmlFor={inputId}>Zum Bestätigen den Namen eingeben</FieldLabel>
+            <FieldLabel htmlFor={inputId}>Type the name to confirm</FieldLabel>
             <div className='flex items-center gap-related'>
               <span className='text-caption font-medium text-muted-foreground'>{NAME}</span>
               <CopyButton value={NAME} size='icon-xs' />
@@ -54,9 +51,9 @@ function ConfirmDelete({ container }: { container: HTMLElement }) {
           </Field>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-          <AlertDialogAction intent='destructive' emphasis='solid' disabled={value !== NAME}>
-            Endgültig löschen
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction intent='destructive' disabled={value !== NAME}>
+            Delete project
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -80,12 +77,12 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Danger Zone'
-      description='The last card of a settings page. InsetCard tone="destructive" around an ItemList: each row names the action, says what it costs, and offers one button. Lifecycle actions that can be undone (withdraw, archive) are raised; a destructive row is solid and opens an AlertDialog that repeats the solid button.'>
+      description='The last card of a settings page. InsetCard intent="destructive" around an ItemList: each row names the action, says what it costs, and offers one button. Lifecycle actions that can be undone (withdraw, archive) are raised; a destructive row is solid and opens an AlertDialog that repeats the solid button.'>
       <ExampleSection
         title='Default'
         description={
           <>
-            <Code>InsetCard tone="destructive"</Code> around an ItemList. Click Löschen… and type the name.
+            <Code>InsetCard intent="destructive"</Code> around an ItemList. Click Delete… and type the name.
           </>
         }
         bare>
@@ -106,5 +103,5 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <DangerZoneDefault />,
-  play: open('click', 'Löschen…', 'Anmeldung löschen?'),
+  play: open('click', 'Delete…', 'Delete project?'),
 };

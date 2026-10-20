@@ -7,8 +7,8 @@ import { OTPField, OTPFieldInput, OTPFieldSeparator } from '~/components/ui/otp-
 const CORRECT_CODE = '123456';
 
 /**
- * The login's two-factor step: the sixth digit submits, the slots are read-only while it verifies. A wrong code
- * shakes the row, clears it and puts the focus back on the first slot; typing clears the error.
+ * A two-factor sign-in step: the sixth digit submits, the slots are read-only while it verifies. A wrong code shakes
+ * the row, clears it and puts the focus back on the first slot; typing clears the error.
  */
 export function OTPFieldVerify() {
   const id = useId();
@@ -20,7 +20,7 @@ export function OTPFieldVerify() {
   const verify = (event: React.FormEvent) => {
     event.preventDefault();
     if (code.length < 6) {
-      setError('Bitte geben Sie alle 6 Ziffern ein.');
+      setError('Enter all 6 digits.');
       slots.current?.focus();
       return;
     }
@@ -32,15 +32,15 @@ export function OTPFieldVerify() {
       }
       setStatus('idle');
       setCode('');
-      setError('Der Code ist ungültig.');
+      setError('That code didn’t work.');
       slots.current?.focus();
     }, 700);
   };
 
   return (
     <form onSubmit={verify} className='flex w-fit min-w-0 flex-col gap-group'>
-      <Field data-invalid={error !== null || undefined}>
-        <FieldLabel htmlFor={id}>Code aus der Authenticator-App</FieldLabel>
+      <Field invalid={error !== null}>
+        <FieldLabel htmlFor={id}>Authentication code</FieldLabel>
         <OTPField
           id={id}
           length={6}
@@ -62,15 +62,13 @@ export function OTPFieldVerify() {
           <OTPFieldInput />
         </OTPField>
         {error === null ? (
-          <FieldDescription>
-            {status === 'verified' ? 'Bestätigt.' : `Zum Ausprobieren: ${CORRECT_CODE}`}
-          </FieldDescription>
+          <FieldDescription>{status === 'verified' ? 'Verified.' : `Try ${CORRECT_CODE}.`}</FieldDescription>
         ) : (
           <FieldError>{error}</FieldError>
         )}
       </Field>
-      <Button type='submit' isLoading={status === 'verifying'}>
-        Code verifizieren
+      <Button intent='primary' type='submit' isLoading={status === 'verifying'}>
+        Verify
       </Button>
     </form>
   );

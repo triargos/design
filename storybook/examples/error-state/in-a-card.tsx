@@ -14,17 +14,17 @@ export function ErrorStateInACard() {
   return (
     <InsetCard className='w-full max-w-2xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Anmeldungen</InsetCardTitle>
+        <InsetCardTitle>Tasks</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='p-4'>
         <ErrorState>
           <ErrorStateIcon>
             <CircleAlertIcon />
           </ErrorStateIcon>
-          <ErrorStateTitle>Etwas ist schiefgelaufen</ErrorStateTitle>
-          <ErrorStateDescription>Die Seite konnte nicht geladen werden. Versuche es erneut.</ErrorStateDescription>
+          <ErrorStateTitle>Something went wrong</ErrorStateTitle>
+          <ErrorStateDescription>The tasks couldn’t be loaded. Try again.</ErrorStateDescription>
           <ErrorStateActions>
-            <Button type='button'>Erneut versuchen</Button>
+            <Button intent='primary'>Try again</Button>
           </ErrorStateActions>
         </ErrorState>
       </InsetCardContent>

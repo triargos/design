@@ -1,22 +1,22 @@
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '~/components/ui/command';
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 
-const SCHOOLS = ['Grundschule am See', 'Gymnasium Nord', 'Realschule Mitte', 'Förderschule Süd'];
+const WORKSPACES = ['Acme', 'Globex', 'Initech', 'Umbrella'];
 
 /** Inline in a card: a filterable list without a popup. */
 export function CommandStandalone() {
   return (
     <InsetCard className='w-full max-w-md'>
       <InsetCardHeader>
-        <InsetCardTitle>Schule wechseln</InsetCardTitle>
+        <InsetCardTitle>Switch workspace</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <Command>
-          <CommandInput placeholder='Schule suchen' />
+          <CommandInput placeholder='Search workspaces' />
           <CommandList>
-            <CommandEmpty>Keine Schule gefunden</CommandEmpty>
-            {SCHOOLS.map((school) => (
-              <CommandItem key={school}>{school}</CommandItem>
+            <CommandEmpty>No workspace found</CommandEmpty>
+            {WORKSPACES.map((workspace) => (
+              <CommandItem key={workspace}>{workspace}</CommandItem>
             ))}
           </CommandList>
         </Command>

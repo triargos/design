@@ -1,25 +1,30 @@
 import { useState } from 'react';
 
 import { SearchSelect } from '~/components/ui/search-select';
-import type { SelectOption } from '~/components/ui/select-option';
+import type { SelectOption } from '~/components/ui/select';
 
-const CLASSES: ReadonlyArray<SelectOption> = ['1a', '1b', '2a', '2b', '3a', '3b', '4a', '4b'].map((name) => ({
-  value: name,
-  label: `Klasse ${name}`,
-}));
+const MEMBERS: ReadonlyArray<SelectOption> = [
+  'Maya Chen',
+  'Jonas Weber',
+  'Priya Patel',
+  'Leo Martin',
+  'Sofia Rossi',
+  'Noah Kim',
+  'Emma Larsen',
+  'Omar Haddad',
+].map((name) => ({ value: name.toLowerCase().replace(' ', '-'), label: name }));
 
 /** `multiple`: chips in the field. */
 export function SearchSelectMultiple() {
-  const [value, setValue] = useState<string[]>(['1a', '2b', '3a']);
+  const [value, setValue] = useState<string[]>(['maya-chen', 'priya-patel', 'noah-kim']);
   return (
     <SearchSelect
       multiple
-      items={CLASSES}
-      itemKey={(option) => option.value}
-      itemLabel={(option) => option.label}
+      aria-label='Members'
+      items={MEMBERS}
       value={value}
       onValueChange={setValue}
-      placeholder='Klassen wählen'
+      placeholder='Add members'
       className='w-80'
     />
   );

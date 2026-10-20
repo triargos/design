@@ -207,7 +207,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<'div'>) 
   );
 }
 
-/** First letter of the first and last word: `Anna-Lena von Müller` → `AM`. */
+/** First letter of the first and last word: `Mary-Kate van der Berg` → `MB`. */
 function getInitials(name: string) {
   const words = name.trim().split(/\s+/);
   const first = words[0] ?? '';

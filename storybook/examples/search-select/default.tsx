@@ -1,24 +1,29 @@
 import { useState } from 'react';
 
 import { SearchSelect } from '~/components/ui/search-select';
-import type { SelectOption } from '~/components/ui/select-option';
+import type { SelectOption } from '~/components/ui/select';
 
-const CLASSES: ReadonlyArray<SelectOption> = ['1a', '1b', '2a', '2b', '3a', '3b', '4a', '4b'].map((name) => ({
-  value: name,
-  label: `Klasse ${name}`,
-}));
+const PROJECTS: ReadonlyArray<SelectOption> = [
+  'Atlas',
+  'Beacon',
+  'Comet',
+  'Delta',
+  'Harbor',
+  'Orbit',
+  'Pioneer',
+  'Summit',
+].map((name) => ({ value: name.toLowerCase(), label: name }));
 
 /** Type to filter, Enter picks the first match; one value with a clear button. Always virtualized. */
 export function SearchSelectDefault() {
-  const [value, setValue] = useState<string | null>('2b');
+  const [value, setValue] = useState<string | null>('beacon');
   return (
     <SearchSelect
-      items={CLASSES}
-      itemKey={(option) => option.value}
-      itemLabel={(option) => option.label}
+      aria-label='Project'
+      items={PROJECTS}
       value={value}
       onValueChange={setValue}
-      placeholder='Klasse wählen'
+      placeholder='Choose a project'
       className='w-64'
     />
   );

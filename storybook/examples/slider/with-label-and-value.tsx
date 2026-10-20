@@ -3,7 +3,7 @@ import { useId, useState } from 'react';
 import { Field, FieldDescription, FieldLabel } from '~/components/ui/field';
 import { Slider } from '~/components/ui/slider';
 
-/** No `SliderValue` part yet: the field shows the controlled value. */
+/** The field shows the controlled value beside the label. */
 export function SliderWithLabelAndValue() {
   const [zoom, setZoom] = useState(140);
   const labelId = useId();
@@ -21,7 +21,7 @@ export function SliderWithLabelAndValue() {
         max={300}
         step={10}
       />
-      <FieldDescription>Wie im Bildzuschnitt für das Profilbild.</FieldDescription>
+      <FieldDescription>Crop your profile photo.</FieldDescription>
     </Field>
   );
 }

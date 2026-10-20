@@ -9,8 +9,8 @@ export function UnsavedChangesIndicatorDefault() {
   return (
     <div className='flex items-center gap-3'>
       <UnsavedChangesIndicator show={dirty} />
-      <Button type='button' intent='neutral' emphasis='raised' size='sm' onClick={() => setDirty(!dirty)}>
-        {dirty ? 'Speichern' : 'Ändern'}
+      <Button size='sm' onClick={() => setDirty(!dirty)}>
+        {dirty ? 'Save' : 'Edit'}
       </Button>
     </div>
   );

@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 /**
  * Intent × emphasis, the two color axes every colored primitive shares (DESIGN.md, Color).
@@ -77,5 +77,3 @@ export const intentVariants = cva('', {
     interactive: false,
   },
 });
-
-export type IntentVariantProps = VariantProps<typeof intentVariants>;

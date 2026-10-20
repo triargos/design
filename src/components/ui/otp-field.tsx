@@ -1,6 +1,5 @@
 import { OTPField as OTPFieldPrimitive } from '@base-ui/react/otp-field';
 import * as React from 'react';
-import { useUiStrings } from '~/lib/ui-config';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 
@@ -17,9 +16,19 @@ interface OTPFieldContextValue {
   entry: { from: number; to: number; parity: Parity } | null;
   /** The slot that just refused a character. */
   rejected: { index: number; parity: Parity } | null;
+  slotLabel: SlotLabel;
 }
 
-const OTPFieldContext = React.createContext<OTPFieldContextValue>({ invalid: false, entry: null, rejected: null });
+type SlotLabel = (slot: { readonly position: number; readonly length: number }) => string;
+
+const defaultSlotLabel: SlotLabel = ({ position, length }) => `Character ${position} of ${length}`;
+
+const OTPFieldContext = React.createContext<OTPFieldContextValue>({
+  invalid: false,
+  entry: null,
+  rejected: null,
+  slotLabel: defaultSlotLabel,
+});
 
 const slotSelector = 'input[data-slot=otp-field-input]';
 
@@ -29,6 +38,8 @@ type OTPFieldProps = Omit<OTPFieldPrimitive.Root.Props, 'className'> & {
   'aria-invalid'?: boolean | 'true' | 'false';
   /** `focus()` moves to the first empty slot, or the last; pass react-hook-form's `field.ref`. */
   inputRef?: React.Ref<{ focus: () => void }>;
+  /** The accessible name of every slot but the first, which the field's label names. */
+  slotLabel?: SlotLabel;
 };
 
 /**
@@ -41,6 +52,7 @@ function OTPField({
   className,
   'aria-invalid': ariaInvalid,
   inputRef,
+  slotLabel = defaultSlotLabel,
   value,
   defaultValue,
   onValueChange,
@@ -100,7 +112,7 @@ function OTPField({
   };
 
   return (
-    <OTPFieldContext.Provider value={{ invalid, entry, rejected }}>
+    <OTPFieldContext.Provider value={{ invalid, entry, rejected, slotLabel }}>
       <OTPFieldPrimitive.Root
         ref={rootRef}
         data-slot='otp-field'
@@ -126,11 +138,10 @@ type OTPFieldInputProps = Omit<OTPFieldPrimitive.Input.Props, 'className' | 'ren
 
 /**
  * One character. Slots follow DOM order (no `index`). Label the first with a `<label htmlFor>` on the root's `id`; the
- * others name themselves „Stelle 2 von 6“.
+ * others take `slotLabel` ("Character 2 of 6").
  */
 function OTPFieldInput({ className, ...props }: OTPFieldInputProps) {
-  const strings = useUiStrings();
-  const { invalid, entry, rejected } = React.useContext(OTPFieldContext);
+  const { invalid, entry, rejected, slotLabel } = React.useContext(OTPFieldContext);
 
   return (
     <OTPFieldPrimitive.Input
@@ -159,7 +170,7 @@ function OTPFieldInput({ className, ...props }: OTPFieldInputProps) {
             // Incomplete: the empty slots are what is missing. Complete: the code itself is wrong.
             aria-invalid={invalid && !state.disabled && (state.complete || !state.filled) ? true : undefined}
             aria-label={
-              first ? inputProps['aria-label'] : strings.otpSlot({ position: state.index + 1, length: state.length })
+              first ? inputProps['aria-label'] : slotLabel({ position: state.index + 1, length: state.length })
             }
             aria-labelledby={first ? inputProps['aria-labelledby'] : undefined}
             data-entered={entered ? entry.parity : undefined}

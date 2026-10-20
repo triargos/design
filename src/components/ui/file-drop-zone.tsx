@@ -5,7 +5,7 @@ import { inputSurfaceVariants } from '~/components/ui/input';
 
 import { cn } from '~/lib/utils';
 
-// A field surface you drop files on. Disabled and invalid come from the hidden input (`within` scope). The compact row
+// A field surface you drop files on. Disabled and invalid come from the hidden input (`within` scope). The `sm` row
 // trades the fill for a dashed outline: filled, it would read as a text field.
 const fileDropZoneVariants = cva(
   [
@@ -17,8 +17,7 @@ const fileDropZoneVariants = cva(
     variants: {
       size: {
         default: 'flex-col justify-center gap-3 px-6 py-7 text-center',
-        compact:
-          'min-h-10 justify-center gap-2 border-dashed border-border bg-transparent px-3.5 py-2 text-body font-medium text-primary shadow-none hover:bg-field has-disabled:border-transparent has-disabled:hover:bg-disabled has-aria-invalid:border-destructive-border',
+        sm: 'min-h-10 justify-center gap-2 border-dashed border-border bg-transparent px-3.5 py-2 text-body font-medium text-primary shadow-none hover:bg-field has-disabled:border-transparent has-disabled:hover:bg-disabled has-aria-invalid:border-destructive-border',
       },
     },
     defaultVariants: { size: 'default' },
@@ -68,6 +67,8 @@ function FileDropZone({
       onDragLeave={(e) => {
         e.preventDefault();
         e.stopPropagation();
+        // Moving onto a child also fires `dragleave` on the zone; only leaving the zone ends the drag.
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
         setIsDragging(false);
       }}
       onDragOver={(e) => {

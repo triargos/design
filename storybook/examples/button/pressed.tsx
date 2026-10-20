@@ -10,33 +10,22 @@ export function ButtonPressed() {
   const [underline, setUnderline] = useState(false);
   return (
     <div className='flex items-center gap-0.5 text-muted-foreground'>
-      <Button
-        type='button'
-        emphasis='ghost'
-        intent='neutral'
-        size='icon-xs'
-        aria-pressed={bold}
-        aria-label='Fett'
-        onClick={() => setBold(!bold)}>
+      <Button emphasis='ghost' size='icon-xs' aria-pressed={bold} aria-label='Bold' onClick={() => setBold(!bold)}>
         <BoldIcon />
       </Button>
       <Button
-        type='button'
         emphasis='ghost'
-        intent='neutral'
         size='icon-xs'
         aria-pressed={italic}
-        aria-label='Kursiv'
+        aria-label='Italic'
         onClick={() => setItalic(!italic)}>
         <ItalicIcon />
       </Button>
       <Button
-        type='button'
         emphasis='ghost'
-        intent='neutral'
         size='icon-xs'
         aria-pressed={underline}
-        aria-label='Unterstrichen'
+        aria-label='Underline'
         onClick={() => setUnderline(!underline)}>
         <UnderlineIcon />
       </Button>

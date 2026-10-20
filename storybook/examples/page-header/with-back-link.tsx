@@ -1,33 +1,27 @@
 import { Badge } from '~/components/ui/badge';
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 import { PageContent } from '~/components/ui/page-content';
-import {
-  PageHeader,
-  PageHeaderBackLink,
-  PageHeaderGroup,
-  PageHeaderMeta,
-  PageHeaderSection,
-} from '~/components/ui/page-header';
+import { PageHeaderBackLink, PageHeaderGroup, PageHeaderMeta, PageTitle } from '~/components/ui/page-header';
 
 /** Navigation above the title; `PageHeaderMeta` for a status and facts under it. */
 export function PageHeaderWithBackLink() {
   return (
     <PageContent
       header={
-        <PageHeaderSection>
-          <PageHeaderBackLink href='/'>Anmeldungen</PageHeaderBackLink>
+        <>
+          <PageHeaderBackLink href='#invoices'>Invoices</PageHeaderBackLink>
           <PageHeaderGroup>
-            <PageHeader>Anmeldung von Mia Schmidt</PageHeader>
+            <PageTitle>Invoice INV-2041</PageTitle>
             <PageHeaderMeta>
-              <Badge intent='warning'>In Prüfung</Badge>
-              <span>Eingegangen am 12. März</span>
+              <Badge intent='warning'>Due soon</Badge>
+              <span>Sent on March 12</span>
             </PageHeaderMeta>
           </PageHeaderGroup>
-        </PageHeaderSection>
+        </>
       }>
       <InsetCard>
         <InsetCardHeader>
-          <InsetCardTitle>Anmeldungen</InsetCardTitle>
+          <InsetCardTitle>Line items</InsetCardTitle>
         </InsetCardHeader>
         <InsetCardContent className='h-16' />
       </InsetCard>

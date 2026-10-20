@@ -4,8 +4,8 @@ import { EmptyState, EmptyStateDescription, EmptyStateTitle } from '~/components
 export function EmptyStateBordered() {
   return (
     <EmptyState bordered className='w-full max-w-xl'>
-      <EmptyStateTitle>Noch keine Gruppen</EmptyStateTitle>
-      <EmptyStateDescription>Lege die erste Gruppe an, um Mitglieder zu ordnen.</EmptyStateDescription>
+      <EmptyStateTitle>No projects yet</EmptyStateTitle>
+      <EmptyStateDescription>Create a project to group tasks and documents.</EmptyStateDescription>
     </EmptyState>
   );
 }

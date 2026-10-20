@@ -7,14 +7,14 @@ export function StatWithASeriesDot() {
       <Stat>
         <StatLabel>
           <StatusDot intent='success' />
-          Aktiv
+          Paid
         </StatLabel>
         <StatValue>186</StatValue>
       </Stat>
       <Stat>
         <StatLabel>
           <StatusDot intent='warning' />
-          Inaktiv
+          Due
         </StatLabel>
         <StatValue>41</StatValue>
       </Stat>

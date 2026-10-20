@@ -16,9 +16,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Separator'
-      description='A hairline in border-subtle between groups, horizontal or vertical. Inside a FieldGroup, FieldSeparator.'>
+    <FoundationPage title='Separator' description='A hairline between groups.'>
       <ExampleSection title='Default'>
         <SeparatorDefault />
       </ExampleSection>

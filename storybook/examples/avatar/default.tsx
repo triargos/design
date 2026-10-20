@@ -9,8 +9,8 @@ const portrait = (background: string, figure: string) =>
 export function AvatarDefault() {
   return (
     <Avatar size='2xl'>
-      <AvatarImage src={portrait('#fde68a', '#d97706')} alt='Mia Schmidt' />
-      <AvatarFallback>MS</AvatarFallback>
+      <AvatarImage src={portrait('#fde68a', '#d97706')} alt='Lena Park' />
+      <AvatarFallback>LP</AvatarFallback>
     </Avatar>
   );
 }

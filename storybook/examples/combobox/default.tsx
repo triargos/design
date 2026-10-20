@@ -7,30 +7,30 @@ import {
   ComboboxList,
 } from '~/components/ui/combobox';
 
-interface Town {
+interface Project {
   readonly value: string;
   readonly label: string;
 }
 
-const TOWNS: ReadonlyArray<Town> = [
-  { value: 'berlin', label: 'Berlin' },
-  { value: 'bremen', label: 'Bremen' },
-  { value: 'hamburg', label: 'Hamburg' },
-  { value: 'koeln', label: 'Köln' },
-  { value: 'muenchen', label: 'München' },
+const PROJECTS: ReadonlyArray<Project> = [
+  { value: 'atlas', label: 'Atlas' },
+  { value: 'beacon', label: 'Beacon' },
+  { value: 'comet', label: 'Comet' },
+  { value: 'delta', label: 'Delta' },
+  { value: 'orbit', label: 'Orbit' },
 ];
 
-/** A field that filters a list as you type; the list is a popup. */
+/** A field that filters a list as you type; with a value, a clear button replaces the ⇅ button. */
 export function ComboboxDefault() {
   return (
-    <Combobox items={TOWNS} defaultValue={TOWNS[2]} itemToStringLabel={(town: Town) => town.label}>
-      <ComboboxInput placeholder='Ort suchen' aria-label='Ort' showClear className='w-64' />
+    <Combobox items={PROJECTS} defaultValue={PROJECTS[2]} itemToStringLabel={(project: Project) => project.label}>
+      <ComboboxInput placeholder='Search projects' aria-label='Project' className='w-64' />
       <ComboboxContent>
-        <ComboboxEmpty>Kein Ort gefunden</ComboboxEmpty>
+        <ComboboxEmpty>No projects found</ComboboxEmpty>
         <ComboboxList>
-          {(town: Town) => (
-            <ComboboxItem key={town.value} value={town}>
-              {town.label}
+          {(project: Project) => (
+            <ComboboxItem key={project.value} value={project}>
+              {project.label}
             </ComboboxItem>
           )}
         </ComboboxList>

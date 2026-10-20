@@ -25,28 +25,28 @@ export function OTPFieldStates() {
   const id = useId();
   return (
     <div className='grid gap-group'>
-      <Field data-invalid className='w-fit min-w-0'>
-        <FieldLabel htmlFor={`${id}-incomplete`}>Unvollständig</FieldLabel>
+      <Field invalid className='w-fit min-w-0'>
+        <FieldLabel htmlFor={`${id}-incomplete`}>Incomplete</FieldLabel>
         <OTPField id={`${id}-incomplete`} length={6} defaultValue='481' aria-invalid>
           <Slots />
         </OTPField>
-        <FieldError>Bitte geben Sie alle 6 Ziffern ein.</FieldError>
+        <FieldError>Enter all 6 digits.</FieldError>
       </Field>
-      <Field data-invalid className='w-fit min-w-0'>
-        <FieldLabel htmlFor={`${id}-wrong`}>Falscher Code</FieldLabel>
+      <Field invalid className='w-fit min-w-0'>
+        <FieldLabel htmlFor={`${id}-wrong`}>Wrong code</FieldLabel>
         <OTPField id={`${id}-wrong`} length={6} defaultValue='481920' aria-invalid>
           <Slots />
         </OTPField>
-        <FieldError>Der Code ist ungültig.</FieldError>
+        <FieldError>That code didn’t work.</FieldError>
       </Field>
       <Field className='w-fit min-w-0'>
-        <FieldLabel htmlFor={`${id}-verifying`}>Wird geprüft</FieldLabel>
+        <FieldLabel htmlFor={`${id}-verifying`}>Verifying</FieldLabel>
         <OTPField id={`${id}-verifying`} length={6} defaultValue='481920' readOnly>
           <Slots />
         </OTPField>
       </Field>
-      <Field data-disabled='true' className='w-fit min-w-0'>
-        <FieldLabel htmlFor={`${id}-disabled`}>Deaktiviert</FieldLabel>
+      <Field disabled className='w-fit min-w-0'>
+        <FieldLabel htmlFor={`${id}-disabled`}>Disabled</FieldLabel>
         <OTPField id={`${id}-disabled`} length={6} defaultValue='481' disabled>
           <Slots />
         </OTPField>

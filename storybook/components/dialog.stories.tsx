@@ -104,13 +104,13 @@ function InviteFields() {
   return (
     <FieldGroup>
       <Field>
-        <FieldLabel htmlFor='invite-email'>E-Mail</FieldLabel>
-        <Input id='invite-email' type='email' placeholder='name@schule.de' />
+        <FieldLabel htmlFor='invite-email'>Email</FieldLabel>
+        <Input id='invite-email' type='email' placeholder='name@company.com' />
       </Field>
       <Field>
-        <FieldLabel htmlFor='invite-note'>Nachricht</FieldLabel>
+        <FieldLabel htmlFor='invite-note'>Message</FieldLabel>
         <Textarea id='invite-note' rows={3} placeholder='Optional' />
-        <FieldDescription>Steht über dem Link in der Einladung.</FieldDescription>
+        <FieldDescription>Shown above the link in the invitation.</FieldDescription>
       </Field>
     </FieldGroup>
   );
@@ -134,7 +134,7 @@ export const Board: Story = {
         title='Without close button'
         description={
           <>
-            <Code>showCloseButton={'{false}'}</Code>: the footer is the only way out.
+            <Code>showCloseButton={'{false}'}</Code>: no ✕, the footer action closes it.
           </>
         }>
         <DialogWithoutCloseButton />
@@ -158,17 +158,17 @@ export const Board: Story = {
           <Stage label={<Code>DialogHeader · DialogBody · DialogFooter</Code>}>
             {(container) => (
               <Dialog defaultOpen modal={false}>
-                <DialogContent container={container} className='sm:max-w-md'>
+                <DialogContent container={container}>
                   <DialogHeader>
-                    <DialogTitle>Mitglied einladen</DialogTitle>
-                    <DialogDescription>Wir schicken eine E-Mail mit einem persönlichen Link.</DialogDescription>
+                    <DialogTitle>Invite member</DialogTitle>
+                    <DialogDescription>We’ll email them a link to join the workspace.</DialogDescription>
                   </DialogHeader>
                   <DialogBody>
                     <InviteFields />
                   </DialogBody>
                   <DialogFooter>
-                    <DialogClose render={<Button intent='neutral' emphasis='raised' />}>Abbrechen</DialogClose>
-                    <Button type='button'>Einladen</Button>
+                    <DialogClose render={<Button />}>Cancel</DialogClose>
+                    <Button intent='primary'>Send invite</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -177,13 +177,13 @@ export const Board: Story = {
           <Stage label='No footer'>
             {(container) => (
               <Dialog defaultOpen modal={false}>
-                <DialogContent container={container} className='sm:max-w-md'>
+                <DialogContent container={container}>
                   <DialogHeader>
-                    <DialogTitle>Einladungslink</DialogTitle>
-                    <DialogDescription>Jeder mit diesem Link kann der Klasse beitreten.</DialogDescription>
+                    <DialogTitle>Invite link</DialogTitle>
+                    <DialogDescription>Anyone with this link can join the workspace.</DialogDescription>
                   </DialogHeader>
                   <DialogBody>
-                    <Input readOnly defaultValue='https://elternportal.de/einladung/7f3a' />
+                    <Input readOnly defaultValue='https://acme.app/join/7f3a' aria-label='Invite link' />
                   </DialogBody>
                 </DialogContent>
               </Dialog>
@@ -201,16 +201,14 @@ export const Board: Story = {
               <AlertDialog defaultOpen>
                 <AlertDialogContent container={container}>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Ankündigung löschen?</AlertDialogTitle>
+                    <AlertDialogTitle>Delete the project?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Eltern sehen sie nicht mehr. Gelesen-Status und Antworten gehen verloren.
+                      Its tasks, documents and comments are deleted for everyone. This cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-                    <AlertDialogAction intent='destructive' emphasis='solid'>
-                      Löschen
-                    </AlertDialogAction>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction intent='destructive'>Delete</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -224,14 +222,12 @@ export const Board: Story = {
                     <AlertDialogMedia>
                       <Trash2Icon />
                     </AlertDialogMedia>
-                    <AlertDialogTitle>Datei löschen?</AlertDialogTitle>
-                    <AlertDialogDescription>Elternbrief_März.pdf wird endgültig entfernt.</AlertDialogDescription>
+                    <AlertDialogTitle>Delete file?</AlertDialogTitle>
+                    <AlertDialogDescription>Q1-report.pdf will be deleted permanently.</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-                    <AlertDialogAction intent='destructive' emphasis='solid'>
-                      Löschen
-                    </AlertDialogAction>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction intent='destructive'>Delete</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -248,14 +244,14 @@ export const Board: Story = {
             <Sheet defaultOpen modal={false}>
               <SheetContent container={container}>
                 <SheetHeader>
-                  <SheetTitle>Mitglied einladen</SheetTitle>
-                  <SheetDescription>Wir schicken eine E-Mail mit einem persönlichen Link.</SheetDescription>
+                  <SheetTitle>Invite member</SheetTitle>
+                  <SheetDescription>We’ll email them a link to join the workspace.</SheetDescription>
                 </SheetHeader>
                 <SheetBody>
                   <InviteFields />
                 </SheetBody>
                 <SheetFooter>
-                  <Button type='button'>Einladen</Button>
+                  <Button intent='primary'>Send invite</Button>
                 </SheetFooter>
               </SheetContent>
             </Sheet>
@@ -271,14 +267,14 @@ export const Board: Story = {
             <Drawer defaultOpen modal={false}>
               <DrawerContent container={container}>
                 <DrawerHeader>
-                  <DrawerTitle>Mitglied einladen</DrawerTitle>
-                  <DrawerDescription>Wir schicken eine E-Mail mit einem persönlichen Link.</DrawerDescription>
+                  <DrawerTitle>Invite member</DrawerTitle>
+                  <DrawerDescription>We’ll email them a link to join the workspace.</DrawerDescription>
                 </DrawerHeader>
                 <div className='px-group'>
                   <InviteFields />
                 </div>
                 <DrawerFooter>
-                  <Button type='button'>Einladen</Button>
+                  <Button intent='primary'>Send invite</Button>
                 </DrawerFooter>
               </DrawerContent>
             </Drawer>
@@ -290,27 +286,27 @@ export const Board: Story = {
               <DrawerIndentBackground />
               <DrawerIndent className='h-full'>
                 <div className='flex h-full flex-col gap-related bg-background p-group'>
-                  <span className='text-heading'>Abwesenheiten</span>
+                  <span className='text-heading'>Tasks</span>
                   <span className='text-body text-muted-foreground'>
-                    Krankmeldungen und Termine der Kinder dieser Woche.
+                    Everything due this week, across your projects.
                   </span>
                 </div>
               </DrawerIndent>
               <Drawer defaultOpen modal={false}>
                 <DrawerContent container={container}>
                   <DrawerHeader>
-                    <DrawerTitle>Abwesenheit</DrawerTitle>
-                    <DrawerDescription>Mia Schmidt · Krankheit · heute</DrawerDescription>
+                    <DrawerTitle>Update homepage copy</DrawerTitle>
+                    <DrawerDescription>Website redesign · due today</DrawerDescription>
                   </DrawerHeader>
                   <div className='h-40' />
                   <Drawer defaultOpen modal={false}>
                     <DrawerContent container={container}>
                       <DrawerHeader>
-                        <DrawerTitle>Grund ändern</DrawerTitle>
-                        <DrawerDescription>Krankheit, Arzttermin oder ein anderer Grund.</DrawerDescription>
+                        <DrawerTitle>Change status</DrawerTitle>
+                        <DrawerDescription>To do, in progress or done.</DrawerDescription>
                       </DrawerHeader>
                       <DrawerFooter>
-                        <Button type='button'>Speichern</Button>
+                        <Button intent='primary'>Save</Button>
                       </DrawerFooter>
                     </DrawerContent>
                   </Drawer>
@@ -326,35 +322,35 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <DialogDefault />,
-  play: open('click', 'Mitglied einladen', 'Wir schicken eine E-Mail mit einem persönlichen Link.'),
+  play: open('click', 'Invite member', 'We’ll email them a link to join the workspace.'),
 };
 export const NoFooter: Story = {
   name: 'No footer',
   render: () => <DialogNoFooter />,
-  play: open('click', 'Einladungslink', 'Jeder mit diesem Link kann der Klasse beitreten.'),
+  play: open('click', 'Invite link', 'Anyone with this link can join the workspace.'),
 };
 export const WithoutCloseButton: Story = {
   name: 'Without close button',
   render: () => <DialogWithoutCloseButton />,
-  play: open('click', 'Nutzungsbedingungen', 'Bitte lies sie, bevor du weitermachst.'),
+  play: open('click', 'Terms of service', 'Read them before you continue.'),
 };
 export const ScrollingBody: Story = {
   name: 'Scrolling body',
   render: () => <DialogScrollingBody />,
-  play: open('click', 'Datenschutzerklärung', 'Stand: März 2025'),
+  play: open('click', 'Privacy policy', 'Last updated March 2025'),
 };
 export const Nested: Story = {
   render: () => <DialogNested />,
   play: clickThrough(
-    { click: 'Gruppe bearbeiten', shows: 'Klasse 3b · 24 Mitglieder' },
-    { click: 'Mitglieder verwalten', shows: 'Wer zu Klasse 3b gehört.' },
+    { click: 'Edit project', shows: 'Website redesign · 8 members' },
+    { click: 'Manage members', shows: 'Who can see and edit this project.' },
   ),
 };
 export const OpenedFromAMenu: Story = {
   name: 'Opened from a menu',
   render: () => <DialogOpenedFromAMenu />,
   play: clickThrough(
-    { click: 'Aktionen', shows: 'Umbenennen…' },
-    { click: 'Umbenennen…', role: 'menuitem', shows: 'Gruppe umbenennen' },
+    { click: 'Actions', shows: 'Rename…' },
+    { click: 'Rename…', role: 'menuitem', shows: 'Rename project' },
   ),
 };

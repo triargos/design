@@ -49,7 +49,7 @@ export function Search() {
   return (
     <>
       <SidebarMenuButton
-        variant='outline'
+        emphasis='outline'
         onClick={() => setOpen(true)}
         className='justify-between text-muted-foreground'
         aria-keyshortcuts='Meta+K Control+K'>

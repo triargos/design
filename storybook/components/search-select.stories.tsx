@@ -27,7 +27,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Search Select'
-      description='The default picker: a select you can type into, for any list length. Type to filter, Enter picks the first match. One value with a clear button, or many as chips. The list is always virtualized. Not bound to a form: wire it through Controller + Field.'>
+      description='A select you can type into, for any list length. Type to filter, Enter picks the first match. One value with a clear button, or many as chips; the list is always virtualized.'>
       <ExampleSection title='Default'>
         <SearchSelectDefault />
       </ExampleSection>
@@ -47,8 +47,7 @@ export const Board: Story = {
         title='With description'
         description={
           <>
-            A <Code>description</Code> on the item shows muted beside the label; <Code>renderItem</Code> for anything
-            else.
+            An option's <Code>description</Code> shows muted beside its label.
           </>
         }>
         <SearchSelectWithDescription />
@@ -57,19 +56,18 @@ export const Board: Story = {
         title='Custom value'
         description={
           <>
-            <Code>allowCustom</Code>: the value is a plain string, a key or the typed text. While the query names no
-            item, the last row takes it; Enter picks it once nothing else matches. A custom value reads „Eigene Angabe“
-            in its row.
+            <Code>allowCustom</Code>: the value is an option's value or the typed text. While the query names no option,
+            the last row takes it; Enter picks it once nothing else matches.
           </>
         }>
         <SearchSelectCustomValue />
       </ExampleSection>
       <ExampleSection
         title='Many options'
-        description='2,000 streets, the same every time: reference data at app size. The ManyOptions story is the perf check: its count control goes to 10,000.'>
+        description='2,000 members, the same every time. The ManyOptions story is the perf check: its count control goes to 10,000.'>
         <SearchSelectManyOptions />
       </ExampleSection>
-      <ExampleSection title='In a field' description='Field, label and error around it; through Controller in the app.'>
+      <ExampleSection title='In a field' description='Field, label and error around it.'>
         <SearchSelectInAField />
       </ExampleSection>
       <ExampleSection title='In a dialog' description='The popup portals above the dialog and keeps focus in it.'>
@@ -79,7 +77,7 @@ export const Board: Story = {
         title='States'
         description={
           <>
-            <Code>pending</Code>, <Code>invalid</Code>, <Code>disabled</Code>.
+            Loading (<Code>emptyText</Code>), <Code>aria-invalid</Code>, <Code>disabled</Code>.
           </>
         }>
         <SearchSelectStates />
@@ -93,7 +91,7 @@ export const Placeholder: Story = {
   render: () => <SearchSelectPlaceholder />,
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole('combobox'));
-    await screen.findByText('Klasse 4b');
+    await screen.findByText('Comet');
   },
 };
 export const Multiple: Story = { render: () => <SearchSelectMultiple /> };
@@ -102,7 +100,7 @@ export const WithDescription: Story = {
   render: () => <SearchSelectWithDescription />,
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole('combobox'));
-    await screen.findByText('Englisch, Kunst');
+    await screen.findByText('Finance');
   },
 };
 
@@ -110,10 +108,10 @@ export const CustomValue: Story = {
   name: 'Custom value',
   render: () => <SearchSelectCustomValue />,
   play: async ({ canvas, userEvent }) => {
-    const field = canvas.getByRole('combobox', { name: 'Ort' });
+    const field = canvas.getByRole('combobox', { name: 'Role' });
     await userEvent.clear(field);
-    await userEvent.type(field, 'Delmenhorst');
-    await screen.findByText('Delmenhorst');
+    await userEvent.type(field, 'Freelancer');
+    await screen.findByText('Freelancer');
   },
 };
 
@@ -143,19 +141,19 @@ export const ManyOptions: StoryObj<typeof SearchSelectManyOptions> = {
     measure('open', 'open');
     await expect(within(listbox).getAllByRole('option').length).toBeLessThanOrEqual(MAX_RENDERED_OPTIONS);
 
-    for (const key of 'berg') {
+    for (const key of 'son') {
       performance.mark('filter');
       await userEvent.keyboard(key);
       measure('filter', 'filter');
     }
-    await waitFor(() => expect(within(listbox).getAllByRole('option')[0]).toHaveTextContent(/berg/i));
+    await waitFor(() => expect(within(listbox).getAllByRole('option')[0]).toHaveTextContent(/son/i));
 
     if (args.multiple) {
       for (let pick = 0; pick < 3; pick++) {
         await userEvent.click(within(await screen.findByRole('listbox')).getAllByRole('option')[pick]);
       }
       await waitFor(() =>
-        expect(canvas.getAllByText(/berg/i, { selector: '[data-slot=combobox-chip] *' })).toHaveLength(3),
+        expect(canvas.getAllByText(/son/i, { selector: '[data-slot=combobox-chip]' })).toHaveLength(3),
       );
       return;
     }
@@ -173,6 +171,6 @@ export const InAField: Story = {
 export const InADialog: Story = {
   name: 'In a dialog',
   render: () => <SearchSelectInADialog />,
-  play: open('click', 'Klassen zuordnen', 'Klassen zuordnen'),
+  play: open('click', 'Add members', 'Add members'),
 };
 export const States: Story = { render: () => <SearchSelectStates /> };

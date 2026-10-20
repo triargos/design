@@ -6,21 +6,17 @@ export function CalloutWithAction() {
     <div className='flex w-full max-w-lg flex-col gap-2'>
       <Callout intent='destructive'>
         <CalloutContent>
-          <p className='font-medium'>Synchronisierung fehlgeschlagen</p>
-          <p>3 Dateien konnten nicht übertragen werden.</p>
+          <p className='font-medium'>Sync failed</p>
+          <p>3 documents could not be uploaded.</p>
         </CalloutContent>
         <CalloutAction>
-          <Button type='button' intent='neutral' emphasis='raised'>
-            Erneut versuchen
-          </Button>
+          <Button>Try again</Button>
         </CalloutAction>
       </Callout>
       <Callout>
-        <CalloutContent>Es gibt 4 neue Anmeldungen.</CalloutContent>
+        <CalloutContent>4 members joined this week.</CalloutContent>
         <CalloutAction>
-          <Button type='button' intent='neutral' emphasis='raised'>
-            Ansehen
-          </Button>
+          <Button>View</Button>
         </CalloutAction>
       </Callout>
     </div>

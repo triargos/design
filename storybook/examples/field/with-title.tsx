@@ -5,9 +5,9 @@ import { Field, FieldDescription, FieldTitle } from '~/components/ui/field';
 export function FieldWithTitle() {
   return (
     <Field aria-labelledby='field-color-title' className='w-80'>
-      <FieldTitle id='field-color-title'>Farbe</FieldTitle>
-      <ColorPicker value='#64c989' onChange={() => undefined} />
-      <FieldDescription>Erscheint als Punkt neben der Kategorie.</FieldDescription>
+      <FieldTitle id='field-color-title'>Color</FieldTitle>
+      <ColorPicker value='#64c989' onValueChange={() => undefined} />
+      <FieldDescription>Shown as a dot next to the project name.</FieldDescription>
     </Field>
   );
 }

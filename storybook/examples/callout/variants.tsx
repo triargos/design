@@ -1,15 +1,11 @@
 import { Callout, CalloutContent } from '~/components/ui/callout';
 
 const INTENTS = [
-  { intent: 'info', title: 'Neue Felder verfügbar', body: 'Eltern sehen die Änderungen ab dem nächsten Schuljahr.' },
-  { intent: 'success', title: 'Import abgeschlossen', body: '248 Familien wurden übernommen.' },
-  { intent: 'warning', title: 'Frist bis 31. März', body: 'Danach können Eltern keine Anträge mehr stellen.' },
-  {
-    intent: 'destructive',
-    title: 'Synchronisierung fehlgeschlagen',
-    body: '3 Dateien konnten nicht übertragen werden.',
-  },
-  { intent: 'neutral', title: 'Nur für die Schulleitung sichtbar', body: 'Lehrkräfte sehen diesen Bereich nicht.' },
+  { intent: 'info', title: 'New fields available', body: 'Members see them after their next sign-in.' },
+  { intent: 'success', title: 'Import finished', body: '248 tasks were added to the project.' },
+  { intent: 'warning', title: 'Your trial ends on March 31', body: 'Add a payment method to keep your projects.' },
+  { intent: 'destructive', title: 'Sync failed', body: '3 documents could not be uploaded.' },
+  { intent: 'neutral', title: 'Only admins see this section', body: 'Members cannot open it.' },
 ] as const;
 
 export function CalloutVariants() {

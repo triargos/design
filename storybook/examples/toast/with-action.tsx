@@ -1,21 +1,17 @@
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 /** One action at most; a toast with an action stays open (`timeout: 0`) when the user must decide. */
 export function ToastWithAction() {
   return (
     <Button
-      type='button'
-      intent='neutral'
-      emphasis='raised'
       onClick={() =>
-        toast('Entwurf wiederhergestellt', {
+        toast('Draft restored', {
           timeout: 0,
-          action: { label: 'Verwerfen', onClick: () => toast.dismiss() },
+          action: { label: 'Discard', onClick: () => toast.dismiss() },
         })
       }>
-      Entwurf wiederherstellen
+      Restore draft
     </Button>
   );
 }

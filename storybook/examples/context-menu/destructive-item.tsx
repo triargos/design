@@ -12,17 +12,17 @@ export function ContextMenuDestructiveItem() {
   return (
     <ContextMenu>
       <ContextMenuTrigger className='flex h-40 w-72 items-center justify-center rounded-control-lg border border-dashed border-border text-body text-muted-foreground'>
-        Rechtsklick auf die Datei
+        Right-click the file
       </ContextMenuTrigger>
       <ContextMenuContent className='w-52'>
         <ContextMenuItem>
           <PencilIcon />
-          Umbenennen
+          Rename
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem intent='destructive'>
           <Trash2Icon />
-          Löschen
+          Delete
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

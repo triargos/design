@@ -4,15 +4,16 @@ import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-const withinFocusAndInvalidSurface = [
+const withinSurface = [
   'focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/24 focus-within:shadow-none',
   'has-aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
   'focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 dark:focus-within:has-aria-invalid:ring-destructive/24',
-  // The wrapper itself may carry `aria-invalid` (`ComboboxChips` in the app forms).
+  // The wrapper itself may carry `aria-invalid` (`ComboboxChips`).
   'aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
   'focus-within:aria-invalid:border-destructive/64 focus-within:aria-invalid:ring-destructive/16 dark:focus-within:aria-invalid:ring-destructive/24',
   'has-[[readonly],[data-readonly]]:text-muted-foreground has-[[readonly],[data-readonly]]:shadow-field-flat',
   'has-[[readonly],[data-readonly]]:focus-within:border-transparent has-[[readonly],[data-readonly]]:focus-within:shadow-field-flat has-[[readonly],[data-readonly]]:focus-within:ring-0',
+  'has-disabled:bg-disabled has-disabled:text-disabled-foreground has-disabled:shadow-field-flat',
 ];
 
 /**
@@ -21,8 +22,6 @@ const withinFocusAndInvalidSurface = [
  * - `group`: an `InputGroup` wrapper; only its `[data-slot=input-group-control]` drives focus, so
  *   focusing an addon button does not ring the whole group.
  * - `within`: any other wrapper whose descendants receive focus and carry `aria-invalid`.
- * - `composite`: `within` for a wrapper that hosts its own controls, such as an editor toolbar; a disabled
- *   descendant (an unavailable Undo) does not dim the surface.
  */
 export const inputSurfaceVariants = cva(
   // Resting: the field ring (`shadow-field`) and a small lift; the border is transparent and only carries state. In dark
@@ -57,11 +56,7 @@ export const inputSurfaceVariants = cva(
           'has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:text-muted-foreground has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:shadow-field-flat',
           'has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:border-transparent has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:shadow-field-flat has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:ring-0',
         ],
-        within: [
-          ...withinFocusAndInvalidSurface,
-          'has-disabled:bg-disabled has-disabled:text-disabled-foreground has-disabled:shadow-field-flat',
-        ],
-        composite: withinFocusAndInvalidSurface,
+        within: withinSurface,
       },
     },
     defaultVariants: {

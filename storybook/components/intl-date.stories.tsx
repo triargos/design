@@ -1,14 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { IntlDateDay } from '../examples/intl-date/day';
 import { IntlDateDefault } from '../examples/intl-date/default';
-import { IntlDateIsoDate } from '../examples/intl-date/iso-date';
-import { IntlDateRange } from '../examples/intl-date/range';
+import { IntlDateLocale } from '../examples/intl-date/locale';
+import { IntlDateRangeExample } from '../examples/intl-date/range';
 import { IntlDateRelative } from '../examples/intl-date/relative';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 
 const meta = {
   title: 'Components/Intl Date',
-  parameters: { description: 'A date formatted for reading, in the user’s locale.' },
+  parameters: { description: 'A date formatted for reading.' },
 } satisfies Meta;
 
 export default meta;
@@ -20,30 +21,30 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Intl Date'
-      description='A date formatted for reading, in the user’s locale. Format with intl-date, never by hand.'>
+      description='A date formatted for reading, from an ISO string. Format dates with these, never by hand.'>
       <ExampleSection
         title='Default'
         description={
           <>
-            <Code>IntlDate</Code>: default, then two <Code>format</Code>s.
+            <Code>IntlDate</Code>: a moment in the viewer’s time zone, then two <Code>format</Code>s.
           </>
         }>
         <IntlDateDefault />
       </ExampleSection>
       <ExampleSection
-        title='ISO date'
+        title='Day'
         description={
           <>
-            <Code>IsoIntlDate</Code>: an IsoDate, a day with no time.
+            A <Code>YYYY-MM-DD</Code> day has no zone: the same day for every viewer.
           </>
         }>
-        <IntlDateIsoDate />
+        <IntlDateDay />
       </ExampleSection>
       <ExampleSection
         title='Relative'
         description={
           <>
-            <Code>RelativeIntlDate</Code>: the exact time in a tooltip.
+            <Code>RelativeIntlDate</Code>: the exact moment in a tooltip.
           </>
         }>
         <IntlDateRelative />
@@ -52,19 +53,26 @@ export const Board: Story = {
         title='Range'
         description={
           <>
-            <Code>renderDateRange(start, end)</Code>
+            <Code>IntlDateRange</Code>: shared parts said once.
           </>
         }>
-        <IntlDateRange />
+        <IntlDateRangeExample />
+      </ExampleSection>
+      <ExampleSection
+        title='Locale'
+        description={
+          <>
+            <Code>locale</Code> and <Code>timeZone</Code>; the default is en-US in the runtime’s zone.
+          </>
+        }>
+        <IntlDateLocale />
       </ExampleSection>
     </FoundationPage>
   ),
 };
 
 export const Default: Story = { render: () => <IntlDateDefault /> };
-export const ISODate: Story = {
-  name: 'ISO date',
-  render: () => <IntlDateIsoDate />,
-};
+export const Day: Story = { render: () => <IntlDateDay /> };
 export const Relative: Story = { render: () => <IntlDateRelative /> };
-export const Range: Story = { render: () => <IntlDateRange /> };
+export const Range: Story = { render: () => <IntlDateRangeExample /> };
+export const Locale: Story = { render: () => <IntlDateLocale /> };

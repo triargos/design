@@ -51,11 +51,11 @@ const portrait = (background: string, figure: string) =>
   )}`;
 
 const PEOPLE = [
-  { name: 'Mia Schmidt', photo: portrait('#fde68a', '#d97706') },
-  { name: 'Leon Weber', photo: portrait('#c7d2fe', '#6366f1') },
-  { name: 'Emma Fischer', photo: portrait('#bbf7d0', '#16a34a') },
-  { name: 'Paul Wagner', photo: portrait('#fecdd3', '#e11d48') },
-  { name: 'Anna-Lena von Müller', photo: portrait('#e9d5ff', '#9333ea') },
+  { name: 'Lena Park', photo: portrait('#fde68a', '#d97706') },
+  { name: 'Omar Haddad', photo: portrait('#c7d2fe', '#6366f1') },
+  { name: 'Sofia Rossi', photo: portrait('#bbf7d0', '#16a34a') },
+  { name: 'Jonas Berg', photo: portrait('#fecdd3', '#e11d48') },
+  { name: 'Mary-Kate van der Berg', photo: portrait('#e9d5ff', '#9333ea') },
 ] as const;
 
 export const Board: Story = {
@@ -102,7 +102,7 @@ export const Board: Story = {
                 <AvatarFallback>{getInitials(PEOPLE[4].name)}</AvatarFallback>
               </Avatar>,
               <Avatar key='s' size={size} shape='square'>
-                <AvatarFallback>{getInitials('Grundschule am Park')}</AvatarFallback>
+                <AvatarFallback>{getInitials('Northwind Studio')}</AvatarFallback>
               </Avatar>,
               <Avatar key='b' size={size}>
                 <AvatarImage src={PEOPLE[2].photo} alt={PEOPLE[2].name} />
@@ -157,7 +157,7 @@ export const Board: Story = {
       <FoundationSection title='Usages'>
         <InsetCard>
           <InsetCardHeader>
-            <InsetCardTitle>Erziehungsberechtigte</InsetCardTitle>
+            <InsetCardTitle>Members</InsetCardTitle>
           </InsetCardHeader>
           <InsetCardContent className='overflow-hidden'>
             <ItemList>
@@ -171,7 +171,7 @@ export const Board: Story = {
                   </ItemMedia>
                   <ItemContent>
                     <ItemTitle>{person.name}</ItemTitle>
-                    <ItemDescription>{index === 0 ? 'Mutter' : 'Vater'}</ItemDescription>
+                    <ItemDescription>{index === 0 ? 'Owner' : 'Member'}</ItemDescription>
                   </ItemContent>
                 </Item>
               ))}

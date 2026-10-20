@@ -5,11 +5,11 @@ export function StatEndAligned() {
     <div className='flex gap-8'>
       <Stat className='items-end'>
         <StatValue>+12</StatValue>
-        <StatLabel>30 Tage</StatLabel>
+        <StatLabel>30 days</StatLabel>
       </Stat>
       <Stat className='items-end'>
         <StatValue>+4</StatValue>
-        <StatLabel>7 Tage</StatLabel>
+        <StatLabel>7 days</StatLabel>
       </Stat>
     </div>
   );

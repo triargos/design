@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { Separator } from '~/components/ui/separator';
 
@@ -14,14 +14,13 @@ const buttonGroupVariants = cva('flex w-fit items-stretch *:focus-visible:relati
         'flex-col [&>[data-slot]:has(~[data-slot])]:rounded-b-none [&>[data-slot]~[data-slot]]:rounded-t-none [&>[data-slot]~[data-slot]]:border-t-0',
     },
   },
-  defaultVariants: { orientation: 'horizontal' },
 });
 
 function ButtonGroup({
   className,
-  orientation,
+  orientation = 'horizontal',
   ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof buttonGroupVariants>) {
+}: React.ComponentProps<'div'> & { orientation?: 'horizontal' | 'vertical' }) {
   return (
     <div
       role='group'

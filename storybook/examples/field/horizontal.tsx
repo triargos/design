@@ -11,33 +11,33 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 
-const SEND_MODES = [
-  { value: 'IMMEDIATE', label: 'Sofort' },
-  { value: 'SCHEDULED', label: 'Gesammelt' },
+const DIGESTS = [
+  { value: 'instant', label: 'Instantly' },
+  { value: 'daily', label: 'Daily' },
 ];
 
 /** Settings: `orientation='horizontal'` puts the label and description beside the control. */
 export function FieldHorizontal() {
-  const [mode, setMode] = useState('IMMEDIATE');
+  const [digest, setDigest] = useState('instant');
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Einladungs-E-Mails</InsetCardTitle>
-        <InsetCardDescription>Wann neue Mitglieder ihre Einladung bekommen.</InsetCardDescription>
+        <InsetCardTitle>Notifications</InsetCardTitle>
+        <InsetCardDescription>How you hear about changes to your tasks.</InsetCardDescription>
       </InsetCardHeader>
       <InsetCardContent className='p-group'>
         <FieldGroup>
           <Field orientation='horizontal'>
             <FieldContent>
-              <FieldLabel>Versand</FieldLabel>
-              <FieldDescription>Sofort nach dem Import oder gesammelt am Morgen.</FieldDescription>
+              <FieldLabel htmlFor='field-digest'>Email</FieldLabel>
+              <FieldDescription>Each update as it happens, or one email in the morning.</FieldDescription>
             </FieldContent>
-            <Select items={SEND_MODES} value={mode} onValueChange={(next) => setMode(next ?? 'IMMEDIATE')}>
-              <SelectTrigger className='w-full max-w-48'>
+            <Select items={DIGESTS} value={digest} onValueChange={setDigest}>
+              <SelectTrigger id='field-digest' className='w-full max-w-48'>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {SEND_MODES.map((item) => (
+                {DIGESTS.map((item) => (
                   <SelectItem key={item.value} value={item.value}>
                     {item.label}
                   </SelectItem>
@@ -48,10 +48,10 @@ export function FieldHorizontal() {
           <FieldSeparator />
           <Field orientation='horizontal'>
             <FieldContent>
-              <FieldLabel htmlFor='field-reminder'>Erinnerung</FieldLabel>
-              <FieldDescription>Nach drei Tagen ohne Antwort noch einmal schicken.</FieldDescription>
+              <FieldLabel htmlFor='field-mentions'>Mentions only</FieldLabel>
+              <FieldDescription>Skip updates unless someone mentions you.</FieldDescription>
             </FieldContent>
-            <Switch id='field-reminder' defaultChecked />
+            <Switch id='field-mentions' defaultChecked />
           </Field>
         </FieldGroup>
       </InsetCardContent>

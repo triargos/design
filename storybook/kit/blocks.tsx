@@ -24,6 +24,7 @@ import {
 
 import { cn } from '~/lib/utils';
 
+import { installForcedStates } from './forced-states';
 import { measureGaps, type GapBand } from './measure';
 
 /**
@@ -50,13 +51,13 @@ const STAGE_SURFACE: Record<DocsSurface, string> = {
 
 export const DocsModeContext = createContext<DocsMode | null>(null);
 
-/**
- * Story page layout, after Interfere's design pages: a centered column, the title and a hairline, then sections. Specimens
- * sit in the app's own card (`Preview`, `SpecimenList`), so they render on the surface they mostly live on.
- */
 /** The docs show a Board's lead sentence; the rest is spec, for Storybook. */
 const firstSentence = (text: string) => /^.+?[.!?](?=\s|$)/.exec(text)?.[0] ?? text;
 
+/**
+ * Page layout, after Interfere's design pages: a centered column, the title and a hairline, then sections. Specimens
+ * sit in a card (`Preview`, `SpecimenList`), so they render on the surface they mostly live on.
+ */
 export function FoundationPage({
   title,
   description,
@@ -151,7 +152,6 @@ export function Preview({
     return (
       <div data-slot='preview' data-title={title} className='min-w-0 overflow-hidden rounded-card border border-border'>
         <div
-          lang='de'
           data-surface={surface === 'page' ? undefined : surface}
           className={cn('flex flex-wrap items-center gap-related p-group', STAGE_SURFACE[surface], className)}>
           {children}
@@ -167,8 +167,7 @@ export function Preview({
           <InsetCardTitle className='text-caption text-muted-foreground'>{title}</InsetCardTitle>
         </InsetCardHeader>
       )}
-      {/* The examples are German; the docs around them are English. */}
-      <InsetCardContent lang='de' className={cn('flex flex-wrap items-center gap-related p-group', className)}>
+      <InsetCardContent className={cn('flex flex-wrap items-center gap-related p-group', className)}>
         {children}
       </InsetCardContent>
       {footer}
@@ -194,10 +193,8 @@ export function ExampleCode({ section }: { section: string }) {
     <div data-slot='example-code'>
       <div className='flex items-center justify-between gap-related px-1 pt-1'>
         <Button
-          type='button'
-          size='xs'
-          intent='neutral'
           emphasis='ghost'
+          size='xs'
           aria-expanded={open}
           aria-controls={codeId}
           onClick={() => setOpen((value) => !value)}
@@ -248,9 +245,7 @@ export function ExampleSection({
     <Section title={title} description={description}>
       {bare && !docs ? (
         <div className='flex min-w-0 flex-col gap-tight'>
-          <div lang='de' className={cn('min-w-0', className)}>
-            {children}
-          </div>
+          <div className={cn('min-w-0', className)}>{children}</div>
           <ExampleCode section={title} />
         </div>
       ) : (
@@ -295,7 +290,7 @@ export function GapRuler({ show, children }: { show: boolean; children: ReactNod
       setBands([]);
       return;
     }
-    const measure = () => setBands(measureGaps(root).filter((band) => band.axis === 'vertical'));
+    const measure = () => setBands(measureGaps(root));
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(root);
@@ -433,7 +428,7 @@ export function Code({ children }: { children: ReactNode }) {
 function useCustomProperty(name: string) {
   const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState('');
-  // No dependencies: the toolbar re-renders the story with new CSS, and the value is read after that commit.
+  // No dependencies: a theme change re-renders the page with new CSS, and the value is read after that commit.
   useLayoutEffect(() => {
     if (ref.current === null) return;
     const next = getComputedStyle(ref.current).getPropertyValue(`--${name}`).trim();
@@ -498,16 +493,10 @@ export function SwatchGrid({ tokens }: { tokens: ReadonlyArray<SwatchToken> }) {
 }
 
 /**
- * `parameters.pseudo` for a board that forces states per cell: a `StateCell` with `state='hover'` puts everything in it
- * under `:hover` (`storybook-addon-pseudo-states`), and so on.
+ * One cell of a state matrix: `state='hover'` renders everything in it hovered, as do `press` and `focus`
+ * (`forced-states.ts`). Other states (`rest`, `disabled`, `invalid`) are set on the control itself.
  */
-export const FORCED_STATES = {
-  hover: ['.state-hover, .state-hover *'],
-  active: ['.state-press, .state-press *'],
-  focusVisible: ['.state-focus, .state-focus *'],
-  focusWithin: ['.state-focus, .state-focus *'],
-} as const;
-
 export function StateCell({ state, children }: { state: string; children: ReactNode }) {
+  useLayoutEffect(installForcedStates, []);
   return <div className={`state-${state} flex min-w-0 items-center`}>{children}</div>;
 }

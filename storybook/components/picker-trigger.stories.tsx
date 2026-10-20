@@ -19,10 +19,8 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Picker Trigger'
-      description='A button that looks like a field, for pickers that open a popup (the date picker). Same surface, height, padding and text as Input and SelectTrigger. Pass it as a trigger’s render element.'>
-      <ExampleSection
-        title='Default'
-        description='Wrap the value in a span, so a long value truncates instead of pushing the icon out.'>
+      description='A button that looks like a field, for a picker that opens a popup. It lines up with Input and SelectTrigger; pass it as a trigger’s render element.'>
+      <ExampleSection title='Default' description='The value in a span, so a long one truncates; the icon at the end.'>
         <PickerTriggerDefault />
       </ExampleSection>
       <ExampleSection title='Placeholder'>

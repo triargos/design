@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { Calendar } from '~/components/ui/calendar';
 
-/** react-day-picker in our shape. DateInput opens it. */
+/** A day as `YYYY-MM-DD`; it opens on the value's month. Date Input opens it in a popup. */
 export function CalendarDefault() {
-  const [date, setDate] = useState<Date | undefined>(new Date(2025, 2, 14));
-  return <Calendar mode='single' selected={date} onSelect={setDate} defaultMonth={new Date(2025, 2, 1)} />;
+  const [date, setDate] = useState('2025-03-14');
+  return <Calendar value={date} onValueChange={setDate} />;
 }

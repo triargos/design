@@ -4,7 +4,7 @@ import { Stat, StatLabel, StatValue } from '~/components/ui/stat';
 export function StatLabelFirst() {
   return (
     <Stat>
-      <StatLabel>Neu in 30 Tagen</StatLabel>
+      <StatLabel>New in 30 days</StatLabel>
       <StatValue>+12</StatValue>
     </Stat>
   );

@@ -28,5 +28,5 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <ConfirmationDefault />,
-  play: open('click', 'Ankündigung löschen…', 'Ankündigung löschen?'),
+  play: open('click', 'Delete document…', 'Delete document?'),
 };

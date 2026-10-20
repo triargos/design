@@ -5,7 +5,7 @@ export function InsetCardNoHeader() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardContent className='p-group'>
-        <p className='text-body text-muted-foreground'>Eine Karte ohne Kopfzeile.</p>
+        <p className='text-body text-muted-foreground'>A card without a header.</p>
       </InsetCardContent>
     </InsetCard>
   );

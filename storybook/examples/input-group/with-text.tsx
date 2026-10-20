@@ -7,12 +7,12 @@ export function InputGroupWithText() {
         <InputGroupAddon>
           <InputGroupText>https://</InputGroupText>
         </InputGroupAddon>
-        <InputGroupInput placeholder='schule.de' />
+        <InputGroupInput placeholder='example.com' aria-label='Website' />
       </InputGroup>
       <InputGroup className='w-40'>
-        <InputGroupInput type='number' defaultValue={14} aria-label='Frist' className='tabular-nums' />
+        <InputGroupInput type='number' defaultValue={30} aria-label='Payment terms' className='tabular-nums' />
         <InputGroupAddon align='inline-end'>
-          <InputGroupText>Tage</InputGroupText>
+          <InputGroupText>days</InputGroupText>
         </InputGroupAddon>
       </InputGroup>
     </div>

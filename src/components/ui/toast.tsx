@@ -1,15 +1,15 @@
 import { Toast } from '@base-ui/react/toast';
 import { CircleAlertIcon, CircleCheckIcon, InfoIcon, LoaderCircleIcon, TriangleAlertIcon } from 'lucide-react';
-import type React from 'react';
+import type { ReactNode } from 'react';
 
 import { buttonVariants } from '~/components/ui/button';
 
 import { cn } from '~/lib/utils';
 
 /**
- * Stacked toasts on Base UI (coss ui `toast`). Show them with `toast` from `~/lib/toast/toast`, which dedupes by
- * default: an `add` with an existing `id` updates that toast in place, restarts its timer and bumps `updateKey`, which
- * replays a short pulse (success, info, …) or shake (error).
+ * Stacked toasts on Base UI, bottom right. `ToastProvider` renders the stack once per app; `toast(…)` shows one from
+ * anywhere. `toast` dedupes: an `add` with an existing `id` updates that toast in place, restarts its timer and bumps
+ * `updateKey`, which replays a short pulse (success, info, …) or shake (error).
  */
 const TOAST_ICONS = {
   error: CircleAlertIcon,
@@ -19,20 +19,9 @@ const TOAST_ICONS = {
   warning: TriangleAlertIcon,
 } as const;
 
-export type ToastType = keyof typeof TOAST_ICONS;
+type ToastType = keyof typeof TOAST_ICONS;
 
 const isToastType = (type: string | undefined): type is ToastType => type !== undefined && type in TOAST_ICONS;
-
-export type ToastPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
-
-type SwipeDirection = 'up' | 'down' | 'left' | 'right';
-
-function getSwipeDirection(position: ToastPosition): SwipeDirection[] {
-  const vertical: SwipeDirection = position.startsWith('top') ? 'up' : 'down';
-  if (position.includes('center')) return [vertical];
-  if (position.includes('left')) return ['left', vertical];
-  return ['right', vertical];
-}
 
 /** Two class names per animation that alternate, so every upsert restarts the keyframes: [odd, even]. */
 const UPSERT_REPLAY = {
@@ -47,75 +36,48 @@ function upsertReplayClassName({ type, updateKey = 0 }: { type?: string | undefi
 }
 
 const toastRootClassName = [
-  'absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full rounded-popup text-popover-foreground shadow-popup select-none',
+  'absolute right-0 bottom-0 left-auto top-auto z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full origin-[50%_calc(50%+50%*min(var(--toast-index,0),1))] rounded-popup text-popover-foreground shadow-popup select-none',
   // Toasts behind the front one darken a step each; expanded, they all take the popup fill.
   'bg-[color-mix(in_srgb,var(--popover),black_calc(1%*max(0,var(--toast-index,0))))] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),black_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover',
   '[transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s]',
-  // Position
-  'data-[position*=right]:right-0 data-[position*=right]:left-auto',
-  'data-[position*=left]:right-auto data-[position*=left]:left-0',
-  'data-[position*=center]:right-0 data-[position*=center]:left-0',
-  'data-[position*=top]:top-0 data-[position*=top]:bottom-auto data-[position*=top]:origin-[50%_calc(50%-50%*min(var(--toast-index,0),1))]',
-  'data-[position*=bottom]:top-auto data-[position*=bottom]:bottom-0 data-[position*=bottom]:origin-[50%_calc(50%+50%*min(var(--toast-index,0),1))]',
   // Gap fill, so hovering between expanded toasts keeps them expanded
-  'after:absolute after:left-0 after:h-[calc(var(--toast-gap)+1px)] after:w-full',
-  'data-[position*=top]:after:top-full',
-  'data-[position*=bottom]:after:bottom-full',
+  'after:absolute after:bottom-full after:left-0 after:h-[calc(var(--toast-gap)+1px)] after:w-full',
   '[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-gap:--spacing(3)] [--toast-peek:--spacing(3)] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]',
-  'data-[position*=top]:[--toast-calc-offset-y:calc(var(--toast-offset-y)+var(--toast-index)*var(--toast-gap)+var(--toast-swipe-movement-y))]',
-  'data-[position*=bottom]:[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--toast-gap)*-1+var(--toast-swipe-movement-y))]',
+  '[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--toast-gap)*-1+var(--toast-swipe-movement-y))]',
   // Stacked
-  'data-[position*=top]:transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+(var(--toast-index)*var(--toast-peek))+(var(--toast-shrink)*var(--toast-calc-height))))_scale(var(--toast-scale))]',
-  'data-[position*=bottom]:transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--toast-peek))-(var(--toast-shrink)*var(--toast-calc-height))))_scale(var(--toast-scale))]',
+  'transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--toast-peek))-(var(--toast-shrink)*var(--toast-calc-height))))_scale(var(--toast-scale))]',
   'data-limited:opacity-0',
   // Expanded
   'data-expanded:h-(--toast-height)',
-  'data-position:data-expanded:transform-[translateX(var(--toast-swipe-movement-x))_translateY(var(--toast-calc-offset-y))]',
+  'data-expanded:transform-[translateX(var(--toast-swipe-movement-x))_translateY(var(--toast-calc-offset-y))]',
   // Enter
-  'motion-safe:data-[position*=top]:data-starting-style:transform-[translateY(calc(-100%-var(--toast-inset)))]',
-  'motion-safe:data-[position*=bottom]:data-starting-style:transform-[translateY(calc(100%+var(--toast-inset)))]',
+  'motion-safe:data-starting-style:transform-[translateY(calc(100%+var(--toast-inset)))]',
   'data-ending-style:opacity-0',
   // Reduced motion: fade in and out in place
   'motion-reduce:[transition:opacity_.5s,height_.15s,background-color_.5s] motion-reduce:data-starting-style:opacity-0',
-  // Exit, direction-aware
-  'motion-safe:data-[position*=top]:data-ending-style:not-data-limited:not-data-swipe-direction:transform-[translateY(calc(-100%-var(--toast-inset)))]',
-  'motion-safe:data-[position*=bottom]:data-ending-style:not-data-limited:not-data-swipe-direction:transform-[translateY(calc(100%+var(--toast-inset)))]',
-  'data-ending-style:data-[swipe-direction=left]:transform-[translateX(calc(var(--toast-swipe-movement-x)-100%-var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]',
+  // Exit: down, or the way it was swiped
+  'motion-safe:data-ending-style:not-data-limited:not-data-swipe-direction:transform-[translateY(calc(100%+var(--toast-inset)))]',
   'data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+100%+var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]',
-  'data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-100%-var(--toast-inset)))]',
   'data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]',
 ].join(' ');
 
-function Toasts({
-  position,
-  portalProps,
-}: Required<Pick<ToastProviderProps, 'position'>> & Pick<ToastProviderProps, 'portalProps'>) {
+function Toasts({ container }: Pick<ToastProviderProps, 'container'>) {
   const { toasts } = Toast.useToastManager();
-  const swipeDirection = getSwipeDirection(position);
 
   return (
-    <Toast.Portal data-slot='toast-portal' {...portalProps}>
+    <Toast.Portal data-slot='toast-portal' container={container}>
       <Toast.Viewport
-        className={cn(
-          'fixed z-60 mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-90 [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)]',
-          'data-[position*=top]:top-(--toast-inset)',
-          'data-[position*=bottom]:bottom-(--toast-inset)',
-          'data-[position*=left]:left-(--toast-inset)',
-          'data-[position*=right]:right-(--toast-inset)',
-          'data-[position*=center]:left-1/2 data-[position*=center]:-translate-x-1/2',
-        )}
-        data-position={position}
+        className='fixed right-(--toast-inset) bottom-(--toast-inset) z-60 mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-90 [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)]'
         data-slot='toast-viewport'>
-        {toasts.map((toast) => {
-          const Icon = isToastType(toast.type) ? TOAST_ICONS[toast.type] : null;
+        {toasts.map((item) => {
+          const Icon = isToastType(item.type) ? TOAST_ICONS[item.type] : null;
           return (
             <Toast.Root
-              key={toast.id}
-              className={cn(toastRootClassName, upsertReplayClassName(toast))}
-              data-position={position}
+              key={item.id}
+              className={cn(toastRootClassName, upsertReplayClassName(item))}
               data-slot='toast'
-              swipeDirection={swipeDirection}
-              toast={toast}>
+              swipeDirection={['right', 'down']}
+              toast={item}>
               <Toast.Content className='pointer-events-auto flex items-center gap-2 overflow-hidden px-3.5 py-3 text-body transition-opacity duration-move data-behind:opacity-0 data-behind:not-data-expanded:pointer-events-none data-expanded:opacity-100'>
                 {Icon && (
                   <div
@@ -128,11 +90,11 @@ function Toasts({
                   <Toast.Title className='font-medium' data-slot='toast-title' />
                   <Toast.Description className='text-muted-foreground' data-slot='toast-description' />
                 </div>
-                {toast.actionProps && (
+                {item.actionProps && (
                   <Toast.Action
                     className={buttonVariants({ size: 'sm', intent: 'neutral', emphasis: 'solid', className: 'ms-2' })}
                     data-slot='toast-action'>
-                    {toast.actionProps.children}
+                    {item.actionProps.children}
                   </Toast.Action>
                 )}
               </Toast.Content>
@@ -144,23 +106,98 @@ function Toasts({
   );
 }
 
-export type ToastManager = ReturnType<typeof Toast.createToastManager>;
+const toastManager = Toast.createToastManager();
 
-export const toastManager: ToastManager = Toast.createToastManager();
-
-export interface ToastProviderProps extends Toast.Provider.Props {
-  position?: ToastPosition;
-  portalProps?: React.ComponentProps<typeof Toast.Portal>;
+interface ToastProviderProps {
+  /** Defaults to the app-wide manager `toast` adds to; a docs stage passes its own (`makeToast`). */
+  toastManager?: ReturnType<typeof Toast.createToastManager>;
+  /** Milliseconds until a toast closes; `0` keeps it open. */
+  timeout?: number;
+  /** Where the stack portals to; defaults to `body`. */
+  container?: HTMLElement;
+  children?: ReactNode;
 }
 
-/** Renders the stack. `toastManager` defaults to the app-wide one; stories pass their own. */
-export function ToastProvider({ children, position = 'bottom-right', portalProps, ...props }: ToastProviderProps) {
+/** Renders the stack. Once per app, next to or around the page. */
+export function ToastProvider({
+  children,
+  container,
+  toastManager: manager = toastManager,
+  timeout,
+}: ToastProviderProps) {
   return (
-    <Toast.Provider toastManager={toastManager} {...props}>
+    <Toast.Provider toastManager={manager} timeout={timeout}>
       {children}
-      <Toasts portalProps={portalProps} position={position} />
+      <Toasts container={container} />
     </Toast.Provider>
   );
 }
 
-export { Toast as ToastPrimitive };
+interface ToastOptions {
+  /** Upserts the toast with this id. Defaults to the type, title and description, so a repeat replaces the toast. */
+  readonly id?: string | undefined;
+  readonly description?: ReactNode;
+  /** Milliseconds until it closes; `0` keeps it open until dismissed. Defaults to the provider's 5000. */
+  readonly timeout?: number | undefined;
+  readonly action?: { readonly label: ReactNode; readonly onClick: () => void } | undefined;
+}
+
+interface ToastPromiseOptions<A> {
+  readonly loading: ReactNode;
+  /** No message closes the loading toast. */
+  readonly success?: ReactNode | ((value: A) => ReactNode);
+  readonly error?: ReactNode | ((error: unknown) => ReactNode);
+}
+
+/** Dedupe key: the same type, title and description show one toast. Rich titles get a fresh id. */
+const dedupeId = (type: ToastType | undefined, title: ReactNode, description: ReactNode): string | undefined => {
+  if (typeof title !== 'string') return undefined;
+  if (description !== undefined && typeof description !== 'string') return undefined;
+  return JSON.stringify([type ?? 'default', title, description ?? '']);
+};
+
+const resolve = <A,>(message: ReactNode | ((value: A) => ReactNode), value: A): ReactNode =>
+  typeof message === 'function' ? message(value) : message;
+
+/** `toast` on a given manager; a docs stage passes its own so it renders its own stack. */
+export function makeToast(manager: ReturnType<typeof Toast.createToastManager>) {
+  const show = (type: ToastType | undefined, title: ReactNode, options: ToastOptions = {}): string => {
+    const { action, description, timeout } = options;
+    // Every key is set, so an upsert (loading → success) does not keep the previous description or action.
+    return manager.add({
+      id: options.id ?? dedupeId(type, title, description),
+      type,
+      title,
+      description,
+      timeout,
+      actionProps: action ? { children: action.label, onClick: action.onClick } : undefined,
+    });
+  };
+
+  return Object.assign((title: ReactNode, options?: ToastOptions) => show(undefined, title, options), {
+    success: (title: ReactNode, options?: ToastOptions) => show('success', title, options),
+    error: (title: ReactNode, options?: ToastOptions) => show('error', title, options),
+    info: (title: ReactNode, options?: ToastOptions) => show('info', title, options),
+    warning: (title: ReactNode, options?: ToastOptions) => show('warning', title, options),
+    /** Stays open until updated through its id or dismissed. */
+    loading: (title: ReactNode, options?: ToastOptions) => show('loading', title, options),
+    /** A loading toast that turns into success or error when the promise settles. Returns the promise. */
+    promise: <A,>(promise: Promise<A>, { loading, success, error }: ToastPromiseOptions<A>): Promise<A> => {
+      const id = show('loading', loading);
+      const settle = (type: 'success' | 'error', message: ReactNode) =>
+        message === undefined || message === null ? manager.close(id) : show(type, message, { id });
+      promise.then(
+        (value) => settle('success', resolve(success, value)),
+        (cause: unknown) => settle('error', resolve(error, cause)),
+      );
+      return promise;
+    },
+    /** Closes the toast with this id, or every toast. */
+    dismiss: (id?: string) => manager.close(id),
+  });
+}
+
+/**
+ * Shows a toast and returns its id. Pass the id back (`{ id }`) to update the toast in place, e.g. loading → success.
+ */
+export const toast = makeToast(toastManager);

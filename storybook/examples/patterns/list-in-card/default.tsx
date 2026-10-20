@@ -14,19 +14,9 @@ import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 const MEMBERS = [
-  {
-    name: 'Erika Mustermann',
-    email: 'erika@schule.de',
-    role: 'Sekretariat',
-    status: { label: 'Aktiv', intent: 'success' },
-  },
-  {
-    name: 'Max Mustermann',
-    email: 'max@schule.de',
-    role: 'Lehrkraft',
-    status: { label: 'Eingeladen', intent: 'warning' },
-  },
-  { name: 'Lea Schmidt', email: 'lea@schule.de', role: 'Schulleitung', status: { label: 'Aktiv', intent: 'success' } },
+  { name: 'Sarah Kim', email: 'sarah@example.com', role: 'Admin', status: { label: 'Active', intent: 'success' } },
+  { name: 'Tom Becker', email: 'tom@example.com', role: 'Member', status: { label: 'Invited', intent: 'warning' } },
+  { name: 'Lea Schmidt', email: 'lea@example.com', role: 'Owner', status: { label: 'Active', intent: 'success' } },
 ] as const;
 
 /**
@@ -38,12 +28,12 @@ export function ListInCardDefault() {
     <InsetCard className='w-full max-w-2xl'>
       <InsetCardHeader
         actions={
-          <Button type='button' intent='neutral' emphasis='ghost' size='xs'>
+          <Button emphasis='ghost' size='xs'>
             <PlusIcon data-icon='inline-start' />
-            Einladen
+            Invite
           </Button>
         }>
-        <InsetCardTitle>Mitglieder</InsetCardTitle>
+        <InsetCardTitle>Members</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
@@ -64,26 +54,18 @@ export function ListInCardDefault() {
                 <Badge intent={member.status.intent}>{member.status.label}</Badge>
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    render={
-                      <Button
-                        type='button'
-                        intent='neutral'
-                        emphasis='ghost'
-                        size='icon-xs'
-                        aria-label={`Aktionen für ${member.name}`}
-                      />
-                    }>
+                    render={<Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`} />}>
                     <MoreHorizontalIcon />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end'>
                     <DropdownMenuItem>
                       <PencilIcon />
-                      Rolle ändern
+                      Change role
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem intent='destructive'>
                       <Trash2Icon />
-                      Entfernen
+                      Remove
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

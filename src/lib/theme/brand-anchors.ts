@@ -4,7 +4,7 @@ import type { Color } from './color';
 export type BrandColor = BrandBaseColor | BrandPrimaryColor | BrandDestructiveColor;
 
 /**
- * The LCH (D50) anchor of each stored brand color name, converted from Tailwind 4.3's `oklch()` noted per entry.
+ * The LCH (D50) anchor of each brand color name, converted from Tailwind 4.3's `oklch()` noted per entry.
  * Chromatic names are step 600 (Tailwind's button fill; the anchor is `controlPrimary`); grays are step 500, of
  * which only chroma and hue reach the theme.
  */

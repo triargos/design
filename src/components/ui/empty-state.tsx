@@ -111,8 +111,7 @@ function EmptyStateContent({ className, ...props }: HTMLMotionProps<'div'>) {
 
 // Skeleton cards are raised: the field edge and lift, `card` in light, a foreground tint in dark. Tints mix into `card`
 // so stacked layers stay opaque.
-const raisedCard =
-  'rounded-xl border border-field-border border-t-field-border-top border-b-field-border-bottom bg-card shadow-(--field-shadow) dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]';
+const raisedCard = 'rounded-xl bg-card shadow-field dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]';
 const skeletonFill = 'rounded-md bg-foreground/8 dark:bg-foreground/10';
 
 // Three cards stacked front to back, each layer a step greyer. The rest offset is framer's `transform`; the hover

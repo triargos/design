@@ -4,13 +4,10 @@ import { PageSection } from '~/components/ui/page-header';
 /** `PageSection`: a titled group of cards inside a page. */
 export function PageHeaderPageSection() {
   return (
-    <PageSection
-      title='Benachrichtigungen'
-      description='Wann wir Eltern und Lehrkräfte informieren.'
-      className='w-full max-w-2xl'>
+    <PageSection title='Notifications' description='When we let you and your team know.' className='w-full max-w-2xl'>
       <InsetCard>
         <InsetCardHeader>
-          <InsetCardTitle>E-Mail</InsetCardTitle>
+          <InsetCardTitle>Email</InsetCardTitle>
         </InsetCardHeader>
         <InsetCardContent className='h-16' />
       </InsetCard>

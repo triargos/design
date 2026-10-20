@@ -26,8 +26,8 @@ const DefaultBody = () => (
       <UploadIcon className='size-4 text-muted-foreground' />
     </span>
     <div>
-      <p className='text-body text-foreground'>Dateien hierher ziehen oder auswählen</p>
-      <p className='text-caption text-muted-foreground'>Bis 10 MB, höchstens 6 Dateien</p>
+      <p className='text-body text-foreground'>Drop files here or choose them</p>
+      <p className='text-caption text-muted-foreground'>PDF or images, up to 10 MB each</p>
     </div>
   </>
 );
@@ -35,19 +35,19 @@ const DefaultBody = () => (
 const CompactBody = () => (
   <>
     <PaperclipIcon className='size-4 shrink-0' />
-    Datei anhängen
+    Attach a file
   </>
 );
 
 /** Drag-over is the zone's own state (`data-dragging`), forced here with the attribute. */
-const zone = (size: 'default' | 'compact', state: State) => (
+const zone = (size: 'default' | 'sm', state: State) => (
   <div key={size} className='w-full'>
     <FileDropZone
       size={size}
       onFiles={() => undefined}
       disabled={state === 'disabled'}
       aria-invalid={state === 'invalid'}
-      aria-label='Dateien auswählen'
+      aria-label='Choose files'
       className={state === 'drag-over' ? 'border-ring bg-background ring-3 ring-ring/24' : undefined}>
       {size === 'default' ? <DefaultBody /> : <CompactBody />}
     </FileDropZone>
@@ -59,7 +59,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='File Drop Zone'
-      description='A field surface you drop files on or click to pick them. The default zone sits in a form; compact trades the fill for a dashed outline, so it does not read as a text field. FileUploadDropzone (components/files) adds the upload list and limits.'>
+      description='A field surface you drop files on or click to pick them. The default zone sits in a form; sm is a row with a dashed outline, so it does not read as a text field.'>
       <ExampleSection title='Default' description='Drag a file over it to see drag-over for real.'>
         <FileDropZoneDefault />
       </ExampleSection>
@@ -67,7 +67,7 @@ export const Board: Story = {
         title='Sizes'
         description={
           <>
-            <Code>compact</Code> trades the fill for a dashed outline, so it does not read as a text field.
+            <Code>size='sm'</Code>: a row with a dashed outline, so it does not read as a text field.
           </>
         }>
         <FileDropZoneSizes />
@@ -84,7 +84,7 @@ export const Board: Story = {
             <SpecimenRow key={state} name={state}>
               <div className='grid items-center gap-related sm:grid-cols-[3fr_2fr]'>
                 {zone('default', state)}
-                {zone('compact', state)}
+                {zone('sm', state)}
               </div>
             </SpecimenRow>
           ))}

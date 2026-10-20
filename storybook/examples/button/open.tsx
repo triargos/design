@@ -6,18 +6,11 @@ import { Button } from '~/components/ui/button';
 export function ButtonOpen() {
   return (
     <div className='flex items-center gap-2'>
-      <Button type='button' intent='neutral' emphasis='raised' aria-expanded aria-haspopup='menu'>
-        Optionen
+      <Button aria-expanded aria-haspopup='menu'>
+        Options
         <ChevronDownIcon data-icon='inline-end' />
       </Button>
-      <Button
-        type='button'
-        intent='neutral'
-        emphasis='ghost'
-        size='icon'
-        aria-expanded
-        aria-haspopup='menu'
-        aria-label='Mehr'>
+      <Button emphasis='ghost' size='icon' aria-expanded aria-haspopup='menu' aria-label='More'>
         <MoreHorizontalIcon />
       </Button>
     </div>

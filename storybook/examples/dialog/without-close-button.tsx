@@ -11,23 +11,23 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 
-/** `showCloseButton={false}`: the footer is the only way out. */
+/** `showCloseButton={false}`: no ✕, the footer action closes it. */
 export function DialogWithoutCloseButton() {
   return (
     <Dialog>
-      <DialogTrigger render={<Button intent='neutral' emphasis='raised' />}>Nutzungsbedingungen</DialogTrigger>
-      <DialogContent showCloseButton={false} className='sm:max-w-md'>
+      <DialogTrigger render={<Button />}>Terms of service</DialogTrigger>
+      <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>Neue Nutzungsbedingungen</DialogTitle>
-          <DialogDescription>Bitte lies sie, bevor du weitermachst.</DialogDescription>
+          <DialogTitle>Updated terms of service</DialogTitle>
+          <DialogDescription>Read them before you continue.</DialogDescription>
         </DialogHeader>
         <DialogBody>
           <p className='text-body text-muted-foreground'>
-            Ab dem 1. April gelten neue Regeln für die Speicherung von Fotos und Nachrichten.
+            From April 1, deleted files stay in the trash for 30 days before they are removed.
           </p>
         </DialogBody>
         <DialogFooter>
-          <DialogClose render={<Button />}>Verstanden</DialogClose>
+          <DialogClose render={<Button intent='primary' />}>Got it</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -4,8 +4,8 @@ import { Switch } from '~/components/ui/switch';
 export function SwitchSizes() {
   return (
     <div className='flex items-center gap-4'>
-      <Switch size='sm' aria-label='Klein' defaultChecked />
-      <Switch aria-label='Standard' defaultChecked />
+      <Switch size='sm' aria-label='Small' defaultChecked />
+      <Switch aria-label='Default' defaultChecked />
     </div>
   );
 }

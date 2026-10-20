@@ -13,7 +13,7 @@ export function BreadcrumbWithEllipsis() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href='/management'>Verwaltung</BreadcrumbLink>
+          <BreadcrumbLink href='#workspace'>Workspace</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -21,7 +21,7 @@ export function BreadcrumbWithEllipsis() {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Mia Schmidt</BreadcrumbPage>
+          <BreadcrumbPage>Homepage copy</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

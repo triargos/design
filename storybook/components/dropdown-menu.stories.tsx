@@ -23,7 +23,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Dropdown Menu'
-      description='A list of actions opened from a button: an icon, a label, a shortcut. A destructive item takes intent="destructive" and sits last. To open a dialog from an item, see Dialog › Opened from a menu.'>
+      description='A list of actions opened from a button: an icon, a label, a shortcut. A destructive item takes intent="destructive" and sits last. Below 768px the same parts open as a bottom drawer of large rows; a submenu stacks a second drawer. To open a dialog from an item, see Dialog › Opened from a menu.'>
       <ExampleSection title='Default'>
         <DropdownMenuDefault />
       </ExampleSection>
@@ -36,7 +36,7 @@ export const Board: Story = {
         }>
         <DropdownMenuShortcuts />
       </ExampleSection>
-      <ExampleSection title='Checkbox' description='Toggles that stay in the menu.'>
+      <ExampleSection title='Checkbox' description='Toggles in the menu, controlled.'>
         <DropdownMenuCheckbox />
       </ExampleSection>
       <ExampleSection title='Radio group' description='One of a few, chosen in the menu.'>
@@ -44,7 +44,7 @@ export const Board: Story = {
       </ExampleSection>
       <ExampleSection
         title='Submenu'
-        description='A row with a chevron opens a second list beside the first; one level only. On touch it opens in place.'>
+        description='A row with a chevron opens a second list beside the first; one level only. On touch it stacks a second drawer.'>
         <DropdownMenuSubmenu />
       </ExampleSection>
       <ExampleSection
@@ -62,27 +62,27 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <DropdownMenuDefault />,
-  play: open('click', 'Aktionen', 'Antrag 2024-118'),
+  play: open('click', 'Actions', 'Website redesign'),
 };
-export const Shortcuts: Story = { render: () => <DropdownMenuShortcuts />, play: open('click', 'Aktionen', '⌘D') };
+export const Shortcuts: Story = { render: () => <DropdownMenuShortcuts />, play: open('click', 'Actions', '⌘D') };
 export const Checkbox: Story = {
   render: () => <DropdownMenuCheckbox />,
-  play: open('click', 'Spalten', 'Sichtbare Spalten'),
+  play: open('click', 'Columns', 'Visible columns'),
 };
 export const RadioGroup: Story = {
   name: 'Radio group',
   render: () => <DropdownMenuRadioGroupExample />,
-  play: open('click', 'Sortieren', 'Sortieren nach'),
+  play: open('click', 'Sort', 'Sort by'),
 };
 export const Submenu: Story = {
   render: () => <DropdownMenuSubmenu />,
   play: clickThrough(
-    { click: 'Aktionen', shows: 'Status ändern' },
-    { click: 'Status ändern', role: 'menuitem', shows: 'In Prüfung' },
+    { click: 'Actions', shows: 'Change status' },
+    { click: 'Change status', role: 'menuitem', shows: 'In progress' },
   ),
 };
 export const DestructiveItem: Story = {
   name: 'Destructive item',
   render: () => <DropdownMenuDestructiveItem />,
-  play: open('click', 'Aktionen', 'Löschen'),
+  play: open('click', 'Actions', 'Delete'),
 };

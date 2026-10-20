@@ -2,7 +2,6 @@ import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { motion, type Transition, useReducedMotion } from 'framer-motion';
 import { type CSSProperties, type PointerEvent, useState } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
-import { useUiStrings } from '~/lib/ui-config';
 
 import { inputControlClassName } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon } from '~/components/ui/input-group';
@@ -11,26 +10,40 @@ import { RadioGroup } from '~/components/ui/radio-group';
 
 import { cn } from '~/lib/utils';
 
-/**
- * Tailwind 500s: they read as a 6px dot and as a status-icon stroke on light and dark surfaces. The default submission
- * statuses use these values, so they show up as presets.
- */
-const COLOR_PRESETS = [
-  { name: 'gray', value: '#6b7280' },
-  { name: 'red', value: '#ef4444' },
-  { name: 'orange', value: '#f97316' },
-  { name: 'amber', value: '#f59e0b' },
-  { name: 'yellow', value: '#eab308' },
-  { name: 'green', value: '#22c55e' },
-  { name: 'teal', value: '#14b8a6' },
-  { name: 'cyan', value: '#06b6d4' },
-  { name: 'blue', value: '#3b82f6' },
-  { name: 'indigo', value: '#6366f1' },
-  { name: 'violet', value: '#8b5cf6' },
-  { name: 'pink', value: '#ec4899' },
-] as const;
+/** Tailwind 500s: they read as a 6px dot and as an icon stroke on light and dark surfaces. */
+const COLOR_PRESETS = {
+  gray: '#6b7280',
+  red: '#ef4444',
+  orange: '#f97316',
+  amber: '#f59e0b',
+  yellow: '#eab308',
+  green: '#22c55e',
+  teal: '#14b8a6',
+  cyan: '#06b6d4',
+  blue: '#3b82f6',
+  indigo: '#6366f1',
+  violet: '#8b5cf6',
+  pink: '#ec4899',
+} as const;
 
-const DEFAULT_COLOR = COLOR_PRESETS[0].value;
+type ColorPreset = keyof typeof COLOR_PRESETS;
+
+const PRESET_LABELS: Record<ColorPreset, string> = {
+  gray: 'Gray',
+  red: 'Red',
+  orange: 'Orange',
+  amber: 'Amber',
+  yellow: 'Yellow',
+  green: 'Green',
+  teal: 'Teal',
+  cyan: 'Cyan',
+  blue: 'Blue',
+  indigo: 'Indigo',
+  violet: 'Violet',
+  pink: 'Pink',
+};
+
+const presets = Object.entries(COLOR_PRESETS) as ReadonlyArray<[ColorPreset, string]>;
 
 const CUSTOM_GRADIENT = 'conic-gradient(#ef4444, #eab308, #22c55e, #06b6d4, #3b82f6, #8b5cf6, #ec4899, #ef4444)';
 
@@ -126,8 +139,7 @@ const PresetSwatch = ({ color, checked, label }: { color: string; checked: boole
   );
 };
 
-const CustomSwatch = ({ value, isCustom }: { value: string | undefined; isCustom: boolean }) => {
-  const t = useUiStrings().colorPicker;
+const CustomSwatch = ({ value, isCustom, label }: { value: string; isCustom: boolean; label: string }) => {
   const { hovered, pressed, handlers } = useSwatchPointer();
   return (
     <PopoverTrigger
@@ -135,10 +147,10 @@ const CustomSwatch = ({ value, isCustom }: { value: string | undefined; isCustom
         <button
           type='button'
           data-checked={isCustom ? '' : undefined}
-          aria-label={isCustom ? t.customValue(value ?? '') : t.custom}
-          title={t.custom}
+          aria-label={isCustom ? `${label}: ${value}` : label}
+          title={label}
           className={swatchClassName}
-          style={swatchStyle(isCustom && value ? value : 'var(--foreground)')}
+          style={swatchStyle(isCustom ? value : 'var(--foreground)')}
           {...handlers}
         />
       }>
@@ -153,92 +165,97 @@ const CustomSwatch = ({ value, isCustom }: { value: string | undefined; isCustom
 };
 
 interface ColorPickerProps {
-  value: string | undefined;
-  onChange: (value: string) => void;
-  /** `popover`: a custom swatch opens the picker. `inline`: the picker sits under the presets (inside a popover). */
-  custom?: 'popover' | 'inline';
-  'aria-labelledby'?: string;
+  readonly value: string;
+  readonly onValueChange: (value: string) => void;
+  /** `popover`: a custom swatch opens the picker. `inline`: the picker sits under the presets, for a picker in a popup. */
+  readonly custom?: 'popover' | 'inline';
+  readonly 'aria-labelledby'?: string;
+  /** The group's name without `aria-labelledby`. */
+  readonly 'aria-label'?: string;
+  /** The custom swatch's name; selected, it reads "Custom color: #d3d3d3". */
+  readonly customLabel?: string;
+  readonly hexLabel?: string;
+  /** The preset swatches' names, merged over the English ones. */
+  readonly presetLabels?: Partial<Record<ColorPreset, string>>;
 }
 
+/** A user-chosen data color: twelve presets and a custom color. The value is a lowercase hex. */
 export const ColorPicker = ({
   value,
-  onChange,
+  onValueChange,
   custom = 'popover',
   'aria-labelledby': labelledBy,
+  'aria-label': label = 'Color',
+  customLabel = 'Custom color',
+  hexLabel = 'Hex color',
+  presetLabels,
 }: ColorPickerProps) => {
-  const t = useUiStrings().colorPicker;
-  const normalized = value?.toLowerCase();
-  const preset = COLOR_PRESETS.find((color) => color.value === normalized);
-  const isCustom = value !== undefined && !preset;
+  const normalized = value.toLowerCase();
+  const preset = presets.find(([, color]) => color === normalized)?.[1] ?? null;
+  const labels = { ...PRESET_LABELS, ...presetLabels };
 
-  const presets = (
+  const swatches = (
     <RadioGroup
-      value={preset?.value ?? null}
-      onValueChange={onChange}
+      value={preset}
+      onValueChange={onValueChange}
       aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : t.label}
+      aria-label={labelledBy ? undefined : label}
       className={cn(
         'flex flex-wrap gap-2 pointer-coarse:gap-3',
         custom === 'inline' && 'grid grid-cols-6 justify-between gap-y-2.5',
       )}>
-      {COLOR_PRESETS.map((color) => (
-        <PresetSwatch
-          key={color.value}
-          color={color.value}
-          checked={preset?.value === color.value}
-          label={t.colors[color.name] ?? color.name}
-        />
+      {presets.map(([name, color]) => (
+        <PresetSwatch key={color} color={color} checked={preset === color} label={labels[name]} />
       ))}
       {custom === 'popover' && (
         <Popover>
-          <CustomSwatch value={value} isCustom={isCustom} />
+          <CustomSwatch value={value} isCustom={preset === null} label={customLabel} />
           <PopoverContent align='start' className='w-60 p-3' sideOffset={8}>
-            <CustomColor value={value} onChange={onChange} />
+            <CustomColor value={value} onValueChange={onValueChange} hexLabel={hexLabel} />
           </PopoverContent>
         </Popover>
       )}
     </RadioGroup>
   );
 
-  if (custom === 'popover') return presets;
+  if (custom === 'popover') return swatches;
 
   return (
     <div className='flex flex-col gap-3'>
-      {presets}
-      <CustomColor value={value} onChange={onChange} />
+      {swatches}
+      <CustomColor value={value} onValueChange={onValueChange} hexLabel={hexLabel} />
     </div>
   );
 };
 
 /** The free choice: a saturation/hue area and a hex field that takes typed or pasted values. */
-const CustomColor = ({ value, onChange }: Pick<ColorPickerProps, 'value' | 'onChange'>) => {
-  const t = useUiStrings().colorPicker;
-  const color = value ?? DEFAULT_COLOR;
-
-  return (
-    <div className='flex flex-col gap-2.5'>
-      {/* react-colorful injects unlayered CSS, which beats layered utilities: overrides of its rules need `!`. */}
-      <HexColorPicker
-        color={color}
-        onChange={onChange}
-        className='[&>*:first-child]:rounded-inner! [&>*:first-child]:border-b-0! [&>*:last-child]:mt-3 [&>*:last-child]:h-3! [&>*:last-child]:rounded-full!'
-        style={{ width: '100%', height: 160 }}
-      />
-      <InputGroup>
-        <InputGroupAddon>
-          <span aria-hidden className={cn('size-4', swatchEdge)} style={{ background: color }} />
-        </InputGroupAddon>
-        <span data-slot='input-group-input' className='flex h-full min-w-0 flex-1 items-center px-3.5 text-control'>
-          <HexColorInput
-            data-slot='input-group-control'
-            aria-label={t.hex}
-            prefixed
-            color={color}
-            onChange={(next) => onChange(next.toLowerCase())}
-            className={cn(inputControlClassName, 'font-mono uppercase')}
-          />
-        </span>
-      </InputGroup>
-    </div>
-  );
-};
+const CustomColor = ({
+  value,
+  onValueChange,
+  hexLabel,
+}: Pick<ColorPickerProps, 'value' | 'onValueChange'> & { hexLabel: string }) => (
+  <div className='flex flex-col gap-2.5'>
+    {/* react-colorful injects unlayered CSS, which beats layered utilities: overrides of its rules need `!`. */}
+    <HexColorPicker
+      color={value}
+      onChange={onValueChange}
+      className='[&>*:first-child]:rounded-inner! [&>*:first-child]:border-b-0! [&>*:last-child]:mt-3 [&>*:last-child]:h-3! [&>*:last-child]:rounded-full!'
+      style={{ width: '100%', height: 160 }}
+    />
+    <InputGroup>
+      <InputGroupAddon>
+        <span aria-hidden className={cn('size-4', swatchEdge)} style={{ background: value }} />
+      </InputGroupAddon>
+      <span data-slot='input-group-input' className='flex h-full min-w-0 flex-1 items-center px-3.5 text-control'>
+        <HexColorInput
+          data-slot='input-group-control'
+          aria-label={hexLabel}
+          prefixed
+          color={value}
+          onChange={(next) => onValueChange(next.toLowerCase())}
+          className={cn(inputControlClassName, 'font-mono uppercase')}
+        />
+      </span>
+    </InputGroup>
+  </div>
+);

@@ -6,24 +6,24 @@ export function SheetDirections() {
   return (
     <div className='flex gap-2'>
       <Sheet>
-        <SheetTrigger render={<Button intent='neutral' emphasis='raised' />}>Links</SheetTrigger>
+        <SheetTrigger render={<Button />}>Left</SheetTrigger>
         <SheetContent side='left'>
           <SheetHeader>
-            <SheetTitle>Von links</SheetTitle>
+            <SheetTitle>From the left</SheetTitle>
           </SheetHeader>
           <SheetBody>
-            <p className='text-body text-muted-foreground'>Navigation und Ordner.</p>
+            <p className='text-body text-muted-foreground'>Navigation and folders.</p>
           </SheetBody>
         </SheetContent>
       </Sheet>
       <Sheet>
-        <SheetTrigger render={<Button intent='neutral' emphasis='raised' />}>Rechts</SheetTrigger>
+        <SheetTrigger render={<Button />}>Right</SheetTrigger>
         <SheetContent side='right'>
           <SheetHeader>
-            <SheetTitle>Von rechts</SheetTitle>
+            <SheetTitle>From the right</SheetTitle>
           </SheetHeader>
           <SheetBody>
-            <p className='text-body text-muted-foreground'>Details zum ausgewählten Eintrag.</p>
+            <p className='text-body text-muted-foreground'>Details of the selected task.</p>
           </SheetBody>
         </SheetContent>
       </Sheet>

@@ -10,7 +10,7 @@ import { open } from '../kit/play';
 
 const meta = {
   title: 'Components/Option Select',
-  parameters: { description: 'A select over a short list of items; optionally with an „Andere“ row.' },
+  parameters: { description: 'A select over a short list of options, optionally with an “Other…” row.' },
 } satisfies Meta;
 
 export default meta;
@@ -22,7 +22,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Option Select'
-      description='Select over items with SearchSelect’s API (items, itemKey, itemLabel, value, onValueChange) for short lists: no typing, no virtualization. Not bound to a form: wire it through Controller + Field. For long lists or search, Search Select.'>
+      description='A select over a short list of options, with Search Select’s items and value: no typing, no virtualization. For long lists or search, Search Select.'>
       <ExampleSection title='Default'>
         <OptionSelectDefault />
       </ExampleSection>
@@ -30,9 +30,8 @@ export const Board: Story = {
         title='Allow custom'
         description={
           <>
-            <Code>allowCustom</Code>: the value is a plain string, a key or the typed text. „Andere angeben …“ stays
-            last, after a separator; picking it emits <Code>''</Code>, folds open a text field hung off the select and
-            focuses it. A value that is no key opens with the field.
+            <Code>allowCustom</Code>: the value is an option's value or the typed text. “Other…” stays last, after a
+            separator; picking it emits <Code>''</Code>, folds open a text field and focuses it.
           </>
         }>
         <OptionSelectAllowCustom />
@@ -41,8 +40,8 @@ export const Board: Story = {
         title='In a field'
         description={
           <>
-            Required: a non-empty check covers „Andere“ without text (<Code>''</Code>); <Code>invalid</Code> then marks
-            the text field.
+            Required: a non-empty check covers “Other” without text (<Code>''</Code>); <Code>aria-invalid</Code> then
+            marks the text field.
           </>
         }>
         <OptionSelectInAField />
@@ -56,20 +55,20 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <OptionSelectDefault />,
-  play: open('click', 'Status', 'Erledigt', 'combobox'),
+  play: open('click', 'Status', 'Done', 'combobox'),
 };
 export const AllowCustom: Story = {
   name: 'Allow custom',
   render: () => <OptionSelectAllowCustom />,
-  /** Away from „Andere" and back: the field folds open again, empty, and takes focus once the popup has closed. */
+  /** Away from “Other” and back: the field folds open again, empty, and takes focus once the popup has closed. */
   play: async ({ canvas, userEvent }) => {
-    const trigger = canvas.getByRole('combobox', { name: 'Beziehung zum Kind' });
+    const trigger = canvas.getByRole('combobox', { name: 'How did you hear about us?' });
     await userEvent.click(trigger);
-    await userEvent.click(await screen.findByRole('option', { name: 'Vater' }));
-    await waitFor(() => expect(canvas.queryByLabelText('Andere Beziehung')).toBeNull());
+    await userEvent.click(await screen.findByRole('option', { name: 'A colleague' }));
+    await waitFor(() => expect(canvas.queryByLabelText('Other source')).toBeNull());
     await userEvent.click(trigger);
-    await userEvent.click(await screen.findByRole('option', { name: 'Andere angeben …' }));
-    const other = await canvas.findByLabelText('Andere Beziehung');
+    await userEvent.click(await screen.findByRole('option', { name: 'Other source…' }));
+    const other = await canvas.findByLabelText('Other source');
     await waitFor(() => expect(other).toHaveFocus());
     await expect(other).toHaveValue('');
   },

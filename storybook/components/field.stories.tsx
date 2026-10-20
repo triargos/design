@@ -28,7 +28,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Field'
-      description='A field is a label, a control, a description and an error, in that order. Forms are fields in a card. Checkbox, Radio Group and Switch show their fields beside the label on their own pages.'>
+      description='A label, a control, a description and an error, in that order. Forms are fields in a card.'>
       <ExampleSection title='Default' description='Label to control: related.'>
         <FieldDefault />
       </ExampleSection>
@@ -39,8 +39,7 @@ export const Board: Story = {
         title='With error'
         description={
           <>
-            <Code>data-invalid</Code> on the field, <Code>aria-invalid</Code> on the control, <Code>FieldError</Code>{' '}
-            last.
+            <Code>invalid</Code> on the field, <Code>aria-invalid</Code> on the control, <Code>FieldError</Code> last.
           </>
         }>
         <FieldWithError />
@@ -67,7 +66,7 @@ export const Board: Story = {
         title='Pills'
         description={
           <>
-            Pills sit under their label: <Code>TabsList as='radio'</Code>.
+            Pills sit under their label: <Code>TabsRadioGroup</Code>.
           </>
         }>
         <FieldPills />
@@ -99,10 +98,16 @@ export const Board: Story = {
       </ExampleSection>
       <ExampleSection
         title='In a form'
-        description='react-hook-form: Controller renders the Field. Submit to see the error.'>
+        description='With react-hook-form, Controller renders the Field. Submit to see the error.'>
         <FieldInAForm />
       </ExampleSection>
-      <ExampleSection title='Disabled'>
+      <ExampleSection
+        title='Disabled'
+        description={
+          <>
+            <Code>disabled</Code> on the field mutes the label; the control takes its own.
+          </>
+        }>
         <FieldDisabled />
       </ExampleSection>
     </FoundationPage>
@@ -136,6 +141,6 @@ export const InACard: Story = {
 export const InAForm: Story = {
   name: 'In a form',
   render: () => <FieldInAForm />,
-  play: open('click', 'Einladen', 'Bitte gib eine gültige E-Mail-Adresse ein.'),
+  play: open('click', 'Invite', 'Enter a valid email address.'),
 };
 export const Disabled: Story = { render: () => <FieldDisabled /> };

@@ -1,6 +1,5 @@
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -8,18 +7,15 @@ const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, 
 export function ToastPromise() {
   return (
     <Button
-      type='button'
-      intent='neutral'
-      emphasis='raised'
       onClick={() => {
         void toast
           .promise(
             wait(1500).then(() => Promise.reject(new Error('offline'))),
-            { loading: 'Datei wird hochgeladen …', success: 'Datei hochgeladen', error: 'Upload fehlgeschlagen' },
+            { loading: 'Uploading invoice…', success: 'Invoice uploaded', error: 'Upload failed' },
           )
           .catch(() => undefined);
       }}>
-      Datei hochladen
+      Upload invoice
     </Button>
   );
 }

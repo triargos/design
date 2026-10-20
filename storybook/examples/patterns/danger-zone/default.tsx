@@ -18,7 +18,7 @@ import { Input } from '~/components/ui/input';
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
-const NAME = 'Einschulung 2025';
+const NAME = 'Website redesign';
 
 /**
  * The last card of a settings page: each row names the action, says what it costs, and offers one button. Lifecycle
@@ -29,52 +29,44 @@ export function DangerZoneDefault() {
   const inputId = useId();
   const [value, setValue] = useState('');
   return (
-    <InsetCard tone='destructive' className='w-full max-w-2xl'>
+    <InsetCard intent='destructive' className='w-full max-w-2xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Gefahrenzone</InsetCardTitle>
+        <InsetCardTitle>Danger zone</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
-        <ItemList animate={false}>
+        <ItemList>
           <Item>
             <ItemContent>
-              <ItemTitle>Veröffentlichung zurückziehen</ItemTitle>
-              <ItemDescription>Eltern sehen die Anmeldung nicht mehr; eingereichte bleiben erhalten.</ItemDescription>
+              <ItemTitle>Unpublish</ItemTitle>
+              <ItemDescription>Guests lose access; members keep it.</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button type='button' intent='neutral' emphasis='raised' size='sm'>
-                Zurückziehen
-              </Button>
+              <Button size='sm'>Unpublish</Button>
             </ItemActions>
           </Item>
           <Item>
             <ItemContent>
-              <ItemTitle>Archivieren</ItemTitle>
-              <ItemDescription>Aus der Liste entfernen. Lässt sich wiederherstellen.</ItemDescription>
+              <ItemTitle>Archive</ItemTitle>
+              <ItemDescription>Removes it from the list. You can restore it.</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button type='button' intent='neutral' emphasis='raised' size='sm'>
-                Archivieren
-              </Button>
+              <Button size='sm'>Archive</Button>
             </ItemActions>
           </Item>
           <Item>
             <ItemContent>
-              <ItemTitle>Löschen</ItemTitle>
-              <ItemDescription>Die Anmeldung und alle Einreichungen. Nicht rückgängig zu machen.</ItemDescription>
+              <ItemTitle>Delete</ItemTitle>
+              <ItemDescription>The project and all its tasks. This can’t be undone.</ItemDescription>
             </ItemContent>
             <ItemActions>
               <AlertDialog onOpenChange={() => setValue('')}>
-                <AlertDialogTrigger render={<Button intent='destructive' emphasis='solid' size='sm' />}>
-                  Löschen…
-                </AlertDialogTrigger>
+                <AlertDialogTrigger render={<Button intent='destructive' size='sm' />}>Delete…</AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Anmeldung löschen?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      „{NAME}“ und alle Einreichungen werden endgültig gelöscht.
-                    </AlertDialogDescription>
+                    <AlertDialogTitle>Delete project?</AlertDialogTitle>
+                    <AlertDialogDescription>“{NAME}” and all its tasks are deleted for good.</AlertDialogDescription>
                     <Field className='mt-group'>
-                      <FieldLabel htmlFor={inputId}>Zum Bestätigen den Namen eingeben</FieldLabel>
+                      <FieldLabel htmlFor={inputId}>Type the name to confirm</FieldLabel>
                       <div className='flex items-center gap-2'>
                         <span className='text-caption font-medium text-muted-foreground'>{NAME}</span>
                         <CopyButton value={NAME} size='icon-xs' />
@@ -88,9 +80,9 @@ export function DangerZoneDefault() {
                     </Field>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-                    <AlertDialogAction intent='destructive' emphasis='solid' disabled={value !== NAME}>
-                      Endgültig löschen
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction intent='destructive' disabled={value !== NAME}>
+                      Delete project
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

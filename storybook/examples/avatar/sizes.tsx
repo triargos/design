@@ -8,7 +8,7 @@ export function AvatarSizes() {
     <div className='flex flex-wrap items-end gap-3'>
       {SIZES.map((size) => (
         <Avatar key={size} size={size}>
-          <AvatarFallback>MS</AvatarFallback>
+          <AvatarFallback>LP</AvatarFallback>
         </Avatar>
       ))}
     </div>

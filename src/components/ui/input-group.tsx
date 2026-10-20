@@ -61,7 +61,7 @@ function InputGroupAddon({
       className={cn(inputGroupAddonVariants({ align }), className)}
       onClick={(event) => {
         if ((event.target as Element).closest('button')) return;
-        event.currentTarget.parentElement?.querySelector('input')?.focus();
+        event.currentTarget.parentElement?.querySelector<HTMLElement>('[data-slot=input-group-control]')?.focus();
       }}
       {...props}
     />
@@ -79,7 +79,7 @@ const inputGroupButtonVariants = cva(
       size: {
         xs: "h-6 gap-1 rounded-inner px-1.5 [--outer-inset:--spacing(2)] [&>svg:not([class*='size-'])]:size-3.5",
         // Keeps the raised edge the ghost sizes drop: white on the white field reads only through it.
-        action: 'h-8 rounded-inner px-3 text-secondary-foreground shadow-raised [--outer-inset:--spacing(1)]',
+        action: 'h-8 rounded-inner px-3 text-foreground shadow-raised [--outer-inset:--spacing(1)]',
         'icon-xs': 'size-6 rounded-inner p-0 [--outer-inset:--spacing(2)] has-[>svg]:p-0',
         'icon-sm': 'size-8 rounded-inner p-0 [--outer-inset:--spacing(1)] has-[>svg]:p-0',
       },
@@ -94,18 +94,13 @@ function InputGroupButton({
   className,
   size = 'xs',
   type = size === 'action' ? 'submit' : 'button',
-  variant,
-  // Defaults only without the deprecated `variant`: `intent` and `emphasis` would override it.
-  intent = variant ? undefined : 'neutral',
-  emphasis = variant ? undefined : size === 'action' ? 'raised' : 'ghost',
+  emphasis = size === 'action' ? 'raised' : 'ghost',
   ...props
 }: Omit<React.ComponentProps<typeof Button>, 'size'> & VariantProps<typeof inputGroupButtonVariants>) {
   return (
     <Button
       type={type}
       data-size={size}
-      variant={variant}
-      intent={intent}
       emphasis={emphasis}
       className={cn(inputGroupButtonVariants({ size }), className)}
       {...props}
@@ -142,4 +137,29 @@ function InputGroupInput({ className, style, ...props }: React.ComponentProps<'i
   );
 }
 
-export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupInput, inputGroupButtonVariants };
+/**
+ * The multi-line control of an `InputGroup`, bare: the group draws the surface. Pair it with a `block-start` or
+ * `block-end` addon for a toolbar or a count. Multi-line, so no `input-scale`: on touch it renders 16px.
+ */
+function InputGroupTextarea({ className, ...props }: React.ComponentProps<'textarea'>) {
+  return (
+    <textarea
+      data-slot='input-group-control'
+      className={cn(
+        'flex min-h-[60px] w-full resize-none bg-transparent px-3.5 py-2.5 text-control outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed pointer-coarse:text-[1rem]',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupInput,
+  InputGroupTextarea,
+  inputGroupButtonVariants,
+};

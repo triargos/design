@@ -11,24 +11,24 @@ import {
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 
 const SERIES = [
-  { key: 'parents', label: 'Eltern', color: 'var(--chart-1)' },
-  { key: 'teachers', label: 'Lehrkräfte', color: 'var(--chart-2)' },
-  { key: 'office', label: 'Sekretariat', color: 'var(--chart-3)' },
-  { key: 'admins', label: 'Leitung', color: 'var(--chart-4)' },
-  { key: 'guests', label: 'Gäste', color: 'var(--chart-5)' },
+  { key: 'engineering', label: 'Engineering', color: 'var(--chart-1)' },
+  { key: 'design', label: 'Design', color: 'var(--chart-2)' },
+  { key: 'marketing', label: 'Marketing', color: 'var(--chart-3)' },
+  { key: 'sales', label: 'Sales', color: 'var(--chart-4)' },
+  { key: 'support', label: 'Support', color: 'var(--chart-5)' },
 ] as const;
 
 const config = Object.fromEntries(
   SERIES.map((series) => [series.key, { label: series.label, color: series.color }]),
 ) satisfies ChartConfig;
 
-const DATA = ['Sep', 'Okt', 'Nov', 'Dez', 'Jan', 'Feb'].map((month, index) => ({
+const DATA = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'].map((month, index) => ({
   month,
-  parents: 120 + index * 18,
-  teachers: 40 + index * 4,
-  office: 12 + (index % 3) * 3,
-  admins: 6 + (index % 2),
-  guests: 3 + index,
+  engineering: 120 + index * 18,
+  design: 40 + index * 4,
+  marketing: 12 + (index % 3) * 3,
+  sales: 6 + (index % 2),
+  support: 3 + index,
 }));
 
 /** Stacked bars, the tooltip on hover, a legend. */
@@ -36,7 +36,7 @@ export function ChartDefault() {
   return (
     <InsetCard className='w-full max-w-2xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Aktive Mitglieder</InsetCardTitle>
+        <InsetCardTitle>Tasks closed by team</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='p-group'>
         <ChartContainer config={config} className='aspect-auto h-64 w-full'>
@@ -48,7 +48,7 @@ export function ChartDefault() {
               <Bar
                 key={series.key}
                 dataKey={series.key}
-                stackId='members'
+                stackId='tasks'
                 fill={`var(--color-${series.key})`}
                 radius={index === SERIES.length - 1 ? [4, 4, 0, 0] : 0}
                 isAnimationActive={false}

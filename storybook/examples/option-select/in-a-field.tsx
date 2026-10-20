@@ -2,35 +2,33 @@ import { useState } from 'react';
 
 import { Field, FieldError, FieldLabel } from '~/components/ui/field';
 import { OptionSelect } from '~/components/ui/option-select';
-import type { SelectOption } from '~/components/ui/select-option';
+import type { SelectOption } from '~/components/ui/select';
 
-const RELATIONS: ReadonlyArray<SelectOption> = [
-  { value: 'mother', label: 'Mutter' },
-  { value: 'father', label: 'Vater' },
-  { value: 'grandparent', label: 'Großelternteil' },
+const SOURCES: ReadonlyArray<SelectOption> = [
+  { value: 'search', label: 'Search engine' },
+  { value: 'referral', label: 'A colleague' },
+  { value: 'event', label: 'An event' },
 ];
 
-/** Required: „Andere" with no text is '', so a non-empty check covers it; the error marks the text field. */
+/** Required: “Other” with no text is '', so a non-empty check covers it; the error marks the text field. */
 export function OptionSelectInAField() {
   const [value, setValue] = useState<string | null>('');
   const invalid = !value?.trim();
   return (
-    <Field data-invalid={invalid || undefined} className='w-64'>
-      <FieldLabel htmlFor='field-relation'>Beziehung zum Kind</FieldLabel>
+    <Field invalid={invalid} className='w-64'>
+      <FieldLabel htmlFor='field-source'>How did you hear about us?</FieldLabel>
       <OptionSelect
         allowCustom
-        id='field-relation'
-        items={RELATIONS}
-        itemKey={(option) => option.value}
-        itemLabel={(option) => option.label}
+        id='field-source'
+        items={SOURCES}
         value={value}
         onValueChange={setValue}
-        invalid={invalid}
-        placeholder='Beziehung wählen'
-        otherLabel='Andere Beziehung'
-        otherPlaceholder='Beziehung angeben'
+        aria-invalid={invalid}
+        placeholder='Choose a source'
+        otherLabel='Other source'
+        otherPlaceholder='Tell us where'
       />
-      {invalid && <FieldError>Bitte gib die Beziehung an.</FieldError>}
+      {invalid && <FieldError>Tell us how you heard about us.</FieldError>}
     </Field>
   );
 }

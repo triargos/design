@@ -32,11 +32,11 @@ export const Loading: Story = {
           {pairs.map(({ intent, emphasis }) => (
             <SpecimenRow key={`${intent}-${emphasis}`} name={`${intent} / ${emphasis}`} meta={<Code>isLoading</Code>}>
               <div className='flex items-center gap-3'>
-                <Button type='button' intent={intent} emphasis={emphasis}>
-                  Speichern
+                <Button intent={intent} emphasis={emphasis}>
+                  Save
                 </Button>
-                <Button type='button' intent={intent} emphasis={emphasis} isLoading>
-                  Speichern
+                <Button intent={intent} emphasis={emphasis} isLoading>
+                  Save
                 </Button>
               </div>
             </SpecimenRow>

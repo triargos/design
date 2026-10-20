@@ -9,18 +9,18 @@ export function TableEmpty() {
       <Table variant='card'>
         <TableHeader>
           <TableRow>
-            <TableHead>Posten</TableHead>
+            <TableHead>Invoice</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Gruppe</TableHead>
-            <TableHead className='text-right'>Betrag</TableHead>
+            <TableHead>Project</TableHead>
+            <TableHead className='text-right'>Amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow>
             <TableCell colSpan={4}>
               <EmptyState size='sm'>
-                <EmptyStateTitle>Keine Zahlungen</EmptyStateTitle>
-                <EmptyStateDescription>Zahlungen erscheinen hier, sobald Eltern bezahlen.</EmptyStateDescription>
+                <EmptyStateTitle>No invoices</EmptyStateTitle>
+                <EmptyStateDescription>Invoices show up here once you send one.</EmptyStateDescription>
               </EmptyState>
             </TableCell>
           </TableRow>

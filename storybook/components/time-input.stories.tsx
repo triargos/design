@@ -18,7 +18,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Time Input'
-      description='A time of day as an HH:mm string, typed into segments at input height. Empty is the empty string.'>
+      description='A time of day typed into segments at input height. The value is a 24-hour HH:mm string, empty is the empty string; the segments follow the locale’s clock.'>
       <ExampleSection title='Default'>
         <TimeInputDefault />
       </ExampleSection>

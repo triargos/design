@@ -1,12 +1,7 @@
 import { Button } from '~/components/ui/button';
-
-import { toast } from '~/lib/toast/toast';
+import { toast } from '~/components/ui/toast';
 
 /** Neutral news. Toasts stack bottom right, close after 5 seconds and pause while hovered. */
 export function ToastDefault() {
-  return (
-    <Button type='button' intent='neutral' emphasis='raised' onClick={() => toast('Entwurf wiederhergestellt')}>
-      Entwurf wiederherstellen
-    </Button>
-  );
+  return <Button onClick={() => toast('Draft restored')}>Restore draft</Button>;
 }

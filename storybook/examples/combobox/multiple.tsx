@@ -8,39 +8,41 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxValue,
-  useComboboxAnchor,
 } from '~/components/ui/combobox';
 
-interface Town {
+interface Label {
   readonly value: string;
   readonly label: string;
 }
 
-const TOWNS: ReadonlyArray<Town> = [
-  { value: 'berlin', label: 'Berlin' },
-  { value: 'bremen', label: 'Bremen' },
-  { value: 'hamburg', label: 'Hamburg' },
-  { value: 'koeln', label: 'Köln' },
-  { value: 'muenchen', label: 'München' },
+const LABELS: ReadonlyArray<Label> = [
+  { value: 'bug', label: 'Bug' },
+  { value: 'feature', label: 'Feature' },
+  { value: 'design', label: 'Design' },
+  { value: 'docs', label: 'Docs' },
+  { value: 'research', label: 'Research' },
 ];
 
-/** Chips in the field: 32px, 4px in, rounded-inner. */
+/** Chips in the field: 32px, 4px in, rounded-inner. The popup anchors to the chips field. */
 export function ComboboxMultiple() {
-  const anchor = useComboboxAnchor();
   return (
-    <Combobox multiple items={TOWNS} defaultValue={TOWNS.slice(0, 2)} itemToStringLabel={(town: Town) => town.label}>
-      <ComboboxChips ref={anchor} className='w-80'>
+    <Combobox
+      multiple
+      items={LABELS}
+      defaultValue={LABELS.slice(0, 2)}
+      itemToStringLabel={(label: Label) => label.label}>
+      <ComboboxChips className='w-80'>
         <ComboboxValue>
-          {(value: Town[]) => value.map((town) => <ComboboxChip key={town.value}>{town.label}</ComboboxChip>)}
+          {(value: Label[]) => value.map((label) => <ComboboxChip key={label.value}>{label.label}</ComboboxChip>)}
         </ComboboxValue>
-        <ComboboxChipsInput placeholder='Weitere Orte' aria-label='Orte' />
+        <ComboboxChipsInput placeholder='Add labels' aria-label='Labels' />
       </ComboboxChips>
-      <ComboboxContent anchor={anchor}>
-        <ComboboxEmpty>Kein Ort gefunden</ComboboxEmpty>
+      <ComboboxContent>
+        <ComboboxEmpty>No labels found</ComboboxEmpty>
         <ComboboxList>
-          {(town: Town) => (
-            <ComboboxItem key={town.value} value={town}>
-              {town.label}
+          {(label: Label) => (
+            <ComboboxItem key={label.value} value={label}>
+              {label.label}
             </ComboboxItem>
           )}
         </ComboboxList>

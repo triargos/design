@@ -13,15 +13,15 @@ export function BreadcrumbCustomSeparator() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href='/management'>Verwaltung</BreadcrumbLink>
+          <BreadcrumbLink href='#workspace'>Workspace</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>/</BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbLink href='/management/applications'>Anmeldungen</BreadcrumbLink>
+          <BreadcrumbLink href='#projects'>Projects</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>/</BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbPage>Einschulung 2025</BreadcrumbPage>
+          <BreadcrumbPage>Website redesign</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

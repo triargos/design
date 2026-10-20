@@ -3,6 +3,7 @@ import { useId } from 'react';
 import { Field, FieldLabel } from '~/components/ui/field';
 import { OTPField, OTPFieldInput } from '~/components/ui/otp-field';
 
+/** `mask` hides the digits, for a PIN. */
 export function OTPFieldFourDigits() {
   const id = useId();
   return (

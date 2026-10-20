@@ -7,10 +7,10 @@ export function AvatarFallbackExample() {
   return (
     <div className='flex items-center gap-4'>
       <Avatar size='2xl'>
-        <AvatarFallback>{getInitials('Anna-Lena von Müller')}</AvatarFallback>
+        <AvatarFallback>{getInitials('Mary-Kate van der Berg')}</AvatarFallback>
       </Avatar>
       <Avatar size='2xl'>
-        <AvatarFallback>{getInitials('Emma Fischer')}</AvatarFallback>
+        <AvatarFallback>{getInitials('Sofia Rossi')}</AvatarFallback>
         <AvatarBadge>
           <CheckIcon />
         </AvatarBadge>

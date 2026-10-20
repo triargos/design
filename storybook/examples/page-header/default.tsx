@@ -1,6 +1,6 @@
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 import { PageContent } from '~/components/ui/page-content';
-import { PageDescription, PageHeader, PageHeaderGroup } from '~/components/ui/page-header';
+import { PageDescription, PageHeaderGroup, PageTitle } from '~/components/ui/page-header';
 
 /** Title and description; `PageContent` sets the 32px to the content, whatever the header holds. */
 export function PageHeaderDefault() {
@@ -8,13 +8,13 @@ export function PageHeaderDefault() {
     <PageContent
       header={
         <PageHeaderGroup>
-          <PageHeader>Nachmittagsbetreuung</PageHeader>
-          <PageDescription>Anmeldungen für das Schuljahr 2025/26.</PageDescription>
+          <PageTitle>Projects</PageTitle>
+          <PageDescription>Everything your team is working on this quarter.</PageDescription>
         </PageHeaderGroup>
       }>
       <InsetCard>
         <InsetCardHeader>
-          <InsetCardTitle>Anmeldungen</InsetCardTitle>
+          <InsetCardTitle>Active</InsetCardTitle>
         </InsetCardHeader>
         <InsetCardContent className='h-16' />
       </InsetCard>

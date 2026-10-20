@@ -1,17 +1,15 @@
-import type { IsoDate } from '~/lib/iso-date';
-
 import { useState } from 'react';
 
 import { DateInput } from '~/components/ui/date-input';
 
 /** Empty segments, or a word for the empty value. */
 export function DateInputPlaceholder() {
-  const [first, setFirst] = useState<IsoDate | null>(null);
-  const [second, setSecond] = useState<IsoDate | null>(null);
+  const [start, setStart] = useState('');
+  const [end, setEnd] = useState('');
   return (
     <div className='flex flex-wrap gap-2'>
-      <DateInput value={first} onChange={setFirst} aria-label='Datum' className='w-48' />
-      <DateInput value={second} onChange={setSecond} placeholder='Unbegrenzt' aria-label='Ende' className='w-48' />
+      <DateInput value={start} onValueChange={setStart} aria-label='Start date' className='w-48' />
+      <DateInput value={end} onValueChange={setEnd} placeholder='No end date' aria-label='End date' className='w-48' />
     </div>
   );
 }

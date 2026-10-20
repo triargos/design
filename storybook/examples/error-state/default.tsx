@@ -16,15 +16,13 @@ export function ErrorStateDefault() {
       <ErrorStateIcon>
         <CloudOffIcon />
       </ErrorStateIcon>
-      <ErrorStateTitle>Datenquelle nicht erreichbar</ErrorStateTitle>
+      <ErrorStateTitle>Can’t reach the server</ErrorStateTitle>
       <ErrorStateDescription>
-        Die Angaben aus der Schulverwaltung konnten nicht geladen werden. Versuche es in ein paar Minuten erneut.
+        Your projects couldn’t be loaded. Your work is saved; try again in a few minutes.
       </ErrorStateDescription>
       <ErrorStateActions>
-        <Button type='button'>Erneut versuchen</Button>
-        <Button type='button' intent='neutral' emphasis='raised'>
-          Zurück zur Anmeldung
-        </Button>
+        <Button intent='primary'>Try again</Button>
+        <Button>Back to projects</Button>
       </ErrorStateActions>
     </ErrorState>
   );

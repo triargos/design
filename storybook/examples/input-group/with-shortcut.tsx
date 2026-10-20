@@ -9,7 +9,7 @@ export function InputGroupWithShortcut() {
       <InputGroupAddon>
         <SearchIcon />
       </InputGroupAddon>
-      <InputGroupInput placeholder='Mitglieder suchen' />
+      <InputGroupInput placeholder='Search tasks' aria-label='Search tasks' />
       <InputGroupAddon align='inline-end'>
         <Kbd>⌘K</Kbd>
       </InputGroupAddon>

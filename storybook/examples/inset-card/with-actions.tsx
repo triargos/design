@@ -5,9 +5,9 @@ import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 const MEMBERS = [
-  { name: 'Erika Mustermann', role: 'Klasse 5a · Elternvertretung' },
-  { name: 'Max Mustermann', role: 'Klasse 7b' },
-  { name: 'Lea Schmidt', role: 'Klasse 5a' },
+  { name: 'Jordan Lee', role: 'Admin · Design' },
+  { name: 'Sam Rivera', role: 'Engineering' },
+  { name: 'Priya Patel', role: 'Design' },
 ];
 
 /** Header actions take xs / icon-xs buttons and end on the column of the row actions below. */
@@ -17,16 +17,16 @@ export function InsetCardWithActions() {
       <InsetCardHeader
         actions={
           <>
-            <Button type='button' intent='neutral' emphasis='ghost' size='xs'>
+            <Button emphasis='ghost' size='xs'>
               <PlusIcon data-icon='inline-start' />
-              Hinzufügen
+              Invite
             </Button>
-            <Button type='button' intent='neutral' emphasis='ghost' size='icon-xs' aria-label='Mehr'>
+            <Button emphasis='ghost' size='icon-xs' aria-label='More'>
               <MoreHorizontalIcon />
             </Button>
           </>
         }>
-        <InsetCardTitle>Mitglieder</InsetCardTitle>
+        <InsetCardTitle>Members</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
@@ -40,7 +40,7 @@ export function InsetCardWithActions() {
                 <ItemDescription>{member.role}</ItemDescription>
               </ItemContent>
               <ItemActions>
-                <Button type='button' intent='neutral' emphasis='ghost' size='icon-xs' aria-label='Mehr'>
+                <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`}>
                   <MoreHorizontalIcon />
                 </Button>
               </ItemActions>

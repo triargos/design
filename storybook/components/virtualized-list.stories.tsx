@@ -18,15 +18,15 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Virtualized List'
-      description='A long list that renders only the rows in view, measured as they mount, and loads the next page near the end. It scrolls the element in ScrollElementContext: the page in the app, a box here.'>
-      <ExampleSection title='Default' description='1,000 rows.' bare>
+      description='A long list that renders only the rows in view, measured as they mount, and loads the next page near the end. It scrolls itself: give it a height.'>
+      <ExampleSection title='Default' description='1,000 rows, hairlines between them as in ItemList.' bare>
         <VirtualizedListDefault />
       </ExampleSection>
       <ExampleSection
         title='Loading more'
         description={
           <>
-            <Code>hasMore</Code> + <Code>onLoadMore</Code>; <Code>isLoadingMore</Code> shows the Loader. Scroll down.
+            <Code>hasMore</Code> + <Code>onLoadMore</Code>; <Code>isLoadingMore</Code> shows the loader. Scroll down.
           </>
         }
         bare>

@@ -15,9 +15,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Sortable'
-      description='Rows a person puts in order themselves: statuses, categories, form blocks. dnd-kit underneath; SortableItem wraps a row, SortableItemHandle is the only place to grab it, so the rest of the row stays clickable. The handle is 24px, 44px on touch.'>
+    <FoundationPage title='Sortable' description='Rows a person puts in order themselves.'>
       <ExampleSection
         title='Default'
         description='Drag a row by its handle, or Tab to it, Space to lift, arrows to move, Space to drop.'

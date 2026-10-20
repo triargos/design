@@ -26,31 +26,31 @@ export function DialogOpenedFromAMenu() {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button intent='neutral' emphasis='ghost' size='icon' aria-label='Aktionen' />}>
+        <DropdownMenuTrigger render={<Button emphasis='ghost' size='icon' aria-label='Actions' />}>
           <MoreHorizontalIcon />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <PencilIcon />
-            Umbenennen…
+            Rename…
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className='sm:max-w-md'>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Gruppe umbenennen</DialogTitle>
+            <DialogTitle>Rename project</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Field>
-              <FieldLabel htmlFor='group-name'>Name</FieldLabel>
-              <Input id='group-name' defaultValue='Klasse 3b' />
+              <FieldLabel htmlFor='project-name'>Name</FieldLabel>
+              <Input id='project-name' defaultValue='Website redesign' />
             </Field>
           </DialogBody>
           <DialogFooter>
-            <DialogClose render={<Button intent='neutral' emphasis='raised' />}>Abbrechen</DialogClose>
-            <Button type='button' onClick={() => setOpen(false)}>
-              Speichern
+            <DialogClose render={<Button />}>Cancel</DialogClose>
+            <Button type='button' intent='primary' onClick={() => setOpen(false)}>
+              Save
             </Button>
           </DialogFooter>
         </DialogContent>

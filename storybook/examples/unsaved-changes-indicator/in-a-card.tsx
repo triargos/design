@@ -18,18 +18,18 @@ export function UnsavedChangesIndicatorInACard() {
   return (
     <InsetCard className='w-full max-w-md'>
       <InsetCardHeader>
-        <InsetCardTitle>Schule</InsetCardTitle>
+        <InsetCardTitle>Workspace</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='p-group'>
         <Field>
-          <FieldLabel htmlFor='school-name'>Name</FieldLabel>
-          <Input id='school-name' defaultValue='Grundschule am See' onChange={() => setDirty(true)} />
+          <FieldLabel htmlFor='workspace-name'>Name</FieldLabel>
+          <Input id='workspace-name' defaultValue='Acme Inc.' onChange={() => setDirty(true)} />
         </Field>
       </InsetCardContent>
       <InsetCardFooter show={dirty} className='flex items-center justify-end gap-3'>
         <UnsavedChangesIndicator show={dirty} animated={false} />
-        <Button type='button' size='sm' onClick={() => setDirty(false)}>
-          Speichern
+        <Button intent='primary' size='sm' onClick={() => setDirty(false)}>
+          Save
         </Button>
       </InsetCardFooter>
     </InsetCard>

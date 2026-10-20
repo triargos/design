@@ -5,11 +5,11 @@ export function TabsUnderline() {
   return (
     <Tabs defaultValue='all'>
       <TabsList variant='underline'>
-        <TabsTrigger value='all'>Alle</TabsTrigger>
-        <TabsTrigger value='open'>Offen</TabsTrigger>
-        <TabsTrigger value='approved'>Genehmigt</TabsTrigger>
+        <TabsTrigger value='all'>All</TabsTrigger>
+        <TabsTrigger value='open'>Open</TabsTrigger>
+        <TabsTrigger value='done'>Done</TabsTrigger>
         <TabsTrigger value='archived' disabled>
-          Archiviert
+          Archived
         </TabsTrigger>
       </TabsList>
     </Tabs>

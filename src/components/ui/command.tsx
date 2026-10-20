@@ -1,5 +1,5 @@
 import { Command as CommandPrimitive } from 'cmdk';
-import { CheckIcon, SearchIcon } from 'lucide-react';
+import { SearchIcon } from 'lucide-react';
 import * as React from 'react';
 
 import {
@@ -18,40 +18,31 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
   return (
     <CommandPrimitive
       data-slot='command'
-      className={cn(
-        'flex size-full flex-col overflow-hidden rounded-2xl! bg-transparent p-1 text-popover-foreground',
-        className,
-      )}
+      className={cn('flex size-full flex-col overflow-hidden bg-transparent p-1 text-popover-foreground', className)}
       {...props}
     />
   );
 }
 
-/** The palette: a `Command` as the dialog's only content, one card with no header or footer strip. */
+/** The palette: a `Command` as the dialog's only content, one card with no header, footer or close button. */
 function CommandDialog({
-  title = 'Command Palette',
-  description = 'Search for a command to run...',
+  title,
+  description,
   children,
-  className,
-  showCloseButton = false,
-  container,
   ...props
-}: Omit<React.ComponentProps<typeof Dialog>, 'children'> &
-  Pick<React.ComponentProps<typeof DialogContent>, 'showCloseButton' | 'container'> & {
-    className?: string;
-    title?: string;
-    description?: string;
-    children: React.ReactNode;
-  }) {
+}: Omit<React.ComponentProps<typeof Dialog>, 'children'> & {
+  /** The dialog's accessible name; not shown. */
+  title: string;
+  /** Read after the title; not shown. */
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
     <Dialog {...props}>
-      <DialogContent
-        container={container}
-        className={cn('top-1/3 translate-y-0', className)}
-        showCloseButton={showCloseButton}>
+      <DialogContent className='top-1/3 translate-y-0 sm:max-w-sm' showCloseButton={false}>
         <DialogHeader className='sr-only'>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          {description !== undefined && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <DialogBody className='gap-0 overflow-hidden p-0'>{children}</DialogBody>
       </DialogContent>
@@ -62,7 +53,7 @@ function CommandDialog({
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
     <div data-slot='command-input-wrapper' className='p-1 pb-0'>
-      <InputGroup className='h-9! rounded-xl! *:data-[slot=input-group-addon]:pl-2.5!'>
+      <InputGroup className='h-9 *:data-[slot=input-group-addon]:pl-2.5!'>
         <CommandPrimitive.Input
           data-slot='command-input'
           className={cn(
@@ -122,7 +113,7 @@ function CommandSeparator({ className, ...props }: React.ComponentProps<typeof C
   );
 }
 
-function CommandItem({ className, children, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
+function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
   return (
     <CommandPrimitive.Item
       data-slot='command-item'
@@ -130,10 +121,8 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
         "group/command-item relative flex cursor-default items-center gap-2 rounded-inner px-2.5 py-2 text-control outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-foreground data-[selected=true]:bg-foreground/6 data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[selected=true]:*:[svg]:text-foreground",
         className,
       )}
-      {...props}>
-      {children}
-      <CheckIcon className='ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100' />
-    </CommandPrimitive.Item>
+      {...props}
+    />
   );
 }
 

@@ -3,28 +3,28 @@ import { ChevronRightIcon } from 'lucide-react';
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
-/** `render={<a />}` (a router Link in the app): the row highlights on hover. */
+/** `render={<a />}`, or a router link: the row highlights on hover. */
 export function ItemLink() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Anträge</InsetCardTitle>
+        <InsetCardTitle>Projects</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
-          <Item render={<a href='#nachmittagsbetreuung' />}>
+          <Item render={<a href='#website-redesign' />}>
             <ItemContent>
-              <ItemTitle>Nachmittagsbetreuung</ItemTitle>
-              <ItemDescription>3 offene Anträge</ItemDescription>
+              <ItemTitle>Website redesign</ItemTitle>
+              <ItemDescription>3 open tasks</ItemDescription>
             </ItemContent>
             <ItemActions>
               <ChevronRightIcon className='size-4 text-faint-foreground' />
             </ItemActions>
           </Item>
-          <Item render={<a href='#ferienbetreuung' />}>
+          <Item render={<a href='#mobile-app' />}>
             <ItemContent>
-              <ItemTitle>Ferienbetreuung</ItemTitle>
-              <ItemDescription>Keine offenen Anträge</ItemDescription>
+              <ItemTitle>Mobile app</ItemTitle>
+              <ItemDescription>No open tasks</ItemDescription>
             </ItemContent>
             <ItemActions>
               <ChevronRightIcon className='size-4 text-faint-foreground' />

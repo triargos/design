@@ -81,8 +81,10 @@ function DateSegment({ className, ...props }: DateSegmentProps) {
           className,
         ),
       )}
-      {...props}
-    />
+      {...props}>
+      {/* Node's ICU puts a narrow no-break space before AM/PM, browsers a plain one: one text for server and client. */}
+      {props.segment.type === 'literal' ? props.segment.text.replace(/\u202f/g, ' ') : undefined}
+    </DateSegmentRac>
   );
 }
 

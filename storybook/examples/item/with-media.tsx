@@ -8,7 +8,7 @@ export function ItemWithMedia() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Nachweise</InsetCardTitle>
+        <InsetCardTitle>Documents</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
@@ -17,8 +17,8 @@ export function ItemWithMedia() {
               <FileTextIcon />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Arbeitgeberbescheinigung.pdf</ItemTitle>
-              <ItemDescription>Hochgeladen am 12. März</ItemDescription>
+              <ItemTitle>Brand guidelines.pdf</ItemTitle>
+              <ItemDescription>Uploaded on March 12</ItemDescription>
             </ItemContent>
           </Item>
           <Item>
@@ -26,7 +26,7 @@ export function ItemWithMedia() {
               <FileTextIcon />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Meldebescheinigung.pdf</ItemTitle>
+              <ItemTitle>Q2 roadmap.pdf</ItemTitle>
             </ItemContent>
           </Item>
         </ItemList>

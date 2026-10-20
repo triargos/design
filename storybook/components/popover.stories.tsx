@@ -32,7 +32,7 @@ import { open } from '../kit/play';
 
 /**
  * Every popup shares one surface (`popupSurface`: `rounded-popup bg-popover shadow-popup`, items 4px in with
- * `rounded-inner`) and one entrance (`duration-enter ease-enter`, fade and zoom from 95%). Open on load; non-modal so
+ * `rounded-inner`) and one entrance (`popupMotion`: `duration-enter ease-enter`, fade and zoom from 95%). Open on load; non-modal so
  * they can be open together.
  */
 const meta = {
@@ -55,9 +55,9 @@ function Stage({ label, height = 'h-80', children }: { label: ReactNode; height?
 }
 
 const STATUSES = [
-  { value: 'open', label: 'Offen' },
-  { value: 'review', label: 'In Prüfung' },
-  { value: 'done', label: 'Erledigt' },
+  { value: 'todo', label: 'To do' },
+  { value: 'in-progress', label: 'In progress' },
+  { value: 'done', label: 'Done' },
 ] as const;
 
 export const Board: Story = {
@@ -72,40 +72,37 @@ export const Board: Story = {
         <div className='grid gap-group md:grid-cols-3'>
           <Stage label={<Code>DropdownMenu</Code>}>
             <DropdownMenu defaultOpen modal={false}>
-              <DropdownMenuTrigger
-                render={
-                  <Button type='button' intent='neutral' emphasis='raised' size='icon-sm' aria-label='Aktionen' />
-                }>
+              <DropdownMenuTrigger render={<Button size='icon-sm' aria-label='Actions' />}>
                 <MoreHorizontalIcon />
               </DropdownMenuTrigger>
               <DropdownMenuContent align='start' className='w-56'>
-                <DropdownMenuLabel>Antrag 2024-118</DropdownMenuLabel>
+                <DropdownMenuLabel>Website redesign</DropdownMenuLabel>
                 <DropdownMenuItem>
                   <PencilIcon />
-                  Bearbeiten
+                  Edit
                   <DropdownMenuShortcut>E</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <CopyIcon />
-                  Duplizieren
+                  Duplicate
                   <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled>
                   <ArchiveIcon />
-                  Archivieren
+                  Archive
                 </DropdownMenuItem>
-                <DropdownMenuCheckboxItem checked>Benachrichtigungen</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem checked>Notifications</DropdownMenuCheckboxItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem intent='destructive'>
                   <Trash2Icon />
-                  Löschen
+                  Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </Stage>
           <Stage label={<Code>Select</Code>} height='h-80'>
             <div>
-              <Select defaultOpen defaultValue='review' items={STATUSES} modal={false}>
+              <Select defaultOpen defaultValue='in-progress' items={STATUSES} modal={false}>
                 <SelectTrigger aria-label='Status'>
                   <SelectValue />
                 </SelectTrigger>
@@ -121,16 +118,14 @@ export const Board: Story = {
           </Stage>
           <Stage label={<Code>Popover</Code>} height='h-80'>
             <Popover defaultOpen modal={false}>
-              <PopoverTrigger render={<Button type='button' intent='neutral' emphasis='raised' size='sm' />}>
-                Frist
-              </PopoverTrigger>
+              <PopoverTrigger render={<Button size='sm' />}>Deadline</PopoverTrigger>
               <PopoverContent align='start'>
                 <PopoverHeader>
-                  <PopoverTitle>Frist verlängern</PopoverTitle>
-                  <PopoverDescription>Eltern können bis zum neuen Datum noch Anträge stellen.</PopoverDescription>
+                  <PopoverTitle>Extend the deadline</PopoverTitle>
+                  <PopoverDescription>Members can submit their tasks until the new date.</PopoverDescription>
                 </PopoverHeader>
-                <Button type='button' size='sm' className='self-end'>
-                  Verlängern
+                <Button intent='primary' size='sm' className='self-end'>
+                  Extend
                 </Button>
               </PopoverContent>
             </Popover>
@@ -162,12 +157,18 @@ export const Board: Story = {
   ),
 };
 
-export const Default: Story = { render: () => <PopoverDefault />, play: open('click', 'Frist', 'Frist verlängern') };
+export const Default: Story = {
+  render: () => <PopoverDefault />,
+  play: open('click', 'Deadline', 'Extend the deadline'),
+};
 export const Picker: Story = {
   render: () => <PopoverPicker />,
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByText('14. März 2025'));
+    await userEvent.click(canvas.getByText('March 14, 2025'));
     await screen.findByRole('grid');
   },
 };
-export const Positions: Story = { render: () => <PopoverPositions />, play: open('click', 'Rechts', 'Öffnet rechts.') };
+export const Positions: Story = {
+  render: () => <PopoverPositions />,
+  play: open('click', 'Right', 'Opens on the right.'),
+};

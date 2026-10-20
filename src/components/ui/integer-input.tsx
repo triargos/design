@@ -1,35 +1,44 @@
 import { MinusIcon, PlusIcon } from 'lucide-react';
 import type * as React from 'react';
-import { useUiStrings } from '~/lib/ui-config';
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
 
-import { cn } from '~/lib/utils';
-
-interface IntegerStepperProps extends Omit<
+interface IntegerInputProps extends Omit<
   React.ComponentProps<'input'>,
   'type' | 'value' | 'onChange' | 'max' | 'maxLength'
 > {
   value: number;
-  onChange: (value: number) => void;
+  onValueChange: (value: number) => void;
+  /** After the number: "days", "seats". */
   unit?: string;
-  /** Stops "+" here and caps typing at as many digits. */
+  /** Stops "+" here and clamps what is typed. */
   max?: number;
+  decrementLabel?: string;
+  incrementLabel?: string;
 }
 
-/** Non-negative whole numbers only. A cleared field reads as 0. */
-function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, className, ...props }: IntegerStepperProps) {
-  const strings = useUiStrings();
-
+/** A non-negative whole number between a minus and a plus. A cleared field reads as 0. */
+function IntegerInput({
+  value,
+  onValueChange,
+  unit,
+  max,
+  decrementLabel = 'Decrease',
+  incrementLabel = 'Increase',
+  disabled,
+  onFocus,
+  className,
+  ...props
+}: IntegerInputProps) {
   return (
     <InputGroup className={className}>
       <InputGroupAddon align='inline-start'>
         <InputGroupButton
           size='icon-sm'
           emphasis='raised'
-          aria-label={strings.decrease}
+          aria-label={decrementLabel}
           disabled={disabled || value <= 0}
-          onClick={() => onChange(value - 1)}>
+          onClick={() => onValueChange(value - 1)}>
           <MinusIcon />
         </InputGroupButton>
       </InputGroupAddon>
@@ -40,9 +49,12 @@ function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, classNa
           type='text'
           inputMode='numeric'
           value={String(value)}
-          // Never `undefined`: react-hook-form answers that with the default value, so the last digit
-          // could not be deleted.
-          onChange={(e) => onChange(Number(e.target.value.replace(/\D/g, '')))}
+          // Never `undefined`: a form library may answer that with the default value, so the last digit could not be
+          // deleted.
+          onChange={(e) => {
+            const typed = Number(e.target.value.replace(/\D/g, ''));
+            onValueChange(max === undefined ? typed : Math.min(typed, max));
+          }}
           // Typing then replaces the number instead of appending to it.
           onFocus={(e) => {
             e.currentTarget.select();
@@ -61,9 +73,9 @@ function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, classNa
         <InputGroupButton
           size='icon-sm'
           emphasis='raised'
-          aria-label={strings.increase}
+          aria-label={incrementLabel}
           disabled={disabled || (max !== undefined && value >= max)}
-          onClick={() => onChange(value + 1)}>
+          onClick={() => onValueChange(value + 1)}>
           <PlusIcon />
         </InputGroupButton>
       </InputGroupAddon>
@@ -71,4 +83,4 @@ function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, classNa
   );
 }
 
-export { IntegerStepper };
+export { IntegerInput };

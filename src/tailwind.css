@@ -4,8 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Branded colors come from `<style data-organization-branding>` (`brandingThemeCss` in `lib/theme/branding-theme.ts`),
-   rendered by `root.tsx`. Only non-branded values live here. */
+/* Branded colors come from `brandingThemeCss` (`lib/theme/branding-theme.ts`), rendered into a `<style>` by the page.
+   Only non-branded values live here. */
 :root {
   /* Edges and elevation (DESIGN.md, Surfaces and elevation): a translucent ring outside the fill takes the color of
      whatever sits behind it, so no gray edge and no seam between edge and fill. In dark, drops vanish and a white ring
@@ -71,7 +71,8 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   /* Intents (DESIGN.md, Color). `{i}` is the hue for text and icons, never a fill; `-solid` and `-subtle` are fills with
-     their `-foreground`; `-border` the edge. Generated in `themeToShadcnVars`. */
+     their `-foreground`; `-border` the edge. Generated in `themeToCssVars`. */
+  --color-primary: var(--primary);
   --color-primary-solid: var(--primary-solid);
   --color-primary-solid-foreground: var(--primary-solid-foreground);
   --color-primary-subtle: var(--primary-subtle);
@@ -114,44 +115,18 @@
   --color-disabled-foreground: var(--disabled-foreground);
   --color-disabled: var(--disabled);
 
-  /* Aliases until the app migrates: `primary` is still the brand fill, `secondary` / `accent` the old neutrals, and the
-     callout's `*-tint` / `*-text` and `destructive-strong` read the intent sets. */
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive-strong: var(--destructive-solid);
-  --color-info-tint: var(--info-subtle);
-  --color-info-text: var(--info-subtle-foreground);
-  --color-success-tint: var(--success-subtle);
-  --color-success-text: var(--success-subtle-foreground);
-  --color-warning-tint: var(--warning-subtle);
-  --color-warning-text: var(--warning-subtle-foreground);
-  --color-destructive-tint: var(--destructive-subtle);
-  --color-destructive-text: var(--destructive-subtle-foreground);
   --color-border-subtle: var(--border-subtle);
   --color-border-strong: var(--border-strong);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-field-border: var(--field-border);
-  --color-field-border-top: var(--field-border-top);
-  --color-field-border-bottom: var(--field-border-bottom);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   /* Elevation (DESIGN.md, Elevation): one ring (`--edge`) at every level, more drop the higher it sits. Inline, so the
      colors resolve on the element and `.dark` reaches them. */
@@ -248,17 +223,6 @@
   --text-overline--line-height: 1rem;
   --text-overline--letter-spacing: 0.06em;
   --text-overline--font-weight: 500;
-
-  /* Legacy t-shirt sizes: removed once call sites move to the roles above. */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 0.9375rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-  --text-5xl: 3rem;
 
   --animate-shimmer: shimmer 2s linear infinite;
   --animate-skeleton-carousel: skeleton-carousel 8.4s infinite;
@@ -485,8 +449,7 @@
     text-transform: uppercase;
   }
 
-  /* Scrolls without a scrollbar. Two names for the same utility; both have callers. */
-  .scrollbar-hide,
+  /* Scrolls without a scrollbar. */
   .no-scrollbar {
     scrollbar-width: none;
 

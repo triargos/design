@@ -1,25 +1,24 @@
 import { useState } from 'react';
 
 import { SearchSelect } from '~/components/ui/search-select';
-import type { SelectOption } from '~/components/ui/select-option';
+import type { SelectOption } from '~/components/ui/select';
 
-const TEACHERS: ReadonlyArray<SelectOption> = [
-  { value: 'mueller', label: 'Petra Müller', description: 'Deutsch, Sport' },
-  { value: 'schmidt', label: 'Jan Schmidt', description: 'Mathematik' },
-  { value: 'yilmaz', label: 'Elif Yılmaz', description: 'Englisch, Kunst' },
+const MEMBERS: ReadonlyArray<SelectOption> = [
+  { value: 'maya-chen', label: 'Maya Chen', description: 'Design' },
+  { value: 'jonas-weber', label: 'Jonas Weber', description: 'Engineering' },
+  { value: 'priya-patel', label: 'Priya Patel', description: 'Finance' },
 ];
 
-/** A `description` field on the item shows muted beside the label; `renderItem` for anything else. */
+/** An option's `description` shows muted beside its label. */
 export function SearchSelectWithDescription() {
-  const [value, setValue] = useState<string | null>('schmidt');
+  const [value, setValue] = useState<string | null>('jonas-weber');
   return (
     <SearchSelect
-      items={TEACHERS}
-      itemKey={(option) => option.value}
-      itemLabel={(option) => option.label}
+      aria-label='Owner'
+      items={MEMBERS}
       value={value}
       onValueChange={setValue}
-      placeholder='Lehrkraft wählen'
+      placeholder='Choose an owner'
       className='w-72'
     />
   );

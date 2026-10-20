@@ -12,7 +12,7 @@ import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 
 const meta = {
   title: 'Components/Tabs',
-  parameters: { description: 'One tab component in three variants, with an indicator that slides between tabs.' },
+  parameters: { description: 'Tabs in three variants, with an indicator that slides between them.' },
   component: Tabs,
 } satisfies Meta<typeof Tabs>;
 
@@ -23,9 +23,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Tabs'
-      description='One tab component in three variants, with an indicator that slides between tabs. TabsList as picks the semantics: Base UI tabs, page links, or a single choice.'>
+    <FoundationPage title='Tabs' description='Tabs in three variants, with an indicator that slides between them.'>
       <ExampleSection
         title='Default'
         description='Segmented: views of one page. The raised chip slides to the active tab. The last tab is disabled.'>
@@ -41,7 +39,7 @@ export const Board: Story = {
         title='As nav'
         description={
           <>
-            <Code>TabsList as='nav'</Code>: page links with aria-current.
+            <Code>TabsNav</Code> and <Code>TabsLink</Code>: page links; <Code>current</Code> marks the page.
           </>
         }>
         <TabsAsNav />
@@ -50,7 +48,7 @@ export const Board: Story = {
         title='As radio'
         description={
           <>
-            <Code>TabsList as='radio'</Code>: a single choice, every pill a tab stop.
+            <Code>TabsRadioGroup</Code> and <Code>TabsRadio</Code>: a single choice, every pill a tab stop.
           </>
         }>
         <TabsAsRadio />

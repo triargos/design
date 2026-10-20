@@ -44,17 +44,17 @@ export const alignToInsetCardText = 'px-[calc(--spacing(1)+1px+var(--spacing-gro
 
 /**
  * The shell (`--inset-card-shell`, default `--shell`) wraps the content on every side, so the content's corners sit on
- * the shell, never on the page; restyle the tint by setting the variable. `tone='destructive'` marks only the title.
+ * the shell, never on the page; restyle the tint by setting the variable. `intent='destructive'` marks only the title.
  */
 function InsetCard({
   className,
-  tone = 'default',
+  intent = 'neutral',
   ...props
-}: ComponentProps<'section'> & { tone?: 'default' | 'destructive' }) {
+}: ComponentProps<'section'> & { intent?: 'neutral' | 'destructive' }) {
   return (
     <section
       data-slot='inset-card'
-      data-tone={tone}
+      data-intent={intent}
       className={cn(
         'group/inset-card rounded-card bg-(--inset-card-shell) p-1 [--inset-card-shell:var(--shell)] [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-card)]',
         className,
@@ -120,7 +120,7 @@ function InsetCardTitle({ className, ...props }: ComponentProps<'h2'>) {
   return (
     <h2
       className={cn(
-        'text-body font-medium text-balance group-data-[tone=destructive]/inset-card:text-destructive',
+        'text-body font-medium text-balance group-data-[intent=destructive]/inset-card:text-destructive',
         className,
       )}
       {...props}

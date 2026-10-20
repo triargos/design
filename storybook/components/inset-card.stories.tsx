@@ -22,9 +22,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Inset Card'
-      description='The content block. A shell (label strip, footer) around a card (content). Every block on a page is one.'>
+    <FoundationPage title='Inset Card' description='The content block: a shell around a card.'>
       <ExampleSection title='Default' description='The header is a one-line label strip on the shell.' bare>
         <InsetCardDefault />
       </ExampleSection>
@@ -60,7 +58,8 @@ export const Board: Story = {
         title='Destructive'
         description={
           <>
-            <Code>tone='destructive'</Code> marks only the title. The action row stacks below sm, the button full width.
+            <Code>intent='destructive'</Code> marks only the title. The action row stacks below sm, the button full
+            width.
           </>
         }
         bare>

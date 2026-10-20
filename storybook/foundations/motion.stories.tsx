@@ -97,13 +97,7 @@ function Run({ className, label }: { className: string; label: string }) {
           )}
         />
       </div>
-      <Button
-        type='button'
-        intent='neutral'
-        emphasis='ghost'
-        size='icon-sm'
-        aria-label={`${label} abspielen`}
-        onClick={() => setEnd((value) => !value)}>
+      <Button emphasis='ghost' size='icon-sm' aria-label={`Play ${label}`} onClick={() => setEnd((value) => !value)}>
         <PlayIcon />
       </Button>
     </div>

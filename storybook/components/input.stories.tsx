@@ -12,7 +12,6 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxValue,
-  useComboboxAnchor,
 } from '~/components/ui/combobox';
 import { Input } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '~/components/ui/input-group';
@@ -35,17 +34,17 @@ const meta = {
   title: 'Components/Input',
   parameters: { description: 'A single-line text field on the shared field surface.' },
   component: Input,
-  args: { placeholder: 'Max Mustermann' },
+  args: { placeholder: 'Maya Chen' },
 } satisfies Meta<typeof Input>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const GRADES = [
-  { value: '5', label: 'Klasse 5' },
-  { value: '6', label: 'Klasse 6' },
-  { value: '7', label: 'Klasse 7' },
+const TEAMS = [
+  { value: 'design', label: 'Design' },
+  { value: 'engineering', label: 'Engineering' },
+  { value: 'marketing', label: 'Marketing' },
 ];
 
 /** A labelled cell, so a row of states reads as a table. */
@@ -68,20 +67,20 @@ const stateProps = (state: FieldState) => ({
   readOnly: state === 'read-only',
 });
 
-function GradeSelect({ state }: { state: FieldState }) {
+function TeamSelect({ state }: { state: FieldState }) {
   return (
     <Select
-      items={GRADES}
-      defaultValue={state === 'empty' ? undefined : '6'}
+      items={TEAMS}
+      defaultValue={state === 'empty' ? undefined : 'design'}
       disabled={state === 'disabled'}
       readOnly={state === 'read-only'}>
       <SelectTrigger aria-invalid={state === 'invalid' || undefined}>
-        <SelectValue placeholder='Klasse wählen' />
+        <SelectValue placeholder='Choose a team' />
       </SelectTrigger>
       <SelectContent>
-        {GRADES.map((grade) => (
-          <SelectItem key={grade.value} value={grade.value}>
-            {grade.label}
+        {TEAMS.map((team) => (
+          <SelectItem key={team.value} value={team.value}>
+            {team.label}
           </SelectItem>
         ))}
       </SelectContent>
@@ -89,30 +88,29 @@ function GradeSelect({ state }: { state: FieldState }) {
   );
 }
 
-type Grade = (typeof GRADES)[number];
+type Team = (typeof TEAMS)[number];
 
-function GradeChips({ state }: { state: FieldState }) {
-  const anchor = useComboboxAnchor();
+function TeamChips({ state }: { state: FieldState }) {
   return (
     <Combobox
       multiple
-      items={GRADES}
-      defaultValue={state === 'empty' ? [] : GRADES.slice(0, 2)}
-      itemToStringLabel={(grade: Grade) => grade.label}
+      items={TEAMS}
+      defaultValue={state === 'empty' ? [] : TEAMS.slice(0, 2)}
+      itemToStringLabel={(team: Team) => team.label}
       disabled={state === 'disabled'}
       readOnly={state === 'read-only'}>
-      <ComboboxChips ref={anchor} aria-invalid={state === 'invalid' || undefined}>
+      <ComboboxChips aria-invalid={state === 'invalid' || undefined}>
         <ComboboxValue>
-          {(value: Grade[]) => value.map((grade) => <ComboboxChip key={grade.value}>{grade.label}</ComboboxChip>)}
+          {(value: Team[]) => value.map((team) => <ComboboxChip key={team.value}>{team.label}</ComboboxChip>)}
         </ComboboxValue>
-        <ComboboxChipsInput placeholder={state === 'empty' ? 'Klassen wählen' : undefined} />
+        <ComboboxChipsInput placeholder={state === 'empty' ? 'Choose teams' : undefined} />
       </ComboboxChips>
-      <ComboboxContent anchor={anchor}>
-        <ComboboxEmpty>Keine Klasse gefunden</ComboboxEmpty>
+      <ComboboxContent>
+        <ComboboxEmpty>No teams found</ComboboxEmpty>
         <ComboboxList>
-          {(grade: Grade) => (
-            <ComboboxItem key={grade.value} value={grade}>
-              {grade.label}
+          {(team: Team) => (
+            <ComboboxItem key={team.value} value={team}>
+              {team.label}
             </ComboboxItem>
           )}
         </ComboboxList>
@@ -127,8 +125,8 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
     meta: '40px, text-control; on touch 16px scaled to 14',
     render: (state) => (
       <Input
-        placeholder='Max Mustermann'
-        defaultValue={state === 'empty' ? undefined : 'Erika Mustermann'}
+        placeholder='Maya Chen'
+        defaultValue={state === 'empty' ? undefined : 'Maya Chen'}
         {...stateProps(state)}
       />
     ),
@@ -138,13 +136,13 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
     meta: 'min 60px, grows with rows',
     render: (state) => (
       <Textarea
-        placeholder='Nachricht an die Eltern'
-        defaultValue={state === 'empty' ? undefined : 'Der Elternabend beginnt um 19 Uhr.'}
+        placeholder='Add a comment'
+        defaultValue={state === 'empty' ? undefined : 'The review moved to Thursday.'}
         {...stateProps(state)}
       />
     ),
   },
-  { name: 'Select', meta: 'SelectTrigger', render: (state) => <GradeSelect state={state} /> },
+  { name: 'Select', meta: 'SelectTrigger', render: (state) => <TeamSelect state={state} /> },
   {
     name: 'PickerTrigger',
     meta: 'opens a popup: date, virtualized combobox',
@@ -152,16 +150,16 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
       <PickerTrigger
         aria-invalid={state === 'invalid' || undefined}
         disabled={state === 'disabled'}
-        className={cn('justify-between', state === 'empty' && 'text-muted-foreground')}>
-        <span>{state === 'empty' ? 'Schüler wählen' : 'Erika Mustermann'}</span>
-        <ChevronsUpDownIcon className='opacity-50' />
+        className={cn(state === 'empty' && 'text-muted-foreground')}>
+        <span>{state === 'empty' ? 'Choose an assignee' : 'Maya Chen'}</span>
+        <ChevronsUpDownIcon />
       </PickerTrigger>
     ),
   },
   {
     name: 'Combobox chips',
     meta: '32px chips, 4px in, rounded-inner',
-    render: (state) => <GradeChips state={state} />,
+    render: (state) => <TeamChips state={state} />,
   },
   {
     name: 'InputGroup',
@@ -172,8 +170,8 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
           <SearchIcon />
         </InputGroupAddon>
         <InputGroupInput
-          placeholder='Suchen'
-          defaultValue={state === 'empty' ? undefined : 'Mustermann'}
+          placeholder='Search'
+          defaultValue={state === 'empty' ? undefined : 'Chen'}
           {...stateProps(state)}
         />
       </InputGroup>
@@ -181,7 +179,7 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
   },
 ];
 
-/** A surface the field can sit on, with the `data-surface` the app sets. */
+/** A surface the field can sit on, with its `data-surface`. */
 function SurfaceSample({
   label,
   surface,
@@ -196,8 +194,8 @@ function SurfaceSample({
       <Code>{label}</Code>
       <div data-surface={surface} className={cn('rounded-[24px] p-group', className)}>
         <Stack gap='related'>
-          <Input placeholder='Max Mustermann' />
-          <GradeSelect state='filled' />
+          <Input placeholder='Maya Chen' aria-label='Name' />
+          <TeamSelect state='filled' />
         </Stack>
       </div>
     </Stack>

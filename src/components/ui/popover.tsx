@@ -10,6 +10,14 @@ import { cn } from '~/lib/utils';
 export const popupSurface =
   'rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-popup)]';
 
+/** How every popup enters and leaves: a fade and a zoom from 95%, sliding in from its trigger's side. */
+export const popupMotion =
+  'origin-(--transform-origin) duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2';
+
+/** A row in a popup list (menus): highlighted by pointer or keyboard, `rounded-inner` 4px in. Sets no horizontal padding. */
+export const popupItem =
+  "relative flex cursor-default items-center gap-2 rounded-inner py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
+
 function Popover(props: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot='popover' {...props} />;
 }
@@ -21,30 +29,20 @@ function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {
 function PopoverContent({
   className,
   align,
-  alignOffset,
   side,
   sideOffset = 4,
-  collisionPadding,
-  container,
   ...props
-}: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset' | 'collisionPadding'> &
-  Pick<PopoverPrimitive.Portal.Props, 'container'>) {
+}: PopoverPrimitive.Popup.Props & Pick<PopoverPrimitive.Positioner.Props, 'align' | 'side' | 'sideOffset'>) {
   return (
-    <PopoverPrimitive.Portal container={container}>
-      <PopoverPrimitive.Positioner
-        align={align}
-        alignOffset={alignOffset}
-        side={side}
-        sideOffset={sideOffset}
-        collisionPadding={collisionPadding}
-        className='isolate z-50'>
+    <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Positioner align={align} side={side} sideOffset={sideOffset} className='isolate z-50'>
         <PopoverPrimitive.Popup
           data-slot='popover-content'
           data-surface='popup'
           className={cn(
             popupSurface,
-            'flex w-72 origin-(--transform-origin) flex-col gap-2.5 p-2.5 text-body outline-hidden duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+            popupMotion,
+            'flex w-72 flex-col gap-2.5 p-2.5 text-body outline-hidden',
             className,
           )}
           {...props}

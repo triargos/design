@@ -29,8 +29,40 @@ function Timeline({ value = 1, orientation = 'vertical', className, ...props }: 
   );
 }
 
-function TimelineContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='timeline-content' className={cn('text-body text-muted-foreground', className)} {...props} />;
+interface TimelineItemProps extends React.ComponentProps<'div'> {
+  step: number;
+}
+
+/**
+ * An event: its marker and the line to the next event, then the children (`TimelineDate`, `TimelineTitle`,
+ * `TimelineContent`). A reached event takes the brand edge; the line turns brand once the next one is reached.
+ */
+function TimelineItem({ step, className, children, ...props }: TimelineItemProps) {
+  const reachedStep = React.use(ReachedStepContext);
+
+  return (
+    <div
+      data-slot='timeline-item'
+      className={cn(
+        'group/timeline-item relative flex flex-1 flex-col group-data-[orientation=horizontal]/timeline:mt-8 not-last:group-data-[orientation=horizontal]/timeline:pe-8 group-data-[orientation=vertical]/timeline:ms-8 not-last:group-data-[orientation=vertical]/timeline:pb-12',
+        className,
+      )}
+      data-completed={step <= reachedStep || undefined}
+      {...props}>
+      <div
+        data-slot='timeline-separator'
+        aria-hidden='true'
+        data-completed={step < reachedStep || undefined}
+        className='absolute self-start bg-primary-subtle group-last/timeline-item:hidden data-completed:bg-primary-solid group-data-[orientation=horizontal]/timeline:-top-6 group-data-[orientation=horizontal]/timeline:h-0.5 group-data-[orientation=horizontal]/timeline:w-[calc(100%-1rem-0.25rem)] group-data-[orientation=horizontal]/timeline:translate-x-4.5 group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:h-[calc(100%-1rem-0.25rem)] group-data-[orientation=vertical]/timeline:w-0.5 group-data-[orientation=vertical]/timeline:-translate-x-1/2 group-data-[orientation=vertical]/timeline:translate-y-4.5'
+      />
+      <div
+        data-slot='timeline-indicator'
+        aria-hidden='true'
+        className='absolute size-4 rounded-full border-2 border-primary-border group-data-completed/timeline-item:border-primary-solid group-data-[orientation=horizontal]/timeline:-top-6 group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:top-0 group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:-translate-x-1/2'
+      />
+      {children}
+    </div>
+  );
 }
 
 function TimelineDate({ className, render, ...props }: useRender.ComponentProps<'time'>) {
@@ -50,69 +82,14 @@ function TimelineDate({ className, render, ...props }: useRender.ComponentProps<
   });
 }
 
-function TimelineHeader(props: React.ComponentProps<'div'>) {
-  return <div data-slot='timeline-header' {...props} />;
-}
-
-function TimelineIndicator({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot='timeline-indicator'
-      className={cn(
-        'absolute size-4 rounded-full border-2 border-primary-border group-data-completed/timeline-item:border-primary-solid group-data-[orientation=horizontal]/timeline:-top-6 group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:top-0 group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:-translate-x-1/2',
-        className,
-      )}
-      aria-hidden='true'
-      {...props}
-    />
-  );
-}
-
-interface TimelineItemProps extends React.ComponentProps<'div'> {
-  step: number;
-}
-
-function TimelineItem({ step, className, ...props }: TimelineItemProps) {
-  const reachedStep = React.use(ReachedStepContext);
-
-  return (
-    <div
-      data-slot='timeline-item'
-      className={cn(
-        'group/timeline-item relative flex flex-1 flex-col gap-0.5 group-data-[orientation=horizontal]/timeline:mt-8 not-last:group-data-[orientation=horizontal]/timeline:pe-8 group-data-[orientation=vertical]/timeline:ms-8 not-last:group-data-[orientation=vertical]/timeline:pb-12 **:data-[slot=timeline-separator]:has-[+[data-completed]]:bg-primary-solid',
-        className,
-      )}
-      data-completed={step <= reachedStep || undefined}
-      {...props}
-    />
-  );
-}
-
-function TimelineSeparator({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot='timeline-separator'
-      className={cn(
-        'absolute self-start bg-primary-subtle group-last/timeline-item:hidden group-data-[orientation=horizontal]/timeline:-top-6 group-data-[orientation=horizontal]/timeline:h-0.5 group-data-[orientation=horizontal]/timeline:w-[calc(100%-1rem-0.25rem)] group-data-[orientation=horizontal]/timeline:translate-x-4.5 group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:h-[calc(100%-1rem-0.25rem)] group-data-[orientation=vertical]/timeline:w-0.5 group-data-[orientation=vertical]/timeline:-translate-x-1/2 group-data-[orientation=vertical]/timeline:translate-y-4.5',
-        className,
-      )}
-      aria-hidden='true'
-      {...props}
-    />
-  );
-}
-
 function TimelineTitle({ className, ...props }: React.ComponentProps<'h3'>) {
   return <h3 data-slot='timeline-title' className={cn('text-caption text-muted-foreground', className)} {...props} />;
 }
 
-export {
-  Timeline,
-  TimelineContent,
-  TimelineDate,
-  TimelineHeader,
-  TimelineIndicator,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineTitle,
-};
+function TimelineContent({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div data-slot='timeline-content' className={cn('mt-0.5 text-body text-muted-foreground', className)} {...props} />
+  );
+}
+
+export { Timeline, TimelineContent, TimelineDate, TimelineItem, TimelineTitle };

@@ -1,5 +1,3 @@
-import { IsoDate } from '~/lib/iso-date';
-
 import { useState } from 'react';
 
 import { DateInput } from '~/components/ui/date-input';
@@ -7,17 +5,17 @@ import { Field, FieldGroup, FieldLabel } from '~/components/ui/field';
 import { TimeInput } from '~/components/ui/time-input';
 
 export function DateInputInAForm() {
-  const [from, setFrom] = useState<IsoDate | null>(IsoDate.fromDate(new Date(2025, 2, 14)));
-  const [time, setTime] = useState('08:00');
+  const [date, setDate] = useState('2025-03-14');
+  const [time, setTime] = useState('09:30');
   return (
     <FieldGroup columns={2} className='w-full max-w-md'>
       <Field>
-        <FieldLabel htmlFor='absence-from'>Erster Fehltag</FieldLabel>
-        <DateInput id='absence-from' value={from} onChange={setFrom} />
+        <FieldLabel htmlFor='meeting-date'>Date</FieldLabel>
+        <DateInput id='meeting-date' value={date} onValueChange={setDate} />
       </Field>
       <Field>
-        <FieldLabel htmlFor='absence-time'>Ab</FieldLabel>
-        <TimeInput id='absence-time' value={time} onChange={setTime} />
+        <FieldLabel htmlFor='meeting-time'>Start</FieldLabel>
+        <TimeInput id='meeting-time' value={time} onValueChange={setTime} />
       </Field>
     </FieldGroup>
   );

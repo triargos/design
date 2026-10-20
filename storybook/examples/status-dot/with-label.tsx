@@ -6,12 +6,12 @@ export function StatusDotWithLabel() {
   return (
     <Item className='w-80'>
       <ItemContent>
-        <ItemTitle>Mia Schmidt</ItemTitle>
-        <ItemDescription>Klasse 3b</ItemDescription>
+        <ItemTitle>Lena Park</ItemTitle>
+        <ItemDescription>Design</ItemDescription>
       </ItemContent>
       <span className='flex items-center gap-1.5 text-caption text-muted-foreground'>
         <StatusDot intent='success' />
-        Anwesend
+        Online
       </span>
     </Item>
   );

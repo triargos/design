@@ -39,10 +39,12 @@ interface BottomFloatMenuProps {
   show: boolean;
   /** Wrap controls in `BottomFloatMenuItem`. */
   children: ReactNode;
-  label?: string;
+  /** The bar's accessible name (a toolbar). */
+  label: string;
+  /** Shown instead of the bar; the bar morphs into it. */
   panel?: BottomFloatMenuPanel | null;
+  /** Escape or a press outside an open panel. */
   onPanelDismiss?: (reason: BottomFloatMenuDismissReason) => void;
-  className?: string;
 }
 
 const BAR_VIEW = 'bar';
@@ -102,14 +104,7 @@ const surfaceExit: TargetAndTransition = {
 /** Read once by the menu and shared, instead of one media-query hook per item. */
 const ReducedMotionContext = createContext(false);
 
-export const BottomFloatMenu = ({
-  show,
-  children,
-  label,
-  panel = null,
-  onPanelDismiss,
-  className,
-}: BottomFloatMenuProps) => {
+export const BottomFloatMenu = ({ show, children, label, panel = null, onPanelDismiss }: BottomFloatMenuProps) => {
   const shouldReduceMotion = useReducedMotion() ?? false;
   // Portaled out of the page: an opacity or transform ancestor would trap a `fixed` bar.
   // Form controls inside reach their form through the `form` attribute.
@@ -127,7 +122,7 @@ export const BottomFloatMenu = ({
         <AnimatePresence>
           {show && (
             <MenuSurface key='menu'>
-              <MorphingShell label={label} panel={panel} onPanelDismiss={onPanelDismiss} className={className}>
+              <MorphingShell label={label} panel={panel} onPanelDismiss={onPanelDismiss}>
                 {children}
               </MorphingShell>
             </MenuSurface>
@@ -154,7 +149,7 @@ const MenuSurface = ({ children }: { children: ReactNode }) => {
 
 type MorphingShellProps = Omit<BottomFloatMenuProps, 'show'>;
 
-const MorphingShell = ({ children, label, panel, onPanelDismiss, className }: MorphingShellProps) => {
+const MorphingShell = ({ children, label, panel, onPanelDismiss }: MorphingShellProps) => {
   const reduceMotion = use(ReducedMotionContext);
   const shellRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -295,12 +290,11 @@ const MorphingShell = ({ children, label, panel, onPanelDismiss, className }: Mo
               <div
                 role='toolbar'
                 aria-label={label}
-                className={cn(
-                  // Room to breathe: 8px between controls, 6px around them.
-                  'flex max-w-[calc(100vw-2rem)] float-menu-content-in items-center gap-2 p-1.5 [--outer-inset:--spacing(1.5)]',
+                className={[
+                  // Room to breathe: 8px between controls, 6px around them. Too wide for the screen, it wraps.
+                  'flex max-w-[calc(100vw-2rem)] float-menu-content-in flex-wrap items-center justify-center gap-2 p-1.5 [--outer-inset:--spacing(1.5)]',
                   '[&_[data-slot=button]]:h-(--float-control) [&_[data-slot=button]]:min-w-(--float-control) [&_[data-slot=button]]:rounded-inner',
-                  className,
-                )}>
+                ].join(' ')}>
                 {children}
               </div>
             )}
@@ -325,28 +319,26 @@ const MenuView = ({ view, children }: { view: string; children: ReactNode }) => 
   );
 };
 
-interface BottomFloatMenuItemProps {
-  children: ReactNode;
-  className?: string;
-}
-
-/** A wrapper per control: `float-menu-content-in` fades it, off the Button's own transitions. */
-export const BottomFloatMenuItem = ({ children, className }: BottomFloatMenuItemProps) => (
-  <div className={cn('flex items-center', className)}>{children}</div>
+/**
+ * A wrapper per control: the bar's children fade in (`float-menu-content-in` animates `& > *`), so the fade runs on the
+ * wrapper, off the Button's own transitions.
+ */
+export const BottomFloatMenuItem = ({ children }: { children: ReactNode }) => (
+  <div className='flex items-center'>{children}</div>
 );
 
 interface BottomFloatMenuRowProps {
   icon: ReactNode;
   children: ReactNode;
   onClick: () => void;
+  /** It opens another panel: a chevron at the end. */
   opensPanel?: boolean;
 }
 
+/** A row in a panel: an icon and a label. */
 export const BottomFloatMenuRow = ({ icon, children, onClick, opensPanel }: BottomFloatMenuRowProps) => (
   <BottomFloatMenuItem>
     <Button
-      type='button'
-      intent='neutral'
       emphasis='ghost'
       onClick={onClick}
       className='h-auto min-h-(--float-control) w-full justify-start gap-2 rounded-inner px-3 py-2.5'>

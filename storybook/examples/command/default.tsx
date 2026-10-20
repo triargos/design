@@ -1,5 +1,5 @@
-import { CalendarXIcon, InboxIcon, SearchIcon, SettingsIcon, UserPlusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { FolderIcon, InboxIcon, SearchIcon, SettingsIcon, UserPlusIcon } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -13,57 +13,45 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '~/components/ui/command';
-import { Kbd, KbdGroup } from '~/components/ui/kbd';
 
-/** The palette: `CommandDialog` around a `Command`, opened with ⌘K or its button. */
+/**
+ * The palette: `CommandDialog` around a `Command`. An app also opens it with ⌘K (this site's search does, so the
+ * example only has its button).
+ */
 export function CommandDefault() {
   const [open, setOpen] = useState(false);
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault();
-        setOpen((current) => !current);
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, []);
   return (
     <>
-      <Button type='button' intent='neutral' emphasis='raised' onClick={() => setOpen(true)}>
+      <Button onClick={() => setOpen(true)}>
         <SearchIcon data-icon='inline-start' />
-        Suchen
-        <KbdGroup className='ml-2'>
-          <Kbd>⌘</Kbd>
-          <Kbd>K</Kbd>
-        </KbdGroup>
+        Search
       </Button>
-      <CommandDialog open={open} onOpenChange={setOpen} title='Befehle' description='Seite oder Aktion suchen'>
+      <CommandDialog open={open} onOpenChange={setOpen} title='Commands' description='Find a page or an action.'>
         <Command>
-          <CommandInput placeholder='Seite oder Aktion suchen' />
+          <CommandInput placeholder='Search pages and actions' />
           <CommandList>
-            <CommandEmpty>Keine Treffer</CommandEmpty>
-            <CommandGroup heading='Seiten'>
+            <CommandEmpty>No results</CommandEmpty>
+            <CommandGroup heading='Pages'>
               <CommandItem>
                 <InboxIcon />
-                Posteingang
+                Inbox
                 <CommandShortcut>G I</CommandShortcut>
               </CommandItem>
               <CommandItem>
-                <CalendarXIcon />
-                Abwesenheiten
-                <CommandShortcut>G A</CommandShortcut>
+                <FolderIcon />
+                Projects
+                <CommandShortcut>G P</CommandShortcut>
               </CommandItem>
             </CommandGroup>
             <CommandSeparator />
-            <CommandGroup heading='Aktionen'>
+            <CommandGroup heading='Actions'>
               <CommandItem>
                 <UserPlusIcon />
-                Mitglied einladen
+                Invite member
               </CommandItem>
               <CommandItem>
                 <SettingsIcon />
-                Einstellungen
+                Settings
                 <CommandShortcut>⌘,</CommandShortcut>
               </CommandItem>
             </CommandGroup>

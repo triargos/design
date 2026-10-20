@@ -1,8 +1,8 @@
 import { IntlDate } from '~/components/ui/intl-date';
 
-/** A `Date` in the user’s locale. Format for reading with intl-date, never by hand. */
+/** An ISO moment in the viewer's time zone: the default, then two `format`s. */
 export function IntlDateDefault() {
-  const sentAt = new Date(2025, 2, 14, 9, 30);
+  const sentAt = '2025-03-14T09:30:00Z';
   return (
     <div className='flex flex-col gap-1 text-body'>
       <IntlDate date={sentAt} />

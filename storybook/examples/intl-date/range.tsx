@@ -1,12 +1,13 @@
 import { CalendarClockIcon } from 'lucide-react';
 
-import { renderDateRange } from '~/components/ui/intl-date';
+import { IntlDateRange } from '~/components/ui/intl-date';
 
-export function IntlDateRange() {
+/** Shared parts said once. */
+export function IntlDateRangeExample() {
   return (
     <span className='flex items-center gap-2 text-body'>
       <CalendarClockIcon className='size-4 text-muted-foreground' />
-      {renderDateRange(new Date(2025, 2, 10), new Date(2025, 2, 14))}
+      <IntlDateRange start='2025-03-10' end='2025-03-14' />
     </span>
   );
 }

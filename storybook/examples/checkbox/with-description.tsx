@@ -4,10 +4,10 @@ import { Field, FieldContent, FieldDescription, FieldLabel } from '~/components/
 export function CheckboxWithDescription() {
   return (
     <Field orientation='horizontal' className='max-w-md'>
-      <Checkbox id='photos' defaultChecked />
+      <Checkbox id='checkbox-guests' defaultChecked />
       <FieldContent>
-        <FieldLabel htmlFor='photos'>Fotos erlaubt</FieldLabel>
-        <FieldDescription>Die Schule darf Fotos meines Kindes auf der Website zeigen.</FieldDescription>
+        <FieldLabel htmlFor='checkbox-guests'>Allow guests</FieldLabel>
+        <FieldDescription>People outside the workspace can view shared documents.</FieldDescription>
       </FieldContent>
     </Field>
   );

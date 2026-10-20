@@ -9,7 +9,7 @@ export function InputGroupWithIcon() {
       <InputGroupAddon>
         <SearchIcon />
       </InputGroupAddon>
-      <InputGroupInput placeholder='Mitglieder suchen' />
+      <InputGroupInput placeholder='Search members' aria-label='Search members' />
     </InputGroup>
   );
 }

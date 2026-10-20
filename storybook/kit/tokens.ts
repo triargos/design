@@ -1,6 +1,6 @@
 /**
- * The tunable scales and their defaults, as in `tailwind.css`. Shared by the foundation stories, `Frame`
- * (`.storybook/frame.tsx`) and Storybook's Tokens panel (`.storybook/manager.ts`), so it imports nothing.
+ * The tunable scales and their defaults, as in `tailwind.css`. Shared by the foundation pages and the
+ * docs customize panel (`site/customize.tsx`), so it imports nothing.
  */
 
 export const SPACING_STEPS = [
@@ -26,7 +26,7 @@ export const TYPE_ROLES = [
 
 export type TypeRole = (typeof TYPE_ROLES)[number];
 
-/** One CSS variable the Tokens panel tunes. `global` is the variable without `--` and also the Storybook global. */
+/** One CSS variable Customize tunes. `global` is the variable without `--`. */
 export interface TunableToken {
   readonly global: string;
   readonly label: string;

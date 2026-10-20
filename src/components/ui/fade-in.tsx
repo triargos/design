@@ -1,8 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ReactNode, useState } from 'react';
 
-import { cn } from '~/lib/utils';
-
 /** Content that arrives after a load fades in once: 150ms, opacity only. `enabled={false}` renders it at rest. */
 function FadeIn({
   enabled = true,
@@ -13,11 +11,10 @@ function FadeIn({
   className?: string;
   children: ReactNode;
 }) {
-  const classes = cn('space-y-4', className);
-  if (!enabled) return <div className={classes}>{children}</div>;
+  if (!enabled) return <div className={className}>{children}</div>;
   return (
     <motion.div
-      className={classes}
+      className={className}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}>
@@ -27,11 +24,10 @@ function FadeIn({
 }
 
 /**
- * Whether content should fade in: only when it arrives after the first render. Data on the first render (cached, SSR)
- * never fades.
+ * Whether content should fade in: only when it arrives after the first render. Data on the first render (cached,
+ * prerendered) never fades. Pass whether the data is still loading.
  */
-function useShouldFadeIn(result: { _tag: string } | boolean): boolean {
-  const pending = typeof result === 'boolean' ? result : result._tag === 'Initial' || result._tag === 'Loading';
+function useShouldFadeIn(pending: boolean): boolean {
   const [startedPending] = useState(pending);
   return startedPending && !pending;
 }
@@ -41,13 +37,9 @@ function FadeOut({ show, className, children }: { show: boolean; className?: str
   return (
     <AnimatePresence>
       {show && (
-        <motion.section
-          className={className}
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}>
+        <motion.div className={className} initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
           {children}
-        </motion.section>
+        </motion.div>
       )}
     </AnimatePresence>
   );

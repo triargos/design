@@ -18,8 +18,8 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Shortcut Tooltip'
-      description='A Tooltip that names a control and its shortcut. Chords read “dann”; combinations use the platform’s modifier.'>
-      <ExampleSection title='Default' description='Hover the inbox button.'>
+      description='A Tooltip that names a control and its shortcut. A chord reads “G then P” (chordSeparator); a combination uses the platform’s modifier.'>
+      <ExampleSection title='Default' description='Hover the button.'>
         <ShortcutTooltipDefault />
       </ExampleSection>
     </FoundationPage>
@@ -28,5 +28,5 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <ShortcutTooltipDefault />,
-  play: open('hover', 'Posteingang', 'Posteingang'),
+  play: open('hover', 'Projects', 'Projects'),
 };

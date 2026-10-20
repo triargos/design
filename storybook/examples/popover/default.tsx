@@ -12,16 +12,14 @@ import {
 export function PopoverDefault() {
   return (
     <Popover>
-      <PopoverTrigger render={<Button type='button' intent='neutral' emphasis='raised' size='sm' />}>
-        Frist
-      </PopoverTrigger>
+      <PopoverTrigger render={<Button size='sm' />}>Deadline</PopoverTrigger>
       <PopoverContent align='start'>
         <PopoverHeader>
-          <PopoverTitle>Frist verlängern</PopoverTitle>
-          <PopoverDescription>Eltern können bis zum neuen Datum noch Anträge stellen.</PopoverDescription>
+          <PopoverTitle>Extend the deadline</PopoverTitle>
+          <PopoverDescription>Members can submit their tasks until the new date.</PopoverDescription>
         </PopoverHeader>
-        <Button type='button' size='sm' className='self-end'>
-          Verlängern
+        <Button intent='primary' size='sm' className='self-end'>
+          Extend
         </Button>
       </PopoverContent>
     </Popover>

@@ -2,7 +2,7 @@ import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog
 import * as React from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
-import { modalBackdrop, modalBody, modalFooter, modalShell } from '~/components/ui/modal';
+import { modalBackdrop, modalBody, modalCentered, modalFooter, modalShell } from '~/components/ui/modal';
 
 import { cn } from '~/lib/utils';
 
@@ -25,6 +25,7 @@ function AlertDialogContent({
   ...props
 }: AlertDialogPrimitive.Popup.Props &
   Pick<AlertDialogPrimitive.Portal.Props, 'container'> & {
+    /** `sm`: narrower and centered, the two actions in equal columns. */
     size?: 'default' | 'sm';
   }) {
   return (
@@ -35,7 +36,8 @@ function AlertDialogContent({
         data-size={size}
         className={cn(
           modalShell,
-          'group/alert-dialog-content fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full max-w-xs translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[size=default]:sm:max-w-sm',
+          modalCentered,
+          'group/alert-dialog-content max-w-xs data-[size=default]:sm:max-w-sm',
           className,
         )}
         {...props}
@@ -48,7 +50,6 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<'div'>)
   return (
     <div
       data-slot='alert-dialog-header'
-      data-modal='body'
       data-surface='card'
       className={cn(
         modalBody,
@@ -120,13 +121,7 @@ function AlertDialogAction(props: ButtonProps) {
 
 /** Always `neutral`/`raised`; `size` matches a smaller action. */
 function AlertDialogCancel({ size, ...props }: AlertDialogPrimitive.Close.Props & Pick<ButtonProps, 'size'>) {
-  return (
-    <AlertDialogPrimitive.Close
-      data-slot='alert-dialog-cancel'
-      render={<Button intent='neutral' emphasis='raised' size={size} />}
-      {...props}
-    />
-  );
+  return <AlertDialogPrimitive.Close data-slot='alert-dialog-cancel' render={<Button size={size} />} {...props} />;
 }
 
 export {

@@ -14,14 +14,14 @@ import { Input } from '~/components/ui/input';
 export function DialogNoFooter() {
   return (
     <Dialog>
-      <DialogTrigger render={<Button intent='neutral' emphasis='raised' />}>Einladungslink</DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogTrigger render={<Button />}>Invite link</DialogTrigger>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Einladungslink</DialogTitle>
-          <DialogDescription>Jeder mit diesem Link kann der Klasse beitreten.</DialogDescription>
+          <DialogTitle>Invite link</DialogTitle>
+          <DialogDescription>Anyone with this link can join the workspace.</DialogDescription>
         </DialogHeader>
         <DialogBody>
-          <Input readOnly defaultValue='https://elternportal.de/einladung/7f3a' aria-label='Einladungslink' />
+          <Input readOnly defaultValue='https://acme.app/join/7f3a' aria-label='Invite link' />
         </DialogBody>
       </DialogContent>
     </Dialog>

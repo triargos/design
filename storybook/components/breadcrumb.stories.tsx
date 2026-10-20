@@ -17,14 +17,12 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Breadcrumb'
-      description='Where a page sits, as links back up the tree; the current page is plain text. In the app the header builds it from the route (GeneratedBreadcrumbs).'>
+    <FoundationPage title='Breadcrumb' description='Where a page sits, as links back up the tree.'>
       <ExampleSection
         title='Default'
         description={
           <>
-            <Code>BreadcrumbLink render={'<Link />'}</Code>
+            <Code>BreadcrumbLink</Code> up the tree; <Code>BreadcrumbPage</Code> is the current page.
           </>
         }>
         <BreadcrumbDefault />

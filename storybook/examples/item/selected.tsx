@@ -1,30 +1,29 @@
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
-/** `data-selected` and `data-targeted` (keyboard selection, use-selectable) take a quiet fill. */
+/** A `selected` row takes a quiet fill. */
 export function ItemSelected() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Mitglieder</InsetCardTitle>
+        <InsetCardTitle>Members</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
-          <Item data-selected>
+          <Item selected>
             <ItemContent>
-              <ItemTitle>Erika Mustermann</ItemTitle>
-              <ItemDescription>Ausgewählt</ItemDescription>
-            </ItemContent>
-          </Item>
-          <Item data-targeted>
-            <ItemContent>
-              <ItemTitle>Max Mustermann</ItemTitle>
-              <ItemDescription>Mit der Tastatur angesteuert</ItemDescription>
+              <ItemTitle>Jordan Lee</ItemTitle>
+              <ItemDescription>Selected</ItemDescription>
             </ItemContent>
           </Item>
           <Item>
             <ItemContent>
-              <ItemTitle>Lea Schmidt</ItemTitle>
+              <ItemTitle>Sam Rivera</ItemTitle>
+            </ItemContent>
+          </Item>
+          <Item>
+            <ItemContent>
+              <ItemTitle>Priya Patel</ItemTitle>
             </ItemContent>
           </Item>
         </ItemList>

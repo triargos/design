@@ -1,12 +1,11 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import type * as React from 'react';
 
-import { Label } from '~/components/ui/label';
 import { Separator } from '~/components/ui/separator';
 
-import { useUiConfig } from '~/lib/ui-config';
 import { cn } from '~/lib/utils';
 
+/** Several fields that answer one question (a checkbox or radio list), named by a `FieldLegend`. */
 function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   return (
     <fieldset
@@ -17,24 +16,8 @@ function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   );
 }
 
-function FieldLegend({
-  className,
-  variant = 'legend',
-  ...props
-}: React.ComponentProps<'legend'> & { variant?: 'legend' | 'label' }) {
-  return (
-    <legend
-      data-slot='field-legend'
-      data-variant={variant}
-      className={cn(
-        'mb-group',
-        'data-[variant=legend]:text-heading',
-        'data-[variant=label]:text-body data-[variant=label]:font-medium',
-        className,
-      )}
-      {...props}
-    />
-  );
+function FieldLegend({ className, ...props }: React.ComponentProps<'legend'>) {
+  return <legend data-slot='field-legend' className={cn('mb-group text-body font-medium', className)} {...props} />;
 }
 
 const fieldGroupVariants = cva('group/field-group @container/field-group flex w-full flex-col gap-group', {
@@ -75,22 +58,31 @@ const fieldVariants = cva('group/field flex w-full gap-3 data-[invalid=true]:tex
   },
 });
 
+/**
+ * A label, a control, a description and an error, in that order. `invalid` and `disabled` style the label and text;
+ * the control takes its own `aria-invalid` and `disabled`.
+ */
 function Field({
   className,
   orientation = 'vertical',
+  invalid,
+  disabled,
   ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof fieldVariants>) {
+}: React.ComponentProps<'div'> & VariantProps<typeof fieldVariants> & { invalid?: boolean; disabled?: boolean }) {
   return (
     <div
       role='group'
       data-slot='field'
       data-orientation={orientation}
+      data-invalid={invalid || undefined}
+      data-disabled={disabled || undefined}
       className={cn(fieldVariants({ orientation }), className)}
       {...props}
     />
   );
 }
 
+/** The label and description beside a checkbox, radio or switch. */
 function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -101,17 +93,30 @@ function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
+/** `required` adds an asterisk; the control still takes `required` itself. */
+function FieldLabel({
+  className,
+  required,
+  children,
+  ...props
+}: React.ComponentProps<'label'> & { required?: boolean }) {
   return (
-    <Label
+    <label
       data-slot='field-label'
       className={cn(
-        // No `leading-snug`: Label's `leading-none` keeps the label→control gap tight.
-        'group/field-label peer/field-label flex w-fit gap-2 group-data-[disabled=true]/field:text-disabled-foreground',
+        // `leading-none` keeps the label→control gap tight.
+        'group/field-label peer/field-label flex w-fit items-center gap-2 text-body leading-none font-medium select-none',
+        'group-data-[disabled=true]/field:text-disabled-foreground peer-disabled:cursor-not-allowed peer-disabled:text-disabled-foreground',
         className,
       )}
-      {...props}
-    />
+      {...props}>
+      {children}
+      {required && (
+        <span aria-hidden className='-ml-1 text-caption text-muted-foreground'>
+          *
+        </span>
+      )}
+    </label>
   );
 }
 
@@ -135,8 +140,8 @@ function FieldDescription({ className, ...props }: React.ComponentProps<'p'>) {
       data-slot='field-description'
       className={cn(
         'text-body font-normal text-muted-foreground group-has-[[data-orientation=horizontal]]/field:text-balance',
-        // A description that follows a label or legend sits `tight` below it: pull back the parent's larger gap.
-        'last:mt-0 nth-last-2:-mt-[calc(var(--spacing-related)-var(--spacing-tight))] [[data-variant=legend]+&]:-mt-[calc(var(--spacing-group)-var(--spacing-tight))]',
+        // A description that follows a label sits `tight` below it: pull back the field's larger gap.
+        'last:mt-0 nth-last-2:-mt-[calc(var(--spacing-related)-var(--spacing-tight))]',
         '[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary',
         className,
       )}
@@ -145,6 +150,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<'p'>) {
   );
 }
 
+/** A divider between fields; with children, a labelled one ("or"). */
 function FieldSeparator({ children, className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -164,16 +170,18 @@ function FieldSeparator({ children, className, ...props }: React.ComponentProps<
   );
 }
 
+/**
+ * The field's error: `children`, or the messages in `errors` (react-hook-form's `fieldState.error` fits), deduped;
+ * several render as a list. Renders nothing without one, so it can stay in the tree.
+ */
 function FieldError({
   className,
   children,
   errors,
   ...props
 }: React.ComponentProps<'div'> & {
-  /** Messages go through `UiConfig.message`: an app with i18n passes keys and translates them there. */
   errors?: Array<{ message?: string } | undefined>;
 }) {
-  const t = useUiConfig().message;
   const messages = [
     ...new Set(errors?.map((error) => error?.message).filter((message): message is string => !!message)),
   ];
@@ -187,11 +195,11 @@ function FieldError({
       {...props}>
       {children ||
         (messages.length === 1 ? (
-          t(messages[0])
+          messages[0]
         ) : (
           <ul className='ml-4 flex list-disc flex-col gap-tight'>
             {messages.map((message) => (
-              <li key={message}>{t(message)}</li>
+              <li key={message}>{message}</li>
             ))}
           </ul>
         ))}

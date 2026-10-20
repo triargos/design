@@ -56,7 +56,7 @@ export const Board: Story = {
         title='Block addon'
         description={
           <>
-            <Code>align='block-end'</Code>: a toolbar under a ghost textarea.
+            <Code>align='block-end'</Code>: a toolbar under the text.
           </>
         }>
         <InputGroupBlockAddon />
@@ -67,7 +67,13 @@ export const Board: Story = {
       <ExampleSection title='Pending' description='A Loader in the end addon while results load.'>
         <InputGroupPending />
       </ExampleSection>
-      <ExampleSection title='With textarea'>
+      <ExampleSection
+        title='With textarea'
+        description={
+          <>
+            <Code>InputGroupTextarea</Code>, with a count below.
+          </>
+        }>
         <InputGroupWithTextarea />
       </ExampleSection>
     </FoundationPage>

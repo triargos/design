@@ -8,24 +8,22 @@ export function ItemHeaderAndFooter() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Antrag 2024-118</InsetCardTitle>
+        <InsetCardTitle>Review requests</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
           <Item>
             <ItemHeader>
-              <span className='text-caption text-muted-foreground'>Eingereicht am 12. März</span>
-              <Badge intent='warning'>Ausstehend</Badge>
+              <span className='text-caption text-muted-foreground'>Requested on March 12</span>
+              <Badge intent='warning'>Pending</Badge>
             </ItemHeader>
             <ItemContent>
-              <ItemTitle>Mia Schmidt · Einschulung 2025</ItemTitle>
-              <ItemDescription>Geburtsurkunde fehlt noch.</ItemDescription>
+              <ItemTitle>Homepage copy · Website redesign</ItemTitle>
+              <ItemDescription>Waiting for a second reviewer.</ItemDescription>
             </ItemContent>
             <ItemFooter>
-              <span className='text-caption text-muted-foreground'>2 von 3 Unterlagen</span>
-              <Button type='button' size='xs' intent='neutral' emphasis='raised'>
-                Erinnern
-              </Button>
+              <span className='text-caption text-muted-foreground'>1 of 2 approvals</span>
+              <Button size='xs'>Remind</Button>
             </ItemFooter>
           </Item>
         </ItemList>

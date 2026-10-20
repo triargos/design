@@ -29,12 +29,16 @@ function SheetContent({
   children,
   side = 'right',
   showCloseButton = true,
+  closeLabel = 'Close',
   container,
   ...props
 }: SheetPrimitive.Popup.Props &
   Pick<SheetPrimitive.Portal.Props, 'container'> & {
     side?: 'right' | 'left';
+    /** The ✕ in the corner. Off when a footer action is the way out. */
     showCloseButton?: boolean;
+    /** The ✕'s accessible name. */
+    closeLabel?: string;
   }) {
   return (
     <SheetPrimitive.Portal data-slot='sheet-portal' container={container}>
@@ -52,7 +56,7 @@ function SheetContent({
         {...props}>
         {children}
         {showCloseButton && (
-          <SheetClose render={<Button intent='neutral' emphasis='ghost' size='icon-sm' className={modalClose} />}>
+          <SheetClose render={<Button emphasis='ghost' size='icon-sm' className={modalClose} />}>
             <XIcon />
             <span className='sr-only'>Close</span>
           </SheetClose>
@@ -70,7 +74,6 @@ function SheetBody({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='sheet-body'
-      data-modal='body'
       data-surface='card'
       className={cn(modalBody, 'min-h-0 flex-1 overflow-y-auto', className)}
       {...props}

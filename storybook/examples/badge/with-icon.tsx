@@ -7,11 +7,11 @@ export function BadgeWithIcon() {
     <div className='flex flex-wrap items-center gap-2'>
       <Badge intent='success'>
         <CheckIcon />
-        Genehmigt
+        Paid
       </Badge>
       <Badge intent='warning'>
         <ClockIcon />
-        Ausstehend
+        Due in 3 days
       </Badge>
     </div>
   );

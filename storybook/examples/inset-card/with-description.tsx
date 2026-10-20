@@ -11,11 +11,11 @@ export function InsetCardWithDescription() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Benachrichtigungen</InsetCardTitle>
-        <InsetCardDescription>Wann wir dir eine E-Mail schicken.</InsetCardDescription>
+        <InsetCardTitle>Notifications</InsetCardTitle>
+        <InsetCardDescription>When we send you an email.</InsetCardDescription>
       </InsetCardHeader>
       <InsetCardContent className='p-group'>
-        <p className='text-body text-muted-foreground'>Inhalt der Karte.</p>
+        <p className='text-body text-muted-foreground'>Card content.</p>
       </InsetCardContent>
     </InsetCard>
   );

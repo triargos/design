@@ -23,10 +23,10 @@ import { SortableItem, SortableItemHandle } from '~/components/ui/sortable';
 import { StatusDot } from '~/components/ui/status-dot';
 
 const INITIAL = [
-  { id: 'new', title: 'Neu', description: 'Gerade eingereicht', intent: 'info' },
-  { id: 'review', title: 'In Prüfung', description: 'Unterlagen werden geprüft', intent: 'warning' },
-  { id: 'accepted', title: 'Zugesagt', description: 'Zusage verschickt', intent: 'success' },
-  { id: 'declined', title: 'Abgelehnt', description: 'Absage verschickt', intent: 'destructive' },
+  { id: 'todo', title: 'To do', description: 'Not started yet', intent: 'info' },
+  { id: 'progress', title: 'In progress', description: 'Someone is on it', intent: 'warning' },
+  { id: 'done', title: 'Done', description: 'Shipped and checked', intent: 'success' },
+  { id: 'blocked', title: 'Blocked', description: 'Waiting on something', intent: 'destructive' },
 ] as const;
 
 /**
@@ -52,7 +52,7 @@ export function SortableDefault() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Status der Anmeldungen</InsetCardTitle>
+        <InsetCardTitle>Task statuses</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <DndContext id='sortable-statuses' sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
@@ -61,7 +61,7 @@ export function SortableDefault() {
               {items.map((item) => (
                 <SortableItem key={item.id} id={item.id} render={<Item className='flex-nowrap bg-card' />}>
                   <ItemMedia>
-                    <SortableItemHandle aria-label={`${item.title} verschieben`} />
+                    <SortableItemHandle aria-label={`Move ${item.title}`} />
                   </ItemMedia>
                   <ItemContent className='flex-none'>
                     <ItemTitle className='whitespace-nowrap'>
@@ -71,7 +71,7 @@ export function SortableDefault() {
                   </ItemContent>
                   <ItemActions className='min-w-0 flex-1 justify-end'>
                     <span className='truncate text-muted-foreground'>{item.description}</span>
-                    <Button type='button' intent='neutral' emphasis='ghost' size='icon-xs' aria-label='Mehr'>
+                    <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${item.title}`}>
                       <MoreHorizontalIcon />
                     </Button>
                   </ItemActions>

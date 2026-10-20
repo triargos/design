@@ -8,8 +8,7 @@ import useMeasure from 'react-use-measure';
 import { cn } from '~/lib/utils';
 
 // The hairline stops at the row padding (`group`), so it lines up with the row content instead of running into the
-// card's rounded edge. Row padding targets direct item children, so it belongs on whichever element holds the rows: the
-// list itself, or the inner measure wrapper when animated.
+// card's rounded edge. Row padding targets direct item children, so it sits on the inner measure wrapper.
 const itemListRowClasses = cn(
   '[&>[data-slot=item]]:px-group',
   '[&>[data-slot=item]:not(:last-child)]:relative',
@@ -18,26 +17,12 @@ const itemListRowClasses = cn(
   '[&>[data-slot=item]:not(:last-child)]:after:right-group [&>[data-slot=item]:not(:last-child)]:after:left-group',
 );
 
-interface ItemListProps {
-  className?: string;
-  animate?: boolean;
-  children?: React.ReactNode;
-}
-
 /**
  * Rows that run to the card's edge, hairlines between them: put it in `InsetCardContent className='overflow-hidden'`.
- * `animate` springs the height when rows come and go.
+ * Springs its height when rows come and go.
  */
-function ItemList({ className, animate = true, children }: ItemListProps) {
+function ItemList({ className, children }: { className?: string; children?: React.ReactNode }) {
   const [measureRef, bounds] = useMeasure();
-
-  if (!animate) {
-    return (
-      <div role='list' data-slot='item-list' className={cn('overflow-hidden', itemListRowClasses, className)}>
-        {children}
-      </div>
-    );
-  }
 
   return (
     <motion.div
@@ -60,17 +45,22 @@ function ItemList({ className, animate = true, children }: ItemListProps) {
 }
 
 const itemClassName =
-  'group/item flex w-full flex-wrap items-center gap-2.5 rounded-control-lg border border-transparent px-3 py-2.5 text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-[selected]:bg-muted data-[targeted]:bg-muted/40 [a]:no-underline [a]:hover:bg-row-hover';
+  'group/item flex w-full flex-wrap items-center gap-2.5 rounded-control-lg border border-transparent px-3 py-2.5 text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover';
 
 /**
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
- * under the pointer; a selected row (`data-selected`) fills with `muted`.
+ * under the pointer; a `selected` row fills with `muted`.
  */
-function Item({ className, render, ...props }: useRender.ComponentProps<'div'>) {
+function Item({
+  className,
+  render,
+  selected = false,
+  ...props
+}: useRender.ComponentProps<'div'> & { selected?: boolean }) {
   return useRender({
     defaultTagName: 'div',
     render,
-    state: { slot: 'item' },
+    state: { slot: 'item', selected },
     props: mergeProps<'div'>({ className: cn(itemClassName, className) }, props),
   });
 }

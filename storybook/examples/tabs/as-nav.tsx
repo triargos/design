@@ -1,23 +1,23 @@
 import { InboxIcon, SettingsIcon, UsersIcon } from 'lucide-react';
 
-import { TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { TabsLink, TabsNav } from '~/components/ui/tabs';
 
-/** Page links: each trigger is a router link with `aria-current`. */
+/** Page links: `current` marks the page; a router link that sets `aria-current` itself needs none. */
 export function TabsAsNav() {
   return (
-    <TabsList as='nav'>
-      <TabsTrigger href='/' current>
+    <TabsNav>
+      <TabsLink href='#overview' current>
         <InboxIcon />
-        Übersicht
-      </TabsTrigger>
-      <TabsTrigger href='/members'>
+        Overview
+      </TabsLink>
+      <TabsLink href='#members'>
         <UsersIcon />
-        Mitglieder
-      </TabsTrigger>
-      <TabsTrigger href='/settings'>
+        Members
+      </TabsLink>
+      <TabsLink href='#settings'>
         <SettingsIcon />
-        Einstellungen
-      </TabsTrigger>
-    </TabsList>
+        Settings
+      </TabsLink>
+    </TabsNav>
   );
 }

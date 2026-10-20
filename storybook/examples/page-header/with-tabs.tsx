@@ -1,30 +1,30 @@
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 import { PageContent } from '~/components/ui/page-content';
-import { PageDescription, PageHeader, PageHeaderGroup, PageHeaderSection } from '~/components/ui/page-header';
-import { TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { PageDescription, PageHeaderGroup, PageTitle } from '~/components/ui/page-header';
+import { TabsLink, TabsNav } from '~/components/ui/tabs';
 
-/** View tabs below the title: `TabsList as='nav'`. */
+/** View tabs below the title: a `TabsNav`. */
 export function PageHeaderWithTabs() {
   return (
     <PageContent
       header={
-        <PageHeaderSection>
+        <>
           <PageHeaderGroup>
-            <PageHeader>Nachmittagsbetreuung</PageHeader>
-            <PageDescription>Anmeldungen für das Schuljahr 2025/26.</PageDescription>
+            <PageTitle>Website redesign</PageTitle>
+            <PageDescription>The new marketing site, due June 30.</PageDescription>
           </PageHeaderGroup>
-          <TabsList as='nav'>
-            <TabsTrigger href='/' current>
-              Übersicht
-            </TabsTrigger>
-            <TabsTrigger href='/forms'>Formulare</TabsTrigger>
-            <TabsTrigger href='/settings'>Einstellungen</TabsTrigger>
-          </TabsList>
-        </PageHeaderSection>
+          <TabsNav>
+            <TabsLink href='#overview' current>
+              Overview
+            </TabsLink>
+            <TabsLink href='#tasks'>Tasks</TabsLink>
+            <TabsLink href='#settings'>Settings</TabsLink>
+          </TabsNav>
+        </>
       }>
       <InsetCard>
         <InsetCardHeader>
-          <InsetCardTitle>Anmeldungen</InsetCardTitle>
+          <InsetCardTitle>Milestones</InsetCardTitle>
         </InsetCardHeader>
         <InsetCardContent className='h-16' />
       </InsetCard>

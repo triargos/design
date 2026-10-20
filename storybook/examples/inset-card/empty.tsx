@@ -6,12 +6,12 @@ export function InsetCardEmpty() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Dokumente</InsetCardTitle>
+        <InsetCardTitle>Documents</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent>
         <EmptyState size='sm'>
-          <EmptyStateTitle>Noch keine Dokumente</EmptyStateTitle>
-          <EmptyStateDescription>Hochgeladene Dokumente erscheinen hier.</EmptyStateDescription>
+          <EmptyStateTitle>No documents yet</EmptyStateTitle>
+          <EmptyStateDescription>Uploaded documents show up here.</EmptyStateDescription>
         </EmptyState>
       </InsetCardContent>
     </InsetCard>

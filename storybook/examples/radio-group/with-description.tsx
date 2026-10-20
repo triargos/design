@@ -1,23 +1,23 @@
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldLegend, FieldSet } from '~/components/ui/field';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 
-const PLANS = [
-  { value: 'daily', label: 'Täglich', description: 'Eine E-Mail am Morgen mit allem vom Vortag.' },
-  { value: 'instant', label: 'Sofort', description: 'Jede Nachricht einzeln, sobald sie eintrifft.' },
-  { value: 'never', label: 'Nie', description: 'Nur im Elternportal, keine E-Mails.' },
+const DIGESTS = [
+  { value: 'daily', label: 'Daily', description: 'One email in the morning with everything from the day before.' },
+  { value: 'instant', label: 'Instantly', description: 'Each update on its own, as it happens.' },
+  { value: 'never', label: 'Never', description: 'Updates stay in the inbox, no email.' },
 ] as const;
 
 export function RadioGroupWithDescription() {
   return (
     <FieldSet className='max-w-md'>
-      <FieldLegend variant='label'>E-Mail-Benachrichtigungen</FieldLegend>
+      <FieldLegend>Email updates</FieldLegend>
       <RadioGroup defaultValue='daily'>
-        {PLANS.map((plan) => (
-          <Field key={plan.value} orientation='horizontal'>
-            <RadioGroupItem id={`plan-${plan.value}`} value={plan.value} />
+        {DIGESTS.map((digest) => (
+          <Field key={digest.value} orientation='horizontal'>
+            <RadioGroupItem id={`digest-${digest.value}`} value={digest.value} />
             <FieldContent>
-              <FieldLabel htmlFor={`plan-${plan.value}`}>{plan.label}</FieldLabel>
-              <FieldDescription>{plan.description}</FieldDescription>
+              <FieldLabel htmlFor={`digest-${digest.value}`}>{digest.label}</FieldLabel>
+              <FieldDescription>{digest.description}</FieldDescription>
             </FieldContent>
           </Field>
         ))}

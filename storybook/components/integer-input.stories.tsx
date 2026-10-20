@@ -17,9 +17,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Integer Input'
-      description='A whole number with steppers and a unit: an InputGroup with minus and plus. IntegerStepper.'>
+    <FoundationPage title='Integer Input' description='A whole number between a minus and a plus, with a unit.'>
       <ExampleSection title='Default'>
         <IntegerInputDefault />
       </ExampleSection>

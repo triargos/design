@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { CopyIcon } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { useUiStrings } from '~/lib/ui-config';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
 import { PopCheck, usePop } from '~/components/ui/pop-check';
@@ -12,8 +11,10 @@ const COPIED_MS = 2000;
 interface CopyButtonProps extends Omit<ButtonProps, 'onClick' | 'children' | 'value'> {
   /** The text written to the clipboard. */
   value: string;
-  /** Accessible name; defaults to "Kopieren". Icon-only buttons need no other text. */
+  /** The accessible name of the icon-only button. With `children`, the text names it. */
   label?: string;
+  /** Announced to screen readers after a copy; the visible label does not change. */
+  copiedLabel?: string;
   /** Visible text next to the icon; a function gets whether the value was just copied. */
   children?: ReactNode | ((copied: boolean) => ReactNode);
   /** After a successful copy, e.g. a toast. */
@@ -45,15 +46,14 @@ function CopyIconSwap({ copied }: { copied: boolean }) {
 /** Copies `value`; the icon springs into a check for 2s. Icon-only and ghost by default. */
 function CopyButton({
   value,
-  label,
+  label = 'Copy',
+  copiedLabel = 'Copied',
   children,
   onCopied,
   size = children === undefined ? 'icon-sm' : 'sm',
-  intent = 'neutral',
   emphasis = 'ghost',
   ...props
 }: CopyButtonProps) {
-  const strings = useUiStrings();
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -69,20 +69,17 @@ function CopyButton({
   const text = typeof children === 'function' ? children(copied) : children;
   return (
     <Button
-      type='button'
       data-slot='copy-button'
       data-copied={copied || undefined}
       size={size}
-      intent={intent}
       emphasis={emphasis}
       {...props}
-      aria-label={text === undefined ? (label ?? strings.copy) : label}
+      aria-label={text === undefined ? label : undefined}
       onClick={() => void copy()}>
       <CopyIconSwap copied={copied} />
       {text}
-      {/* The label does not change on copy; this announces it. */}
       <span role='status' className='sr-only'>
-        {copied ? strings.copied : ''}
+        {copied ? copiedLabel : ''}
       </span>
     </Button>
   );

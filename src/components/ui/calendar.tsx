@@ -1,139 +1,160 @@
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import * as React from 'react';
-import { DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker';
-import { de } from 'react-day-picker/locale';
+import { type CalendarDate, parseDate } from '@internationalized/date';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import {
+  Button,
+  CalendarCell,
+  CalendarGrid,
+  CalendarGridBody,
+  CalendarGridHeader,
+  CalendarHeaderCell,
+  Calendar as CalendarRac,
+  Heading,
+} from 'react-aria-components/Calendar';
+import { I18nProvider } from 'react-aria-components/I18nProvider';
+import { RangeCalendar as RangeCalendarRac } from 'react-aria-components/RangeCalendar';
 
 import { buttonVariants } from '~/components/ui/button';
-import { inputSurfaceVariants } from '~/components/ui/input';
 
 import { cn } from '~/lib/utils';
 
-const defaultClassNames = getDefaultClassNames();
+/** A day as `YYYY-MM-DD`, or `''` for none. */
+const toDate = (value: string | undefined): CalendarDate | null => (value ? parseDate(value) : null);
+
+interface CalendarBaseProps {
+  /** Earliest and latest day that can be picked, `YYYY-MM-DD`; days outside are disabled. */
+  min?: string;
+  max?: string;
+  /** Focuses the selected day (or today) on mount: for a calendar that opens in a popup. */
+  autoFocus?: boolean;
+  /** BCP 47; sets the month names, weekday names and the first day of the week. */
+  locale?: string;
+  className?: string;
+}
+
+const rootClassName = 'w-fit p-3 [--cell-size:2.25rem]';
 
 const navButtonClassName = cn(
   buttonVariants({ intent: 'neutral', emphasis: 'ghost' }),
-  'h-(--cell-size) w-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 aria-disabled:text-disabled-foreground dark:hover:bg-foreground/6',
+  'size-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 disabled:text-disabled-foreground dark:hover:bg-foreground/6',
 );
 
-const chevronIcons = { left: ChevronLeftIcon, right: ChevronRightIcon, up: ChevronDownIcon, down: ChevronDownIcon };
+/**
+ * The day cell carries a range's band (the days between its ends); the day inside it is the target. The selected day
+ * (a range's start and end) takes the brand fill; today is a quiet fill. Days outside the month are muted, disabled
+ * days `disabled-foreground`.
+ */
+const cellClassName = cn(
+  'group/day relative size-(--cell-size) outline-none select-none data-disabled:pointer-events-none',
+  'data-selected:data-[range]:bg-foreground/6 data-selection-start:rounded-l-control data-selection-end:rounded-r-control',
+);
+const dayClassName = cn(
+  'flex size-full items-center justify-center rounded-control text-body leading-none',
+  'transition-colors duration-feedback group-hover/day:bg-foreground/6',
+  'group-data-focus-visible/day:ring-3 group-data-focus-visible/day:ring-ring/24',
+  'group-data-today/day:bg-foreground/6 group-data-today/day:font-medium',
+  'group-data-outside-month/day:text-muted-foreground group-data-disabled/day:text-disabled-foreground',
+);
+const selectedDayClassName = {
+  single: 'group-data-selected/day:bg-primary-solid group-data-selected/day:text-primary-solid-foreground',
+  range: cn(
+    'group-data-selection-start/day:bg-primary-solid group-data-selection-start/day:text-primary-solid-foreground',
+    'group-data-selection-end/day:bg-primary-solid group-data-selection-end/day:text-primary-solid-foreground',
+  ),
+};
 
+/** Header (previous, month, next) and the month grid, shared by both calendars. */
+function CalendarMonth({ range = false }: { range?: boolean }) {
+  return (
+    <>
+      <header className='mb-4 flex h-(--cell-size) items-center justify-between gap-1'>
+        <Button slot='previous' className={navButtonClassName}>
+          <ChevronLeftIcon className='size-4' />
+        </Button>
+        <Heading className='text-body font-medium select-none' />
+        <Button slot='next' className={navButtonClassName}>
+          <ChevronRightIcon className='size-4' />
+        </Button>
+      </header>
+      <CalendarGrid weekdayStyle='short' className='border-separate border-spacing-x-0 border-spacing-y-2 -my-2'>
+        <CalendarGridHeader>
+          {(day) => (
+            <CalendarHeaderCell className='p-0 text-caption font-normal text-muted-foreground select-none'>
+              {day}
+            </CalendarHeaderCell>
+          )}
+        </CalendarGridHeader>
+        <CalendarGridBody>
+          {(date) => (
+            <CalendarCell date={date} data-range={range || undefined} className={cellClassName}>
+              {({ formattedDate }) => (
+                <span className={cn(dayClassName, selectedDayClassName[range ? 'range' : 'single'])}>
+                  {formattedDate}
+                </span>
+              )}
+            </CalendarCell>
+          )}
+        </CalendarGridBody>
+      </CalendarGrid>
+    </>
+  );
+}
+
+/** A month to pick a day in. `value` is `YYYY-MM-DD` or `''`; it opens on the value's month. */
 function Calendar({
+  value,
+  onValueChange,
+  min,
+  max,
+  autoFocus,
+  locale = 'en-US',
   className,
-  classNames,
-  showOutsideDays = true,
-  captionLayout = 'label',
-  formatters,
-  components,
-  ...props
-}: React.ComponentProps<typeof DayPicker>) {
+}: CalendarBaseProps & { value: string; onValueChange: (value: string) => void }) {
   return (
-    <DayPicker
-      locale={de}
-      showOutsideDays={showOutsideDays}
-      className={cn(
-        'group/calendar bg-background p-3 [--cell-size:2.25rem] in-data-[slot=inset-card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent',
-        className,
-      )}
-      captionLayout={captionLayout}
-      formatters={{
-        formatMonthDropdown: (date) => date.toLocaleString(de.code, { month: 'short' }),
-        ...formatters,
-      }}
-      classNames={{
-        root: cn('w-fit', defaultClassNames.root),
-        months: cn('relative flex flex-col gap-4 md:flex-row', defaultClassNames.months),
-        month: cn('flex w-full flex-col gap-4', defaultClassNames.month),
-        nav: cn('absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1', defaultClassNames.nav),
-        button_previous: cn(navButtonClassName, defaultClassNames.button_previous),
-        button_next: cn(navButtonClassName, defaultClassNames.button_next),
-        month_caption: cn(
-          'flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)',
-          defaultClassNames.month_caption,
-        ),
-        dropdowns: cn(
-          'flex h-(--cell-size) w-full items-center justify-center gap-1.5 text-body font-medium',
-          defaultClassNames.dropdowns,
-        ),
-        dropdown_root: cn(
-          inputSurfaceVariants({ scope: 'within' }),
-          'relative rounded-control',
-          defaultClassNames.dropdown_root,
-        ),
-        dropdown: cn('absolute inset-0 opacity-0', defaultClassNames.dropdown),
-        caption_label: cn(
-          'text-body font-medium select-none',
-          captionLayout !== 'label' &&
-            'flex h-8 items-center gap-1 rounded-control pr-1.5 pl-2.5 [&>svg]:size-3.5 [&>svg]:text-muted-foreground',
-          defaultClassNames.caption_label,
-        ),
-        weekdays: cn('flex', defaultClassNames.weekdays),
-        weekday: cn('flex-1 text-caption font-normal text-muted-foreground select-none', defaultClassNames.weekday),
-        week: cn('mt-2 flex w-full', defaultClassNames.week),
-        week_number_header: cn('w-(--cell-size) select-none', defaultClassNames.week_number_header),
-        week_number: cn('text-caption text-muted-foreground select-none', defaultClassNames.week_number),
-        day: cn(
-          'group/day relative aspect-square h-full w-full p-0 text-center select-none [&:first-child[data-selected=true]_button]:rounded-l-control [&:last-child[data-selected=true]_button]:rounded-r-control',
-          defaultClassNames.day,
-        ),
-        range_start: cn('rounded-l-control bg-foreground/6', defaultClassNames.range_start),
-        range_middle: cn('rounded-none', defaultClassNames.range_middle),
-        range_end: cn('rounded-r-control bg-foreground/6', defaultClassNames.range_end),
-        today: cn('rounded-control bg-foreground/6 font-medium text-foreground', defaultClassNames.today),
-        outside: cn('text-muted-foreground aria-selected:text-muted-foreground', defaultClassNames.outside),
-        disabled: cn('text-muted-foreground opacity-50', defaultClassNames.disabled),
-        hidden: cn('invisible', defaultClassNames.hidden),
-        ...classNames,
-      }}
-      components={{
-        Root: ({ rootRef, ...props }) => <div data-slot='calendar' ref={rootRef} {...props} />,
-        Chevron: ({ className, orientation = 'down', ...props }) => {
-          const Icon = chevronIcons[orientation];
-          return <Icon className={cn('size-4', className)} {...props} />;
-        },
-        DayButton: CalendarDayButton,
-        WeekNumber: ({ children, ...props }) => (
-          <td {...props}>
-            <div className='flex size-(--cell-size) items-center justify-center text-center'>{children}</div>
-          </td>
-        ),
-        ...components,
-      }}
-      {...props}
-    />
+    <I18nProvider locale={locale}>
+      <CalendarRac
+        data-slot='calendar'
+        value={toDate(value)}
+        onChange={(date) => onValueChange(date.toString())}
+        minValue={toDate(min)}
+        maxValue={toDate(max)}
+        autoFocus={autoFocus}
+        className={cn(rootClassName, className)}>
+        <CalendarMonth />
+      </CalendarRac>
+    </I18nProvider>
   );
 }
 
-function CalendarDayButton({ className, day, modifiers, ...props }: React.ComponentProps<typeof DayButton>) {
-  const ref = React.useRef<HTMLButtonElement>(null);
-  React.useEffect(() => {
-    if (modifiers.focused) ref.current?.focus();
-  }, [modifiers.focused]);
+/** Two days as `YYYY-MM-DD`, the first not after the second. */
+interface DateRange {
+  start: string;
+  end: string;
+}
 
-  // A plain <button>: Button's ghost variant brings `bg-muted` hover/open states and a dark-mode hover
-  // that would override the selected fill.
+/** A month to pick a range of days in: the first click sets the start, the second the end. */
+function RangeCalendar({
+  value,
+  onValueChange,
+  min,
+  max,
+  autoFocus,
+  locale = 'en-US',
+  className,
+}: CalendarBaseProps & { value: DateRange | null; onValueChange: (value: DateRange) => void }) {
   return (
-    <button
-      ref={ref}
-      type='button'
-      data-day={day.date.toLocaleDateString(de.code)}
-      data-selected-single={
-        modifiers.selected && !modifiers.range_start && !modifiers.range_end && !modifiers.range_middle
-      }
-      data-range-start={modifiers.range_start}
-      data-range-end={modifiers.range_end}
-      data-range-middle={modifiers.range_middle}
-      className={cn(
-        'relative flex aspect-square h-auto w-full min-w-(--cell-size) flex-col items-center justify-center gap-1 rounded-control text-body leading-none font-normal transition-colors outline-none select-none',
-        'hover:bg-foreground/6 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-foreground/15 disabled:pointer-events-none',
-        'data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-foreground/6',
-        'data-[range-end=true]:bg-primary-solid data-[range-end=true]:text-primary-solid-foreground data-[range-start=true]:bg-primary-solid data-[range-start=true]:text-primary-solid-foreground data-[selected-single=true]:bg-primary-solid data-[selected-single=true]:text-primary-solid-foreground',
-        '[&>span]:text-caption [&>span]:opacity-70',
-        defaultClassNames.day,
-        className,
-      )}
-      {...props}
-    />
+    <I18nProvider locale={locale}>
+      <RangeCalendarRac
+        data-slot='calendar'
+        value={value && { start: parseDate(value.start), end: parseDate(value.end) }}
+        onChange={(range) => onValueChange({ start: range.start.toString(), end: range.end.toString() })}
+        minValue={toDate(min)}
+        maxValue={toDate(max)}
+        autoFocus={autoFocus}
+        className={cn(rootClassName, className)}>
+        <CalendarMonth range />
+      </RangeCalendarRac>
+    </I18nProvider>
   );
 }
 
-export { Calendar };
+export { Calendar, RangeCalendar, type DateRange };

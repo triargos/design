@@ -6,13 +6,13 @@ import { PickerTrigger } from '~/components/ui/picker-trigger';
 export function PickerTriggerStates() {
   return (
     <div className='grid w-72 gap-2'>
-      <PickerTrigger aria-invalid className='justify-between text-muted-foreground'>
-        <span>Schüler wählen</span>
-        <ChevronsUpDownIcon className='opacity-50' />
+      <PickerTrigger aria-invalid className='text-muted-foreground'>
+        <span>Choose an assignee</span>
+        <ChevronsUpDownIcon />
       </PickerTrigger>
-      <PickerTrigger disabled className='justify-between'>
-        <span>Erika Mustermann</span>
-        <ChevronsUpDownIcon className='opacity-50' />
+      <PickerTrigger disabled>
+        <span>Maya Chen</span>
+        <ChevronsUpDownIcon />
       </PickerTrigger>
     </div>
   );

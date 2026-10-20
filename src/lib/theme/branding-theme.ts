@@ -1,7 +1,7 @@
 import { BRAND_ANCHORS } from './brand-anchors';
 import type { BrandingTheme } from './branding';
 import { generateTheme, type ThemeInput } from './theme-generator';
-import { surfaceRules, themeToShadcnVars, type FillTint } from './theme-to-css';
+import { surfaceRules, themeToCssVars, type FillTint } from './theme-to-css';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -78,7 +78,7 @@ const declarations = (vars: Record<string, string>): string =>
 const modeCss = (theme: BrandingTheme, mode: ThemeMode, contrast: number): string => {
   const page = generateTheme(brandingThemeInput(theme, mode, contrast));
   const tint = fillTint(theme, mode);
-  const pageVars = themeToShadcnVars(page, tint, BRAND_ANCHORS[theme.destructiveColor]);
+  const pageVars = themeToCssVars(page, tint, BRAND_ANCHORS[theme.destructiveColor]);
   const surfaces = surfaceRules(page, tint).map(
     ({ selector, vars }) => `${mode === 'light' ? '' : '.dark '}${selector} {${declarations(vars)}}`,
   );
@@ -88,8 +88,8 @@ const modeCss = (theme: BrandingTheme, mode: ThemeMode, contrast: number): strin
 const cssCache = new Map<string, string>();
 
 /**
- * The `:root` (light) and `.dark` color rules for an organization's branding, each followed by its `[data-surface]`
- * rules, then the same at `CONTRAST_MORE` under `prefers-contrast: more`. Memoized per stored color names.
+ * The `:root` (light) and `.dark` color rules for a branding theme, each followed by its `[data-surface]`
+ * rules, then the same at `CONTRAST_MORE` under `prefers-contrast: more`. Memoized per color names.
  */
 export function brandingThemeCss(theme: BrandingTheme): string {
   const key = `${theme.baseColor}/${theme.primaryColor}/${theme.destructiveColor}`;

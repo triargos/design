@@ -7,20 +7,12 @@ import { RadioGroupDefault } from '../examples/radio-group/default';
 import { RadioGroupDisabled } from '../examples/radio-group/disabled';
 import { RadioGroupInvalid } from '../examples/radio-group/invalid';
 import { RadioGroupWithDescription } from '../examples/radio-group/with-description';
-import {
-  Code,
-  ExampleSection,
-  FORCED_STATES,
-  FoundationPage,
-  FoundationSection,
-  Matrix,
-  StateCell,
-} from '../kit/blocks';
+import { Code, ExampleSection, FoundationPage, FoundationSection, Matrix, StateCell } from '../kit/blocks';
 
 const meta = {
   title: 'Components/Radio Group',
   component: RadioGroup,
-  parameters: { description: 'One of a few options, all visible.', pseudo: FORCED_STATES },
+  parameters: { description: 'One of a few options, all visible.' },
 } satisfies Meta<typeof RadioGroup>;
 
 export default meta;
@@ -33,7 +25,7 @@ const STATES = ['rest', 'hover', 'focus', 'invalid', 'disabled'] as const;
 const radioCell = (state: (typeof STATES)[number], checked: boolean) => (
   <StateCell key={state} state={state}>
     <RadioGroup
-      aria-label='Auswahl'
+      aria-label='Choice'
       defaultValue={checked ? 'on' : undefined}
       disabled={state === 'disabled'}
       className='w-auto'>
@@ -45,12 +37,12 @@ const radioCell = (state: (typeof STATES)[number], checked: boolean) => (
 const cardCell = (state: (typeof STATES)[number], checked: boolean) => (
   <StateCell key={state} state={state}>
     <RadioGroup
-      aria-label='Grund'
+      aria-label='Plan'
       defaultValue={checked ? 'on' : undefined}
       disabled={state === 'disabled'}
       className='w-full'>
       <ChoiceCardItem value='on' aria-invalid={state === 'invalid' || undefined}>
-        Arzt
+        Team
       </ChoiceCardItem>
     </RadioGroup>
   </StateCell>
@@ -61,12 +53,12 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Radio Group'
-      description='One of a few options, all visible. RadioGroupItem is the flat dot next to a label; ChoiceCard is the radio as a card, for a few choices that deserve room.'>
+      description='One of a few options, all visible. RadioGroupItem is the dot next to a label; ChoiceCard is the radio as a card.'>
       <ExampleSection
         title='Default'
         description={
           <>
-            <Code>FieldSet · FieldLegend variant='label'</Code>
+            <Code>FieldSet · FieldLegend</Code>
           </>
         }>
         <RadioGroupDefault />

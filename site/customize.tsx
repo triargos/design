@@ -14,7 +14,7 @@ import {
 } from '~/components/ui/sheet';
 import { SidebarMenuButton } from '~/components/ui/sidebar';
 import { Slider } from '~/components/ui/slider';
-import { TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { TabsRadio, TabsRadioGroup } from '~/components/ui/tabs';
 
 import { BRAND_ANCHORS, type BrandColor } from '~/lib/theme/brand-anchors';
 import {
@@ -256,19 +256,18 @@ export function CustomizeSheet() {
             <span id='examples-on' className='text-body font-medium'>
               Examples on
             </span>
-            <TabsList
-              as='radio'
+            <TabsRadioGroup
               variant='segmented'
               aria-labelledby='examples-on'
               value={customization.surface}
               onValueChange={(surface) => write({ ...customization, surface: surface as DocsSurface })}
               className='w-full'>
               {SURFACES.map((surface) => (
-                <TabsTrigger key={surface} value={surface} className='flex-1 capitalize'>
+                <TabsRadio key={surface} value={surface} className='flex-1 capitalize'>
                   {surface}
-                </TabsTrigger>
+                </TabsRadio>
               ))}
-            </TabsList>
+            </TabsRadioGroup>
           </div>
           <Swatches
             legend='Primary'
@@ -310,7 +309,7 @@ export function CustomizeSheet() {
           </Accordion>
         </SheetBody>
         <SheetFooter>
-          <Button type='button' intent='neutral' emphasis='raised' disabled={!customized} onClick={() => write(null)}>
+          <Button disabled={!customized} onClick={() => write(null)}>
             <RotateCcwIcon data-icon='inline-start' aria-hidden />
             Reset to defaults
           </Button>

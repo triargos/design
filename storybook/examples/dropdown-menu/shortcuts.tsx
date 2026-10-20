@@ -9,27 +9,27 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 
+/** `DropdownMenuShortcut` at the end of a row; hidden in the touch drawer. */
 export function DropdownMenuShortcuts() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button type='button' intent='neutral' emphasis='raised' size='icon-sm' aria-label='Aktionen' />}>
+      <DropdownMenuTrigger render={<Button size='icon-sm' aria-label='Actions' />}>
         <MoreHorizontalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-56'>
         <DropdownMenuItem>
           <PencilIcon />
-          Bearbeiten
+          Edit
           <DropdownMenuShortcut>E</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <CopyIcon />
-          Duplizieren
+          Duplicate
           <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <PrinterIcon />
-          Drucken
+          Print
           <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>

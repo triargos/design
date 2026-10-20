@@ -1,9 +1,9 @@
-import { CalendarXIcon, FileTextIcon, HomeIcon, InboxIcon, SettingsIcon, UsersIcon } from 'lucide-react';
+import { CheckSquareIcon, FolderIcon, HomeIcon, InboxIcon, SettingsIcon, UsersIcon } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
 import { PageContent } from '~/components/ui/page-content';
-import { PageDescription, PageHeader, PageHeaderGroup } from '~/components/ui/page-header';
+import { PageDescription, PageHeaderGroup, PageTitle } from '~/components/ui/page-header';
 import {
   Sidebar,
   SidebarContent,
@@ -24,24 +24,24 @@ import {
 
 const GROUPS = [
   {
-    title: 'Schule',
+    title: 'Workspace',
     links: [
-      { label: 'Übersicht', icon: <HomeIcon />, active: false },
-      { label: 'Posteingang', icon: <InboxIcon />, active: false, count: 3 },
-      { label: 'Abwesenheiten', icon: <CalendarXIcon />, active: true },
+      { label: 'Overview', icon: <HomeIcon />, current: false },
+      { label: 'Inbox', icon: <InboxIcon />, current: false, count: 3 },
+      { label: 'Tasks', icon: <CheckSquareIcon />, current: true },
       {
-        label: 'Anmeldungen',
-        icon: <FileTextIcon />,
-        active: false,
-        children: ['Einschulung 2025', 'Nachmittagsbetreuung'],
+        label: 'Projects',
+        icon: <FolderIcon />,
+        current: false,
+        children: ['Website redesign', 'Mobile app'],
       },
     ],
   },
   {
-    title: 'Verwaltung',
+    title: 'Admin',
     links: [
-      { label: 'Mitglieder', icon: <UsersIcon />, active: false },
-      { label: 'Einstellungen', icon: <SettingsIcon />, active: false },
+      { label: 'Members', icon: <UsersIcon />, current: false },
+      { label: 'Settings', icon: <SettingsIcon />, current: false },
     ],
   },
 ] as const;
@@ -59,9 +59,9 @@ export function SidebarDefault() {
             <SidebarHeader className='px-5 pt-group'>
               <div className='flex items-center gap-2'>
                 <span className='flex size-8 shrink-0 items-center justify-center rounded-control-sm bg-primary-solid text-caption font-medium text-primary-solid-foreground'>
-                  GS
+                  AC
                 </span>
-                <span className='truncate text-body font-medium'>Grundschule am See</span>
+                <span className='truncate text-body font-medium'>Acme Inc.</span>
               </div>
             </SidebarHeader>
             <SidebarContent>
@@ -72,7 +72,7 @@ export function SidebarDefault() {
                     <SidebarMenu>
                       {group.links.map((link) => (
                         <SidebarMenuItem key={link.label}>
-                          <SidebarMenuButton isActive={link.active} className='relative w-full gap-3'>
+                          <SidebarMenuButton current={link.current} className='relative w-full gap-3'>
                             {link.icon}
                             <span>{link.label}</span>
                             {'count' in link && (
@@ -85,7 +85,7 @@ export function SidebarDefault() {
                             <SidebarMenuSub>
                               {link.children.map((child, index) => (
                                 <SidebarMenuSubItem key={child}>
-                                  <SidebarMenuSubButton isActive={index === 0}>
+                                  <SidebarMenuSubButton current={index === 0}>
                                     <span>{child}</span>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
@@ -100,7 +100,7 @@ export function SidebarDefault() {
               ))}
             </SidebarContent>
             <SidebarFooter className='px-5 pb-group'>
-              <span className='truncate text-caption text-muted-foreground'>Erika Mustermann · Sekretariat</span>
+              <span className='truncate text-caption text-muted-foreground'>Jordan Lee · Admin</span>
             </SidebarFooter>
           </Sidebar>
           <div className='relative h-full min-w-0 flex-1 overflow-y-auto bg-background shadow-md ring ring-border/50 md:rounded-panel'>
@@ -111,13 +111,13 @@ export function SidebarDefault() {
               <PageContent
                 header={
                   <PageHeaderGroup>
-                    <PageHeader>Abwesenheiten</PageHeader>
-                    <PageDescription>Krankmeldungen und Termine der Kinder dieser Woche.</PageDescription>
+                    <PageTitle>Tasks</PageTitle>
+                    <PageDescription>Everything assigned to you this week.</PageDescription>
                   </PageHeaderGroup>
                 }>
                 <InsetCard>
                   <InsetCardHeader>
-                    <InsetCardTitle>Heute</InsetCardTitle>
+                    <InsetCardTitle>Due today</InsetCardTitle>
                   </InsetCardHeader>
                   <InsetCardContent className='h-24' />
                 </InsetCard>

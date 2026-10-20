@@ -1,5 +1,3 @@
-import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
-import * as Schema from 'effect/Schema';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -21,21 +19,13 @@ import { Textarea } from '~/components/ui/textarea';
 
 const SEND_DELAY_MS = 1000;
 
-const Invite = Schema.Struct({
-  email: Schema.String.check(Schema.isPattern(/^\S+@\S+$/, { message: 'Bitte gib eine E-Mail-Adresse ein.' })),
-  note: Schema.String,
-});
-
 /**
  * Header and footer on the shell, the body in a card. A form wraps `DialogBody` and `DialogFooter` with
  * `className='contents'`, so the modal's layout is unchanged and Enter submits; the submit button sits in the footer.
  */
 export function DialogDefault() {
   const [open, setOpen] = useState(false);
-  const form = useForm({
-    resolver: standardSchemaResolver(Schema.toStandardSchemaV1(Invite)),
-    defaultValues: { email: '', note: '' },
-  });
+  const form = useForm({ defaultValues: { email: '', note: '' } });
   const onSubmit = form.handleSubmit(async () => {
     await new Promise((resolve) => setTimeout(resolve, SEND_DELAY_MS));
     setOpen(false);
@@ -43,11 +33,11 @@ export function DialogDefault() {
   });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button intent='neutral' emphasis='raised' />}>Mitglied einladen</DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogTrigger render={<Button />}>Invite member</DialogTrigger>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Mitglied einladen</DialogTitle>
-          <DialogDescription>Wir schicken eine E-Mail mit einem persönlichen Link.</DialogDescription>
+          <DialogTitle>Invite member</DialogTitle>
+          <DialogDescription>We’ll email them a link to join the workspace.</DialogDescription>
         </DialogHeader>
         <form noValidate onSubmit={onSubmit} className='contents'>
           <DialogBody>
@@ -55,14 +45,18 @@ export function DialogDefault() {
               <Controller
                 name='email'
                 control={form.control}
+                rules={{
+                  required: 'Enter an email address.',
+                  pattern: { value: /^\S+@\S+$/, message: 'Enter an email address.' },
+                }}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>E-Mail</FieldLabel>
+                  <Field invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                     <Input
                       {...field}
                       id={field.name}
                       type='email'
-                      placeholder='name@schule.de'
+                      placeholder='name@company.com'
                       aria-invalid={fieldState.invalid}
                     />
                     <FieldError errors={[fieldState.error]} />
@@ -74,18 +68,18 @@ export function DialogDefault() {
                 control={form.control}
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Nachricht</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Message</FieldLabel>
                     <Textarea {...field} id={field.name} rows={3} placeholder='Optional' />
-                    <FieldDescription>Steht über dem Link in der Einladung.</FieldDescription>
+                    <FieldDescription>Shown above the link in the invitation.</FieldDescription>
                   </Field>
                 )}
               />
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
-            <DialogClose render={<Button type='button' intent='neutral' emphasis='raised' />}>Abbrechen</DialogClose>
-            <Button type='submit' isLoading={form.formState.isSubmitting}>
-              Einladen
+            <DialogClose render={<Button type='button' />}>Cancel</DialogClose>
+            <Button type='submit' intent='primary' isLoading={form.formState.isSubmitting}>
+              Send invite
             </Button>
           </DialogFooter>
         </form>

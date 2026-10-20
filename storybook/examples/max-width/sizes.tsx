@@ -1,10 +1,10 @@
 import { MaxWidth } from '~/components/ui/max-width';
 
 const SIZES = [
-  { size: 'sm', label: 'sm · 640px · Formulare, ein Datensatz' },
-  { size: 'base', label: 'base · 768px · Einstellungen, Details' },
-  { size: 'md', label: 'md · 896px · Listen, Übersichten (Standard)' },
-  { size: 'lg', label: 'lg · 1480px · breite Tabellen, Formular-Editor' },
+  { size: 'sm', label: 'sm · 640px · forms, one record' },
+  { size: 'md', label: 'md · 768px · settings, details' },
+  { size: 'lg', label: 'lg · 896px · lists, overviews (default)' },
+  { size: 'xl', label: 'xl · 1480px · wide tables, editors' },
 ] as const;
 
 /** Caps the page column and centers it. Pick by content: forms read best narrow, tables need room. */

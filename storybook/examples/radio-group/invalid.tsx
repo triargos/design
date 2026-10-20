@@ -1,20 +1,20 @@
 import { Field, FieldError } from '~/components/ui/field';
 import { ChoiceCard, RadioGroup } from '~/components/ui/radio-group';
 
-const REASONS = ['Krankheit', 'Arzttermin', 'Familiärer Anlass', 'Sonstiges'] as const;
+const PLANS = ['Free', 'Team', 'Business', 'Enterprise'] as const;
 
 /** Not chosen yet, submitted. */
 export function RadioGroupInvalid() {
   return (
-    <Field data-invalid className='max-w-md'>
-      <RadioGroup aria-label='Grund der Abwesenheit' className='sm:grid-cols-2'>
-        {REASONS.map((reason) => (
-          <ChoiceCard key={reason} value={reason} aria-invalid>
-            {reason}
+    <Field invalid className='max-w-md'>
+      <RadioGroup aria-label='Plan' className='sm:grid-cols-2'>
+        {PLANS.map((plan) => (
+          <ChoiceCard key={plan} value={plan} aria-invalid>
+            {plan}
           </ChoiceCard>
         ))}
       </RadioGroup>
-      <FieldError>Bitte wähle einen Grund.</FieldError>
+      <FieldError>Choose a plan.</FieldError>
     </Field>
   );
 }

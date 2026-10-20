@@ -3,12 +3,16 @@ import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-function Drawer({ swipeDirection = 'down', ...props }: DrawerPrimitive.Root.Props) {
-  return <DrawerPrimitive.Root data-slot='drawer' swipeDirection={swipeDirection} {...props} />;
+function Drawer(props: DrawerPrimitive.Root.Props) {
+  return <DrawerPrimitive.Root data-slot='drawer' {...props} />;
 }
 
 function DrawerTrigger(props: DrawerPrimitive.Trigger.Props) {
   return <DrawerPrimitive.Trigger data-slot='drawer-trigger' {...props} />;
+}
+
+function DrawerClose(props: DrawerPrimitive.Close.Props) {
+  return <DrawerPrimitive.Close data-slot='drawer-close' {...props} />;
 }
 
 /** A touch bottom sheet. A `Drawer` rendered inside another drawer's popup nests in it (Base UI does it on its own). */
@@ -72,13 +76,14 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
   );
 }
 
+/** Wraps the page, so an open drawer scales `DrawerIndent` back over `DrawerIndentBackground`. */
 const DrawerProvider = DrawerPrimitive.Provider;
 
 function DrawerIndentBackground({ className, ...props }: DrawerPrimitive.IndentBackground.Props) {
   return (
     <DrawerPrimitive.IndentBackground
       data-slot='drawer-indent-background'
-      className={cn('fixed inset-0 data-active:bg-black', className)}
+      className={cn('pointer-events-none fixed inset-0 data-active:bg-black', className)}
       {...props}
     />
   );
@@ -106,6 +111,7 @@ function DrawerIndent({ className, ...props }: DrawerPrimitive.Indent.Props) {
 export {
   Drawer,
   DrawerTrigger,
+  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerFooter,

@@ -13,23 +13,22 @@ import {
 export function DropdownMenuDestructiveItem() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button type='button' intent='neutral' emphasis='raised' size='icon-sm' aria-label='Aktionen' />}>
+      <DropdownMenuTrigger render={<Button size='icon-sm' aria-label='Actions' />}>
         <MoreHorizontalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>
         <DropdownMenuItem>
           <PencilIcon />
-          Bearbeiten
+          Edit
         </DropdownMenuItem>
         <DropdownMenuItem>
           <CopyIcon />
-          Duplizieren
+          Duplicate
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem intent='destructive'>
           <Trash2Icon />
-          Löschen
+          Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

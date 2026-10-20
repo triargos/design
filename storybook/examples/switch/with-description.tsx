@@ -5,10 +5,10 @@ export function SwitchWithDescription() {
   return (
     <Field orientation='horizontal' className='max-w-md'>
       <FieldContent>
-        <FieldLabel htmlFor='digest'>Tägliche Zusammenfassung</FieldLabel>
-        <FieldDescription>Eine E-Mail am Morgen statt einzelner Nachrichten.</FieldDescription>
+        <FieldLabel htmlFor='switch-digest'>Daily digest</FieldLabel>
+        <FieldDescription>One email in the morning instead of one per update.</FieldDescription>
       </FieldContent>
-      <Switch id='digest' defaultChecked />
+      <Switch id='switch-digest' defaultChecked />
     </Field>
   );
 }

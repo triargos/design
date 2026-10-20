@@ -10,7 +10,7 @@ export function InputGroupPending() {
       <InputGroupAddon>
         <SearchIcon />
       </InputGroupAddon>
-      <InputGroupInput defaultValue='Schmidt' aria-label='Mitglieder suchen' />
+      <InputGroupInput defaultValue='Chen' aria-label='Search members' />
       <InputGroupAddon align='inline-end'>
         <Loader size={16} />
       </InputGroupAddon>

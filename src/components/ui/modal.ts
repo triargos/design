@@ -2,8 +2,7 @@ import { cardSurface } from '~/components/ui/inset-card';
 
 /**
  * The one modal shape, shared by `Dialog`, `AlertDialog` and `Sheet`: a shell (`--shell`, as in `InsetCard`) with the
- * header and footer on it, and the body as a card. The body marks itself `data-modal='body'`, so a header inside it (a
- * confirmation) drops the shell padding.
+ * header and footer on it, and the body as a card.
  */
 
 /**
@@ -24,13 +23,15 @@ export const modalShell = [
   'bg-(--modal-shell) [--modal-shell:var(--shell)]',
 ].join(' ');
 
+/** Centered in the viewport (whole pixels, so text stays sharp); enters and leaves with a fade and a zoom from 95%. */
+export const modalCentered =
+  'fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95';
+
 /**
  * Title and description on the shell, `group` + 1px in to share the body text's edge (inside its border). The right
- * padding clears the 36px close button (`icon-sm`, 12px in). Inside the body (a confirmation), the body's padding
- * takes over.
+ * padding clears the 36px close button (`icon-sm`, 12px in).
  */
-export const modalHeader =
-  'flex flex-col gap-tight pt-3 pr-11 pb-3 pl-[calc(var(--spacing-group)+1px)] in-data-[modal=body]:p-0 in-data-[modal=body]:pr-8';
+export const modalHeader = 'flex flex-col gap-tight pt-3 pr-11 pb-3 pl-[calc(var(--spacing-group)+1px)]';
 
 /** The card, inset 4px in the shell like `InsetCardContent`. */
 export const modalBody = `flex flex-col gap-group rounded-inner p-group text-card-foreground ${cardSurface}`;

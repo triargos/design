@@ -6,12 +6,12 @@ export function FieldColumns() {
   return (
     <FieldGroup columns={2} className='w-full max-w-md'>
       <Field>
-        <FieldLabel htmlFor='field-first'>Vorname</FieldLabel>
-        <Input id='field-first' defaultValue='Erika' />
+        <FieldLabel htmlFor='field-first'>First name</FieldLabel>
+        <Input id='field-first' defaultValue='Maya' />
       </Field>
       <Field>
-        <FieldLabel htmlFor='field-last'>Nachname</FieldLabel>
-        <Input id='field-last' defaultValue='Mustermann' />
+        <FieldLabel htmlFor='field-last'>Last name</FieldLabel>
+        <Input id='field-last' defaultValue='Chen' />
       </Field>
     </FieldGroup>
   );

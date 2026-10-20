@@ -5,17 +5,17 @@ export function AvatarShapes() {
   return (
     <div className='flex flex-wrap items-center gap-4'>
       <Avatar size='2xl'>
-        <AvatarFallback>{getInitials('Mia Schmidt')}</AvatarFallback>
+        <AvatarFallback>{getInitials('Lena Park')}</AvatarFallback>
       </Avatar>
       <Avatar size='2xl' shape='square'>
-        <AvatarFallback>{getInitials('Grundschule am Park')}</AvatarFallback>
+        <AvatarFallback>{getInitials('Northwind Studio')}</AvatarFallback>
       </Avatar>
       <AvatarGroup size='xl' shape='square'>
         <Avatar>
-          <AvatarFallback>{getInitials('Grundschule am Park')}</AvatarFallback>
+          <AvatarFallback>{getInitials('Northwind Studio')}</AvatarFallback>
         </Avatar>
         <Avatar>
-          <AvatarFallback>{getInitials('Gymnasium Nord')}</AvatarFallback>
+          <AvatarFallback>{getInitials('Acme Labs')}</AvatarFallback>
         </Avatar>
         <AvatarGroupCount>+2</AvatarGroupCount>
       </AvatarGroup>

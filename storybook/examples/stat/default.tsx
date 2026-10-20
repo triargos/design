@@ -4,7 +4,7 @@ export function StatDefault() {
   return (
     <Stat>
       <StatValue>248</StatValue>
-      <StatLabel>Mitglieder</StatLabel>
+      <StatLabel>Open tasks</StatLabel>
     </Stat>
   );
 }

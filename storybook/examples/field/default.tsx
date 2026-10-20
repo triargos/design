@@ -6,9 +6,9 @@ export function FieldDefault() {
   return (
     <Field className='w-80'>
       <FieldLabel htmlFor='field-name' required>
-        Name
+        Project name
       </FieldLabel>
-      <Input id='field-name' placeholder='Max Mustermann' />
+      <Input id='field-name' placeholder='Website redesign' required />
     </Field>
   );
 }

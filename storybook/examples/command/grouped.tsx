@@ -1,4 +1,4 @@
-import { CalendarXIcon, InboxIcon, SettingsIcon, UserPlusIcon } from 'lucide-react';
+import { FolderIcon, InboxIcon, SettingsIcon, UserPlusIcon } from 'lucide-react';
 
 import {
   Command,
@@ -19,30 +19,30 @@ export function CommandGrouped() {
   return (
     <div className={cn(popupSurface, 'w-96 overflow-hidden')}>
       <Command>
-        <CommandInput placeholder='Seite oder Aktion suchen' />
+        <CommandInput placeholder='Search pages and actions' />
         <CommandList>
-          <CommandEmpty>Keine Treffer</CommandEmpty>
-          <CommandGroup heading='Seiten'>
+          <CommandEmpty>No results</CommandEmpty>
+          <CommandGroup heading='Pages'>
             <CommandItem>
               <InboxIcon />
-              Posteingang
+              Inbox
               <CommandShortcut>G I</CommandShortcut>
             </CommandItem>
             <CommandItem>
-              <CalendarXIcon />
-              Abwesenheiten
-              <CommandShortcut>G A</CommandShortcut>
+              <FolderIcon />
+              Projects
+              <CommandShortcut>G P</CommandShortcut>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading='Aktionen'>
+          <CommandGroup heading='Actions'>
             <CommandItem>
               <UserPlusIcon />
-              Mitglied einladen
+              Invite member
             </CommandItem>
             <CommandItem>
               <SettingsIcon />
-              Einstellungen
+              Settings
               <CommandShortcut>⌘,</CommandShortcut>
             </CommandItem>
           </CommandGroup>

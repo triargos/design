@@ -7,11 +7,11 @@ import { ButtonGroup, ButtonGroupSeparator } from '~/components/ui/button-group'
 export function ButtonGroupWithSeparator() {
   return (
     <ButtonGroup>
-      <Button type='button' size='sm'>
-        Veröffentlichen
+      <Button intent='primary' size='sm'>
+        Publish
       </Button>
       <ButtonGroupSeparator />
-      <Button type='button' size='icon-sm' aria-label='Weitere Optionen'>
+      <Button intent='primary' size='icon-sm' aria-label='More publish options'>
         <ChevronDownIcon />
       </Button>
     </ButtonGroup>

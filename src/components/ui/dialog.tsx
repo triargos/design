@@ -1,10 +1,17 @@
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
-import { useAnimate, useReducedMotion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
-import { modalBackdrop, modalBody, modalClose, modalFooter, modalHeader, modalShell } from '~/components/ui/modal';
+import {
+  modalBackdrop,
+  modalBody,
+  modalCentered,
+  modalClose,
+  modalFooter,
+  modalHeader,
+  modalShell,
+} from '~/components/ui/modal';
 
 import { cn } from '~/lib/utils';
 
@@ -20,6 +27,13 @@ function DialogClose(props: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot='dialog-close' {...props} />;
 }
 
+interface DialogContentProps extends DialogPrimitive.Popup.Props, Pick<DialogPrimitive.Portal.Props, 'container'> {
+  /** The ✕ in the corner. Off when a footer action is the way out. */
+  showCloseButton?: boolean;
+  /** The ✕'s accessible name. */
+  closeLabel?: string;
+}
+
 /**
  * A modal: `DialogHeader` and `DialogFooter` on the shell, the content in `DialogBody`, a card (`components/ui/modal.ts`).
  * A form wraps `DialogBody` and `DialogFooter` (`className='contents'`). A confirmation is an `AlertDialog`.
@@ -28,28 +42,23 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  closeLabel = 'Close',
   container,
   ...props
-}: DialogPrimitive.Popup.Props &
-  Pick<DialogPrimitive.Portal.Props, 'container'> & {
-    showCloseButton?: boolean;
-  }) {
+}: DialogContentProps) {
   return (
     <DialogPrimitive.Portal data-slot='dialog-portal' container={container}>
       <DialogPrimitive.Backdrop data-slot='dialog-overlay' className={modalBackdrop} />
       <DialogPrimitive.Popup
         data-slot='dialog-content'
-        className={cn(
-          modalShell,
-          'fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 sm:max-w-sm sm:min-w-min',
-          className,
-        )}
+        className={cn(modalShell, modalCentered, 'max-w-[calc(100%-2rem)] sm:max-w-md sm:min-w-min', className)}
         {...props}>
         {children}
         {showCloseButton && (
-          <DialogClose render={<Button intent='neutral' emphasis='ghost' size='icon-sm' className={modalClose} />}>
+          <DialogClose
+            aria-label={closeLabel}
+            render={<Button emphasis='ghost' size='icon-sm' className={modalClose} />}>
             <XIcon />
-            <span className='sr-only'>Close</span>
           </DialogClose>
         )}
       </DialogPrimitive.Popup>
@@ -62,15 +71,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function DialogBody({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot='dialog-body'
-      data-modal='body'
-      data-surface='card'
-      className={cn(modalBody, className)}
-      {...props}
-    />
-  );
+  return <div data-slot='dialog-body' data-surface='card' className={cn(modalBody, className)} {...props} />;
 }
 
 function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
@@ -96,26 +97,6 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
   );
 }
 
-/**
- * Acknowledge an action without closing the dialog (e.g. "save and add another"): the whole popup squishes and springs
- * back. Pass `scope` as the {@link DialogContent} ref. The popup centers with the `translate` property, so the inline
- * `transform` this sets does not displace it.
- */
-function useDialogAcknowledge() {
-  const [scope, animate] = useAnimate<HTMLDivElement>();
-  const reduceMotion = useReducedMotion() ?? false;
-
-  // Stable, so callers can list it in effect deps.
-  const acknowledge = React.useCallback(() => {
-    if (reduceMotion || scope.current === null) return;
-    animate(scope.current, { scale: 0.95 }, { duration: 0.06, ease: 'easeOut' }).then(() => {
-      animate(scope.current, { scale: 1 }, { type: 'spring', stiffness: 700, damping: 28, mass: 0.8 });
-    });
-  }, [animate, reduceMotion, scope]);
-
-  return { scope, acknowledge };
-}
-
 export {
   Dialog,
   DialogBody,
@@ -126,5 +107,4 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  useDialogAcknowledge,
 };

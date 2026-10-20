@@ -16,10 +16,8 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Page Content'
-      description='Page layout: the header, then the content page (32px) below it, whatever the header holds. Blocks sit group (16px) apart; a PageSection that is a direct child sits section (48px) from its neighbours.'>
-      <ExampleSection title='Default'>
+    <FoundationPage title='Page Content' description='Page layout: the header, then the content blocks.'>
+      <ExampleSection title='Default' description='The content sits 32px below the header; blocks sit 16px apart.'>
         <PageContentDefault />
       </ExampleSection>
       <ExampleSection

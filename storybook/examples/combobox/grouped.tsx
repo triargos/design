@@ -10,29 +10,29 @@ import {
   ComboboxList,
 } from '~/components/ui/combobox';
 
-interface Town {
+interface Project {
   readonly value: string;
   readonly label: string;
 }
 
-interface Region {
+interface Team {
   readonly value: string;
-  readonly items: ReadonlyArray<Town>;
+  readonly items: ReadonlyArray<Project>;
 }
 
-const REGIONS: ReadonlyArray<Region> = [
+const TEAMS: ReadonlyArray<Team> = [
   {
-    value: 'Nord',
+    value: 'Design',
     items: [
-      { value: 'bremen', label: 'Bremen' },
-      { value: 'hamburg', label: 'Hamburg' },
+      { value: 'atlas', label: 'Atlas' },
+      { value: 'beacon', label: 'Beacon' },
     ],
   },
   {
-    value: 'Süd',
+    value: 'Engineering',
     items: [
-      { value: 'muenchen', label: 'München' },
-      { value: 'stuttgart', label: 'Stuttgart' },
+      { value: 'comet', label: 'Comet' },
+      { value: 'orbit', label: 'Orbit' },
     ],
   },
 ];
@@ -40,18 +40,18 @@ const REGIONS: ReadonlyArray<Region> = [
 /** `items` as groups; each `ComboboxGroup` renders its own `ComboboxCollection`. */
 export function ComboboxGrouped() {
   return (
-    <Combobox items={REGIONS} itemToStringLabel={(town: Town) => town.label}>
-      <ComboboxInput placeholder='Ort suchen' aria-label='Ort' className='w-64' />
+    <Combobox items={TEAMS} itemToStringLabel={(project: Project) => project.label}>
+      <ComboboxInput placeholder='Search projects' aria-label='Project' className='w-64' />
       <ComboboxContent>
-        <ComboboxEmpty>Kein Ort gefunden</ComboboxEmpty>
+        <ComboboxEmpty>No projects found</ComboboxEmpty>
         <ComboboxList>
-          {(region: Region) => (
-            <ComboboxGroup key={region.value} items={region.items}>
-              <ComboboxLabel>{region.value}</ComboboxLabel>
+          {(team: Team) => (
+            <ComboboxGroup key={team.value} items={team.items}>
+              <ComboboxLabel>{team.value}</ComboboxLabel>
               <ComboboxCollection>
-                {(town: Town) => (
-                  <ComboboxItem key={town.value} value={town}>
-                    {town.label}
+                {(project: Project) => (
+                  <ComboboxItem key={project.value} value={project}>
+                    {project.label}
                   </ComboboxItem>
                 )}
               </ComboboxCollection>

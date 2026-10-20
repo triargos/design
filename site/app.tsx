@@ -54,9 +54,7 @@ function NotFound() {
       title='Page not found'
       description='This address has no page. Pick one from the menu, or search with ⌘K.'>
       <div>
-        <Button intent='neutral' emphasis='raised' render={<Link href='/' />}>
-          Go to the introduction
-        </Button>
+        <Button render={<Link href='/' />}>Go to the introduction</Button>
       </div>
     </FoundationPage>
   );

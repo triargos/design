@@ -15,9 +15,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Max Width'
-      description='Caps the page column inside the panel and centers it. Pick by content: forms read best narrow, tables need room. max-width-layout wraps routes in the default, md.'>
+    <FoundationPage title='Max Width' description='Caps the page column and centers it; pick the size by content.'>
       <ExampleSection title='Sizes' bare>
         <MaxWidthSizes />
       </ExampleSection>

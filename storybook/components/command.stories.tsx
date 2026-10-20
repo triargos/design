@@ -25,7 +25,7 @@ export const Board: Story = {
         title='Default'
         description={
           <>
-            <Code>CommandDialog</Code>, opened with ⌘K or its button.
+            <Code>CommandDialog title</Code>, opened from a button; an app also binds ⌘K.
           </>
         }>
         <CommandDefault />
@@ -46,6 +46,6 @@ export const Board: Story = {
   ),
 };
 
-export const Default: Story = { render: () => <CommandDefault />, play: open('click', /Suchen/, 'Mitglied einladen') };
+export const Default: Story = { render: () => <CommandDefault />, play: open('click', /Search/, 'Invite member') };
 export const Grouped: Story = { render: () => <CommandGrouped /> };
 export const Standalone: Story = { render: () => <CommandStandalone /> };

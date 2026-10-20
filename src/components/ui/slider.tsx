@@ -2,8 +2,15 @@ import { Slider as SliderPrimitive } from '@base-ui/react/slider';
 
 import { cn } from '~/lib/utils';
 
-/** One thumb per value: a number is one thumb, an array (a range) one per entry. */
-function Slider<Value extends number | readonly number[]>({ className, ...props }: SliderPrimitive.Root.Props<Value>) {
+/**
+ * One thumb per value: a number is one thumb, an array (a range) one per entry. Name it with `aria-labelledby` (a
+ * `FieldLabel` id) or `aria-label`; each thumb's input takes the name.
+ */
+function Slider<Value extends number | readonly number[]>({
+  className,
+  'aria-label': ariaLabel,
+  ...props
+}: SliderPrimitive.Root.Props<Value>) {
   const values = props.value ?? props.defaultValue;
   const thumbs = Array.isArray(values) ? values.length : 1;
 
@@ -12,6 +19,7 @@ function Slider<Value extends number | readonly number[]>({ className, ...props 
       className={cn('data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full', className)}
       data-slot='slider'
       thumbAlignment='edge'
+      aria-label={ariaLabel}
       {...props}>
       <SliderPrimitive.Control className='relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-40 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col'>
         <SliderPrimitive.Track
@@ -27,6 +35,7 @@ function Slider<Value extends number | readonly number[]>({ className, ...props 
           <SliderPrimitive.Thumb
             data-slot='slider-thumb'
             key={index}
+            aria-label={ariaLabel}
             className='relative block size-3 shrink-0 rounded-full border border-ring bg-white ring-ring/24 transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3'
           />
         ))}

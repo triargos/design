@@ -5,12 +5,12 @@ import { Button } from '~/components/ui/button';
 export function ButtonWithIcon() {
   return (
     <div className='flex flex-wrap items-center gap-2'>
-      <Button type='button'>
+      <Button intent='primary'>
         <PlusIcon data-icon='inline-start' />
-        Hinzufügen
+        New task
       </Button>
-      <Button type='button' intent='neutral' emphasis='raised'>
-        Weiter
+      <Button>
+        Next
         <ArrowRightIcon data-icon='inline-end' />
       </Button>
     </div>

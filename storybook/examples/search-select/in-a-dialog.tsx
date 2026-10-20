@@ -4,35 +4,39 @@ import { Button } from '~/components/ui/button';
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog';
 import { Field, FieldLabel } from '~/components/ui/field';
 import { SearchSelect } from '~/components/ui/search-select';
-import type { SelectOption } from '~/components/ui/select-option';
+import type { SelectOption } from '~/components/ui/select';
 
-const CLASSES: ReadonlyArray<SelectOption> = ['1a', '1b', '2a', '2b', '3a', '3b', '4a', '4b'].map((name) => ({
-  value: name,
-  label: `Klasse ${name}`,
-}));
+const MEMBERS: ReadonlyArray<SelectOption> = [
+  'Maya Chen',
+  'Jonas Weber',
+  'Priya Patel',
+  'Leo Martin',
+  'Sofia Rossi',
+  'Noah Kim',
+  'Emma Larsen',
+  'Omar Haddad',
+].map((name) => ({ value: name.toLowerCase().replace(' ', '-'), label: name }));
 
 /** In a dialog the popup portals above it and keeps focus in it. */
 export function SearchSelectInADialog() {
-  const [value, setValue] = useState<string[]>(['1a']);
+  const [value, setValue] = useState<string[]>(['maya-chen']);
   return (
     <Dialog>
-      <DialogTrigger render={<Button intent='neutral' emphasis='raised' />}>Klassen zuordnen</DialogTrigger>
-      <DialogContent>
+      <DialogTrigger render={<Button />}>Add members</DialogTrigger>
+      <DialogContent className='sm:max-w-sm'>
         <DialogHeader>
-          <DialogTitle>Klassen zuordnen</DialogTitle>
+          <DialogTitle>Add members</DialogTitle>
         </DialogHeader>
         <DialogBody>
           <Field>
-            <FieldLabel htmlFor='dialog-classes'>Klassen</FieldLabel>
+            <FieldLabel htmlFor='dialog-members'>Members</FieldLabel>
             <SearchSelect
               multiple
-              id='dialog-classes'
-              items={CLASSES}
-              itemKey={(option) => option.value}
-              itemLabel={(option) => option.label}
+              id='dialog-members'
+              items={MEMBERS}
               value={value}
               onValueChange={setValue}
-              placeholder='Klassen wählen'
+              placeholder='Add members'
             />
           </Field>
         </DialogBody>

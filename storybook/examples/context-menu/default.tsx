@@ -13,17 +13,17 @@ export function ContextMenuDefault() {
   return (
     <ContextMenu>
       <ContextMenuTrigger className='flex h-40 w-72 items-center justify-center rounded-control-lg border border-dashed border-border text-body text-muted-foreground'>
-        Rechtsklick auf die Datei
+        Right-click the file
       </ContextMenuTrigger>
       <ContextMenuContent className='w-52'>
         <ContextMenuItem>
           <PencilIcon />
-          Umbenennen
+          Rename
           <ContextMenuShortcut>F2</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
           <CopyIcon />
-          Link kopieren
+          Copy link
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

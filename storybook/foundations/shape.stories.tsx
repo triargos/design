@@ -50,7 +50,7 @@ export const Shape: Story = {
       description='Radius follows the role: a control by its height, then popups, cards, dialogs and the page panel. Nested corners stay concentric: inner = outer − inset.'>
       <FoundationSection
         title='Roles'
-        description='Write the role, not the step. Tune each in the Tokens panel; every component follows.'>
+        description='Write the role, not the step. Tune each in Customize; every component follows.'>
         <TileGrid>
           {RADIUS_ROLES.map((role) => (
             <Tile
@@ -71,7 +71,7 @@ export const Shape: Story = {
             <InsetCard>
               <InsetCardHeader
                 actions={
-                  <Button type='button' intent='neutral' emphasis='ghost' size='icon-sm' aria-label='Mehr'>
+                  <Button emphasis='ghost' size='icon-sm' aria-label='More'>
                     <MoreHorizontalIcon />
                   </Button>
                 }>
@@ -82,11 +82,9 @@ export const Shape: Story = {
           </SpecimenRow>
           <SpecimenRow name='Callout' meta={<Code>rounded-card · action 6px in</Code>}>
             <Callout>
-              <CalloutContent>Die Frist endet am 31. März.</CalloutContent>
+              <CalloutContent>The trial ends on March 31.</CalloutContent>
               <CalloutAction>
-                <Button type='button' intent='neutral' emphasis='raised'>
-                  Ansehen
-                </Button>
+                <Button>Upgrade</Button>
               </CalloutAction>
             </Callout>
           </SpecimenRow>
@@ -99,23 +97,19 @@ export const Shape: Story = {
         <SpecimenList>
           <SpecimenRow name='40 · 44px' meta={<Code>rounded-control-lg · Button, Input</Code>}>
             <div className='flex max-w-md items-center gap-2'>
-              <Input placeholder='Suchen' aria-label='Suchen' />
-              <Button type='button'>Speichern</Button>
+              <Input placeholder='Search' aria-label='Search' />
+              <Button intent='primary'>Save</Button>
             </div>
           </SpecimenRow>
           <SpecimenRow name='32 · 36px' meta={<Code>rounded-control · Button sm, xs</Code>}>
             <div className='flex items-center gap-2'>
-              <Button type='button' size='sm' intent='neutral' emphasis='raised'>
-                Bearbeiten
-              </Button>
-              <Button type='button' size='xs' intent='neutral' emphasis='raised'>
-                Filter
-              </Button>
+              <Button size='sm'>Edit</Button>
+              <Button size='xs'>Filter</Button>
             </div>
           </SpecimenRow>
-          <SpecimenRow name='20 – 32px' meta={<Code>rounded-sm · rounded-md · Badge</Code>}>
+          <SpecimenRow name='20 · 24px' meta={<Code>rounded-control-sm · Badge</Code>}>
             <div className='flex items-center gap-2'>
-              {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+              {(['sm', 'default'] as const).map((size) => (
                 <Badge key={size} size={size}>
                   {size}
                 </Badge>

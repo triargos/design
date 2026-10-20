@@ -1,24 +1,25 @@
 import { SearchSelect } from '~/components/ui/search-select';
-import type { SelectOption } from '~/components/ui/select-option';
+import type { SelectOption } from '~/components/ui/select';
 
-const CLASSES: ReadonlyArray<SelectOption> = ['1a', '1b', '2a', '2b', '3a', '3b', '4a', '4b'].map((name) => ({
-  value: name,
-  label: `Klasse ${name}`,
-}));
+const PROJECTS: ReadonlyArray<SelectOption> = [
+  'Atlas',
+  'Beacon',
+  'Comet',
+  'Delta',
+  'Harbor',
+  'Orbit',
+  'Pioneer',
+  'Summit',
+].map((name) => ({ value: name.toLowerCase(), label: name }));
 
-/** `pending` while the items load, `invalid`, `disabled`. */
+/** Loading (`emptyText` while the items load), invalid, disabled. */
 export function SearchSelectStates() {
-  const common = {
-    itemKey: (option: SelectOption) => option.value,
-    itemLabel: (option: SelectOption) => option.label,
-    onValueChange: () => undefined,
-    placeholder: 'Klasse wählen',
-  };
+  const common = { onValueChange: () => undefined, placeholder: 'Choose a project' };
   return (
     <div className='grid w-64 gap-2'>
-      <SearchSelect {...common} items={[]} value={null} pending />
-      <SearchSelect {...common} items={CLASSES} value={null} invalid />
-      <SearchSelect {...common} items={CLASSES} value='2b' disabled />
+      <SearchSelect {...common} aria-label='Project, loading' items={[]} value={null} emptyText='Loading projects…' />
+      <SearchSelect {...common} aria-label='Project, invalid' items={PROJECTS} value={null} aria-invalid />
+      <SearchSelect {...common} aria-label='Project, disabled' items={PROJECTS} value='beacon' disabled />
     </div>
   );
 }

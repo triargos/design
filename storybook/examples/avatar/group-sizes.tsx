@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, getInitials } from '~/components/ui/avatar';
 
-const NAMES = ['Mia Schmidt', 'Leon Weber', 'Emma Fischer'] as const;
+const NAMES = ['Lena Park', 'Omar Haddad', 'Sofia Rossi'] as const;
 const SIZES = ['sm', 'md', 'xl', '2xl'] as const;
 
 export function AvatarGroupSizes() {

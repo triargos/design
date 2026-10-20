@@ -2,14 +2,14 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { PageHeaderDefault } from '../examples/page-header/default';
 import { PageHeaderPageSection } from '../examples/page-header/page-section';
+import { PageHeaderWithActions } from '../examples/page-header/with-actions';
 import { PageHeaderWithBackLink } from '../examples/page-header/with-back-link';
 import { PageHeaderWithTabs } from '../examples/page-header/with-tabs';
-import { PageHeaderWithTools } from '../examples/page-header/with-tools';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 
 const meta = {
   title: 'Components/Page Header',
-  parameters: { description: 'The page title and description, with tools, navigation or tabs.', frame: 'column' },
+  parameters: { description: 'The page title and description, with actions, navigation or tabs.', frame: 'column' },
 } satisfies Meta;
 
 export default meta;
@@ -19,32 +19,30 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Page Header'
-      description='Title and description first; tools on the right; navigation above the title, view tabs below it. PageContent sets the 32px to the content, whatever the header holds.'>
+    <FoundationPage title='Page Header' description='The page title and description, with actions, navigation or tabs.'>
       <ExampleSection
         title='Default'
         description={
           <>
-            <Code>PageHeaderGroup · PageHeader · PageDescription</Code>
+            <Code>PageHeaderGroup · PageTitle · PageDescription</Code> in the <Code>PageContent</Code> header.
           </>
         }>
         <PageHeaderDefault />
       </ExampleSection>
       <ExampleSection
-        title='With tools'
+        title='With actions'
         description={
           <>
-            <Code>PageHeaderRow · PageHeaderTools</Code>: the main action last.
+            <Code>PageHeaderRow · PageHeaderActions</Code>: the main action last.
           </>
         }>
-        <PageHeaderWithTools />
+        <PageHeaderWithActions />
       </ExampleSection>
       <ExampleSection
         title='With back link'
         description={
           <>
-            <Code>PageHeaderSection · PageHeaderBackLink · PageHeaderMeta</Code>
+            <Code>PageHeaderBackLink</Code> above the title, <Code>PageHeaderMeta</Code> under it.
           </>
         }>
         <PageHeaderWithBackLink />
@@ -53,7 +51,7 @@ export const Board: Story = {
         title='With tabs'
         description={
           <>
-            <Code>TabsList as='nav'</Code> below the title.
+            <Code>TabsNav</Code> below the title.
           </>
         }>
         <PageHeaderWithTabs />
@@ -72,9 +70,9 @@ export const Board: Story = {
 };
 
 export const Default: Story = { render: () => <PageHeaderDefault /> };
-export const WithTools: Story = {
-  name: 'With tools',
-  render: () => <PageHeaderWithTools />,
+export const WithActions: Story = {
+  name: 'With actions',
+  render: () => <PageHeaderWithActions />,
 };
 export const WithBackLink: Story = {
   name: 'With back link',

@@ -2,24 +2,26 @@ import { useState } from 'react';
 
 import { Field, FieldLabel } from '~/components/ui/field';
 import { SearchSelect } from '~/components/ui/search-select';
+import type { SelectOption } from '~/components/ui/select';
 
-const TOWNS = ['Berlin', 'Bremen', 'Hamburg', 'Köln', 'München'].map((name) => ({ value: name, label: name }));
+const ROLES: ReadonlyArray<SelectOption> = ['Owner', 'Admin', 'Member', 'Guest'].map((role) => ({
+  value: role.toLowerCase(),
+  label: role,
+}));
 
-/** `allowCustom`: a key from the list or the typed text; a custom value reads „Eigene Angabe“ in its list row. */
+/** `allowCustom`: an option's value or the typed text; a typed value reads “Custom” in its list row. */
 export function SearchSelectCustomValue() {
-  const [value, setValue] = useState<string | null>('Oldenburg');
+  const [value, setValue] = useState<string | null>('Contractor');
   return (
     <Field className='w-64'>
-      <FieldLabel htmlFor='town'>Ort</FieldLabel>
+      <FieldLabel htmlFor='role'>Role</FieldLabel>
       <SearchSelect
         allowCustom
-        id='town'
-        items={TOWNS}
-        itemKey={(option) => option.value}
-        itemLabel={(option) => option.label}
+        id='role'
+        items={ROLES}
         value={value}
         onValueChange={setValue}
-        placeholder='Ort suchen oder eingeben'
+        placeholder='Choose or type a role'
       />
     </Field>
   );

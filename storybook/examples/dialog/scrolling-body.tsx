@@ -12,19 +12,19 @@ import {
 } from '~/components/ui/dialog';
 
 const SECTIONS = Array.from({ length: 12 }, (_, index) => ({
-  title: `§ ${index + 1}`,
-  body: 'Die Schule verarbeitet die Angaben nur für die Organisation des Schulalltags und gibt sie nicht an Dritte weiter.',
+  title: `Section ${index + 1}`,
+  body: 'We process workspace data only to run the service and never share it with third parties.',
 }));
 
 /** A long body scrolls; header and footer stay. */
 export function DialogScrollingBody() {
   return (
     <Dialog>
-      <DialogTrigger render={<Button intent='neutral' emphasis='raised' />}>Datenschutzerklärung</DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogTrigger render={<Button />}>Privacy policy</DialogTrigger>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Datenschutzerklärung</DialogTitle>
-          <DialogDescription>Stand: März 2025</DialogDescription>
+          <DialogTitle>Privacy policy</DialogTitle>
+          <DialogDescription>Last updated March 2025</DialogDescription>
         </DialogHeader>
         <DialogBody className='max-h-80 overflow-y-auto'>
           <div className='flex flex-col gap-4'>
@@ -37,7 +37,7 @@ export function DialogScrollingBody() {
           </div>
         </DialogBody>
         <DialogFooter>
-          <DialogClose render={<Button />}>Schließen</DialogClose>
+          <DialogClose render={<Button intent='primary' />}>Close</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

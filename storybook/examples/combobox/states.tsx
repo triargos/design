@@ -7,44 +7,48 @@ import {
   ComboboxList,
 } from '~/components/ui/combobox';
 
-interface Town {
+interface Project {
   readonly value: string;
   readonly label: string;
 }
 
-const TOWNS: ReadonlyArray<Town> = [
-  { value: 'berlin', label: 'Berlin' },
-  { value: 'bremen', label: 'Bremen' },
-  { value: 'hamburg', label: 'Hamburg' },
-  { value: 'koeln', label: 'Köln' },
-  { value: 'muenchen', label: 'München' },
+const PROJECTS: ReadonlyArray<Project> = [
+  { value: 'atlas', label: 'Atlas' },
+  { value: 'beacon', label: 'Beacon' },
+  { value: 'comet', label: 'Comet' },
+  { value: 'delta', label: 'Delta' },
+  { value: 'orbit', label: 'Orbit' },
 ];
 
 /** Invalid and disabled. With no match the list shows `ComboboxEmpty`. */
 export function ComboboxStates() {
   return (
     <div className='grid w-64 gap-2'>
-      <Combobox items={TOWNS} itemToStringLabel={(town: Town) => town.label}>
-        <ComboboxInput placeholder='Ort suchen' aria-label='Ort, ungültig' aria-invalid />
+      <Combobox items={PROJECTS} itemToStringLabel={(project: Project) => project.label}>
+        <ComboboxInput placeholder='Search projects' aria-label='Project, invalid' aria-invalid />
         <ComboboxContent>
-          <ComboboxEmpty>Kein Ort gefunden</ComboboxEmpty>
+          <ComboboxEmpty>No projects found</ComboboxEmpty>
           <ComboboxList>
-            {(town: Town) => (
-              <ComboboxItem key={town.value} value={town}>
-                {town.label}
+            {(project: Project) => (
+              <ComboboxItem key={project.value} value={project}>
+                {project.label}
               </ComboboxItem>
             )}
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-      <Combobox items={TOWNS} defaultValue={TOWNS[0]} disabled itemToStringLabel={(town: Town) => town.label}>
-        <ComboboxInput placeholder='Ort suchen' aria-label='Ort, deaktiviert' />
+      <Combobox
+        items={PROJECTS}
+        defaultValue={PROJECTS[0]}
+        disabled
+        itemToStringLabel={(project: Project) => project.label}>
+        <ComboboxInput placeholder='Search projects' aria-label='Project, disabled' />
         <ComboboxContent>
-          <ComboboxEmpty>Kein Ort gefunden</ComboboxEmpty>
+          <ComboboxEmpty>No projects found</ComboboxEmpty>
           <ComboboxList>
-            {(town: Town) => (
-              <ComboboxItem key={town.value} value={town}>
-                {town.label}
+            {(project: Project) => (
+              <ComboboxItem key={project.value} value={project}>
+                {project.label}
               </ComboboxItem>
             )}
           </ComboboxList>

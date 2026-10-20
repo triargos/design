@@ -6,26 +6,13 @@ import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import { TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { TabsRadio, TabsRadioGroup } from '~/components/ui/tabs';
 
-import { Code, FoundationPage, FoundationSection, Matrix, SpecimenList, SpecimenRow } from '../kit/blocks';
+import { Code, FoundationPage, FoundationSection, Matrix, SpecimenList, SpecimenRow, StateCell } from '../kit/blocks';
 
-/**
- * Every state forced at once: `storybook-addon-pseudo-states` rewrites `:hover`, `:active` and `:focus-visible` rules
- * so a class on a cell (`state-hover`, …) puts everything inside it in that state.
- */
 const meta = {
   title: 'Foundations/Interaction',
-  parameters: {
-    frame: 'page',
-    pseudo: {
-      hover: ['.state-hover, .state-hover *'],
-      active: ['.state-press, .state-press *'],
-      focusVisible: ['.state-focus, .state-focus *'],
-      // Fields ring their surface on `focus-within`.
-      focusWithin: ['.state-focus, .state-focus *'],
-    },
-  },
+  parameters: { frame: 'page' },
 } satisfies Meta;
 
 export default meta;
@@ -35,14 +22,14 @@ type Story = StoryObj<typeof meta>;
 const STATES = ['rest', 'hover', 'press', 'focus', 'disabled'] as const;
 type State = (typeof STATES)[number];
 
-/** One control in every state: a cell per state, the class forces it. */
+/** One control in every state: a cell per state. */
 const row = (name: string, meta: ReactNode, render: (state: State) => ReactNode) => ({
   name,
   meta,
   cells: STATES.map((state) => (
-    <div key={state} className={`state-${state} flex min-w-0 items-center`}>
+    <StateCell key={state} state={state}>
       {render(state)}
-    </div>
+    </StateCell>
   )),
 });
 
@@ -61,23 +48,17 @@ export const Interaction: Story = {
           columns={STATES}
           rows={[
             row('Primary', <Code>primary/solid</Code>, (state) => (
-              <Button type='button' size='sm' disabled={off(state)}>
-                Speichern
+              <Button intent='primary' size='sm' disabled={off(state)}>
+                Save
               </Button>
             )),
             row('Raised', <Code>neutral/raised</Code>, (state) => (
-              <Button type='button' size='sm' intent='neutral' emphasis='raised' disabled={off(state)}>
-                Bearbeiten
+              <Button size='sm' disabled={off(state)}>
+                Edit
               </Button>
             )),
             row('Ghost', <Code>neutral/ghost</Code>, (state) => (
-              <Button
-                type='button'
-                size='icon-sm'
-                intent='neutral'
-                emphasis='ghost'
-                aria-label='Mehr'
-                disabled={off(state)}>
+              <Button emphasis='ghost' size='icon-sm' aria-label='More' disabled={off(state)}>
                 <MoreHorizontalIcon />
               </Button>
             )),
@@ -85,18 +66,18 @@ export const Interaction: Story = {
               <Input aria-label='Name' placeholder='Name' disabled={off(state)} className='w-24' />
             )),
             row('Checkbox', <Code>Checkbox</Code>, (state) => (
-              <Checkbox aria-label='Auswahl' defaultChecked disabled={off(state)} />
+              <Checkbox aria-label='Select' defaultChecked disabled={off(state)} />
             )),
             row('Switch', <Code>Switch</Code>, (state) => (
-              <Switch aria-label='Aktiv' defaultChecked disabled={off(state)} />
+              <Switch aria-label='Active' defaultChecked disabled={off(state)} />
             )),
-            row('Tab', <Code>TabsTrigger</Code>, (state) => (
+            row('Tab', <Code>TabsRadio</Code>, (state) => (
               // An unselected pill: the selected one only changes under the sliding indicator.
-              <TabsList as='radio' value='a' onValueChange={() => undefined} aria-label='Ansicht'>
-                <TabsTrigger value='b' disabled={off(state)}>
-                  Karte
-                </TabsTrigger>
-              </TabsList>
+              <TabsRadioGroup value='a' onValueChange={() => undefined} aria-label='View'>
+                <TabsRadio value='b' disabled={off(state)}>
+                  Board
+                </TabsRadio>
+              </TabsRadioGroup>
             )),
           ]}
         />
@@ -128,7 +109,7 @@ export const Interaction: Story = {
           <SpecimenRow name='Hit area' meta={<Code>hit-area</Code>}>
             <div className='flex items-center gap-group'>
               <div className='relative flex size-11 shrink-0 items-center justify-center rounded-control-lg border border-dashed border-border-strong'>
-                <Button type='button' size='icon-xs' intent='neutral' emphasis='raised' aria-label='Mehr'>
+                <Button size='icon-xs' aria-label='More'>
                   <MoreHorizontalIcon />
                 </Button>
               </div>

@@ -1,16 +1,14 @@
-import { Stepper, StepperIndicator, StepperItem, StepperSeparator, StepperTitle } from '~/components/ui/stepper';
+import { Stepper, StepperItem, StepperTitle } from '~/components/ui/stepper';
 
-const STEPS = ['App installieren', 'Code scannen', 'Code eingeben'] as const;
+const STEPS = ['Create project', 'Invite members', 'Add tasks'] as const;
 
-/** `loading` on the active step: the indicator spins. */
+/** `loading`: the active step's indicator spins. */
 export function StepperLoading() {
   return (
-    <Stepper value={2} aria-label='Zwei-Faktor einrichten' className='w-full max-w-xl'>
+    <Stepper value={2} loading aria-label='Project setup' className='w-full max-w-xl'>
       {STEPS.map((title, index) => (
-        <StepperItem key={title} step={index + 1} loading>
-          <StepperIndicator />
+        <StepperItem key={title} step={index + 1}>
           <StepperTitle>{title}</StepperTitle>
-          <StepperSeparator />
         </StepperItem>
       ))}
     </Stepper>

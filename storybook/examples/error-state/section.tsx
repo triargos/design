@@ -15,19 +15,17 @@ export function ErrorStateSection() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Letzte Aktivität</InsetCardTitle>
+        <InsetCardTitle>Recent activity</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent>
         <ErrorState size='section'>
           <ErrorStateIcon>
             <CircleAlertIcon />
           </ErrorStateIcon>
-          <ErrorStateTitle>Etwas ist schiefgelaufen</ErrorStateTitle>
-          <ErrorStateDescription>Dieser Bereich konnte nicht geladen werden.</ErrorStateDescription>
+          <ErrorStateTitle>Something went wrong</ErrorStateTitle>
+          <ErrorStateDescription>This section couldn’t be loaded.</ErrorStateDescription>
           <ErrorStateActions>
-            <Button type='button' intent='neutral' emphasis='raised'>
-              Erneut versuchen
-            </Button>
+            <Button>Try again</Button>
           </ErrorStateActions>
         </ErrorState>
       </InsetCardContent>

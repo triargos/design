@@ -18,13 +18,7 @@ export function PopCheckDefault() {
           <PopCheck key={run} className='size-5' />
         </AnimatePresence>
       </span>
-      <Button
-        type='button'
-        intent='neutral'
-        emphasis='ghost'
-        size='icon-sm'
-        aria-label='Noch einmal'
-        onClick={() => setRun((value) => value + 1)}>
+      <Button emphasis='ghost' size='icon-sm' aria-label='Replay' onClick={() => setRun((value) => value + 1)}>
         <RotateCcwIcon />
       </Button>
     </div>

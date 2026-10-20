@@ -7,13 +7,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip
 export function TooltipDefault() {
   return (
     <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button type='button' intent='neutral' emphasis='ghost' size='icon-sm' aria-label='Weitere Aktionen' />
-        }>
+      <TooltipTrigger render={<Button emphasis='ghost' size='icon-sm' aria-label='More actions' />}>
         <MoreHorizontalIcon />
       </TooltipTrigger>
-      <TooltipContent>Weitere Aktionen</TooltipContent>
+      <TooltipContent>More actions</TooltipContent>
     </Tooltip>
   );
 }

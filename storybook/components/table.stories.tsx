@@ -20,9 +20,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Table'
-      description='Rows of records with shared columns. Markup for a TanStack Table (useTable, table.FlexRender) or static rows.'>
+    <FoundationPage title='Table' description='Rows of records with shared columns.'>
       <ExampleSection title='Default' description='A plain table, rows separated by hairlines.'>
         <TableDefault />
       </ExampleSection>
@@ -58,8 +56,8 @@ export const Board: Story = {
         title='With selection'
         description={
           <>
-            TanStack <Code>useTable</Code> with <Code>rowSelectionFeature</Code>; a selected row sets{' '}
-            <Code>data-state='selected'</Code>.
+            TanStack <Code>useTable</Code> with <Code>rowSelectionFeature</Code>; a selected row is{' '}
+            <Code>selected</Code>.
           </>
         }
         bare>

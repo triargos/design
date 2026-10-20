@@ -18,9 +18,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Stepper'
-      description='A fixed sequence and where someone is in it. Done steps show a check on the brand fill and a brand connector, the active step the subtle brand fill, later steps the quiet fill and a muted title.'>
+    <FoundationPage title='Stepper' description='A fixed sequence and where someone is in it.'>
       <ExampleSection
         title='Default'
         description={
@@ -34,7 +32,7 @@ export const Board: Story = {
         title='Vertical'
         description={
           <>
-            <Code>StepperIndicator · StepperContent · StepperSeparator</Code>
+            <Code>orientation='vertical'</Code>, with a <Code>StepperDescription</Code> under each title.
           </>
         }>
         <StepperVertical />
@@ -43,7 +41,7 @@ export const Board: Story = {
         title='Loading'
         description={
           <>
-            <Code>loading</Code> on the active step.
+            <Code>loading</Code>: the active step's indicator spins.
           </>
         }>
         <StepperLoading />

@@ -43,21 +43,21 @@ export function AlertDialogCloseConfirmation() {
           else if (note === '') close();
           else setConfirming(true);
         }}>
-        <DialogTrigger render={<Button intent='neutral' emphasis='raised' />}>Notiz schreiben</DialogTrigger>
-        <DialogContent className='sm:max-w-md'>
+        <DialogTrigger render={<Button />}>Write a note</DialogTrigger>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Notiz für die Klassenleitung</DialogTitle>
+            <DialogTitle>Note for the team</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Field>
-              <FieldLabel htmlFor='class-note'>Notiz</FieldLabel>
-              <Textarea id='class-note' rows={4} value={note} onChange={(event) => setNote(event.target.value)} />
+              <FieldLabel htmlFor='team-note'>Note</FieldLabel>
+              <Textarea id='team-note' rows={4} value={note} onChange={(event) => setNote(event.target.value)} />
             </Field>
           </DialogBody>
           <DialogFooter>
-            <DialogClose render={<Button intent='neutral' emphasis='raised' />}>Abbrechen</DialogClose>
-            <Button type='button' onClick={close}>
-              Senden
+            <DialogClose render={<Button />}>Cancel</DialogClose>
+            <Button intent='primary' onClick={close}>
+              Send
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -65,13 +65,13 @@ export function AlertDialogCloseConfirmation() {
       <AlertDialog open={confirming} onOpenChange={setConfirming}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Notiz verwerfen?</AlertDialogTitle>
-            <AlertDialogDescription>Was du geschrieben hast, geht verloren.</AlertDialogDescription>
+            <AlertDialogTitle>Discard the note?</AlertDialogTitle>
+            <AlertDialogDescription>What you wrote will be lost.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Weiter schreiben</AlertDialogCancel>
-            <AlertDialogAction intent='destructive' emphasis='solid' onClick={close}>
-              Verwerfen
+            <AlertDialogCancel>Keep writing</AlertDialogCancel>
+            <AlertDialogAction intent='destructive' onClick={close}>
+              Discard
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -3,14 +3,12 @@ import { Button } from '~/components/ui/button';
 export function ButtonDisabled() {
   return (
     <div className='flex flex-wrap items-center gap-2'>
-      <Button type='button' disabled>
-        Speichern
+      <Button intent='primary' disabled>
+        Save
       </Button>
-      <Button type='button' intent='neutral' emphasis='raised' disabled>
-        Abbrechen
-      </Button>
-      <Button type='button' intent='neutral' emphasis='ghost' disabled>
-        Überspringen
+      <Button disabled>Cancel</Button>
+      <Button emphasis='ghost' disabled>
+        Skip
       </Button>
     </div>
   );

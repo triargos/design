@@ -12,7 +12,6 @@ import { CheckboxWithLabel } from '../examples/checkbox/with-label';
 import {
   Code,
   ExampleSection,
-  FORCED_STATES,
   FoundationPage,
   FoundationSection,
   Matrix,
@@ -24,8 +23,8 @@ import {
 const meta = {
   title: 'Components/Checkbox',
   component: Checkbox,
-  args: { 'aria-label': 'Auswahl' },
-  parameters: { description: 'One of many on or off, or an agreement.', pseudo: FORCED_STATES },
+  args: { 'aria-label': 'Select task' },
+  parameters: { description: 'One of many on or off, or an agreement.' },
 } satisfies Meta<typeof Checkbox>;
 
 export default meta;

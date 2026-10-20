@@ -9,10 +9,12 @@ import { Loader } from '~/components/ui/loader';
 import { cn } from '~/lib/utils';
 
 /**
- * A button is an `intent` (what the action means) at an `emphasis` (how much it weighs): `primary`/`solid` is the one
- * main action, `neutral`/`raised` every other, `neutral`/`ghost` header, row and toolbar actions, `destructive`/`solid`
- * an irreversible action inside a confirmation and every danger-zone action, `destructive`/`subtle` a destructive action
- * anywhere else. A button that looks like a field is `PickerTrigger`; a text link is a link.
+ * A button is an `intent` (what the action means) at an `emphasis` (how much it weighs). Without props it is
+ * `neutral`/`raised`, every ordinary action. `intent='primary'` is the one main action, `emphasis='ghost'` a header,
+ * row or toolbar action, `intent='destructive'` an irreversible action inside its confirmation or a danger zone, and
+ * `intent='destructive' emphasis='subtle'` a destructive action that opens its confirmation. `emphasis` defaults to
+ * `raised` for `neutral` and to `solid` for every other intent. A button that looks like a field is `PickerTrigger`; a
+ * text link is a link.
  */
 const buttonShape = cva(
   [
@@ -52,53 +54,30 @@ const buttonShape = cva(
         'icon-lg': 'size-11 rounded-control-lg',
       },
     },
-    defaultVariants: { emphasis: 'solid', size: 'default' },
+    defaultVariants: { size: 'default' },
   },
 );
 
 type ButtonSize = NonNullable<Parameters<typeof buttonShape>[0]>['size'] & string;
 
-/** The names before `intent` × `emphasis`. Kept until the app migrates; each is one pair. */
-const VARIANTS = {
-  default: { intent: 'primary', emphasis: 'solid' },
-  secondary: { intent: 'neutral', emphasis: 'raised' },
-  ghost: { intent: 'neutral', emphasis: 'ghost' },
-  destructive: { intent: 'destructive', emphasis: 'solid' },
-  /** @deprecated `secondary`. */
-  outline: { intent: 'neutral', emphasis: 'raised' },
-  /** @deprecated `secondary`. */
-  surface: { intent: 'neutral', emphasis: 'raised' },
-  /** @deprecated `ghost`. */
-  muted: { intent: 'neutral', emphasis: 'ghost' },
-  /** @deprecated `ghost` in a `text-muted-foreground` container. */
-  toolbar: { intent: 'neutral', emphasis: 'ghost' },
-} as const satisfies Record<string, { intent: Intent; emphasis: Emphasis }>;
-
 interface ButtonStyleProps {
-  /** @deprecated Use `intent` and `emphasis`. */
-  variant?: keyof typeof VARIANTS;
   intent?: Intent;
   emphasis?: Emphasis;
   size?: ButtonSize;
   className?: string;
 }
 
-const resolve = ({ variant, intent, emphasis }: ButtonStyleProps): { intent: Intent; emphasis: Emphasis } => {
-  const base = VARIANTS[variant ?? 'default'];
-  return { intent: intent ?? base.intent, emphasis: emphasis ?? base.emphasis };
-};
-
-function buttonVariants(props: ButtonStyleProps = {}): string {
-  const { intent, emphasis } = resolve(props);
+/** The button classes, for an element that must stay itself (a toolbar part, a calendar day). */
+function buttonVariants({ intent = 'neutral', emphasis, size, className }: ButtonStyleProps = {}): string {
+  const resolvedEmphasis = emphasis ?? (intent === 'neutral' ? 'raised' : 'solid');
   return cn(
-    intentVariants({ intent, emphasis, interactive: true }),
-    buttonShape({ emphasis, size: props.size }),
+    intentVariants({ intent, emphasis: resolvedEmphasis, interactive: true }),
+    buttonShape({ emphasis: resolvedEmphasis, size }),
     // A neutral ghost keeps its container's text color at rest: a muted toolbar sets `text-muted-foreground` once.
     intent === 'neutral' &&
-      emphasis === 'ghost' &&
+      resolvedEmphasis === 'ghost' &&
       'text-current hover:text-foreground aria-expanded:text-foreground aria-pressed:text-foreground',
-    props.variant === 'toolbar' && 'text-muted-foreground',
-    props.className,
+    className,
   );
 }
 
@@ -199,30 +178,17 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
 
 type ButtonProps = ButtonPrimitive.Props & Omit<ButtonStyleProps, 'className'> & { isLoading?: boolean };
 
-function Button({
-  className,
-  variant,
-  intent,
-  emphasis,
-  size = 'default',
-  isLoading,
-  children,
-  ...props
-}: ButtonProps) {
+/** A native `type='button'` unless the caller passes `type='submit'`. */
+function Button({ className, intent, emphasis, size = 'default', isLoading, children, ...props }: ButtonProps) {
   const pending = useMinimumPending(isLoading === true);
-  const resolved = resolve({ variant, intent, emphasis });
   return (
     <ButtonPrimitive
-      type='submit'
       data-slot='button'
-      data-intent={resolved.intent}
-      data-emphasis={resolved.emphasis}
       data-size={size}
       // A custom `render` (a router `Link`) is not a native button: Base UI then adds the button role and keys.
       nativeButton={props.render === undefined}
       className={(state) =>
         buttonVariants({
-          variant,
           intent,
           emphasis,
           size,

@@ -12,21 +12,21 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 
-/** One of a few, chosen in the menu: `DropdownMenuRadioGroup`. */
+/** One of a few, chosen in the menu: `DropdownMenuRadioGroup`, controlled with `value` and `onValueChange`. */
 export function DropdownMenuRadioGroupExample() {
   const [sort, setSort] = useState('newest');
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button type='button' intent='neutral' emphasis='raised' size='sm' />}>
+      <DropdownMenuTrigger render={<Button size='sm' />}>
         <ArrowUpDownIcon data-icon='inline-start' />
-        Sortieren
+        Sort
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Sortieren nach</DropdownMenuLabel>
+          <DropdownMenuLabel>Sort by</DropdownMenuLabel>
           <DropdownMenuRadioGroup value={sort} onValueChange={setSort}>
-            <DropdownMenuRadioItem value='newest'>Neueste zuerst</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value='oldest'>Älteste zuerst</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value='newest'>Newest first</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value='oldest'>Oldest first</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value='name'>Name</DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
         </DropdownMenuGroup>

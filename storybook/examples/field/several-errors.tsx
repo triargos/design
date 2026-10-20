@@ -4,10 +4,10 @@ import { Input } from '~/components/ui/input';
 /** `FieldError errors` lists them. */
 export function FieldSeveralErrors() {
   return (
-    <Field data-invalid className='w-80'>
-      <FieldLabel htmlFor='field-password'>Passwort</FieldLabel>
+    <Field invalid className='w-80'>
+      <FieldLabel htmlFor='field-password'>Password</FieldLabel>
       <Input id='field-password' type='password' defaultValue='abc' aria-invalid />
-      <FieldError errors={[{ message: 'Mindestens 12 Zeichen.' }, { message: 'Mindestens eine Ziffer.' }]} />
+      <FieldError errors={[{ message: 'Use at least 12 characters.' }, { message: 'Add a number.' }]} />
     </Field>
   );
 }

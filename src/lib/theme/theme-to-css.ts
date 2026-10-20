@@ -13,9 +13,6 @@ export interface FillTint {
  */
 const FIELD_STEP = { light: -3.5, dark: -2 };
 
-/** Light `--secondary` lightness from its surface. */
-const SECONDARY_STEP_LIGHT = -4.5;
-
 /** Fields carry less of the fill tint than the shell: on a white card the full tint reads as colored. */
 const FIELD_TINT_SCALE = 0.5;
 
@@ -79,9 +76,6 @@ function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
     '--muted': theme.isDark
       ? toCss(theme.colorFormat, adjustTo(fromCss(color.bgShade), tint))
       : step(MUTED_STEP_LIGHT, tint),
-    '--accent': color.bgSelected,
-    // The neutral button pill. Light `controlSecondary` is white and vanishes on a white card, so light steps down.
-    '--secondary': theme.isDark ? color.controlSecondary : step(SECONDARY_STEP_LIGHT, tint),
     '--border-subtle': color.bgBorderFaint,
     '--border': color.bgBorder,
     '--border-strong': color.bgBorderStrong,
@@ -93,11 +87,11 @@ function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
 }
 
 /**
- * Projects a generated theme onto the shadcn custom properties `tailwind.css` maps: the page's surface tokens plus the
+ * Projects a generated theme onto the custom properties `tailwind.css` maps: the page's surface tokens plus the
  * global ones. `*Thin` tokens are skipped: they depend on the display density, so the server and client render would
- * differ. `destructive` is the organization's anchor; it replaces the generator's red.
+ * differ. `destructive` is the theme's destructive anchor; it replaces the generator's red.
  */
-export function themeToShadcnVars(theme: Theme, tint: FillTint, destructive: Color): Record<string, string> {
+export function themeToCssVars(theme: Theme, tint: FillTint, destructive: Color): Record<string, string> {
   const { color } = theme;
   const sidebar = theme.sidebarTheme().color;
   const surfaces = surfaceThemes(theme);
@@ -109,9 +103,7 @@ export function themeToShadcnVars(theme: Theme, tint: FillTint, destructive: Col
     '--card-foreground': color.labelTitle,
     '--popover': surfaces.popup.color.bgBase,
     '--popover-foreground': color.labelTitle,
-    '--secondary-foreground': color.controlSecondaryLabel,
     '--muted-foreground': color.labelMuted,
-    '--accent-foreground': color.labelTitle,
     // Status hues are fixed, not branded; destructive follows the brand, its solid the anchor itself.
     ...intentVars('info', INTENT_HUE.info, theme.isDark),
     ...intentVars('success', INTENT_HUE.success, theme.isDark),
@@ -121,18 +113,11 @@ export function themeToShadcnVars(theme: Theme, tint: FillTint, destructive: Col
     ...primaryVars(theme),
     ...textLevelVars(theme),
     '--ring': color.focusColor,
-    // A bordered field edge and lift (`EmptyState` skeleton cards): pure black/white alpha, so they read on any surface.
-    // Light weighs the bottom edge (light from above); dark lights the top edge and drops the lift.
-    '--field-border': theme.isDark ? 'oklch(1 0 0 / 0.08)' : 'oklch(0 0 0 / 0.1)',
-    '--field-border-top': theme.isDark ? 'oklch(1 0 0 / 0.135)' : 'oklch(0 0 0 / 0.1)',
-    '--field-border-bottom': theme.isDark ? 'oklch(1 0 0 / 0.08)' : 'oklch(0 0 0 / 0.14)',
-    '--field-shadow': theme.isDark ? '0 0 #0000' : '0 1px 2px oklch(0 0 0 / 0.05)',
     '--sidebar': sidebar.bgBase,
     '--sidebar-foreground': sidebar.labelTitle,
     '--sidebar-border': sidebar.bgBorder,
     '--sidebar-accent': sidebar.sidebarLinkBgActive,
     '--sidebar-accent-foreground': sidebar.labelTitle,
-    '--sidebar-ring': color.focusColor,
   };
 }
 
@@ -184,17 +169,13 @@ function intentVars(
   };
 }
 
-/**
- * The brand intent. `--primary` stays the brand fill as well as its text hue until the app moves to `bg-primary-solid`;
- * the rest is the shared set on the brand's hue, its solid the brand color itself.
- */
+/** The brand intent: the shared set on the brand's hue. `--primary` (text and icons) and the solid are the brand color. */
 function primaryVars(theme: Theme): Record<string, string> {
   const { color } = theme;
   const brand = fromCss(color.controlPrimary);
   const { subtle, subtleText, border } = INTENT_STEP[theme.isDark ? 'dark' : 'light'];
   return {
     '--primary': color.controlPrimary,
-    '--primary-foreground': color.controlPrimaryLabel,
     '--primary-solid': color.controlPrimary,
     '--primary-solid-foreground': color.controlPrimaryLabel,
     '--primary-subtle': lch(subtle.l, Math.min(subtle.c, brand[1]), brand[2], subtle.a),

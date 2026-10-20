@@ -22,7 +22,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Alert Dialog'
-      description='Asks to confirm an action before it happens. The header is the card, the actions sit on the shell; no close button. Dialog/Board compares it with Dialog, Sheet and Drawer.'>
+      description='Asks to confirm an action before it happens. The header is the card, the actions sit on the shell; no close button. AlertDialogAction is primary unless set, and does not close the dialog on its own: close it when the action is done.'>
       <ExampleSection title='Default'>
         <AlertDialogDefault />
       </ExampleSection>
@@ -40,7 +40,13 @@ export const Board: Story = {
         description='Closing a dialog with changes asks first. Type a note, then press Escape.'>
         <AlertDialogCloseConfirmation />
       </ExampleSection>
-      <ExampleSection title='Destructive' description='Opened by destructive/subtle, confirmed by destructive/solid.'>
+      <ExampleSection
+        title='Destructive'
+        description={
+          <>
+            Opened by destructive/subtle, confirmed by <Code>intent='destructive'</Code> (solid).
+          </>
+        }>
         <AlertDialogDestructive />
       </ExampleSection>
     </FoundationPage>
@@ -49,23 +55,23 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <AlertDialogDefault />,
-  play: open('click', 'Anmeldung einreichen', 'Danach kannst du die Angaben nur noch über das Sekretariat ändern.'),
+  play: open('click', 'Publish project', 'Every member gets notified and can see it right away.'),
 };
 export const Sizes: Story = {
   render: () => <AlertDialogSizes />,
-  play: open('click', 'Datei löschen…', 'Elternbrief_März.pdf wird endgültig entfernt.'),
+  play: open('click', 'Delete file…', 'Q1-report.pdf will be deleted permanently.'),
 };
 export const CloseConfirmation: Story = {
   name: 'Close confirmation',
   render: () => <AlertDialogCloseConfirmation />,
   play: async ({ userEvent }) => {
-    await userEvent.click(await screen.findByRole('button', { name: 'Notiz schreiben' }));
-    await userEvent.type(await screen.findByLabelText('Notiz'), 'Mia fehlt am Freitag.');
+    await userEvent.click(await screen.findByRole('button', { name: 'Write a note' }));
+    await userEvent.type(await screen.findByLabelText('Note'), 'Back on Friday.');
     await userEvent.keyboard('{Escape}');
-    await screen.findByText('Notiz verwerfen?');
+    await screen.findByText('Discard the note?');
   },
 };
 export const Destructive: Story = {
   render: () => <AlertDialogDestructive />,
-  play: open('click', 'Ankündigung löschen…', 'Ankündigung löschen?'),
+  play: open('click', 'Delete project…', 'Delete the project?'),
 };

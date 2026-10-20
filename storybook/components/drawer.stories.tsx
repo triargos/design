@@ -19,7 +19,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Drawer'
-      description='A bottom sheet for touch menus and short tasks, swiped down to close. Under DrawerProvider the page scales back; a drawer opened from a drawer stacks on it.'>
+      description='A bottom sheet for touch menus and short tasks, swiped down to close; DrawerClose closes it from a button. Under DrawerProvider the page scales back; a drawer opened from a drawer stacks on it.'>
       <ExampleSection title='Default'>
         <DrawerDefault />
       </ExampleSection>
@@ -38,12 +38,12 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <DrawerDefault />,
-  play: open('click', 'Abwesenheit melden', 'Mia Schmidt · heute'),
+  play: open('click', 'Move task', 'Update homepage copy · Website redesign'),
 };
 export const Nested: Story = {
   render: () => <DrawerNested />,
   play: clickThrough(
-    { click: 'Abwesenheit öffnen', shows: 'Mia Schmidt · Krankheit · heute' },
-    { click: 'Grund ändern', shows: 'Krankheit, Arzttermin oder ein anderer Grund.' },
+    { click: 'Open task', shows: 'Website redesign · due today' },
+    { click: 'Change status', shows: 'To do, in progress or done.' },
   ),
 };

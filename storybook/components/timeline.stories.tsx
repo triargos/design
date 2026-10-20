@@ -16,9 +16,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Timeline'
-      description='Events in order, with what happened when. Reached steps take the brand edge and line; later ones stay subtle. The changelog sheet uses it with an accordion per entry.'>
+    <FoundationPage title='Timeline' description='Events in order, with what happened when.'>
       <ExampleSection
         title='Default'
         description={

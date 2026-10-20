@@ -54,27 +54,27 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <ContextMenuDefault />,
-  play: rightClick('Rechtsklick auf die Datei', 'Umbenennen'),
+  play: rightClick('Right-click the file', 'Rename'),
 };
 export const Grouped: Story = {
   render: () => <ContextMenuGrouped />,
-  play: rightClick('Rechtsklick auf die Datei', 'Teilen'),
+  play: rightClick('Right-click the file', 'Share'),
 };
 export const Submenu: Story = {
   render: () => <ContextMenuSubmenu />,
-  play: rightClick('Rechtsklick auf die Datei', 'Verschieben nach'),
+  play: rightClick('Right-click the file', 'Move to'),
 };
 export const Checkbox: Story = {
   render: () => <ContextMenuCheckbox />,
-  play: rightClick('Rechtsklick auf die Datei', 'Sichtbar für'),
+  play: rightClick('Right-click the file', 'Visible to'),
 };
 export const RadioGroup: Story = {
   name: 'Radio group',
   render: () => <ContextMenuRadioGroupExample />,
-  play: rightClick('Rechtsklick auf die Datei', 'Ansicht'),
+  play: rightClick('Right-click the file', 'View'),
 };
 export const DestructiveItem: Story = {
   name: 'Destructive item',
   render: () => <ContextMenuDestructiveItem />,
-  play: rightClick('Rechtsklick auf die Datei', 'Löschen'),
+  play: rightClick('Right-click the file', 'Delete'),
 };

@@ -21,9 +21,7 @@ type Story = StoryObj<typeof meta>;
 export const Board: Story = {
   parameters: { frame: 'page' },
   render: () => (
-    <FoundationPage
-      title='Item'
-      description='A row in a list: media, title and description, actions on the right. Lists sit flush in a card, a hairline between rows that stops at the row padding. Every part is optional except the content.'>
+    <FoundationPage title='Item' description='A row in a list: media, title and description, actions.'>
       <ExampleSection
         title='Default'
         description={
@@ -64,7 +62,7 @@ export const Board: Story = {
         title='Link'
         description={
           <>
-            <Code>{'render={<a />}'}</Code> (a router Link in the app): the row highlights on hover.
+            <Code>{'render={<a />}'}</Code>, or a router link: the row highlights on hover.
           </>
         }
         bare>
@@ -74,7 +72,7 @@ export const Board: Story = {
         title='Selected'
         description={
           <>
-            <Code>data-selected</Code> and <Code>data-targeted</Code> (keyboard selection) take a quiet fill.
+            A <Code>selected</Code> row takes a quiet fill.
           </>
         }
         bare>

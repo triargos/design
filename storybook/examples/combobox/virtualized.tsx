@@ -1,34 +1,35 @@
 import { useState } from 'react';
 
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput } from '~/components/ui/combobox';
-import type { SelectOption } from '~/components/ui/select-option';
-import { useVirtualizedCombobox, VirtualizedComboboxList } from '~/components/ui/virtualized-combobox';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxVirtualizedList,
+} from '~/components/ui/combobox';
+import type { SelectOption } from '~/components/ui/select';
 
-const STREETS = ['Hauptstraße', 'Schulweg', 'Gartenstraße', 'Bahnhofstraße', 'Lindenallee', 'Am See', 'Kirchplatz'];
+const AREAS = ['Billing', 'Onboarding', 'Search', 'Settings', 'Invoices', 'Reports', 'Members'];
 
-const MANY: ReadonlyArray<SelectOption> = Array.from({ length: 2100 }, (_, index) => ({
-  value: String(index),
-  label: `${STREETS[index % STREETS.length]} ${Math.floor(index / STREETS.length) + 1}`,
+const TASKS: ReadonlyArray<SelectOption> = Array.from({ length: 2100 }, (_, index) => ({
+  value: String(index + 1),
+  label: `${AREAS[index % AREAS.length]} task ${Math.floor(index / AREAS.length) + 1}`,
 }));
 
-/** `virtualized` + `VirtualizedComboboxList`: only the rows in view render. What Search Select builds. */
+/** `virtualized` + `ComboboxVirtualizedList`: only the rows in view render. What Search Select builds on. */
 export function ComboboxVirtualized() {
-  const [value, setValue] = useState<SelectOption | null>(MANY[24]);
-  const virtual = useVirtualizedCombobox();
+  const [value, setValue] = useState<SelectOption | null>(TASKS[24]!);
   return (
     <Combobox
-      {...virtual.root}
       virtualized
-      items={MANY}
-      itemToStringValue={(item: SelectOption) => item.label}
+      items={TASKS}
+      itemToStringValue={(task: SelectOption) => task.label}
       value={value}
-      onValueChange={(item: SelectOption | null) => setValue(item)}>
-      <ComboboxInput placeholder='Straße suchen' aria-label='Straße' showClear className='w-64' />
+      onValueChange={(task: SelectOption | null) => setValue(task)}>
+      <ComboboxInput placeholder='Search tasks' aria-label='Task' className='w-64' />
       <ComboboxContent>
-        <ComboboxEmpty>Keine Straße gefunden</ComboboxEmpty>
-        <VirtualizedComboboxList {...virtual.list}>
-          {(option: SelectOption) => <span>{option.label}</span>}
-        </VirtualizedComboboxList>
+        <ComboboxEmpty>No tasks found</ComboboxEmpty>
+        <ComboboxVirtualizedList>{(task: SelectOption) => <span>{task.label}</span>}</ComboboxVirtualizedList>
       </ComboboxContent>
     </Combobox>
   );

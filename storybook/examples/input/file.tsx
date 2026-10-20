@@ -4,8 +4,8 @@ import { Input } from '~/components/ui/input';
 export function InputFile() {
   return (
     <Field className='w-80'>
-      <FieldLabel htmlFor='certificate'>Bescheinigung</FieldLabel>
-      <Input id='certificate' type='file' />
+      <FieldLabel htmlFor='input-invoice'>Invoice</FieldLabel>
+      <Input id='input-invoice' type='file' />
     </Field>
   );
 }

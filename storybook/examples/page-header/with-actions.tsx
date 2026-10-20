@@ -5,36 +5,34 @@ import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/
 import { PageContent } from '~/components/ui/page-content';
 import {
   PageDescription,
-  PageHeader,
+  PageHeaderActions,
   PageHeaderGroup,
   PageHeaderRow,
-  PageHeaderTools,
+  PageTitle,
 } from '~/components/ui/page-header';
 
-/** Tools on the right: the main action last. */
-export function PageHeaderWithTools() {
+/** Actions on the right: the main action last. */
+export function PageHeaderWithActions() {
   return (
     <PageContent
       header={
         <PageHeaderRow>
           <PageHeaderGroup>
-            <PageHeader>Nachmittagsbetreuung</PageHeader>
-            <PageDescription>Anmeldungen für das Schuljahr 2025/26.</PageDescription>
+            <PageTitle>Projects</PageTitle>
+            <PageDescription>Everything your team is working on this quarter.</PageDescription>
           </PageHeaderGroup>
-          <PageHeaderTools>
-            <Button type='button' intent='neutral' emphasis='raised'>
-              Exportieren
-            </Button>
-            <Button type='button'>
+          <PageHeaderActions>
+            <Button>Export</Button>
+            <Button intent='primary'>
               <PlusIcon data-icon='inline-start' />
-              Neuer Antrag
+              New project
             </Button>
-          </PageHeaderTools>
+          </PageHeaderActions>
         </PageHeaderRow>
       }>
       <InsetCard>
         <InsetCardHeader>
-          <InsetCardTitle>Anmeldungen</InsetCardTitle>
+          <InsetCardTitle>Active</InsetCardTitle>
         </InsetCardHeader>
         <InsetCardContent className='h-16' />
       </InsetCard>

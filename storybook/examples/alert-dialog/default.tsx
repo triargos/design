@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,21 +13,22 @@ import {
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 
-/** The header is the card, the actions sit on the shell; no close button. */
+/** The header is the card, the actions sit on the shell; no close button. The action closes it in `onClick`. */
 export function AlertDialogDefault() {
+  const [open, setOpen] = useState(false);
   return (
-    <AlertDialog>
-      <AlertDialogTrigger render={<Button />}>Anmeldung einreichen</AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger render={<Button intent='primary' />}>Publish project</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Anmeldung einreichen?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Danach kannst du die Angaben nur noch über das Sekretariat ändern.
-          </AlertDialogDescription>
+          <AlertDialogTitle>Publish the project?</AlertDialogTitle>
+          <AlertDialogDescription>Every member gets notified and can see it right away.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-          <AlertDialogAction>Einreichen</AlertDialogAction>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction intent='primary' onClick={() => setOpen(false)}>
+            Publish
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,31 +1,19 @@
-import {
-  Stepper,
-  StepperContent,
-  StepperDescription,
-  StepperIndicator,
-  StepperItem,
-  StepperSeparator,
-  StepperTitle,
-} from '~/components/ui/stepper';
+import { Stepper, StepperDescription, StepperItem, StepperTitle } from '~/components/ui/stepper';
 
-const DELETION = [
-  { title: 'Löschung beantragt', description: 'Am 3. März 2025' },
-  { title: 'Bestätigt', description: 'Per E-Mail-Link' },
-  { title: 'Konto wird gelöscht', description: 'Am 2. April 2025 um 10:00' },
+const EXPORT = [
+  { title: 'Export requested', description: 'March 3, 2025' },
+  { title: 'Confirmed', description: 'By email link' },
+  { title: 'Archive ready', description: 'April 2, 2025 at 10:00 AM' },
 ] as const;
 
 /** `value` past the last step: every step done. */
 export function StepperDone() {
   return (
-    <Stepper value={4} orientation='vertical' aria-label='Fortschritt der Löschung'>
-      {DELETION.map((step, index) => (
+    <Stepper value={4} orientation='vertical' aria-label='Workspace export'>
+      {EXPORT.map((step, index) => (
         <StepperItem key={step.title} step={index + 1}>
-          <StepperIndicator />
-          <StepperContent>
-            <StepperTitle>{step.title}</StepperTitle>
-            <StepperDescription>{step.description}</StepperDescription>
-          </StepperContent>
-          <StepperSeparator />
+          <StepperTitle>{step.title}</StepperTitle>
+          <StepperDescription>{step.description}</StepperDescription>
         </StepperItem>
       ))}
     </Stepper>

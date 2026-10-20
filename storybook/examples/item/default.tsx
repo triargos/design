@@ -6,18 +6,18 @@ export function ItemDefault() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Klassen</InsetCardTitle>
+        <InsetCardTitle>Projects</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
           <Item>
             <ItemContent>
-              <ItemTitle>Klasse 3b</ItemTitle>
+              <ItemTitle>Website redesign</ItemTitle>
             </ItemContent>
           </Item>
           <Item>
             <ItemContent>
-              <ItemTitle>Klasse 4a</ItemTitle>
+              <ItemTitle>Mobile app</ItemTitle>
             </ItemContent>
           </Item>
         </ItemList>

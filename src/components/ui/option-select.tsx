@@ -1,23 +1,26 @@
 import * as React from 'react';
-import { useUiStrings } from '~/lib/ui-config';
 
 import { FieldReveal } from '~/components/ui/field-reveal';
 import { Input } from '~/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '~/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  type SelectOption,
+} from '~/components/ui/select';
 
-type OptionSelectKey = string | number;
-
-interface OptionSelectBaseProps<Item, Key extends OptionSelectKey> {
-  readonly items: ReadonlyArray<Item>;
-  /** Equality, React key, and the value handed to `onValueChange`. */
-  readonly itemKey: (item: Item) => Key;
-  /** The row and the trigger text. */
-  readonly itemLabel: (item: Item) => string;
+interface OptionSelectBaseProps {
+  readonly items: ReadonlyArray<SelectOption>;
+  readonly value: string | null;
+  readonly onValueChange: (value: string) => void;
   readonly placeholder?: string;
   readonly id?: string;
   /** Without a visible label, e.g. `size='sm'` in a toolbar. */
   readonly 'aria-label'?: string;
-  readonly invalid?: boolean;
+  readonly 'aria-invalid'?: boolean;
   readonly disabled?: boolean;
   readonly onBlur?: () => void;
   readonly size?: 'sm' | 'default';
@@ -25,80 +28,62 @@ interface OptionSelectBaseProps<Item, Key extends OptionSelectKey> {
   readonly className?: string;
 }
 
-interface OptionSelectPickProps<Item, Key extends OptionSelectKey> extends OptionSelectBaseProps<Item, Key> {
+interface OptionSelectPickProps extends OptionSelectBaseProps {
   readonly allowCustom?: false;
-  readonly value: Key | null;
-  readonly onValueChange: (key: Key) => void;
 }
 
 /**
- * The value is a plain string: an item's key or the typed text. The list ends, after a separator, in an „Andere
- * angeben …“ row; picking it emits '' and folds open a text field, hung off the select, that takes focus. A value
- * that is no item's key opens with the text field.
+ * The value is an item's value or the typed text. The list ends, after a separator, in an "Other…" row; picking it
+ * emits '' and folds open a text field, hung off the select, that takes focus. A value that is no item's value opens
+ * with the text field.
  */
-interface OptionSelectCustomProps<Item> extends OptionSelectBaseProps<Item, string> {
+interface OptionSelectCustomProps extends OptionSelectBaseProps {
   readonly allowCustom: true;
-  readonly value: string | null;
-  readonly onValueChange: (value: string) => void;
-  /** The text field's accessible name; default: common `select.otherLabel`. */
+  /** The trigger text once "other" is chosen, the row (with an ellipsis), and the text field's accessible name. */
   readonly otherLabel?: string;
-  /** Default: common `select.otherPlaceholder`. */
   readonly otherPlaceholder?: string;
 }
 
-export type OptionSelectProps<Item, Key extends OptionSelectKey> =
-  | OptionSelectPickProps<Item, Key>
-  | (Key extends string ? OptionSelectCustomProps<Item> : never);
+export type OptionSelectProps = OptionSelectPickProps | OptionSelectCustomProps;
 
-/** The select's own value for the other row; never emitted, so no key or typed text can collide with it. */
+/** The select's own value for the other row: not a string, so no item value or typed text can collide with it. */
 const OTHER = { other: true } as const;
 
-/** A type guard, not `===`: only a guard narrows `Item | typeof OTHER` on a generic `Item`. */
-const isOther = (choice: unknown): choice is typeof OTHER => choice === OTHER;
+type Choice = string | typeof OTHER;
 
 /**
- * A select over `items`, with SearchSelect's API, for short lists: no typing, no virtualization. `allowCustom` adds
- * an „Andere“ row with a text field for a value outside the list. Not bound to a form: wire it through `Controller` +
- * `Field`. For long lists or a custom value typed in place, `SearchSelect`.
+ * A select over a short list of options: no typing, no virtualization. `allowCustom` adds an "Other…" row with a text
+ * field for a value outside the list. For long lists or a value typed in place, `SearchSelect`.
  */
-export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSelectProps<Item, Key>) {
-  const { items, itemKey, itemLabel, placeholder, id, invalid, disabled, onBlur, size, className } = props;
-  const ariaLabel = props['aria-label'];
-  type Choice = Item | typeof OTHER;
-  const strings = useUiStrings();
-  // The text last typed into the other field: a typed text that equals a key stays custom while it is typed.
+export function OptionSelect(props: OptionSelectProps) {
+  const { items, value, onValueChange, placeholder = 'Select…', id, disabled, onBlur, size, className } = props;
+  const invalid = props['aria-invalid'] === true;
+  const otherLabel = (props.allowCustom && props.otherLabel) || 'Other';
+  // The text last typed into the other field: a typed text that equals an item's value stays custom while typed.
   const [typedOther, setTypedOther] = React.useState<string | null>(null);
   const otherInput = React.useRef<HTMLInputElement>(null);
   const focusOther = React.useRef(false);
 
-  const itemsByKey = React.useMemo(
-    () => new Map<OptionSelectKey, Item>(items.map((item) => [itemKey(item), item])),
-    [items, itemKey],
-  );
-  const listed = props.value === null ? null : (itemsByKey.get(props.value) ?? null);
-  const otherChosen =
-    props.allowCustom === true && props.value !== null && (listed === null || props.value === typedOther);
-  const selected: Choice | null = otherChosen ? OTHER : listed;
+  const listed = value !== null && items.some((option) => option.value === value);
+  const otherChosen = props.allowCustom === true && value !== null && (!listed || value === typedOther);
+  const selected: Choice | null = otherChosen ? OTHER : listed ? value : null;
 
   const select = (
     <Select<Choice>
+      itemToStringLabel={(choice) =>
+        typeof choice === 'string' ? (items.find((option) => option.value === choice)?.label ?? choice) : otherLabel
+      }
       value={selected}
       onValueChange={(next) => {
-        if (isOther(next)) {
-          if (!props.allowCustom) return;
+        if (typeof next !== 'string') {
           focusOther.current = true;
           setTypedOther('');
-          props.onValueChange('');
+          onValueChange('');
           return;
         }
         setTypedOther(null);
-        // The same call twice: each branch narrows `props`, so the key fits its callback.
-        if (props.allowCustom) props.onValueChange(props.itemKey(next));
-        else props.onValueChange(props.itemKey(next));
+        onValueChange(next);
       }}
-      // Base UI calls neither with `null`.
-      itemToStringLabel={(choice) => (isOther(choice) ? strings.selectOther : itemLabel(choice))}
-      isItemEqualToValue={(a, b) => (isOther(a) || isOther(b) ? a === b : itemKey(a) === itemKey(b))}
       // The popup returns focus to the trigger as it closes; move on to the text field only after that.
       onOpenChangeComplete={(open) => {
         if (open || !focusOther.current) return;
@@ -108,24 +93,24 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
       disabled={disabled}>
       <SelectTrigger
         id={id}
-        aria-label={ariaLabel}
+        aria-label={props['aria-label']}
         size={size}
         onBlur={onBlur}
         aria-invalid={(invalid && !otherChosen) || undefined}
         className={props.allowCustom ? undefined : className}>
-        <SelectValue placeholder={placeholder ?? strings.selectPlaceholder} />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {items.map((item) => (
-          <SelectItem key={itemKey(item)} value={item}>
-            {itemLabel(item)}
+        {items.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
           </SelectItem>
         ))}
         {props.allowCustom && (
           <>
             <SelectSeparator />
-            {/* The row says what picking it does; the trigger then shows `select.other`. */}
-            <SelectItem value={OTHER}>{strings.selectOtherOption}</SelectItem>
+            {/* The ellipsis says a field follows; the trigger then shows the label alone. */}
+            <SelectItem value={OTHER}>{otherLabel}…</SelectItem>
           </>
         )}
       </SelectContent>
@@ -133,16 +118,15 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
   );
 
   if (!props.allowCustom) return select;
-  const { onValueChange, otherLabel, otherPlaceholder } = props;
   return (
     <div className={className}>
       {select}
       <FieldReveal show={otherChosen} elbow>
         <Input
           ref={otherInput}
-          aria-label={otherLabel ?? strings.selectOtherLabel}
-          placeholder={otherPlaceholder ?? strings.selectOtherPlaceholder}
-          value={otherChosen ? (props.value ?? '') : ''}
+          aria-label={otherLabel}
+          placeholder={props.otherPlaceholder}
+          value={otherChosen ? (value ?? '') : ''}
           onChange={(event) => {
             setTypedOther(event.target.value);
             onValueChange(event.target.value);

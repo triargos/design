@@ -1,6 +1,5 @@
 import { PlusIcon } from 'lucide-react';
 import * as React from 'react';
-import { useUiStrings } from '~/lib/ui-config';
 
 import {
   Combobox,
@@ -11,180 +10,173 @@ import {
   ComboboxEmpty,
   ComboboxInput,
   ComboboxValue,
-  useComboboxAnchor,
+  ComboboxVirtualizedList,
 } from '~/components/ui/combobox';
-import { useVirtualizedCombobox, VirtualizedComboboxList } from '~/components/ui/virtualized-combobox';
+import type { SelectOption } from '~/components/ui/select';
 
-type SearchSelectKey = string | number;
-
-interface SearchSelectBaseProps<Item, Key extends SearchSelectKey> {
-  readonly items: ReadonlyArray<Item>;
-  /** Equality, React key, and the value handed to `onValueChange`. */
-  readonly itemKey: (item: Item) => Key;
-  /** Filtering, the input text, the chip text. */
-  readonly itemLabel: (item: Item) => string;
-  /** Row and chip content; default: the label, and a `description` field muted beside it. */
-  readonly renderItem?: (item: Item) => React.ReactNode;
+interface SearchSelectBaseProps {
+  readonly items: ReadonlyArray<SelectOption>;
   readonly placeholder?: string;
-  /** Default: common `select.noItems`. */
+  /** Shown while no item matches; pass a loading text while the items load. */
   readonly emptyText?: string;
-  /** Shows common `select.pending` in place of the empty text. */
-  readonly pending?: boolean;
   readonly id?: string;
-  readonly invalid?: boolean;
+  /** Without a visible label. */
+  readonly 'aria-label'?: string;
+  readonly 'aria-invalid'?: boolean;
   readonly disabled?: boolean;
   readonly onBlur?: () => void;
   /** The field. */
   readonly className?: string;
 }
 
-interface SearchSelectSingleProps<Item, Key extends SearchSelectKey> extends SearchSelectBaseProps<Item, Key> {
+interface SearchSelectSingleProps extends SearchSelectBaseProps {
   readonly multiple?: false;
   readonly allowCustom?: false;
-  readonly value: Key | null;
-  readonly onValueChange: (key: Key | null) => void;
-}
-
-interface SearchSelectMultipleProps<Item, Key extends SearchSelectKey> extends SearchSelectBaseProps<Item, Key> {
-  readonly multiple: true;
-  readonly allowCustom?: false;
-  readonly value: ReadonlyArray<Key>;
-  readonly onValueChange: (keys: Key[]) => void;
-}
-
-/**
- * One value, from the list or typed: the value is a plain string, an item's key or the typed text. A value that is no
- * item's key is custom. While the query matches no item's label, the list ends in a row that takes the query; Enter
- * picks it once nothing else matches. A custom value folds open a note below the field.
- */
-interface SearchSelectCustomProps<Item> extends SearchSelectBaseProps<Item, string> {
-  readonly multiple?: false;
-  readonly allowCustom: true;
   readonly value: string | null;
   readonly onValueChange: (value: string | null) => void;
 }
 
-export type SearchSelectProps<Item, Key extends SearchSelectKey> =
-  | SearchSelectSingleProps<Item, Key>
-  | SearchSelectMultipleProps<Item, Key>
-  | (Key extends string ? SearchSelectCustomProps<Item> : never);
+interface SearchSelectMultipleProps extends SearchSelectBaseProps {
+  readonly multiple: true;
+  readonly allowCustom?: false;
+  readonly value: ReadonlyArray<string>;
+  readonly onValueChange: (values: string[]) => void;
+}
 
-function DefaultItem({ label, item }: { label: string; item: unknown }) {
-  const description =
-    typeof item === 'object' && item !== null && 'description' in item && typeof item.description === 'string'
-      ? item.description
-      : undefined;
+/**
+ * One value, from the list or typed: an item's value or the typed text. While the query matches no item's label, the
+ * list ends in a row that takes the query; Enter picks it once nothing else matches.
+ */
+interface SearchSelectCustomProps extends SearchSelectBaseProps {
+  readonly multiple?: false;
+  readonly allowCustom: true;
+  readonly value: string | null;
+  readonly onValueChange: (value: string | null) => void;
+  /** Marks a typed value: in its row, and as the field's description. */
+  readonly customLabel?: string;
+  /** The row that takes the query; `text` is the typed text, cut to fit. */
+  readonly customOptionLabel?: (text: React.ReactNode) => React.ReactNode;
+}
+
+export type SearchSelectProps = SearchSelectSingleProps | SearchSelectMultipleProps | SearchSelectCustomProps;
+
+const NO_RESULTS = 'No results';
+
+const optionProps = {
+  virtualized: true,
+  itemToStringLabel: (option: SelectOption) => option.label,
+  itemToStringValue: (option: SelectOption) => option.value,
+  isItemEqualToValue: (a: SelectOption, b: SelectOption) => a.value === b.value,
+};
+
+function OptionRow({ option }: { option: SelectOption }) {
   return (
     <>
-      <span className='truncate'>{label}</span>
-      {description && <span className='truncate text-caption text-muted-foreground'>{description}</span>}
+      <span className='truncate'>{option.label}</span>
+      {option.description && <span className='truncate text-caption text-muted-foreground'>{option.description}</span>}
     </>
   );
 }
 
-function SearchSelectEmpty({ pending, text }: { pending: boolean; text: string | undefined }) {
-  const strings = useUiStrings();
-  return <ComboboxEmpty>{pending ? strings.selectPending : (text ?? strings.selectEmpty)}</ComboboxEmpty>;
-}
-
 /**
- * A select you can type into, for any list length: the list is always virtualized. One value (`ComboboxInput`, clear
- * button), many (`multiple`, chips in the field), or one that may be typed (`allowCustom`). Not bound to a form: wire
- * it through `Controller` + `Field`. For grouped lists or custom composition, build on `Combobox` + `ComboboxList`.
+ * A select you can type into, for any list length: the list is always virtualized. One value (a clear button), many
+ * (`multiple`, chips in the field), or one that may be typed (`allowCustom`). Type to filter; Enter picks the first
+ * match. For grouped lists or another trigger, compose `Combobox`.
  */
-export function SearchSelect<Item, Key extends SearchSelectKey>(props: SearchSelectProps<Item, Key>) {
-  return props.allowCustom ? <SearchSelectCustom {...props} /> : <SearchSelectPick {...props} />;
+export function SearchSelect(props: SearchSelectProps) {
+  if (props.allowCustom) return <SearchSelectCustom {...props} />;
+  if (props.multiple) return <SearchSelectMultiple {...props} />;
+  return <SearchSelectSingle {...props} />;
 }
 
-function SearchSelectPick<Item, Key extends SearchSelectKey>(
-  props: SearchSelectSingleProps<Item, Key> | SearchSelectMultipleProps<Item, Key>,
-) {
-  const {
-    items,
-    itemKey,
-    itemLabel,
-    renderItem,
-    placeholder,
-    emptyText,
-    pending = false,
-    id,
-    invalid,
-    disabled,
-    onBlur,
-    className,
-  } = props;
-  const virtual = useVirtualizedCombobox();
-  const anchorRef = useComboboxAnchor();
+function useOptionsByValue(items: ReadonlyArray<SelectOption>) {
+  return React.useMemo(() => new Map(items.map((option) => [option.value, option])), [items]);
+}
 
-  const itemsByKey = React.useMemo(() => new Map(items.map((item) => [itemKey(item), item])), [items, itemKey]);
-  const rootProps = {
-    ...virtual.root,
-    virtualized: true,
-    itemToStringLabel: itemLabel,
-    itemToStringValue: (item: Item) => String(itemKey(item)),
-    isItemEqualToValue: (a: Item, b: Item) => itemKey(a) === itemKey(b),
-    disabled,
-  };
-
-  const popup = (
-    <ComboboxContent anchor={props.multiple ? anchorRef : undefined}>
-      <SearchSelectEmpty pending={pending} text={emptyText} />
-      <VirtualizedComboboxList {...virtual.list} itemKey={itemKey}>
-        {(item: Item) => renderItem?.(item) ?? <DefaultItem label={itemLabel(item)} item={item} />}
-      </VirtualizedComboboxList>
-    </ComboboxContent>
-  );
-
-  if (props.multiple) {
-    const selected = props.value.flatMap((key) => itemsByKey.get(key) ?? []);
-    const { onValueChange } = props;
-    return (
-      <Combobox
-        {...rootProps}
-        multiple
-        items={items}
-        value={selected}
-        onValueChange={(next: Item[]) => onValueChange(next.map((item) => itemKey(item)))}>
-        <ComboboxChips ref={anchorRef} aria-invalid={invalid || undefined} className={className}>
-          <ComboboxValue>
-            {(value: Item[]) =>
-              value.map((item) => (
-                <ComboboxChip key={itemKey(item)}>
-                  <span className='flex min-w-0 items-center gap-1.5'>{renderItem?.(item) ?? itemLabel(item)}</span>
-                </ComboboxChip>
-              ))
-            }
-          </ComboboxValue>
-          <ComboboxChipsInput
-            id={id}
-            placeholder={selected.length === 0 ? placeholder : undefined}
-            onBlur={onBlur}
-            disabled={disabled}
-          />
-        </ComboboxChips>
-        {popup}
-      </Combobox>
-    );
-  }
-
-  const selected = props.value === null ? null : (itemsByKey.get(props.value) ?? null);
-  const { onValueChange } = props;
+function SearchSelectSingle({
+  items,
+  placeholder,
+  emptyText = NO_RESULTS,
+  id,
+  'aria-label': ariaLabel,
+  'aria-invalid': ariaInvalid,
+  disabled,
+  onBlur,
+  className,
+  value,
+  onValueChange,
+}: SearchSelectSingleProps) {
+  const optionsByValue = useOptionsByValue(items);
+  const selected = (value === null ? undefined : optionsByValue.get(value)) ?? null;
   return (
     <Combobox
-      {...rootProps}
+      {...optionProps}
       items={selectedFirst(items, selected)}
       value={selected}
-      onValueChange={(next: Item | null) => onValueChange(next === null ? null : itemKey(next))}>
+      onValueChange={(next: SelectOption | null) => onValueChange(next?.value ?? null)}
+      disabled={disabled}>
       <ComboboxInput
         id={id}
+        aria-label={ariaLabel}
+        aria-invalid={ariaInvalid || undefined}
         placeholder={placeholder}
-        showClear
         onBlur={onBlur}
-        aria-invalid={invalid || undefined}
         disabled={disabled}
         className={className}
       />
-      {popup}
+      <ComboboxContent>
+        <ComboboxEmpty>{emptyText}</ComboboxEmpty>
+        <ComboboxVirtualizedList itemKey={(option: SelectOption) => option.value}>
+          {(option: SelectOption) => <OptionRow option={option} />}
+        </ComboboxVirtualizedList>
+      </ComboboxContent>
+    </Combobox>
+  );
+}
+
+function SearchSelectMultiple({
+  items,
+  placeholder,
+  emptyText = NO_RESULTS,
+  id,
+  'aria-label': ariaLabel,
+  'aria-invalid': ariaInvalid,
+  disabled,
+  onBlur,
+  className,
+  value,
+  onValueChange,
+}: SearchSelectMultipleProps) {
+  const optionsByValue = useOptionsByValue(items);
+  const selected = value.flatMap((key) => optionsByValue.get(key) ?? []);
+  return (
+    <Combobox
+      {...optionProps}
+      multiple
+      items={items}
+      value={selected}
+      onValueChange={(next: SelectOption[]) => onValueChange(next.map((option) => option.value))}
+      disabled={disabled}>
+      <ComboboxChips aria-invalid={ariaInvalid || undefined} className={className}>
+        <ComboboxValue>
+          {(options: SelectOption[]) =>
+            options.map((option) => <ComboboxChip key={option.value}>{option.label}</ComboboxChip>)
+          }
+        </ComboboxValue>
+        <ComboboxChipsInput
+          id={id}
+          aria-label={ariaLabel}
+          placeholder={selected.length === 0 ? placeholder : undefined}
+          onBlur={onBlur}
+          disabled={disabled}
+        />
+      </ComboboxChips>
+      <ComboboxContent>
+        <ComboboxEmpty>{emptyText}</ComboboxEmpty>
+        <ComboboxVirtualizedList itemKey={(option: SelectOption) => option.value}>
+          {(option: SelectOption) => <OptionRow option={option} />}
+        </ComboboxVirtualizedList>
+      </ComboboxContent>
     </Combobox>
   );
 }
@@ -200,35 +192,34 @@ class CustomEntry {
   constructor(readonly text: string) {}
 }
 
-function SearchSelectCustom<Item>({
+type Entry = SelectOption | CustomEntry;
+
+const entryText = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : entry.label);
+
+function SearchSelectCustom({
   items,
-  itemKey,
-  itemLabel,
-  renderItem,
   placeholder,
-  emptyText,
-  pending = false,
+  emptyText = NO_RESULTS,
   id,
-  invalid,
+  'aria-label': ariaLabel,
+  'aria-invalid': ariaInvalid,
   disabled,
   onBlur,
   className,
   value,
   onValueChange,
-}: SearchSelectCustomProps<Item>) {
-  type Entry = Item | CustomEntry;
-  const strings = useUiStrings();
+  customLabel = 'Custom',
+  customOptionLabel = (text) => <>Use “{text}”</>,
+}: SearchSelectCustomProps) {
   const [query, setQuery] = React.useState('');
-  const virtual = useVirtualizedCombobox();
   const noteId = React.useId();
 
-  const itemsByKey = React.useMemo(() => new Map(items.map((item) => [itemKey(item), item])), [items, itemKey]);
-  const labels = React.useMemo(() => new Set(items.map((item) => itemLabel(item).toLowerCase())), [items, itemLabel]);
+  const optionsByValue = useOptionsByValue(items);
+  const labels = React.useMemo(() => new Set(items.map((option) => option.label.toLowerCase())), [items]);
 
   // Base UI resets the input to the selected label when the value changes identity or drops out of `items`; either
-  // would undo every keystroke. So: one `CustomEntry` per custom text (keyed by the text, not by `itemsByKey`, which
-  // an inline `itemKey` rebuilds each render), and it stays in `items`.
-  const listed = value ? itemsByKey.get(value) : undefined;
+  // would undo every keystroke. So: one `CustomEntry` per custom text, and it stays in `items`.
+  const listed = value === null ? undefined : optionsByValue.get(value);
   const custom = Boolean(value) && listed === undefined;
   const customEntry = React.useMemo(() => (custom && value ? new CustomEntry(value) : null), [custom, value]);
   const selected: Entry | null = listed ?? customEntry;
@@ -242,33 +233,24 @@ function SearchSelectCustom<Item>({
     return [...selectedFirst(all, selected), ...typedRow];
   }, [items, labels, query, customEntry, value, selected]);
 
-  const label = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : itemLabel(entry));
   const isPicked = (entry: Entry) => entry instanceof CustomEntry && entry.text === value;
   const content = (entry: Entry) => {
-    if (!(entry instanceof CustomEntry)) {
-      return renderItem?.(entry) ?? <DefaultItem label={itemLabel(entry)} item={entry} />;
-    }
+    if (!(entry instanceof CustomEntry)) return <OptionRow option={entry} />;
     if (isPicked(entry)) {
       return (
         <>
           <span className='truncate'>{entry.text}</span>
           {/* At the row's end: the value truncates first, the hint keeps its width. */}
           <span className='ms-auto shrink-0 text-caption text-muted-foreground in-data-highlighted:text-foreground'>
-            {strings.selectCustom}
+            {customLabel}
           </span>
         </>
       );
     }
-    // One line, as tall as the other rows: the typed text truncates, the verb stays. A virtualized row cannot widen
-    // the popup.
+    // One line, as tall as the other rows: the typed text truncates, the words and quotes around it keep their width.
     return (
-      // gap-1: a word space, not the row's 8px gap.
-      <span className='flex min-w-0 gap-1'>
-        {/* The quotes stay outside the truncation, so a cut text still closes. */}
-        <span className='flex min-w-0'>
-          „<span className='truncate'>{entry.text}</span>“
-        </span>
-        <span className='shrink-0'>{strings.selectUseCustom}</span>
+      <span className='flex min-w-0 whitespace-pre'>
+        {customOptionLabel(<span className='truncate'>{entry.text}</span>)}
       </span>
     );
   };
@@ -276,49 +258,47 @@ function SearchSelectCustom<Item>({
   return (
     <div className={className}>
       <Combobox
-        {...virtual.root}
         virtualized
         items={entries}
         value={selected}
         onValueChange={(next: Entry | null) =>
-          onValueChange(next === null ? null : next instanceof CustomEntry ? next.text : itemKey(next))
+          onValueChange(next === null ? null : next instanceof CustomEntry ? next.text : next.value)
         }
         onInputValueChange={setQuery}
-        itemToStringLabel={label}
-        itemToStringValue={(entry: Entry) => (entry instanceof CustomEntry ? entry.text : itemKey(entry))}
+        itemToStringLabel={entryText}
+        itemToStringValue={(entry: Entry) => (entry instanceof CustomEntry ? entry.text : entry.value)}
         isItemEqualToValue={(a: Entry, b: Entry) =>
           a instanceof CustomEntry || b instanceof CustomEntry
             ? a instanceof CustomEntry && b instanceof CustomEntry && a.text === b.text
-            : itemKey(a) === itemKey(b)
+            : a.value === b.value
         }
         disabled={disabled}>
         <ComboboxInput
           id={id}
-          placeholder={placeholder}
-          showClear
-          onBlur={onBlur}
-          aria-invalid={invalid || undefined}
+          aria-label={ariaLabel}
+          aria-invalid={ariaInvalid || undefined}
           aria-describedby={custom ? noteId : undefined}
+          placeholder={placeholder}
+          onBlur={onBlur}
           disabled={disabled}
         />
         <ComboboxContent>
-          <SearchSelectEmpty pending={pending} text={emptyText} />
-          <VirtualizedComboboxList
-            {...virtual.list}
-            itemKey={(entry: Entry) => (entry instanceof CustomEntry ? `custom:${entry.text}` : itemKey(entry))}
+          <ComboboxEmpty>{emptyText}</ComboboxEmpty>
+          <ComboboxVirtualizedList
+            itemKey={(entry: Entry) => (entry instanceof CustomEntry ? `custom:${entry.text}` : entry.value)}
             indicator={(entry: Entry) =>
               entry instanceof CustomEntry && !isPicked(entry) ? (
                 <PlusIcon className='text-muted-foreground' />
               ) : undefined
             }>
             {content}
-          </VirtualizedComboboxList>
+          </ComboboxVirtualizedList>
         </ComboboxContent>
       </Combobox>
-      {/* No visible mark: the input reads the note, the list row reads „Eigene Angabe“. */}
+      {/* No visible mark: the input reads the note, the list row shows the same label. */}
       {custom && (
         <span id={noteId} className='sr-only'>
-          {strings.selectCustomNote}
+          {customLabel}
         </span>
       )}
     </div>

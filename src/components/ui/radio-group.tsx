@@ -36,7 +36,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
 }
 
 /**
- * A radio as a card, for a few choices that deserve room (a child, a reason). Unchecked it is the quiet shell fill;
+ * A radio as a card, for a few choices that deserve room (a plan, a role). Unchecked it is the quiet shell fill;
  * checked it lifts to a card with a check in the brand hue. Inside a `RadioGroup`, which owns the value and the grid.
  */
 function ChoiceCard({ className, children, ...props }: RadioPrimitive.Root.Props) {

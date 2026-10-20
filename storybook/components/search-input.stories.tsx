@@ -17,7 +17,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Search Input'
-      description='A search field: an InputGroup with a search icon and a clear button. ⌘F focuses it. In the URL: SearchParamInput.'>
+      description='A search field with a clear button. ⌘F focuses it, Escape clears it.'>
       <ExampleSection title='Default'>
         <SearchInputDefault />
       </ExampleSection>

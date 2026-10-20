@@ -4,9 +4,9 @@ import { Separator } from '~/components/ui/separator';
 export function SeparatorDefault() {
   return (
     <div className='flex w-80 flex-col gap-4'>
-      <span className='text-body text-muted-foreground'>Persönliche Daten</span>
+      <span className='text-body text-muted-foreground'>Profile</span>
       <Separator />
-      <span className='text-body text-muted-foreground'>Kontakt</span>
+      <span className='text-body text-muted-foreground'>Notifications</span>
     </div>
   );
 }

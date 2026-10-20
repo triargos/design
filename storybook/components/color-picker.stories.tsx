@@ -8,7 +8,7 @@ import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 
 const meta = {
   title: 'Components/Color Picker',
-  parameters: { description: 'A user-chosen label color: twelve presets and a custom color.' },
+  parameters: { description: 'A user-chosen data color: twelve presets and a custom color.' },
 } satisfies Meta;
 
 export default meta;
@@ -20,7 +20,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Color Picker'
-      description='A user-chosen label color (application categories, submission statuses): twelve Tailwind 500 presets that read as a dot and as an icon stroke, and a custom color. These are data colors, not theme tokens; the UI around them stays on the intents.'>
+      description='A user-chosen data color, such as a project or label color: twelve presets that read as a dot and as an icon stroke, and a custom color. Data colors, not theme tokens; the UI around them stays on the intents.'>
       <ExampleSection title='Default' description='A preset.'>
         <ColorPickerDefault />
       </ExampleSection>

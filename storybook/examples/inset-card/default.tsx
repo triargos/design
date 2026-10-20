@@ -5,10 +5,10 @@ export function InsetCardDefault() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Dateien</InsetCardTitle>
+        <InsetCardTitle>Files</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='p-group'>
-        <p className='text-body text-muted-foreground'>Inhalt der Karte.</p>
+        <p className='text-body text-muted-foreground'>Card content.</p>
       </InsetCardContent>
     </InsetCard>
   );

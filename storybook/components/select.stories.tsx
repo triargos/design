@@ -21,12 +21,12 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Select'
-      description='A field that opens a list of options, on the field surface: the parts to compose. Over a list of items, or with an „Andere“ row, Option Select; for many options or search, Combobox or Search Select.'>
+      description='A field that opens a list of options: the parts to compose. For a list of options with an “Other…” row, Option Select; for many options or search, Search Select.'>
       <ExampleSection
         title='Default'
         description={
           <>
-            <Code>items</Code> lets SelectValue show the label.
+            <Code>items</Code> lets <Code>SelectValue</Code> show the label.
           </>
         }>
         <SelectDefault />
@@ -58,11 +58,11 @@ export const Board: Story = {
 
 export const Default: Story = {
   render: () => <SelectDefault />,
-  play: open('click', 'Status', 'Erledigt', 'combobox'),
+  play: open('click', 'Status', 'Done', 'combobox'),
 };
 export const Sizes: Story = { render: () => <SelectSizes /> };
 export const Grouped: Story = {
   render: () => <SelectGrouped />,
-  play: open('click', 'Klasse', 'Sekundarstufe', 'combobox'),
+  play: open('click', 'Project', 'Engineering', 'combobox'),
 };
 export const States: Story = { render: () => <SelectStates /> };

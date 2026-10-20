@@ -21,7 +21,7 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Sidebar'
-      description='The app navigation: the sidebar on the shell, the page panel beside it. Groups of links with an active state, counts and one level of sub-links. On mobile the sidebar is a sheet the trigger opens: shoot with --mobile.'>
+      description='The app navigation: the sidebar on the shell, the page panel beside it.'>
       <ExampleSection title='Default' bare>
         <SidebarDefault />
       </ExampleSection>
@@ -29,7 +29,8 @@ export const Board: Story = {
         title='Collapsed'
         description={
           <>
-            <Code>collapsible='icon'</Code>, closed: icons only. The trigger or ⌘[ toggles it.
+            <Code>collapsible='icon'</Code>, closed: icons only. The trigger toggles it; ⌘[ toggles the app's own
+            sidebar.
           </>
         }
         bare>

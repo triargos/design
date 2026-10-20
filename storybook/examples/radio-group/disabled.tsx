@@ -3,17 +3,17 @@ import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 
 export function RadioGroupDisabled() {
   return (
-    <RadioGroup defaultValue='parent' disabled aria-label='Abholung'>
-      <Field orientation='horizontal' data-disabled>
-        <RadioGroupItem id='disabled-parent' value='parent' />
-        <FieldLabel htmlFor='disabled-parent' className='font-normal'>
-          Durch ein Elternteil
+    <RadioGroup defaultValue='members' disabled aria-label='Who can see this project'>
+      <Field orientation='horizontal' disabled>
+        <RadioGroupItem id='disabled-members' value='members' />
+        <FieldLabel htmlFor='disabled-members' className='font-normal'>
+          All members
         </FieldLabel>
       </Field>
-      <Field orientation='horizontal' data-disabled>
-        <RadioGroupItem id='disabled-alone' value='alone' />
-        <FieldLabel htmlFor='disabled-alone' className='font-normal'>
-          Allein nach Hause
+      <Field orientation='horizontal' disabled>
+        <RadioGroupItem id='disabled-private' value='private' />
+        <FieldLabel htmlFor='disabled-private' className='font-normal'>
+          Only me
         </FieldLabel>
       </Field>
     </RadioGroup>

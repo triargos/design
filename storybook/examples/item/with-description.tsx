@@ -5,20 +5,20 @@ export function ItemWithDescription() {
   return (
     <InsetCard className='w-full max-w-xl'>
       <InsetCardHeader>
-        <InsetCardTitle>Erziehungsberechtigte</InsetCardTitle>
+        <InsetCardTitle>Members</InsetCardTitle>
       </InsetCardHeader>
       <InsetCardContent className='overflow-hidden'>
         <ItemList>
           <Item>
             <ItemContent>
-              <ItemTitle>Anna Schmidt</ItemTitle>
-              <ItemDescription>anna.schmidt@example.de</ItemDescription>
+              <ItemTitle>Jordan Lee</ItemTitle>
+              <ItemDescription>jordan@acme.com</ItemDescription>
             </ItemContent>
           </Item>
           <Item>
             <ItemContent>
-              <ItemTitle>Jonas Schmidt</ItemTitle>
-              <ItemDescription>jonas.schmidt@example.de</ItemDescription>
+              <ItemTitle>Sam Rivera</ItemTitle>
+              <ItemDescription>sam@acme.com</ItemDescription>
             </ItemContent>
           </Item>
         </ItemList>

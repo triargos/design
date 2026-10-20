@@ -1,62 +1,50 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 
-const GRADES = [
-  { value: '5', label: 'Klasse 5' },
-  { value: '6', label: 'Klasse 6' },
-  { value: '7', label: 'Klasse 7' },
+const ROLES = [
+  { value: 'admin', label: 'Admin' },
+  { value: 'member', label: 'Member' },
+  { value: 'guest', label: 'Guest' },
 ];
+
+function RoleItems() {
+  return (
+    <SelectContent>
+      {ROLES.map((role) => (
+        <SelectItem key={role.value} value={role.value}>
+          {role.label}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  );
+}
 
 /** Placeholder, invalid, read-only, disabled. */
 export function SelectStates() {
   return (
     <div className='grid w-56 gap-2'>
-      <Select items={GRADES}>
-        <SelectTrigger aria-label='Klasse'>
-          <SelectValue placeholder='Klasse wählen' />
+      <Select items={ROLES}>
+        <SelectTrigger aria-label='Role'>
+          <SelectValue placeholder='Choose a role' />
         </SelectTrigger>
-        <SelectContent>
-          {GRADES.map((grade) => (
-            <SelectItem key={grade.value} value={grade.value}>
-              {grade.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
+        <RoleItems />
       </Select>
-      <Select items={GRADES}>
-        <SelectTrigger aria-label='Klasse, ungültig' aria-invalid>
-          <SelectValue placeholder='Klasse wählen' />
+      <Select items={ROLES}>
+        <SelectTrigger aria-label='Role, invalid' aria-invalid>
+          <SelectValue placeholder='Choose a role' />
         </SelectTrigger>
-        <SelectContent>
-          {GRADES.map((grade) => (
-            <SelectItem key={grade.value} value={grade.value}>
-              {grade.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
+        <RoleItems />
       </Select>
-      <Select items={GRADES} defaultValue='6' readOnly>
-        <SelectTrigger aria-label='Klasse, nur lesen'>
+      <Select items={ROLES} defaultValue='member' readOnly>
+        <SelectTrigger aria-label='Role, read-only'>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
-          {GRADES.map((grade) => (
-            <SelectItem key={grade.value} value={grade.value}>
-              {grade.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
+        <RoleItems />
       </Select>
-      <Select items={GRADES} defaultValue='6' disabled>
-        <SelectTrigger aria-label='Klasse, deaktiviert'>
+      <Select items={ROLES} defaultValue='member' disabled>
+        <SelectTrigger aria-label='Role, disabled'>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
-          {GRADES.map((grade) => (
-            <SelectItem key={grade.value} value={grade.value}>
-              {grade.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
+        <RoleItems />
       </Select>
     </div>
   );

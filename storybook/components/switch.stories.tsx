@@ -10,7 +10,6 @@ import { SwitchWithLabel } from '../examples/switch/with-label';
 import {
   Code,
   ExampleSection,
-  FORCED_STATES,
   FoundationPage,
   FoundationSection,
   Matrix,
@@ -22,8 +21,8 @@ import {
 const meta = {
   title: 'Components/Switch',
   component: Switch,
-  args: { 'aria-label': 'Aktiv' },
-  parameters: { description: 'A setting that takes effect at once.', pseudo: FORCED_STATES },
+  args: { 'aria-label': 'Active' },
+  parameters: { description: 'A setting that takes effect at once.' },
 } satisfies Meta<typeof Switch>;
 
 export default meta;

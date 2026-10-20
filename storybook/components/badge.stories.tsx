@@ -13,21 +13,19 @@ import { BadgeStatus } from '../examples/badge/status';
 import { BadgeVariants } from '../examples/badge/variants';
 import { BadgeWithCount } from '../examples/badge/with-count';
 import { BadgeWithIcon } from '../examples/badge/with-icon';
-import {
-  Code,
-  ExampleSection,
-  FoundationPage,
-  FoundationSection,
-  Matrix,
-  SpecimenList,
-  SpecimenRow,
-} from '../kit/blocks';
+import { Code, ExampleSection, FoundationPage, FoundationSection, Matrix } from '../kit/blocks';
 
 const meta = {
   title: 'Components/Badge',
   parameters: { description: 'A state or a count, named in words.' },
   component: Badge,
-  args: { children: 'Genehmigt', intent: 'success' },
+  args: { children: 'Done', intent: 'success' },
+  argTypes: {
+    intent: { control: 'select', options: INTENTS },
+    emphasis: { control: 'select', options: ['subtle', 'solid', 'outline'] },
+    size: { control: 'select', options: ['default', 'sm'] },
+    shape: { control: 'select', options: ['rounded', 'pill'] },
+  },
 } satisfies Meta<typeof Badge>;
 
 export default meta;
@@ -36,19 +34,17 @@ type Story = StoryObj<typeof meta>;
 
 const EMPHASES = ['subtle', 'solid', 'outline'] as const;
 const SIZES = [
+  { size: 'default', height: 24 },
   { size: 'sm', height: 20 },
-  { size: 'md', height: 24 },
-  { size: 'lg', height: 28 },
-  { size: 'xl', height: 32 },
 ] as const;
 
 const LABEL = {
-  neutral: 'Entwurf',
-  primary: 'Ausgewählt',
-  info: 'Neu',
-  success: 'Genehmigt',
-  warning: 'Ausstehend',
-  destructive: 'Abgelehnt',
+  neutral: 'Draft',
+  primary: 'Selected',
+  info: 'New',
+  success: 'Done',
+  warning: 'Blocked',
+  destructive: 'Overdue',
 } as const;
 
 export const Board: Story = {
@@ -56,23 +52,22 @@ export const Board: Story = {
   render: () => (
     <FoundationPage
       title='Badge'
-      description='A state or a count, named in words. An intent at subtle (the default), solid when it needs action, outline in dense lists. Corners follow the height, as on a button; pill for counts and chips.'>
+      description='A state or a count, named in words. An intent at subtle (the default), solid when it needs action, outline in dense lists. Pill for counts and chips.'>
       <ExampleSection title='Default'>
         <BadgeDefault />
       </ExampleSection>
       <ExampleSection
-        title='Variants'
+        title='Intent and emphasis'
         description='An intent at subtle (the default); solid when it needs action, outline in dense lists.'>
         <BadgeVariants />
       </ExampleSection>
-      <ExampleSection
-        title='Sizes'
-        description='20 / 24 / 28 / 32px. Text sizes follow the height: caption to 24px, control from 28px.'>
+      <ExampleSection title='Status' description='One intent per state.'>
+        <BadgeStatus />
+      </ExampleSection>
+      <ExampleSection title='Sizes' description='24px; sm (20px) for a count in a dense row.'>
         <BadgeSizes />
       </ExampleSection>
-      <ExampleSection
-        title='Shapes'
-        description='Corners follow the height, as on a button; pill for counts and chips.'>
+      <ExampleSection title='Shapes' description='Rounded for a state; pill for a count or a filter chip.'>
         <BadgeShapes />
       </ExampleSection>
       <ExampleSection title='With icon'>
@@ -81,13 +76,8 @@ export const Board: Story = {
       <ExampleSection title='With count'>
         <BadgeWithCount />
       </ExampleSection>
-      <ExampleSection
-        title='Status'
-        description='The old variant names keep their pill shape and height until the app migrates.'>
-        <BadgeStatus />
-      </ExampleSection>
 
-      <FoundationSection title='Intent × emphasis' description='At md, the default size.'>
+      <FoundationSection title='Intent × emphasis'>
         <Matrix
           columns={EMPHASES}
           rows={INTENTS.map((intent) => ({
@@ -101,9 +91,7 @@ export const Board: Story = {
         />
       </FoundationSection>
 
-      <FoundationSection
-        title='Sizes and shape'
-        description='Text sizes follow the height: caption to 24px, control from 28px.'>
+      <FoundationSection title='Size × shape' description='Caption text at both sizes; corners rounded-control-sm.'>
         <Matrix
           columns={['rounded', 'pill', 'with icon']}
           rows={SIZES.map(({ size, height }) => ({
@@ -111,75 +99,50 @@ export const Board: Story = {
             meta: <Code>{`${height}px`}</Code>,
             cells: [
               <Badge key='r' size={size} intent='success'>
-                Genehmigt
+                Done
               </Badge>,
-              <Badge key='p' size={size} shape='pill' intent='neutral'>
+              <Badge key='p' size={size} shape='pill'>
                 12
               </Badge>,
               <Badge key='i' size={size} intent='warning'>
                 <ClockIcon />
-                Ausstehend
+                Blocked
               </Badge>,
             ],
           }))}
         />
       </FoundationSection>
 
-      <FoundationSection
-        title='Aliases'
-        description='The old variant names keep their pill shape and height until the app migrates.'>
-        <SpecimenList>
-          <SpecimenRow name='Status' meta={<Code>success · warning · info · danger · muted</Code>}>
-            <div className='flex flex-wrap gap-related'>
-              <Badge variant='success'>Genehmigt</Badge>
-              <Badge variant='warning'>Ausstehend</Badge>
-              <Badge variant='info'>Neu</Badge>
-              <Badge variant='danger'>Abgelehnt</Badge>
-              <Badge variant='muted'>Entwurf</Badge>
-            </div>
-          </SpecimenRow>
-          <SpecimenRow name='Neutral' meta={<Code>default · secondary · outline · destructive · ghost</Code>}>
-            <div className='flex flex-wrap gap-related'>
-              <Badge variant='default'>Standard</Badge>
-              <Badge variant='secondary'>Sekundär</Badge>
-              <Badge variant='outline'>Kontur</Badge>
-              <Badge variant='destructive'>Fehler</Badge>
-              <Badge variant='ghost'>Leise</Badge>
-            </div>
-          </SpecimenRow>
-        </SpecimenList>
-      </FoundationSection>
-
       <FoundationSection title='Usages'>
         <InsetCard>
           <InsetCardHeader>
-            <InsetCardTitle>Anmeldungen</InsetCardTitle>
+            <InsetCardTitle>Tasks</InsetCardTitle>
           </InsetCardHeader>
           <InsetCardContent className='overflow-hidden'>
             <ItemList>
               <Item className='px-4'>
                 <ItemContent>
-                  <ItemTitle>Mia Schmidt</ItemTitle>
-                  <ItemDescription>Klasse 3b · eingereicht am 12. März</ItemDescription>
+                  <ItemTitle>Publish the pricing page</ItemTitle>
+                  <ItemDescription>Website redesign · closed Mar 12</ItemDescription>
                 </ItemContent>
                 <Badge intent='success'>
                   <CheckIcon />
-                  Genehmigt
+                  Done
                 </Badge>
               </Item>
               <Item className='px-4'>
                 <ItemContent>
-                  <ItemTitle>Leon Weber</ItemTitle>
-                  <ItemDescription>Klasse 1a · Unterlagen fehlen</ItemDescription>
+                  <ItemTitle>Sign the vendor contract</ItemTitle>
+                  <ItemDescription>Operations · waiting on legal</ItemDescription>
                 </ItemContent>
                 <Badge intent='warning' emphasis='solid'>
-                  Aktion nötig
+                  Needs review
                 </Badge>
               </Item>
               <Item className='px-4'>
                 <ItemContent>
-                  <ItemTitle>Nachrichten</ItemTitle>
-                  <ItemDescription>Ungelesen</ItemDescription>
+                  <ItemTitle>Comments</ItemTitle>
+                  <ItemDescription>Unread</ItemDescription>
                 </ItemContent>
                 <Badge intent='primary' emphasis='solid' shape='pill' size='sm'>
                   3

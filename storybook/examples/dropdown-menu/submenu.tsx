@@ -11,33 +11,28 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 
-const STATUSES = [
-  { value: 'open', label: 'Offen' },
-  { value: 'review', label: 'In Prüfung' },
-  { value: 'done', label: 'Erledigt' },
-] as const;
+const STATUSES = ['To do', 'In progress', 'Done'];
 
-/** A row with a chevron opens a second list beside the first; one level only. On touch it opens in place. */
+/** A row with a chevron opens a second list beside the first; one level only. On touch it opens a stacked drawer. */
 export function DropdownMenuSubmenu() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button type='button' intent='neutral' emphasis='raised' size='icon-sm' aria-label='Aktionen' />}>
+      <DropdownMenuTrigger render={<Button size='icon-sm' aria-label='Actions' />}>
         <MoreHorizontalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>
         <DropdownMenuItem>
           <PencilIcon />
-          Bearbeiten
+          Edit
         </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <CircleDotIcon />
-            Status ändern
+            Change status
           </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className='w-40'>
+          <DropdownMenuSubContent label='Change status' className='w-40'>
             {STATUSES.map((status) => (
-              <DropdownMenuItem key={status.value}>{status.label}</DropdownMenuItem>
+              <DropdownMenuItem key={status}>{status}</DropdownMenuItem>
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
