@@ -9,7 +9,7 @@ const twMerge = extendTailwindMerge({
       text: ['title', 'heading', 'body', 'control', 'caption', 'overline'],
       spacing: ['tight', 'related', 'group', 'page', 'section'],
       radius: ['control-xs', 'control-sm', 'control', 'control-lg', 'popup', 'card', 'dialog', 'panel', 'inner'],
-      shadow: ['border', 'field', 'field-flat', 'raised', 'raised-hover', 'popup', 'modal'],
+      shadow: ['border', 'field', 'field-flat', 'card', 'raised', 'raised-hover', 'popup', 'modal'],
       ease: ['enter', 'move'],
     },
     // `tailwind-merge` has no theme scale for durations.

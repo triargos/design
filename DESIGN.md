@@ -140,11 +140,11 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | App frame  | `bg-sidebar`                                                                        | `body`, `Sidebar`                                                                          |
 | Page panel | `bg-background md:rounded-panel`                                                    | the page frame                                                                             |
 | Card shell | `rounded-card bg-(--card-shell)`, default `--shell`                                 | `Card`                                                                                     |
-| Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), no drop           | `CardContent`, `DialogBody`, `SheetBody`, `AlertDialogHeader`, `Table variant='card'` body |
+| Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), `shadow-card`     | `CardContent`, `DialogBody`, `SheetBody`, `AlertDialogHeader`, `Table variant='card'` body |
 | Popup      | `rounded-popup bg-popover shadow-popup`, fade + zoom from 95% over `duration-enter` | `PopoverContent`, menus, `SelectContent`, `ComboboxContent`                                |
 | Modal      | a `--modal-shell` shell (`--shell` + `shadow-modal`), the body a card, centered     | `DialogContent`, `AlertDialogContent`, `SheetContent`                                      |
 
-- Elevations: `shadow-border` (ring only), `shadow-field` (+ `-flat`), `shadow-raised` (+ `-hover`), `shadow-popup`, `shadow-modal`.
+- Elevations: `shadow-border` (ring only), `shadow-field` (+ `-flat`), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`), `shadow-popup`, `shadow-modal`.
 - Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop.
 - Fields and popups weight the ring toward the light: heavier at the bottom in light mode, lit at the top in dark. Dark mode drops the shadow and keeps one white ring.
 - Borders are for structure (dividers, table rules, dashed drop zones) and state (focus, invalid), never for depth.
@@ -228,7 +228,7 @@ text          foreground · muted-foreground · faint-foreground · disabled-for
 type          title 28 · heading 18 · body 14 · control 14 · caption 12 · overline 10
 spacing       tight 4 · related 8 · group 16 · page 32 · section 48
 radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · dialog 20 · panel 20 · rounded-inner
-elevation     shadow-border · shadow-field · shadow-raised · shadow-popup · shadow-modal
+elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal
 block         Card > CardHeader > CardContent [> ItemList [virtualized]]
 modal         DialogContent > DialogHeader · DialogBody (card) · DialogFooter
 motion        duration-enter 100 · feedback 150 · move 200 · modal 250 · ease-enter · ease-move

@@ -37,7 +37,8 @@ const elevations = [
   { className: 'shadow-none', name: 'flat', use: 'Page content, shells' },
   { className: 'shadow-border', name: 'shadow-border', use: 'The ring alone, no lift' },
   { className: 'shadow-field', name: 'shadow-field', use: 'Fields: a firmer ring, heavier at the bottom' },
-  { className: 'shadow-raised', name: 'shadow-raised', use: 'Cards, raised buttons, tab chips' },
+  { className: 'shadow-card', name: 'shadow-card', use: 'Card content: a small drop under its border' },
+  { className: 'shadow-raised', name: 'shadow-raised', use: 'Raised buttons, tab chips' },
   { className: 'shadow-popup', name: 'shadow-popup', use: 'Menus, popovers, selects, tooltips' },
   { className: 'shadow-modal', name: 'shadow-modal', use: 'Dialogs, sheets' },
 ] as const;

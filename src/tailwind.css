@@ -24,6 +24,10 @@
   --popup-edge-top: transparent;
   --popup-edge-bottom: oklch(0 0 0 / 0.04);
   --popup-drop: oklch(0 0 0 / 0.05);
+  /* Card content: a small drop and a heavier bottom edge on its border; dark lights the top edge instead. */
+  --card-edge-top: transparent;
+  --card-edge-bottom: oklch(0 0 0 / 0.04);
+  --card-drop: oklch(0 0 0 / 0.05);
   --modal-drop-soft: oklch(0 0 0 / 0.05);
   --modal-drop-far: oklch(0 0 0 / 0.15);
   /* The hairline on a photo: pure black at 10% (white in dark), never a tinted neutral, which reads as dirt on the edge. */
@@ -62,6 +66,9 @@
   --raised-ambient-hover: transparent;
   --popup-edge-top: oklch(1 0 0 / 0.06);
   --popup-edge-bottom: transparent;
+  --card-edge-top: oklch(1 0 0 / 0.06);
+  --card-edge-bottom: transparent;
+  --card-drop: transparent;
   --modal-drop-soft: transparent;
   --modal-drop-far: oklch(0 0 0 / 0.4);
   --image-edge: oklch(1 0 0 / 0.1);
@@ -144,6 +151,8 @@
   --shadow-raised: 0 0 0 1px var(--edge), 0 1px 2px -1px var(--raised-lift), 0 2px 4px 0 var(--raised-ambient);
   --shadow-raised-hover:
     0 0 0 1px var(--edge-hover), 0 1px 2px -1px var(--raised-lift-hover), 0 2px 4px 0 var(--raised-ambient-hover);
+  /* No ring: the card draws its `--edge` as a border, so this is the drop and the lit edge alone. */
+  --shadow-card: 0 -1px 0 0 var(--card-edge-top), 0 1px 0 0 var(--card-edge-bottom), 0 1px 2px 0 var(--card-drop);
   --shadow-popup:
     0 0 0 1px var(--edge), 0 -1px 0 0 var(--popup-edge-top), 0 1px 0 0 var(--popup-edge-bottom),
     0 10px 15px -3px var(--popup-drop), 0 4px 6px -4px var(--popup-drop);

@@ -59,13 +59,14 @@ function Card({
 }
 
 /**
- * A compact label strip on the shell, not a second surface: one line by default. Keep descriptions to one sentence;
- * long copy makes the shell read as a gray block. Title and description sit flush: the line height is the gap.
+ * A label strip on the shell, not a second surface: one line by default. Keep descriptions to one sentence; long copy
+ * makes the shell read as a gray block. Title and description sit flush: the line height is the gap. `group` above and
+ * below the text, so the strip has the content's rhythm.
  */
 function CardHeader({ className, actions, children, ...props }: ComponentProps<'div'> & { actions?: ReactNode }) {
   if (actions === undefined) {
     return (
-      <div data-slot='card-header' className={cn('px-[calc(var(--spacing-group)+1px)] py-2.5', className)} {...props}>
+      <div data-slot='card-header' className={cn('px-[calc(var(--spacing-group)+1px)] py-group', className)} {...props}>
         {children}
       </div>
     );
@@ -74,15 +75,15 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
     <div
       data-slot='card-header'
       className={cn(
-        'flex min-h-11 items-center justify-between gap-group px-[calc(var(--spacing-group)+1px)] py-1.5',
+        'flex items-center justify-between gap-group px-[calc(var(--spacing-group)+1px)] py-group',
         className,
       )}
       {...props}>
       <div className='min-w-0'>{children}</div>
-      {/* A one-line strip is 44px with 32px actions. They end on the same line as the actions of flush rows below
-          (shell 4 + edge 1 + `group`), so header and row actions form one column; their own radius, since their inset
-          is not even. */}
-      <div className='flex shrink-0 items-center gap-1'>{actions}</div>
+      {/* `-my-2`: 32px actions overhang the text line instead of growing the strip, so a header is as tall with
+          actions as without. They end on the same line as the actions of flush rows below (shell 4 + edge 1 +
+          `group`), so header and row actions form one column. */}
+      <div className='-my-2 flex shrink-0 items-center gap-related'>{actions}</div>
     </div>
   );
 }
@@ -104,7 +105,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
           <div className='min-h-0 overflow-hidden'>
             {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
                 stalls before unmount. */}
-            <div className={cn('mb-1 px-[calc(var(--spacing-group)+1px)] pt-2', className)} {...props}>
+            <div className={cn('mb-3 px-[calc(var(--spacing-group)+1px)] pt-3', className)} {...props}>
               {children}
             </div>
           </div>
@@ -141,8 +142,8 @@ function CardDescription({ className, ...props }: ComponentProps<'p'>) {
 
 /**
  * The card inside the shell. Its edge is an `--edge` border inside the box, as the `Table` card body draws it:
- * `bg-clip-padding` keeps the fill inside the border, so the translucent edge sits on the shell behind it. No drop: the
- * whole shell inset (4px) shows as rim, and the edge stays crisp. `data-surface='card'` scopes the surface tokens
+ * `bg-clip-padding` keeps the fill inside the border, so the translucent edge sits on the shell behind it. `shadow-card`
+ * adds a small drop and weights the bottom edge (lights the top in dark), so the card sits on the shell. `data-surface='card'` scopes the surface tokens
  * (`bg-field`, `bg-muted`, …) to it. The bottom radius stays fixed whether a footer is mounted, so its reveal never
  * changes the content's shape mid-animation.
  */
@@ -152,7 +153,7 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
     render,
     state: { slot: 'card-content', surface: 'card' },
     props: mergeProps<'div'>(
-      { className: cn('rounded-inner border border-(--edge) bg-card bg-clip-padding', className) },
+      { className: cn('rounded-inner border border-(--edge) bg-card bg-clip-padding shadow-card', className) },
       props,
     ),
   });
