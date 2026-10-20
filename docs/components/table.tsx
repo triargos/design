@@ -4,7 +4,9 @@ import { TableFlush } from '../examples/table/flush';
 import { TableGroupedRows } from '../examples/table/grouped-rows';
 import { TableInACard } from '../examples/table/in-a-card';
 import { TableRowLinks } from '../examples/table/row-links';
+import { TableScrollElement } from '../examples/table/scroll-element';
 import { TableSortable } from '../examples/table/sortable';
+import { TableVirtualized } from '../examples/table/virtualized';
 import { TableWithHeader } from '../examples/table/with-header';
 import { TableWithSelection } from '../examples/table/with-selection';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
@@ -89,6 +91,27 @@ export default defineDocs({
         }
         bare>
         <TableRowLinks />
+      </ExampleSection>
+      <ExampleSection
+        title='Virtualized'
+        description={
+          <>
+            <Code>Table virtualized items itemKey header</Code>: 1,000 rows in pages of 100 (<Code>hasMore</Code> +{' '}
+            <Code>onLoadMore</Code>), only those in view render. Give it a height.
+          </>
+        }
+        bare>
+        <TableVirtualized />
+      </ExampleSection>
+      <ExampleSection
+        title='Scrolls with the page'
+        description={
+          <>
+            <Code>scrollElement</Code>: the rows scroll with the element around the table; the header sticks to its top.
+          </>
+        }
+        bare>
+        <TableScrollElement />
       </ExampleSection>
       <ExampleSection title='Empty' description='One cell over every column holds an Empty.' bare>
         <TableEmpty />
