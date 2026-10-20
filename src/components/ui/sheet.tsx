@@ -61,6 +61,8 @@ function SheetContent({
           { default: 'sm:max-w-sm', lg: 'sm:max-w-md' }[size],
           'data-[side=right]:right-0 data-[side=right]:rounded-l-dialog data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 sm:data-[side=right]:right-2',
           'data-[side=left]:left-0 data-[side=left]:rounded-r-dialog data-[side=left]:data-closed:slide-out-to-left-10 data-[side=left]:data-open:slide-in-from-left-10 sm:data-[side=left]:left-2',
+          // Reduced motion: fade only, no slide.
+          'motion-reduce:data-[side=right]:data-closed:slide-out-to-right-0 motion-reduce:data-[side=right]:data-open:slide-in-from-right-0 motion-reduce:data-[side=left]:data-closed:slide-out-to-left-0 motion-reduce:data-[side=left]:data-open:slide-in-from-left-0',
           className,
         )}
         {...props}>
