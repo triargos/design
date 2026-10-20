@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { type Emphasis, type Intent, intentVariants } from '~/components/ui/intent-variants';
 
@@ -27,70 +27,67 @@ const badgeShape = cva('inline-flex shrink-0 items-center justify-center gap-1 f
     { shape: 'rounded', size: ['sm', 'md', 'lg'], className: 'rounded-control-sm' },
     { shape: 'rounded', size: 'xl', className: 'rounded-control' },
   ],
-  defaultVariants: { size: 'md', shape: 'rounded' },
 });
 
-type BadgeEmphasis = Extract<Emphasis, 'solid' | 'subtle' | 'outline' | 'ghost'>;
 type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
 type BadgeShape = 'rounded' | 'pill';
 
 interface BadgeStyle {
   intent: Intent;
-  emphasis: BadgeEmphasis;
+  /** `ghost` only for the old `ghost` variant. */
+  emphasis: Extract<Emphasis, 'solid' | 'subtle' | 'outline' | 'ghost'>;
   size: BadgeSize;
   shape: BadgeShape;
+  className?: string;
 }
 
-/** The names before `intent` × `emphasis`. Kept until the app migrates; each keeps its old pill and height. */
+const DEFAULT_STYLE: BadgeStyle = { intent: 'neutral', emphasis: 'subtle', size: 'md', shape: 'rounded' };
+
+/** The names before `intent` × `emphasis`. Kept until the app migrates; each keeps its old pill, height and weight. */
 const VARIANTS = {
-  default: { intent: 'neutral', emphasis: 'outline', size: 'md', shape: 'pill' },
-  secondary: { intent: 'neutral', emphasis: 'subtle', size: 'md', shape: 'pill' },
-  outline: { intent: 'neutral', emphasis: 'outline', size: 'md', shape: 'pill' },
+  default: { intent: 'neutral', emphasis: 'outline', size: 'md', shape: 'pill', className: 'font-normal' },
+  secondary: { intent: 'neutral', emphasis: 'subtle', size: 'md', shape: 'pill', className: 'font-normal' },
+  outline: { intent: 'neutral', emphasis: 'outline', size: 'md', shape: 'pill', className: 'font-normal' },
   /** @deprecated Renders as `outline`; use `intent='success'` for a positive state. */
-  green: { intent: 'neutral', emphasis: 'outline', size: 'md', shape: 'pill' },
+  green: { intent: 'neutral', emphasis: 'outline', size: 'md', shape: 'pill', className: 'font-normal' },
   destructive: { intent: 'destructive', emphasis: 'outline', size: 'md', shape: 'pill' },
-  ghost: { intent: 'neutral', emphasis: 'ghost', size: 'md', shape: 'pill' },
+  ghost: {
+    intent: 'neutral',
+    emphasis: 'ghost',
+    size: 'md',
+    shape: 'pill',
+    className: 'font-normal text-muted-foreground',
+  },
   muted: { intent: 'neutral', emphasis: 'subtle', size: 'sm', shape: 'pill' },
   success: { intent: 'success', emphasis: 'subtle', size: 'sm', shape: 'pill' },
   warning: { intent: 'warning', emphasis: 'subtle', size: 'sm', shape: 'pill' },
   info: { intent: 'info', emphasis: 'subtle', size: 'sm', shape: 'pill' },
   danger: { intent: 'destructive', emphasis: 'subtle', size: 'sm', shape: 'pill' },
-} as const satisfies Record<string, BadgeStyle>;
+} satisfies Record<string, BadgeStyle>;
 
-type BadgeVariant = keyof typeof VARIANTS;
-
-interface BadgeStyleProps {
+type BadgeProps = React.ComponentProps<'div'> & {
   /** @deprecated Use `intent`, `emphasis`, `size` and `shape`. */
-  variant?: BadgeVariant | null;
-  intent?: Intent | null;
-  emphasis?: BadgeEmphasis | null;
-  size?: BadgeSize | null;
-  shape?: BadgeShape | null;
-}
-
-const NEW_DEFAULT: BadgeStyle = { intent: 'neutral', emphasis: 'subtle', size: 'md', shape: 'rounded' };
-
-function badgeVariants({ variant, intent, emphasis, size, shape }: BadgeStyleProps = {}): string {
-  const base: BadgeStyle = variant ? VARIANTS[variant] : NEW_DEFAULT;
-  return cn(
-    intentVariants({ intent: intent ?? base.intent, emphasis: emphasis ?? base.emphasis }),
-    badgeShape({ size: size ?? base.size, shape: shape ?? base.shape }),
-    // The old neutral pills: regular weight, muted ghost text.
-    variant === 'ghost' && 'font-normal text-muted-foreground',
-    (variant === 'default' || variant === 'outline' || variant === 'green' || variant === 'secondary') && 'font-normal',
-  );
-}
-
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, BadgeStyleProps {}
+  variant?: keyof typeof VARIANTS;
+  intent?: Intent;
+  emphasis?: Extract<Emphasis, 'solid' | 'subtle' | 'outline'>;
+  size?: BadgeSize;
+  shape?: BadgeShape;
+};
 
 function Badge({ className, variant, intent, emphasis, size, shape, ...props }: BadgeProps) {
+  const base: BadgeStyle = variant ? VARIANTS[variant] : DEFAULT_STYLE;
   return (
     <div
       data-slot='badge'
-      className={cn(badgeVariants({ variant, intent, emphasis, size, shape }), className)}
+      className={cn(
+        intentVariants({ intent: intent ?? base.intent, emphasis: emphasis ?? base.emphasis }),
+        badgeShape({ size: size ?? base.size, shape: shape ?? base.shape }),
+        base.className,
+        className,
+      )}
       {...props}
     />
   );
 }
 
-export { Badge, badgeVariants, type BadgeVariant };
+export { Badge };

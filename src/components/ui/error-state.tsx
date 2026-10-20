@@ -21,8 +21,7 @@ const errorStateVariants = cva(
 
 /**
  * `page` reads like the page it replaces, left-aligned; `section` sits centered inside a card. Parts read the size from
- * `data-size`. Compose with `ErrorStateIcon`, `ErrorStateTitle`, `ErrorStateDescription`, and `ErrorStateActions`;
- * shared messages live in `common.json` under `errorState`.
+ * `data-size`. Compose with `ErrorStateIcon`, `ErrorStateTitle`, `ErrorStateDescription`, and `ErrorStateActions`.
  */
 function ErrorState({
   className,
@@ -59,7 +58,7 @@ function ErrorStateTitle({ className, render, ...props }: useRender.ComponentPro
     render,
     props: mergeProps<'h2'>(
       {
-        className: cn('text-title text-balance', 'group-data-[size=section]/error-state:text-heading', className),
+        className: cn('text-title text-balance group-data-[size=section]/error-state:text-heading', className),
       },
       props,
     ),
@@ -88,7 +87,7 @@ function ErrorStateActions({ className, ...props }: ComponentProps<'div'>) {
     <div
       data-slot='error-state-actions'
       className={cn(
-        'mt-6 flex flex-wrap items-center gap-2',
+        'mt-6 flex flex-wrap items-center gap-related',
         'group-data-[size=section]/error-state:mt-5 group-data-[size=section]/error-state:justify-center',
         className,
       )}

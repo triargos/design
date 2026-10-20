@@ -1,52 +1,54 @@
 import { DateTime, Interval } from 'luxon';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip.tsx';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 
 import type { IsoDate } from '~/lib/iso-date';
 import { useUiConfig } from '~/lib/ui-config';
 
-const useLocale = () => useUiConfig().locale;
-const useTimezone = () => useUiConfig().timeZone;
+// `suppressHydrationWarning`: the server formats in its own zone and at its own time, so the text may differ.
 
-type IntlDateProps = {
+/** A moment, in the user's time zone and locale. */
+export function IntlDate({
+  date,
+  format = DateTime.DATETIME_MED,
+}: {
   date: Date;
   format?: Intl.DateTimeFormatOptions;
-};
-
-export const IntlDate = ({ date, format }: IntlDateProps) => {
-  const timeZone = useTimezone();
-  const dateTime = DateTime.fromJSDate(date, { zone: timeZone });
-  const defaultFormat = DateTime.DATETIME_MED;
-  const locale = useLocale();
+}) {
+  const { locale, timeZone } = useUiConfig();
   return (
-    <time suppressHydrationWarning={true} dateTime={date.toISOString()}>
-      {dateTime.toLocaleString(format ?? defaultFormat, {
-        locale,
-      })}
+    <time suppressHydrationWarning dateTime={date.toISOString()}>
+      {DateTime.fromJSDate(date, { zone: timeZone }).toLocaleString(format, { locale })}
     </time>
   );
-};
+}
 
-/** A calendar date has no zone — it renders as the same day for every viewer, unlike IntlDate. */
-export const IsoIntlDate = ({ date, format }: { date: IsoDate; format?: Intl.DateTimeFormatOptions }) => {
-  const locale = useLocale();
+/** A calendar date has no zone: it renders as the same day for every viewer, unlike `IntlDate`. */
+export function IsoIntlDate({
+  date,
+  format = DateTime.DATE_MED,
+}: {
+  date: IsoDate;
+  format?: Intl.DateTimeFormatOptions;
+}) {
+  const { locale } = useUiConfig();
   return (
-    <time suppressHydrationWarning={true} dateTime={date}>
-      {DateTime.fromISO(date).toLocaleString(format ?? DateTime.DATE_MED, { locale })}
+    <time suppressHydrationWarning dateTime={date}>
+      {DateTime.fromISO(date).toLocaleString(format, { locale })}
     </time>
   );
-};
+}
 
-export const RelativeIntlDate = ({ date }: { date: Date }) => {
-  const timeZone = useTimezone();
+/** How long ago („vor 2 Stunden“), the exact moment in a tooltip. */
+export function RelativeIntlDate({ date }: { date: Date }) {
+  const { locale, timeZone } = useUiConfig();
   const dateTime = DateTime.fromJSDate(date, { zone: timeZone });
-  const locale = useLocale();
   return (
     <Tooltip>
       <TooltipTrigger
         render={
-          <time dateTime={date.toISOString()}>
-            {dateTime.toRelative({ locale, padding: 1000 * 60 }) ??
+          <time suppressHydrationWarning dateTime={date.toISOString()}>
+            {dateTime.toRelative({ locale, padding: 60_000 }) ??
               dateTime.toLocaleString(DateTime.DATETIME_MED, { locale })}
           </time>
         }
@@ -56,15 +58,6 @@ export const RelativeIntlDate = ({ date }: { date: Date }) => {
       </TooltipContent>
     </Tooltip>
   );
-};
-
-export function useRenderDate() {
-  const locale = useLocale();
-  const timeZone = useTimezone();
-  return ({ date, format }: IntlDateProps) => {
-    const dateTime = DateTime.fromJSDate(date, { zone: timeZone });
-    return dateTime.toLocaleString(format ?? DateTime.DATETIME_MED, { locale });
-  };
 }
 
 /** Pure (no hooks) so it can be used server-side, e.g. in notification renderers. */

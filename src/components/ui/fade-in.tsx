@@ -1,58 +1,56 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { PropsWithChildren, type ReactNode, useRef } from 'react';
+import { type ReactNode, useState } from 'react';
 
 import { cn } from '~/lib/utils';
 
-type FadeInProps = {
-  duration?: number;
+/** Content that arrives after a load fades in once: 150ms, opacity only. `enabled={false}` renders it at rest. */
+function FadeIn({
+  enabled = true,
+  className,
+  children,
+}: {
   enabled?: boolean;
   className?: string;
   children: ReactNode;
-};
-
-function FadeIn({ duration = 0.15, enabled = true, children, className }: FadeInProps) {
+}) {
   const classes = cn('space-y-4', className);
-
-  if (!enabled) {
-    return <div className={classes}>{children}</div>;
-  }
-
+  if (!enabled) return <div className={classes}>{children}</div>;
   return (
     <motion.div
       className={classes}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration, ease: 'easeOut' }}>
+      transition={{ duration: 0.15, ease: 'easeOut' }}>
       {children}
     </motion.div>
   );
 }
 
-// Fade only when content actually arrives async: if the first render already has
-// data (cached collection, SSR), never animate; otherwise animate exactly once.
+/**
+ * Whether content should fade in: only when it arrives after the first render. Data on the first render (cached, SSR)
+ * never fades.
+ */
 function useShouldFadeIn(result: { _tag: string } | boolean): boolean {
-  const isPending = typeof result === 'boolean' ? result : result._tag === 'Initial' || result._tag === 'Loading';
-  const startedPending = useRef<boolean | null>(null);
-
-  if (startedPending.current === null) {
-    startedPending.current = isPending;
-  }
-
-  return startedPending.current && !isPending;
+  const pending = typeof result === 'boolean' ? result : result._tag === 'Initial' || result._tag === 'Loading';
+  const [startedPending] = useState(pending);
+  return startedPending && !pending;
 }
 
-export { FadeIn, useShouldFadeIn };
-
-export const FadeOut = ({ children, className }: PropsWithChildren<FadeInProps>) => {
+/** Content that leaves fades out over 300ms. Stays mounted and takes `show`, so the exit can play. */
+function FadeOut({ show, className, children }: { show: boolean; className?: string; children: ReactNode }) {
   return (
     <AnimatePresence>
-      <motion.section
-        className={className}
-        initial={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}>
-        {children}
-      </motion.section>
+      {show && (
+        <motion.section
+          className={className}
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}>
+          {children}
+        </motion.section>
+      )}
     </AnimatePresence>
   );
-};
+}
+
+export { FadeIn, FadeOut, useShouldFadeIn };

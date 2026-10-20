@@ -9,12 +9,14 @@ interface LoaderProps {
   className?: string;
 }
 
+/** The ring both the track and the arc are drawn on. */
+const ring = { cx: '12', cy: '12', r: '9.5', fill: 'none', strokeWidth: '2', strokeLinecap: 'round' } as const;
+
 /**
- * A growing arc on a faint track, in `currentColor`. From Cloudflare's Kumo `Loader` (MIT,
- * github.com/cloudflare/kumo `packages/kumo/src/components/loader/loader.tsx`). Decorative: the busy element
- * announces itself (`Button` sets `aria-busy`). With reduced motion it is a still arc.
+ * A growing arc on a faint track, in `currentColor`. From Cloudflare's Kumo `Loader` (MIT, github.com/cloudflare/kumo). Decorative:
+ * the busy element announces itself (`Button` sets `aria-busy`). With reduced motion it is a still arc.
  */
-export const Loader = ({ size = 20, className }: LoaderProps) => {
+function Loader({ size = 20, className }: LoaderProps) {
   const reduceMotion = useReducedMotion();
   return (
     <svg
@@ -26,18 +28,9 @@ export const Loader = ({ size = 20, className }: LoaderProps) => {
       aria-hidden='true'
       className={cn('shrink-0', className)}>
       {reduceMotion ? (
-        <circle
-          cx='12'
-          cy='12'
-          r='9.5'
-          fill='none'
-          strokeWidth='2'
-          strokeLinecap='round'
-          strokeDasharray='42 150'
-          transform='rotate(-90 12 12)'
-        />
+        <circle {...ring} strokeDasharray='42 150' transform='rotate(-90 12 12)' />
       ) : (
-        <circle cx='12' cy='12' r='9.5' fill='none' strokeWidth='2' strokeLinecap='round'>
+        <circle {...ring}>
           <animateTransform
             attributeName='transform'
             type='rotate'
@@ -62,7 +55,9 @@ export const Loader = ({ size = 20, className }: LoaderProps) => {
           />
         </circle>
       )}
-      <circle cx='12' cy='12' r='9.5' fill='none' opacity={0.1} strokeWidth='2' strokeLinecap='round' />
+      <circle {...ring} opacity={0.1} />
     </svg>
   );
-};
+}
+
+export { Loader };

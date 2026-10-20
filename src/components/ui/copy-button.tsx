@@ -88,4 +88,4 @@ function CopyButton({
   );
 }
 
-export { CopyButton, type CopyButtonProps };
+export { CopyButton };

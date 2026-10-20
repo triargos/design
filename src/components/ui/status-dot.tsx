@@ -34,4 +34,4 @@ function StatusDot({ className, intent, ...props }: StatusDotProps) {
   );
 }
 
-export { StatusDot, type StatusDotProps };
+export { StatusDot };

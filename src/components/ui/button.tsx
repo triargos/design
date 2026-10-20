@@ -12,8 +12,7 @@ import { cn } from '~/lib/utils';
  * A button is an `intent` (what the action means) at an `emphasis` (how much it weighs): `primary`/`solid` is the one
  * main action, `neutral`/`raised` every other, `neutral`/`ghost` header, row and toolbar actions, `destructive`/`solid`
  * an irreversible action inside a confirmation and every danger-zone action, `destructive`/`subtle` a destructive action
- * anywhere else. A button that
- * looks like a field is `PickerTrigger`; a text link is a link.
+ * anywhere else. A button that looks like a field is `PickerTrigger`; a text link is a link.
  */
 const buttonShape = cva(
   [
@@ -75,14 +74,12 @@ const VARIANTS = {
   toolbar: { intent: 'neutral', emphasis: 'ghost' },
 } as const satisfies Record<string, { intent: Intent; emphasis: Emphasis }>;
 
-type ButtonVariant = keyof typeof VARIANTS;
-
 interface ButtonStyleProps {
   /** @deprecated Use `intent` and `emphasis`. */
-  variant?: ButtonVariant | null;
-  intent?: Intent | null;
-  emphasis?: Emphasis | null;
-  size?: ButtonSize | null;
+  variant?: keyof typeof VARIANTS;
+  intent?: Intent;
+  emphasis?: Emphasis;
+  size?: ButtonSize;
   className?: string;
 }
 
@@ -221,8 +218,7 @@ function Button({
       data-intent={resolved.intent}
       data-emphasis={resolved.emphasis}
       data-size={size}
-      // Custom render elements (e.g. router <Link>) are not native <button>s; Base UI
-      // needs nativeButton=false there to apply ARIA button semantics instead.
+      // A custom `render` (a router `Link`) is not a native button: Base UI then adds the button role and keys.
       nativeButton={props.render === undefined}
       className={(state) =>
         buttonVariants({
@@ -239,7 +235,7 @@ function Button({
       {isLoading === undefined ? (
         children
       ) : (
-        <PendingSwap pending={pending} size={size ?? 'default'}>
+        <PendingSwap pending={pending} size={size}>
           {children}
         </PendingSwap>
       )}
@@ -247,4 +243,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants, type ButtonProps, type ButtonVariant };
+export { Button, buttonVariants, type ButtonProps };

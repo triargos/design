@@ -12,13 +12,11 @@ export function FadeInFadeOut() {
       <Button type='button' intent='neutral' emphasis='raised' size='sm' onClick={() => setShow(!show)}>
         {show ? 'Ausblenden' : 'Einblenden'}
       </Button>
-      {show && (
-        <FadeOut className='w-full'>
-          <Callout>
-            <CalloutContent>Die Synchronisierung ist abgeschlossen.</CalloutContent>
-          </Callout>
-        </FadeOut>
-      )}
+      <FadeOut show={show} className='w-full'>
+        <Callout>
+          <CalloutContent>Die Synchronisierung ist abgeschlossen.</CalloutContent>
+        </Callout>
+      </FadeOut>
     </div>
   );
 }

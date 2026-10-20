@@ -1,43 +1,87 @@
 import { Avatar as AvatarPrimitive } from '@base-ui/react/avatar';
-import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-// Ported from the Interfere design system (design.interfere.com/avatar): a quiet neutral fill with muted initials,
-// a hairline drawn inside the box, and groups that cut each avatar out of the next one with a mask instead of a
-// surface-colored ring, so they read on any surface.
+// A quiet neutral fill with muted initials and a hairline inside the box. Groups cut each avatar out of the next one
+// with a mask instead of a surface-colored ring, so they read on any surface.
 
 type AvatarSize = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 type AvatarShape = 'circle' | 'square';
 
-/** Box, then initials: below the caption role (12px) the initials scale with the circle, like an icon. */
+/**
+ * Per size: the box, the group count's box, the initials (below the caption role, 12px, they scale with the box like an
+ * icon), the `square` radius, and in a group the cut around the next avatar (`--avatar-gap`) and how far each one slides
+ * under the previous (`--avatar-overlap`).
+ */
 const avatarSizes = {
-  xxs: { box: 'size-3', count: 'h-3 min-w-3', text: 'text-[0.5rem]/3' },
-  xs: { box: 'size-4', count: 'h-4 min-w-4', text: 'text-[0.5rem]/3' },
-  sm: { box: 'size-5', count: 'h-5 min-w-5', text: 'text-[0.5rem]/3' },
-  md: { box: 'size-6', count: 'h-6 min-w-6', text: 'text-[0.625rem]/3.5' },
-  lg: { box: 'size-7', count: 'h-7 min-w-7', text: 'text-caption' },
-  xl: { box: 'size-8', count: 'h-8 min-w-8', text: 'text-caption' },
-  '2xl': { box: 'size-10', count: 'h-10 min-w-10', text: 'text-body' },
-  '3xl': { box: 'size-12', count: 'h-12 min-w-12', text: 'text-heading' },
-  '4xl': { box: 'size-20', count: 'h-20 min-w-20', text: 'text-title' },
-} satisfies Record<AvatarSize, { box: string; count: string; text: string }>;
-
-const avatarRadiusVariants = cva('', {
-  variants: {
-    shape: { circle: 'rounded-full', square: '' },
-    size: { xxs: '', xs: '', sm: '', md: '', lg: '', xl: '', '2xl': '', '3xl': '', '4xl': '' },
+  xxs: {
+    box: 'size-3',
+    count: 'h-3 min-w-3',
+    text: 'text-[0.5rem]/3',
+    square: 'rounded-xs',
+    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
   },
-  compoundVariants: [
-    { shape: 'square', size: ['xxs', 'xs'], className: 'rounded-xs' },
-    { shape: 'square', size: ['sm', 'md'], className: 'rounded-sm' },
-    { shape: 'square', size: 'lg', className: 'rounded-md' },
-    { shape: 'square', size: 'xl', className: 'rounded-lg' },
-    { shape: 'square', size: ['2xl', '3xl'], className: 'rounded-xl' },
-    { shape: 'square', size: '4xl', className: 'rounded-2xl' },
-  ],
-});
+  xs: {
+    box: 'size-4',
+    count: 'h-4 min-w-4',
+    text: 'text-[0.5rem]/3',
+    square: 'rounded-xs',
+    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1.5)]',
+  },
+  sm: {
+    box: 'size-5',
+    count: 'h-5 min-w-5',
+    text: 'text-[0.5rem]/3',
+    square: 'rounded-sm',
+    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+  },
+  md: {
+    box: 'size-6',
+    count: 'h-6 min-w-6',
+    text: 'text-[0.625rem]/3.5',
+    square: 'rounded-sm',
+    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+  },
+  lg: {
+    box: 'size-7',
+    count: 'h-7 min-w-7',
+    text: 'text-caption',
+    square: 'rounded-md',
+    group: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
+  },
+  xl: {
+    box: 'size-8',
+    count: 'h-8 min-w-8',
+    text: 'text-caption',
+    square: 'rounded-lg',
+    group: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
+  },
+  '2xl': {
+    box: 'size-10',
+    count: 'h-10 min-w-10',
+    text: 'text-body',
+    square: 'rounded-xl',
+    group: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1.5)]',
+  },
+  '3xl': {
+    box: 'size-12',
+    count: 'h-12 min-w-12',
+    text: 'text-heading',
+    square: 'rounded-xl',
+    group: '[--avatar-gap:3px] [--avatar-overlap:--spacing(1.5)]',
+  },
+  '4xl': {
+    box: 'size-20',
+    count: 'h-20 min-w-20',
+    text: 'text-title',
+    square: 'rounded-2xl',
+    group: '[--avatar-gap:4px] [--avatar-overlap:--spacing(2)]',
+  },
+} satisfies Record<AvatarSize, { box: string; count: string; text: string; square: string; group: string }>;
+
+const avatarRadius = (shape: AvatarShape, size: AvatarSize) =>
+  shape === 'circle' ? 'rounded-full' : avatarSizes[size].square;
 
 // The hairline is a 1px translucent inset ring on a layer above the photo, not a 0.5px outline: sub-pixel outlines snap
 // to whole device pixels unevenly around a curve and look jagged at 1x.
@@ -71,7 +115,7 @@ function Avatar({
         avatarSurface,
         avatarSizes[size].box,
         avatarSizes[size].text,
-        avatarRadiusVariants({ shape, size }),
+        avatarRadius(shape, size),
         className,
       )}
       {...props}
@@ -115,32 +159,14 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<'span'>) {
   );
 }
 
-// `--avatar-overlap`: how far each avatar slides under the previous one. `--avatar-gap`: the cut around the next one.
-const avatarGroupVariants = cva(
-  [
-    'group/avatar-group flex items-center',
-    '[--avatar-cutout-x:calc(150%_-_var(--avatar-overlap))] rtl:[--avatar-cutout-x:calc(-50%_+_var(--avatar-overlap))]',
-    '[--avatar-cutout-direction:to_right] rtl:[--avatar-cutout-direction:to_left]',
-    '*:not-first:-ms-(--avatar-overlap)',
-    '*:not-last:[mask-image:radial-gradient(ellipse_calc(50%_+_var(--avatar-gap))_calc(50%_+_var(--avatar-gap))_at_var(--avatar-cutout-x)_50%,transparent_calc(100%_-_0.5px),#000_100%)]',
-    'data-[shape=square]:*:not-last:[mask-image:linear-gradient(var(--avatar-cutout-direction),#000_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)_-_0.5px),transparent_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)))]',
-  ],
-  {
-    variants: {
-      size: {
-        xxs: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-        xs: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1.5)]',
-        sm: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-        md: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-        lg: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
-        xl: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
-        '2xl': '[--avatar-gap:2px] [--avatar-overlap:--spacing(1.5)]',
-        '3xl': '[--avatar-gap:3px] [--avatar-overlap:--spacing(1.5)]',
-        '4xl': '[--avatar-gap:4px] [--avatar-overlap:--spacing(2)]',
-      },
-    },
-  },
-);
+const avatarGroupShape = [
+  'group/avatar-group flex items-center',
+  '[--avatar-cutout-x:calc(150%_-_var(--avatar-overlap))] rtl:[--avatar-cutout-x:calc(-50%_+_var(--avatar-overlap))]',
+  '[--avatar-cutout-direction:to_right] rtl:[--avatar-cutout-direction:to_left]',
+  '*:not-first:-ms-(--avatar-overlap)',
+  '*:not-last:[mask-image:radial-gradient(ellipse_calc(50%_+_var(--avatar-gap))_calc(50%_+_var(--avatar-gap))_at_var(--avatar-cutout-x)_50%,transparent_calc(100%_-_0.5px),#000_100%)]',
+  'data-[shape=square]:*:not-last:[mask-image:linear-gradient(var(--avatar-cutout-direction),#000_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)_-_0.5px),transparent_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)))]',
+];
 
 /** Overlapping avatars; `size` and `shape` apply to every `Avatar` and the `AvatarGroupCount` inside. */
 function AvatarGroup({
@@ -149,14 +175,13 @@ function AvatarGroup({
   shape = 'circle',
   ...props
 }: React.ComponentProps<'div'> & { size?: AvatarSize; shape?: AvatarShape }) {
-  const context = React.useMemo(() => ({ size, shape }), [size, shape]);
   return (
-    <AvatarGroupContext value={context}>
+    <AvatarGroupContext value={{ size, shape }}>
       <div
         data-slot='avatar-group'
         data-size={size}
         data-shape={shape}
-        className={cn(avatarGroupVariants({ size }), className)}
+        className={cn(avatarGroupShape, avatarSizes[size].group, className)}
         {...props}
       />
     </AvatarGroupContext>
@@ -174,7 +199,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<'div'>) 
         'px-1 tabular-nums',
         avatarSizes[size].count,
         avatarSizes[size].text,
-        avatarRadiusVariants({ shape, size }),
+        avatarRadius(shape, size),
         className,
       )}
       {...props}
@@ -184,13 +209,10 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<'div'>) 
 
 /** First letter of the first and last word: `Anna-Lena von Müller` → `AM`. */
 function getInitials(name: string) {
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((value) => Boolean(value));
-  const first = words.at(0)?.charAt(0) ?? '';
-  const last = words.length > 1 ? (words.at(-1)?.charAt(0) ?? '') : '';
-  return `${first}${last}`.toUpperCase();
+  const words = name.trim().split(/\s+/);
+  const first = words[0] ?? '';
+  const last = words.length > 1 ? (words.at(-1) ?? '') : '';
+  return (first.charAt(0) + last.charAt(0)).toUpperCase();
 }
 
 export { Avatar, AvatarImage, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarBadge, getInitials };

@@ -1,22 +1,20 @@
 import { AnimatePresence, motion } from 'framer-motion';
+
 import { useUiStrings } from '~/lib/ui-config';
 
-interface UnsavedChangesIndicatorProps {
-  show: boolean;
-  /**
-   * Opt out when the indicator sits inside a container that already animates
-   * its reveal (e.g. InsetCardFooter) — a second entrance on top of the
-   * container's reads as wobble.
-   */
-  animated?: boolean;
-}
+const textClassName = 'text-body text-muted-foreground';
 
-export function UnsavedChangesIndicator({ show, animated = true }: UnsavedChangesIndicatorProps) {
+export function UnsavedChangesIndicator({
+  show,
+  animated = true,
+}: {
+  show: boolean;
+  /** Off inside a container that animates its own reveal (`InsetCardFooter`): a second entrance on top reads as wobble. */
+  animated?: boolean;
+}) {
   const strings = useUiStrings();
 
-  if (!animated) {
-    return show ? <span className='text-body text-muted-foreground'>{strings.unsavedChanges}</span> : null;
-  }
+  if (!animated) return show ? <span className={textClassName}>{strings.unsavedChanges}</span> : null;
 
   return (
     <AnimatePresence>
@@ -26,7 +24,7 @@ export function UnsavedChangesIndicator({ show, animated = true }: UnsavedChange
           animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
           exit={{ opacity: 0, x: 10, filter: 'blur(4px)' }}
           transition={{ type: 'spring', duration: 0.3, bounce: 0 }}
-          className='text-body text-muted-foreground'>
+          className={textClassName}>
           {strings.unsavedChanges}
         </motion.span>
       )}

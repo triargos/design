@@ -1,11 +1,10 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import { type HTMLMotionProps, type Variants, motion, useReducedMotion } from 'framer-motion';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-// Entry only: no bounce, short enough that the action is usable almost at once
-// (last item settles at ~0.45s).
+// Entry only: no bounce, short enough that the action is usable almost at once (last item settles at ~0.45s).
 const spring = { type: 'spring', bounce: 0, duration: 0.3 } as const;
 
 const containerVariants: Variants = {
@@ -18,8 +17,8 @@ const itemVariants: Variants = {
   animate: { opacity: 1, y: 0, transition: spring },
 };
 
-// The back layers start hidden behind the front card and rise into place once the
-// media has faded in, so the stack builds itself instead of arriving whole.
+// The back layers start hidden behind the front card and rise into place once the media has faded in, so the stack
+// builds itself instead of arriving whole.
 const stackLayerVariants = (rest: number): Variants => ({
   initial: { y: 0 },
   animate: { y: rest, transition: { ...spring, delay: 0.12 } },
@@ -110,24 +109,22 @@ function EmptyStateContent({ className, ...props }: HTMLMotionProps<'div'>) {
   );
 }
 
-// Skeleton cards wear the raised neutral of `Button` `secondary`: field edge and
-// lift, `card` fill in light, a foreground tint in dark. Tints mix into `card` so
-// stacked layers stay opaque.
+// Skeleton cards are raised: the field edge and lift, `card` in light, a foreground tint in dark. Tints mix into `card`
+// so stacked layers stay opaque.
 const raisedCard =
   'rounded-xl border border-field-border border-t-field-border-top border-b-field-border-bottom bg-card shadow-(--field-shadow) dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]';
 const skeletonFill = 'rounded-md bg-foreground/8 dark:bg-foreground/10';
 
-// Three cards stacked front to back, each layer a step greyer. The rest offset is
-// framer's `transform`; the hover spread is Tailwind's separate `translate`
-// property, so the two add up without fighting. Tailwind's hover variants only
-// apply under `(hover: hover)`, so a tap on touch never sticks the fan open.
-function EmptyStateSkeletonStack({ className, ...props }: React.ComponentProps<'div'>) {
+// Three cards stacked front to back, each layer a step greyer. The rest offset is framer's `transform`; the hover
+// spread is the separate `translate` property, so the two add up. Hover variants only apply under `(hover: hover)`, so
+// a tap on touch never sticks the fan open.
+function EmptyStateSkeletonStack() {
   const layer = cn(
     raisedCard,
     'absolute inset-x-0 bottom-0 h-14 transition-transform duration-move ease-move motion-reduce:transition-none',
   );
   return (
-    <div aria-hidden data-slot='empty-state-skeleton-stack' className={cn('relative h-18 w-40', className)} {...props}>
+    <div aria-hidden data-slot='empty-state-skeleton-stack' className='relative h-18 w-40'>
       <motion.div
         variants={backLayerVariants}
         className={cn(
@@ -153,31 +150,29 @@ function EmptyStateSkeletonStack({ className, ...props }: React.ComponentProps<'
   );
 }
 
-// The track renders its card set twice and the keyframe slides by -50%, so spacing
-// must come from each card's margin (not flex gap) and the set must stay at
-// exactly 3 cards: the step percentages in `skeleton-carousel` assume it.
-function EmptyStateSkeletonCarousel({ className, ...props }: React.ComponentProps<'div'>) {
-  const edgeFade = 'linear-gradient(to right, transparent, #000 20%, #000 80%, transparent)';
-  const cardSet = [
-    { title: 'w-3/4', line: 'w-1/2' },
-    { title: 'w-2/3', line: 'w-3/4' },
-    { title: 'w-4/5', line: 'w-2/5' },
-  ];
+// The track renders its card set twice and the keyframe slides by -50%, so spacing must come from each card's margin
+// (not flex gap) and the set must stay at exactly 3 cards: the step percentages in `skeleton-carousel` assume it.
+const carouselCards = [
+  { title: 'w-3/4', line: 'w-1/2' },
+  { title: 'w-2/3', line: 'w-3/4' },
+  { title: 'w-4/5', line: 'w-2/5' },
+];
+const carouselEdgeFade = 'linear-gradient(to right, transparent, #000 20%, #000 80%, transparent)';
+
+function EmptyStateSkeletonCarousel() {
   return (
     <div
       aria-hidden
       data-slot='empty-state-skeleton-carousel'
-      style={{ maskImage: edgeFade, WebkitMaskImage: edgeFade }}
-      className={cn('w-xl max-w-full overflow-hidden py-2', className)}
-      {...props}>
+      style={{ maskImage: carouselEdgeFade, WebkitMaskImage: carouselEdgeFade }}
+      className='w-xl max-w-full overflow-hidden py-2'>
       <div
-        // Pin the loop to the page timeline so every carousel on screen runs
-        // in phase, no matter when it mounted.
+        // Pin the loop to the page timeline so every carousel on screen runs in phase, no matter when it mounted.
         ref={(track) => {
           track?.style.setProperty('animation-delay', `-${performance.now()}ms`);
         }}
         className='flex w-max animate-skeleton-carousel motion-reduce:animate-none'>
-        {[...cardSet, ...cardSet].map((card, index) => (
+        {[...carouselCards, ...carouselCards].map((card, index) => (
           <div key={index} className={cn(raisedCard, 'mr-3 w-52 shrink-0 p-3')}>
             <div className={cn(skeletonFill, 'h-14 rounded-lg')} />
             <div className={cn(skeletonFill, 'mt-2.5 h-2.5', card.title)} />

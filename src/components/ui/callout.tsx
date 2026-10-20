@@ -35,14 +35,12 @@ const TONES = {
   default: 'info',
 } as const satisfies Record<string, CalloutIntent>;
 
-type CalloutTone = keyof typeof TONES;
-
 type CalloutProps = React.ComponentProps<'div'> & {
   /** What kind of notice: `info` (the default; a plain notice reads as information, not as a gray block), `success`,
    * `warning`, `destructive`, or `neutral` for an aside that is not news. */
   intent?: CalloutIntent;
   /** @deprecated Use `intent`. */
-  tone?: CalloutTone | null;
+  tone?: keyof typeof TONES;
 };
 
 function Callout({ className, intent, tone, ...props }: CalloutProps) {
