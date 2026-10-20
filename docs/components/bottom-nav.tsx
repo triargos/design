@@ -1,4 +1,5 @@
 import { BottomNavDefault } from '../examples/bottom-nav/default';
+import { BottomNavWithSelection } from '../examples/bottom-nav/with-selection';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
 
@@ -23,6 +24,17 @@ export default defineDocs({
         }
         bare>
         <BottomNavDefault />
+      </ExampleSection>
+      <ExampleSection
+        title='With selection'
+        description={
+          <>
+            Under a <Code>BottomNavProvider</Code>, a page's open <Code>ActionBar</Code> docks in the nav: the tabs and
+            the main action step aside until it closes. Select a task.
+          </>
+        }
+        bare>
+        <BottomNavWithSelection />
       </ExampleSection>
     </FoundationPage>
   ),

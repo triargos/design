@@ -1,6 +1,7 @@
 import { DownloadIcon, MailIcon, Trash2Icon, XIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
+import { ActionBar } from '~/components/ui/action-bar';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,6 +52,10 @@ export function BulkSelectionDefault() {
       return next;
     });
   const clear = () => setSelected(new Set());
+  // The bar springs out after a clear; it keeps the last count instead of reading "0 selected" on the way.
+  const lastCount = useRef(selected.size);
+  if (selected.size > 0) lastCount.current = selected.size;
+  const count = lastCount.current;
 
   return (
     <div className='@container flex w-full max-w-2xl flex-col gap-group'>
@@ -94,37 +99,30 @@ export function BulkSelectionDefault() {
           </TableBody>
         </Table>
       </Card>
-      {selected.size > 0 && (
-        <div
-          role='toolbar'
-          aria-label='Selection'
-          data-surface='popup'
-          className='sticky bottom-4 flex items-center gap-related self-center rounded-popup bg-popover p-1.5 text-control text-popover-foreground shadow-popup duration-enter ease-enter animate-in fade-in-0 slide-in-from-bottom-2 @max-lg:gap-1'>
-          {/* 6px in from the 16px popup, the 10px buttons are concentric with it. */}
-          <span className='ps-2.5 whitespace-nowrap text-muted-foreground tabular-nums'>{selected.size} selected</span>
-          <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
-            <XIcon />
-          </Button>
-          <Separator orientation='vertical' className='my-1.5' />
-          {/* No `data-icon`: its padding would outweigh the square icon-only size below 32rem. */}
-          <Button className='@max-lg:w-9 @max-lg:px-0'>
-            <MailIcon />
-            <span className='@max-lg:sr-only'>Send reminder</span>
-          </Button>
-          <Button className='@max-lg:w-9 @max-lg:px-0'>
-            <DownloadIcon />
-            <span className='@max-lg:sr-only'>Export</span>
-          </Button>
-          <Button
-            intent='destructive'
-            emphasis='subtle'
-            className='@max-lg:w-9 @max-lg:px-0'
-            onClick={() => setConfirming(true)}>
-            <Trash2Icon />
-            <span className='@max-lg:sr-only'>Delete…</span>
-          </Button>
-        </div>
-      )}
+      <ActionBar open={selected.size > 0} aria-label='Selection' className='@max-lg:gap-1'>
+        <span className='ps-2.5 whitespace-nowrap text-muted-foreground tabular-nums'>{count} selected</span>
+        <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
+          <XIcon />
+        </Button>
+        <Separator orientation='vertical' className='my-1.5' />
+        {/* No `data-icon`: its padding would outweigh the square icon-only size below 32rem. */}
+        <Button className='@max-lg:w-9 @max-lg:px-0'>
+          <MailIcon />
+          <span className='@max-lg:sr-only'>Send reminder</span>
+        </Button>
+        <Button className='@max-lg:w-9 @max-lg:px-0'>
+          <DownloadIcon />
+          <span className='@max-lg:sr-only'>Export</span>
+        </Button>
+        <Button
+          intent='destructive'
+          emphasis='subtle'
+          className='@max-lg:w-9 @max-lg:px-0'
+          onClick={() => setConfirming(true)}>
+          <Trash2Icon />
+          <span className='@max-lg:sr-only'>Delete…</span>
+        </Button>
+      </ActionBar>
       <AlertDialog open={confirming} onOpenChange={setConfirming}>
         <AlertDialogContent>
           <AlertDialogHeader>

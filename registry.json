@@ -83,6 +83,24 @@
       ]
     },
     {
+      "name": "action-bar",
+      "type": "registry:ui",
+      "dependencies": [
+        "framer-motion@13.4.4"
+      ],
+      "registryDependencies": [
+        "@triargos/bottom-nav",
+        "@triargos/theme",
+        "@triargos/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/action-bar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "alert-dialog",
       "type": "registry:ui",
       "dependencies": [
@@ -156,7 +174,8 @@
       "name": "bottom-nav",
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react@1.8.0"
+        "@base-ui/react@1.8.0",
+        "framer-motion@13.4.4"
       ],
       "registryDependencies": [
         "@triargos/button",
