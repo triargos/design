@@ -11,7 +11,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Kbd'
-      description='A key on the keyboard, in caption on the quiet fill. In a tooltip, it names a control’s shortcut (Tooltip › With shortcut).'>
+      description='A key on the keyboard, in caption on the quiet fill. In a tooltip, it names a control’s shortcut (Shortcut Tooltip).'>
       <ExampleSection
         title='Default'
         description={
