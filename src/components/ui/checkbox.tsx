@@ -16,7 +16,7 @@ const selectionControlVariants = cva(
     'peer relative flex size-4 shrink-0 items-center justify-center inset-ring inset-ring-neutral-border outline-none',
     'transition-[background-color,box-shadow,color,scale] duration-feedback',
     'after:absolute after:-inset-x-3 after:-inset-y-2',
-    'not-data-disabled:hover:bg-neutral-subtle not-data-disabled:active:scale-[0.96]',
+    'not-data-disabled:hover:bg-neutral-subtle not-data-disabled:active:scale-[0.96] motion-reduce:not-data-disabled:active:scale-100',
     'focus-visible:ring-3 focus-visible:ring-ring/24 focus-visible:inset-ring-ring',
     'aria-invalid:inset-ring-destructive-border focus-visible:aria-invalid:ring-destructive/16 dark:focus-visible:aria-invalid:ring-destructive/24',
     'data-checked:bg-primary-solid data-checked:text-primary-solid-foreground data-checked:inset-ring-transparent',
