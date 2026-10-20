@@ -7,24 +7,16 @@ import { modalBackdrop, modalBody, modalClose, modalFooter, modalHeader, modalSh
 
 import { cn } from '~/lib/utils';
 
-function Sheet({ ...props }: SheetPrimitive.Root.Props) {
+function Sheet(props: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot='sheet' {...props} />;
 }
 
-function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
+function SheetTrigger(props: SheetPrimitive.Trigger.Props) {
   return <SheetPrimitive.Trigger data-slot='sheet-trigger' {...props} />;
 }
 
-function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
+function SheetClose(props: SheetPrimitive.Close.Props) {
   return <SheetPrimitive.Close data-slot='sheet-close' {...props} />;
-}
-
-function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
-  return <SheetPrimitive.Portal data-slot='sheet-portal' {...props} />;
-}
-
-function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
-  return <SheetPrimitive.Backdrop data-slot='sheet-overlay' className={cn(modalBackdrop, className)} {...props} />;
 }
 
 /**
@@ -39,15 +31,14 @@ function SheetContent({
   showCloseButton = true,
   container,
   ...props
-}: SheetPrimitive.Popup.Props & {
-  side?: 'right' | 'left';
-  showCloseButton?: boolean;
-  /** Where the portal mounts; default `body`. */
-  container?: SheetPrimitive.Portal.Props['container'];
-}) {
+}: SheetPrimitive.Popup.Props &
+  Pick<SheetPrimitive.Portal.Props, 'container'> & {
+    side?: 'right' | 'left';
+    showCloseButton?: boolean;
+  }) {
   return (
-    <SheetPortal container={container}>
-      <SheetOverlay />
+    <SheetPrimitive.Portal data-slot='sheet-portal' container={container}>
+      <SheetPrimitive.Backdrop data-slot='sheet-overlay' className={modalBackdrop} />
       <SheetPrimitive.Popup
         data-slot='sheet-content'
         data-side={side}
@@ -61,15 +52,13 @@ function SheetContent({
         {...props}>
         {children}
         {showCloseButton && (
-          <SheetPrimitive.Close
-            data-slot='sheet-close'
-            render={<Button intent='neutral' emphasis='ghost' size='icon-sm' className={modalClose} />}>
+          <SheetClose render={<Button intent='neutral' emphasis='ghost' size='icon-sm' className={modalClose} />}>
             <XIcon />
             <span className='sr-only'>Close</span>
-          </SheetPrimitive.Close>
+          </SheetClose>
         )}
       </SheetPrimitive.Popup>
-    </SheetPortal>
+    </SheetPrimitive.Portal>
   );
 }
 
@@ -90,7 +79,7 @@ function SheetBody({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='sheet-footer' data-modal='footer' className={cn(modalFooter, className)} {...props} />;
+  return <div data-slot='sheet-footer' className={cn(modalFooter, className)} {...props} />;
 }
 
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {

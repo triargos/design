@@ -67,7 +67,9 @@ export const Board: Story = {
       <ExampleSection title='Alignment'>
         <TooltipAlignment />
       </ExampleSection>
-      <ExampleSection title='Delay group' description='A muted toolbar of icon-only buttons.'>
+      <ExampleSection
+        title='Delay group'
+        description='Icon-only buttons in one TooltipProvider: the first tooltip opens after 200ms, its neighbours at once.'>
         <TooltipDelayGroup />
       </ExampleSection>
 

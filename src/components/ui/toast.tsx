@@ -19,7 +19,7 @@ const TOAST_ICONS = {
   warning: TriangleAlertIcon,
 } as const;
 
-type ToastType = keyof typeof TOAST_ICONS;
+export type ToastType = keyof typeof TOAST_ICONS;
 
 const isToastType = (type: string | undefined): type is ToastType => type !== undefined && type in TOAST_ICONS;
 
@@ -34,27 +34,24 @@ function getSwipeDirection(position: ToastPosition): SwipeDirection[] {
   return ['right', vertical];
 }
 
-/** Two class names per animation that alternate, so every upsert restarts the keyframes. */
-function upsertReplayClassName(toast: { type?: string | undefined; updateKey?: number | undefined }) {
-  const key = toast.updateKey ?? 0;
-  if (key <= 0) return undefined;
-  const even = key % 2 === 0;
-  if (toast.type === 'error') {
-    return even
-      ? 'animate-toast-error-even motion-reduce:animate-none'
-      : 'animate-toast-error-odd motion-reduce:animate-none';
-  }
-  return even
-    ? 'animate-toast-success-even motion-reduce:animate-none'
-    : 'animate-toast-success-odd motion-reduce:animate-none';
+/** Two class names per animation that alternate, so every upsert restarts the keyframes: [odd, even]. */
+const UPSERT_REPLAY = {
+  error: ['animate-toast-error-odd', 'animate-toast-error-even'],
+  other: ['animate-toast-success-odd', 'animate-toast-success-even'],
+} as const;
+
+function upsertReplayClassName({ type, updateKey = 0 }: { type?: string | undefined; updateKey?: number | undefined }) {
+  if (updateKey <= 0) return undefined;
+  const [odd, even] = UPSERT_REPLAY[type === 'error' ? 'error' : 'other'];
+  return `${updateKey % 2 === 0 ? even : odd} motion-reduce:animate-none`;
 }
 
-const toastRootClassName = cn(
+const toastRootClassName = [
   'absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full rounded-popup text-popover-foreground shadow-popup select-none',
   // Toasts behind the front one darken a step each; expanded, they all take the popup fill.
   'bg-[color-mix(in_srgb,var(--popover),black_calc(1%*max(0,var(--toast-index,0))))] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),black_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover',
   '[transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s]',
-  // Base positioning
+  // Position
   'data-[position*=right]:right-0 data-[position*=right]:left-auto',
   'data-[position*=left]:right-auto data-[position*=left]:left-0',
   'data-[position*=center]:right-0 data-[position*=center]:left-0',
@@ -87,15 +84,12 @@ const toastRootClassName = cn(
   'data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+100%+var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]',
   'data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-100%-var(--toast-inset)))]',
   'data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]',
-);
+].join(' ');
 
 function Toasts({
   position,
   portalProps,
-}: {
-  position: ToastPosition;
-  portalProps?: React.ComponentProps<typeof Toast.Portal> | undefined;
-}) {
+}: Required<Pick<ToastProviderProps, 'position'>> & Pick<ToastProviderProps, 'portalProps'>) {
   const { toasts } = Toast.useToastManager();
   const swipeDirection = getSwipeDirection(position);
 

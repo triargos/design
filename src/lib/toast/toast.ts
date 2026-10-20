@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { type ToastManager, toastManager } from '~/components/ui/toast';
-
-export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'loading';
+import { type ToastManager, type ToastType, toastManager } from '~/components/ui/toast';
 
 export interface ToastOptions {
   /** Upserts the toast with this id. Defaults to the type, title and description, so a repeat replaces the toast. */

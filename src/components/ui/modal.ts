@@ -1,9 +1,9 @@
 import { cardSurface } from '~/components/ui/inset-card';
 
 /**
- * The one modal shape, shared by `Dialog`, `AlertDialog` and `Sheet`: a shell (`--shell`, the page's, as in `InsetCard`)
- * with the header and footer on it, and the body as a card. Parts mark themselves `data-modal='body' | 'footer'` so the
- * shell can see whether the body ends the modal.
+ * The one modal shape, shared by `Dialog`, `AlertDialog` and `Sheet`: a shell (`--shell`, as in `InsetCard`) with the
+ * header and footer on it, and the body as a card. The body marks itself `data-modal='body'`, so a header inside it (a
+ * confirmation) drops the shell padding.
  */
 
 /**
@@ -15,24 +15,24 @@ export const modalBackdrop =
   'fixed inset-0 isolate z-50 bg-black/10 duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:fill-mode-forwards data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-xs';
 
 /**
- * The shell. Opaque: it sits over a blurred backdrop. Like `InsetCard`, it frames the body 4px in on every side, so
- * header, body and footer read as one card on a shell. A shell that must look different sets `--modal-shell`.
+ * The shell. Opaque: it sits over a blurred backdrop. Like `InsetCard`, it frames the body 4px in on every side, its
+ * corners concentric (`rounded-inner` = dialog radius − 4px). A shell that must look different sets `--modal-shell`.
  */
 export const modalShell = [
   'flex flex-col p-1 text-body text-popover-foreground shadow-modal outline-none',
-  // InsetCard's geometry: the body sits 4px in, its corners concentric (`rounded-inner` = dialog radius − 4px).
   '[--outer-inset:--spacing(1)] [--outer-radius:var(--radius-dialog)]',
   'bg-(--modal-shell) [--modal-shell:var(--shell)]',
 ].join(' ');
 
 /**
- * Title and description on the shell, `group` + 1px in to share the body text's edge (inside its border). The right padding clears the 36px close button (`icon-sm`, 12px in). Inside the
- * body (a confirmation: no other content), the body's padding takes over.
+ * Title and description on the shell, `group` + 1px in to share the body text's edge (inside its border). The right
+ * padding clears the 36px close button (`icon-sm`, 12px in). Inside the body (a confirmation), the body's padding
+ * takes over.
  */
 export const modalHeader =
   'flex flex-col gap-tight pt-3 pr-11 pb-3 pl-[calc(var(--spacing-group)+1px)] in-data-[modal=body]:p-0 in-data-[modal=body]:pr-8';
 
-/** The card, inset 4px in the shell like `InsetCardContent`; its corners follow the dialog's (`rounded-inner`). */
+/** The card, inset 4px in the shell like `InsetCardContent`. */
 export const modalBody = `flex flex-col gap-group rounded-inner p-group text-card-foreground ${cardSurface}`;
 
 /** Actions on the shell, end-aligned; stacked full width below `sm`, the main action on top. */

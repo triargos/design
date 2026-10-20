@@ -1,28 +1,26 @@
-import { Fragment, ReactElement } from 'react';
-import { useUiStrings } from '~/lib/ui-config';
+import { type ComponentProps, Fragment, type ReactElement } from 'react';
 
-import { Kbd, KbdGroup } from '~/components/ui/kbd.tsx';
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip.tsx';
+import { Kbd, KbdGroup } from '~/components/ui/kbd';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 
 import { formatShortcut } from '~/lib/format-shortcut';
+import { useUiStrings } from '~/lib/ui-config';
 
-interface ShortcutTooltipProps {
+interface ShortcutTooltipProps extends Pick<ComponentProps<typeof TooltipContent>, 'side'> {
   label: string;
   /** `['N', 'C']` for a chord, `['$mod+Enter']` for a combination. */
   shortcut?: readonly string[];
-  side?: 'top' | 'right' | 'bottom' | 'left';
   children: ReactElement;
 }
 
-export function ShortcutTooltip({ label, shortcut, side, children }: ShortcutTooltipProps) {
+export function ShortcutTooltip({ label, shortcut = [], side, children }: ShortcutTooltipProps) {
   const strings = useUiStrings();
-  const hasShortcut = shortcut !== undefined && shortcut.length > 0;
   return (
     <Tooltip>
       <TooltipTrigger render={children} />
-      <TooltipContent side={side} className='flex items-center gap-1.5 rounded-control-sm px-2.5 py-1 text-caption'>
+      <TooltipContent side={side} className='flex items-center gap-1.5 px-2.5'>
         <span>{label}</span>
-        {hasShortcut && (
+        {shortcut.length > 0 && (
           <KbdGroup aria-hidden>
             {shortcut.map((key, index) => (
               <Fragment key={`${key}-${index}`}>

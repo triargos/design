@@ -10,19 +10,19 @@ import { cn } from '~/lib/utils';
 export const popupSurface =
   'rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-popup)]';
 
-function Popover({ ...props }: PopoverPrimitive.Root.Props) {
+function Popover(props: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot='popover' {...props} />;
 }
 
-function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
+function PopoverTrigger(props: PopoverPrimitive.Trigger.Props) {
   return <PopoverPrimitive.Trigger data-slot='popover-trigger' {...props} />;
 }
 
 function PopoverContent({
   className,
-  align = 'center',
-  alignOffset = 0,
-  side = 'bottom',
+  align,
+  alignOffset,
+  side,
   sideOffset = 4,
   collisionPadding,
   container,
@@ -44,7 +44,7 @@ function PopoverContent({
           data-surface='popup'
           className={cn(
             popupSurface,
-            'z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 p-2.5 text-body outline-hidden duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+            'flex w-72 origin-(--transform-origin) flex-col gap-2.5 p-2.5 text-body outline-hidden duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
             className,
           )}
           {...props}

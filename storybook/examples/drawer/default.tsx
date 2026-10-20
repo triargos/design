@@ -19,7 +19,7 @@ export function DrawerDefault() {
           <DrawerTitle>Abwesenheit melden</DrawerTitle>
           <DrawerDescription>Mia Schmidt · heute</DrawerDescription>
         </DrawerHeader>
-        <div className='px-6 text-body text-muted-foreground'>Krankheit, Arzttermin oder ein anderer Grund.</div>
+        <div className='px-group text-body text-muted-foreground'>Krankheit, Arzttermin oder ein anderer Grund.</div>
         <DrawerFooter>
           <Button type='button'>Melden</Button>
         </DrawerFooter>

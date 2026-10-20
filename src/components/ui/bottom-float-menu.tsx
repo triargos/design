@@ -11,7 +11,6 @@ import {
 import { ChevronRightIcon } from 'lucide-react';
 import {
   type ReactNode,
-  type Ref,
   createContext,
   use,
   useEffect,
@@ -44,7 +43,6 @@ interface BottomFloatMenuProps {
   panel?: BottomFloatMenuPanel | null;
   onPanelDismiss?: (reason: BottomFloatMenuDismissReason) => void;
   className?: string;
-  containerClassName?: string;
 }
 
 const BAR_VIEW = 'bar';
@@ -59,7 +57,6 @@ const FOCUSABLE = 'button:not([disabled]), a[href]';
 const easeEnter = [0.23, 1, 0.32, 1] as const;
 // Stiff springs (stiffness/damping, not duration/bounce): high stiffness pulls hard from rest, so motion starts fast
 // instead of easing in, and settles in ~300ms. A long `visualDuration` spring reads as slow and nearly linear.
-// Calibrated against godui's Floating Toolbar (`stiffness: 520, damping: 32`).
 /**
  * Flying up, growing out of the pill, and morphing between sizes: damping ratio ~0.7, overshoot ~4.5% of the travel.
  * One spring for all three, so the fly-up and the growth peak on the same frame and the bar moves as one piece.
@@ -112,7 +109,6 @@ export const BottomFloatMenu = ({
   panel = null,
   onPanelDismiss,
   className,
-  containerClassName,
 }: BottomFloatMenuProps) => {
   const shouldReduceMotion = useReducedMotion() ?? false;
   // Portaled out of the page: an opacity or transform ancestor would trap a `fixed` bar.
@@ -126,12 +122,7 @@ export const BottomFloatMenu = ({
 
   return createPortal(
     // `inset-x-0` instead of `left-1/2 -translate-x-1/2`: a half-pixel translate blurs the text.
-    <div
-      className={cn(
-        'pointer-events-none flex flex-col',
-        outsideMainLayout && 'fixed inset-x-0 bottom-8 z-50',
-        containerClassName,
-      )}>
+    <div className={cn('pointer-events-none flex flex-col', outsideMainLayout && 'fixed inset-x-0 bottom-8 z-50')}>
       <ReducedMotionContext value={shouldReduceMotion}>
         <AnimatePresence>
           {show && (
@@ -161,7 +152,7 @@ const MenuSurface = ({ children }: { children: ReactNode }) => {
   );
 };
 
-type MorphingShellProps = Omit<BottomFloatMenuProps, 'show' | 'containerClassName'>;
+type MorphingShellProps = Omit<BottomFloatMenuProps, 'show'>;
 
 const MorphingShell = ({ children, label, panel, onPanelDismiss, className }: MorphingShellProps) => {
   const reduceMotion = use(ReducedMotionContext);
@@ -320,18 +311,11 @@ const MorphingShell = ({ children, label, panel, onPanelDismiss, className }: Mo
   );
 };
 
-interface MenuViewProps {
-  view: string;
-  children: ReactNode;
-  ref?: Ref<HTMLDivElement>;
-}
-
-const MenuView = ({ view, children, ref }: MenuViewProps) => {
+const MenuView = ({ view, children }: { view: string; children: ReactNode }) => {
   const isPresent = useIsPresent();
   const reduceMotion = use(ReducedMotionContext);
   return (
     <motion.div
-      ref={ref}
       data-float-menu-view={view}
       inert={!isPresent}
       initial={false}
@@ -362,7 +346,8 @@ export const BottomFloatMenuRow = ({ icon, children, onClick, opensPanel }: Bott
   <BottomFloatMenuItem>
     <Button
       type='button'
-      variant='ghost'
+      intent='neutral'
+      emphasis='ghost'
       onClick={onClick}
       className='h-auto min-h-(--float-control) w-full justify-start gap-2 rounded-inner px-3 py-2.5'>
       {icon}

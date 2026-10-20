@@ -27,6 +27,7 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
   );
 }
 
+/** The palette: a `Command` as the dialog's only content, one card with no header or footer strip. */
 function CommandDialog({
   title = 'Command Palette',
   description = 'Search for a command to run...',
@@ -35,26 +36,23 @@ function CommandDialog({
   showCloseButton = false,
   container,
   ...props
-}: Omit<React.ComponentProps<typeof Dialog>, 'children'> & {
-  title?: string;
-  description?: string;
-  className?: string;
-  showCloseButton?: boolean;
-  /** Where the portal mounts; default `body`. */
-  container?: React.ComponentProps<typeof DialogContent>['container'];
-  children: React.ReactNode;
-}) {
+}: Omit<React.ComponentProps<typeof Dialog>, 'children'> &
+  Pick<React.ComponentProps<typeof DialogContent>, 'showCloseButton' | 'container'> & {
+    className?: string;
+    title?: string;
+    description?: string;
+    children: React.ReactNode;
+  }) {
   return (
     <Dialog {...props}>
-      <DialogHeader className='sr-only'>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
       <DialogContent
         container={container}
         className={cn('top-1/3 translate-y-0', className)}
         showCloseButton={showCloseButton}>
-        {/* The palette is the body alone: one card, no header or footer strip. */}
+        <DialogHeader className='sr-only'>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
         <DialogBody className='gap-0 overflow-hidden p-0'>{children}</DialogBody>
       </DialogContent>
     </Dialog>
