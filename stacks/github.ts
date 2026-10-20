@@ -34,6 +34,14 @@ export default Alchemy.Stack(
           ],
           resources: { [`com.cloudflare.api.account.${accountId}`]: '*' },
         },
+        // Custom domain (design.a-np.de): zone lookup + Worker custom-domain attach.
+        {
+          effect: 'allow',
+          permissionGroups: ['Zone Read', 'Workers Routes Write'],
+          resources: {
+            [`com.cloudflare.api.account.${accountId}`]: { 'com.cloudflare.api.account.zone.*': '*' },
+          },
+        },
       ],
     });
 

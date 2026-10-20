@@ -12,11 +12,15 @@ export default Alchemy.Stack(
     state: Cloudflare.state(),
   },
   Effect.gen(function* () {
+    const stage = yield* Alchemy.Stage;
+
     // Docs site + registry JSON (/r/registry.json, /r/{name}.json) as one assets-only Worker. vite.config.ts runs
     // `shadcn build`, then prerenders every page (/button → button.html). Unknown paths, /r/* included, get 404.html
     // with a 404 status.
     const site = yield* Cloudflare.Website.Vite('Website', {
       assets: { notFoundHandling: '404-page' },
+      // Custom domain on prod only; PR previews stay on workers.dev.
+      domain: stage === 'prod' ? 'design.a-np.de' : undefined,
     });
 
     const github = yield* GitHub.GitHubEnv;
