@@ -1,7 +1,9 @@
 import { ItemDefault } from '../examples/item/default';
 import { ItemHeaderAndFooter } from '../examples/item/header-and-footer';
 import { ItemLink } from '../examples/item/link';
+import { ItemLoadingMore } from '../examples/item/loading-more';
 import { ItemSelected } from '../examples/item/selected';
+import { ItemVirtualized } from '../examples/item/virtualized';
 import { ItemWithActions } from '../examples/item/with-actions';
 import { ItemWithDescription } from '../examples/item/with-description';
 import { ItemWithMedia } from '../examples/item/with-media';
@@ -69,6 +71,26 @@ export default defineDocs({
         }
         bare>
         <ItemSelected />
+      </ExampleSection>
+      <ExampleSection
+        title='Virtualized'
+        description={
+          <>
+            <Code>ItemList virtualized items itemKey</Code>: 1,000 rows, only those in view render. Give it a height.
+          </>
+        }
+        bare>
+        <ItemVirtualized />
+      </ExampleSection>
+      <ExampleSection
+        title='Loading more'
+        description={
+          <>
+            <Code>hasMore</Code> + <Code>onLoadMore</Code>; <Code>isLoadingMore</Code> shows a spinner. Scroll down.
+          </>
+        }
+        bare>
+        <ItemLoadingMore />
       </ExampleSection>
     </FoundationPage>
   ),

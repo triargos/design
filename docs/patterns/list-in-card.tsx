@@ -1,5 +1,6 @@
 import { ListInCardDefault } from '../examples/patterns/list-in-card/default';
-import { ExampleSection, FoundationPage } from '../kit/blocks';
+import { ListInCardVirtualized } from '../examples/patterns/list-in-card/virtualized';
+import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
 
 export default defineDocs({
@@ -12,6 +13,17 @@ export default defineDocs({
       description='Every list on a page: CardContent with overflow-hidden around an ItemList. The header holds the add action; each row ends in a status and a ghost menu, on one column with the header action.'>
       <ExampleSection title='Default' bare>
         <ListInCardDefault />
+      </ExampleSection>
+      <ExampleSection
+        title='Virtualized'
+        description={
+          <>
+            A long list: <Code>ItemList virtualized items itemKey</Code> with a height, the row a function of the item.
+            Only the rows in view render.
+          </>
+        }
+        bare>
+        <ListInCardVirtualized />
       </ExampleSection>
     </FoundationPage>
   ),

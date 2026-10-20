@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Item, ItemContent, ItemDescription, ItemTitle } from '~/components/ui/item';
-import { VirtualizedList } from '~/components/ui/virtualized-list';
+import { Item, ItemContent, ItemDescription, ItemTitle, ItemList } from '~/components/ui/item';
 
 const ACTIONS = ['created a task', 'commented on a task', 'uploaded a document', 'paid an invoice'];
 const MEMBERS = ['Maya Chen', 'Jonas Weber', 'Priya Patel', 'Leo Martin', 'Sofia Rossi'];
@@ -12,19 +11,15 @@ const ACTIVITY = Array.from({ length: 1000 }, (_, index) => ({
 }));
 
 /** Only the rows in view render, measured as they mount; the list scrolls itself. */
-export function VirtualizedListDefault() {
+export function ItemVirtualized() {
   return (
     <Card className='w-full max-w-md'>
       <CardHeader>
         <CardTitle>Activity</CardTitle>
       </CardHeader>
       <CardContent className='overflow-hidden'>
-        <VirtualizedList
-          className='h-80'
-          items={ACTIVITY}
-          itemKey={(item) => item.id}
-          estimatedItemSize={60}
-          renderItem={(item) => (
+        <ItemList virtualized className='h-80' items={ACTIVITY} itemKey={(item) => item.id} estimatedItemSize={60}>
+          {(item) => (
             <Item>
               <ItemContent>
                 <ItemTitle>{item.title}</ItemTitle>
@@ -32,7 +27,7 @@ export function VirtualizedListDefault() {
               </ItemContent>
             </Item>
           )}
-        />
+        </ItemList>
       </CardContent>
     </Card>
   );
