@@ -193,8 +193,8 @@
   --radius-control: 10px;
   --radius-control-lg: 12px;
   --radius-popup: 16px;
-  --radius-card: 20px;
-  --radius-dialog: 20px;
+  --radius-card: 24px;
+  --radius-dialog: 24px;
   --radius-panel: 20px;
 
   /* Spacing (DESIGN.md, Spacing): `gap-group`, `p-group`, `space-y-tight`. */

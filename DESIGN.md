@@ -115,13 +115,13 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | `rounded-control`    | 10  | Controls 32–36px (`Button` `xs`, `sm`, tabs) |
 | `rounded-control-lg` | 12  | Controls and fields 40–44px                  |
 | `rounded-popup`      | 16  | Menus, popovers, selects                     |
-| `rounded-card`       | 20  | `Card` shell, `Alert`                        |
-| `rounded-dialog`     | 20  | Dialogs, sheets                              |
+| `rounded-card`       | 24  | `Card` shell, `Alert`                        |
+| `rounded-dialog`     | 24  | Dialogs, sheets                              |
 | `rounded-panel`      | 20  | The page panel                               |
 
 - Concentric corners: `inner = outer − inset`. The outer surface sets `--outer-radius` and `--outer-inset`; what sits inside takes `rounded-inner`. Owners: `Card` (content 4px in), `Alert` (action 6px in), popups (items 4px in), modals (✕ 12px in), `InputGroup` buttons (8 / 4px in), combobox chips (4px in).
 - `Avatar` `shape='square'` is the one exception: its radius steps with its size (`rounded-xs` at 12px to `rounded-2xl` at 80px), an icon-like scale no role covers.
-- Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons 16px into a card keep `rounded-control*`.
+- Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons 16px into a card keep `rounded-control*`. The card and dialog are 24px so their content (20px) stays clearly rounder than a 12px field inside it; at 16px content the two corners read as a failed concentric pair.
 - Control heights:
 
   | Control  | Heights                                                    |

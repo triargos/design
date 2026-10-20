@@ -43,11 +43,27 @@ interface Customization {
   readonly tokens: Readonly<Record<string, number>>;
   /** The surface the examples sit on: chosen in the Customize menu. */
   readonly surface: DocsSurface;
+  /** The sans font every page renders with: swaps `--font-sans`. */
+  readonly font: Font;
 }
 
 const SURFACES: ReadonlyArray<DocsSurface> = ['page', 'card', 'popup'];
 
-const DEFAULT: Customization = { branding: DEFAULT_BRANDING_THEME, tokens: DEFAULT_TOKEN_GLOBALS, surface: 'page' };
+type Font = 'inter' | 'geist' | 'cal-sans';
+const FONTS: ReadonlyArray<Font> = ['inter', 'geist', 'cal-sans'];
+/** Faces in `site/styles.css`; Inter is the design system's own (`--font-sans` in `tailwind.css`). */
+const FONT_FAMILIES: Record<Font, { readonly label: string; readonly family: string }> = {
+  inter: { label: 'Inter', family: "'Inter Variable', sans-serif" },
+  geist: { label: 'Geist', family: "'Geist', sans-serif" },
+  'cal-sans': { label: 'Cal Sans', family: "'Cal Sans', sans-serif" },
+};
+
+const DEFAULT: Customization = {
+  branding: DEFAULT_BRANDING_THEME,
+  tokens: DEFAULT_TOKEN_GLOBALS,
+  surface: 'page',
+  font: 'inter',
+};
 const KEY = 'customization';
 const CHANGE = 'customizationchange';
 
@@ -64,6 +80,7 @@ const read = (): Customization => {
     branding: Partial<Record<keyof BrandingTheme, unknown>>;
     tokens: Record<string, unknown>;
     surface: unknown;
+    font: unknown;
   }> = {};
   try {
     stored = raw === null ? {} : JSON.parse(raw);
@@ -87,6 +104,7 @@ const read = (): Customization => {
       ]),
     ),
     surface: oneOf(SURFACES, stored.surface, DEFAULT.surface),
+    font: oneOf(FONTS, stored.font, DEFAULT.font),
   };
   cache = { raw, value };
   return value;
@@ -112,11 +130,12 @@ export const useCustomization = () => useSyncExternalStore(subscribe, read, () =
 
 /** The theme and token CSS, after `tailwind.css` so it wins. */
 export function CustomizationStyles() {
-  const { branding, tokens } = useCustomization();
+  const { branding, tokens, font } = useCustomization();
   return (
     <>
       <style data-branding>{brandingThemeCss(branding)}</style>
       <style data-tokens>{tokenCss(tokens)}</style>
+      {font !== DEFAULT.font && <style data-font>{`:root{--font-sans:${FONT_FAMILIES[font].family};}`}</style>}
     </>
   );
 }
@@ -221,7 +240,7 @@ const cornerAt = (rect: DOMRect, velocity: PanInfo['velocity']): Corner => {
 
 /**
  * Customize as a floating button, like the Next.js dev indicator: drag it to any corner (a flick carries it), click it
- * to open the surface, brand colors and token scales in a popover beside it. Choices and corner are saved in this
+ * to open the surface, font, brand colors and token scales in a popover beside it. Choices and corner are saved in this
  * browser. At the app root.
  *
  * The button rests at its corner through CSS, so it prerenders in place. A drag moves it by `x`/`y`; on release it takes
@@ -331,7 +350,7 @@ export function CustomizeMenu() {
         <PopoverHeader className='px-group pt-group pb-related'>
           <PopoverTitle>Customize</PopoverTitle>
           <PopoverDescription>
-            Surface, brand colors and token scales for every page. Saved in this browser.
+            Surface, font, brand colors and token scales for every page. Saved in this browser.
           </PopoverDescription>
         </PopoverHeader>
         <div className='flex min-h-0 flex-1 flex-col gap-group overflow-y-auto px-group py-related'>
@@ -348,6 +367,27 @@ export function CustomizeMenu() {
               {SURFACES.map((surface) => (
                 <TabsRadio key={surface} value={surface} className='flex-1 capitalize'>
                   {surface}
+                </TabsRadio>
+              ))}
+            </TabsRadioGroup>
+          </div>
+          <div role='group' aria-labelledby='font' className='flex flex-col gap-related'>
+            <span id='font' className='text-body font-medium'>
+              Font
+            </span>
+            <TabsRadioGroup
+              variant='segmented'
+              aria-labelledby='font'
+              value={customization.font}
+              onValueChange={(font) => write({ ...customization, font: font as Font })}
+              className='w-full'>
+              {FONTS.map((font) => (
+                <TabsRadio
+                  key={font}
+                  value={font}
+                  style={{ fontFamily: FONT_FAMILIES[font].family }}
+                  className='flex-1'>
+                  {FONT_FAMILIES[font].label}
                 </TabsRadio>
               ))}
             </TabsRadioGroup>
