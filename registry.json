@@ -392,7 +392,6 @@
       ],
       "registryDependencies": [
         "@triargos/dialog",
-        "@triargos/input-group",
         "@triargos/theme",
         "@triargos/utils"
       ],

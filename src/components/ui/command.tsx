@@ -10,21 +10,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import { InputGroup, InputGroupAddon } from '~/components/ui/input-group';
 
 import { cn } from '~/lib/utils';
 
+/**
+ * Rows sit 8px in (`CommandList`'s `p-2`), so `rounded-inner` is the surface's radius less 8px: 8px inline (a popup's 16px,
+ * like a card's content), 12px in `CommandDialog` (the dialog's 20px).
+ */
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (
     <CommandPrimitive
       data-slot='command'
-      className={cn('flex size-full flex-col overflow-hidden bg-transparent p-1 text-popover-foreground', className)}
+      className={cn(
+        'flex size-full flex-col overflow-hidden bg-transparent text-popover-foreground [--outer-inset:--spacing(2)] [--outer-radius:var(--radius-popup)] in-data-[slot=dialog-content]:[--outer-radius:var(--radius-dialog)]',
+        className,
+      )}
       {...props}
     />
   );
 }
 
-/** The palette: a `Command` as the dialog's only content, one card with no header, footer or close button. */
+/** The palette: a `Command` as the dialog's only content, 42rem wide (`lg`), with no header, footer or close button. */
 function CommandDialog({
   title,
   description,
@@ -39,7 +45,7 @@ function CommandDialog({
 }) {
   return (
     <Dialog {...props}>
-      <DialogContent size='sm' className='top-1/3 translate-y-0' showCloseButton={false}>
+      <DialogContent size='lg' className='top-[12dvh] max-h-[76dvh] translate-y-0' showCloseButton={false}>
         <DialogHeader className='sr-only'>
           <DialogTitle>{title}</DialogTitle>
           {description !== undefined && <DialogDescription>{description}</DialogDescription>}
@@ -52,20 +58,17 @@ function CommandDialog({
 
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
-    <div data-slot='command-input-wrapper' className='p-1 pb-0'>
-      <InputGroup className='h-9 *:data-[slot=input-group-addon]:pl-2.5!'>
-        <CommandPrimitive.Input
-          data-slot='command-input'
-          className={cn(
-            'w-full text-body outline-hidden disabled:cursor-not-allowed disabled:text-disabled-foreground',
-            className,
-          )}
-          {...props}
-        />
-        <InputGroupAddon>
-          <IconSearch className='size-4 shrink-0 text-faint-foreground' />
-        </InputGroupAddon>
-      </InputGroup>
+    // A bare row over a rule, not a field: the search is the palette's header. The icon lines up with the rows' text.
+    <div data-slot='command-input-wrapper' className='flex h-12 shrink-0 items-center gap-2.5 border-b px-5'>
+      <IconSearch aria-hidden className='size-4 shrink-0 text-muted-foreground' />
+      <CommandPrimitive.Input
+        data-slot='command-input'
+        className={cn(
+          'h-full w-full min-w-0 bg-transparent text-body outline-hidden placeholder:text-faint-foreground disabled:cursor-not-allowed disabled:text-disabled-foreground',
+          className,
+        )}
+        {...props}
+      />
     </div>
   );
 }
@@ -74,7 +77,7 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
   return (
     <CommandPrimitive.List
       data-slot='command-list'
-      className={cn('no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none', className)}
+      className={cn('no-scrollbar max-h-96 scroll-py-2 overflow-x-hidden overflow-y-auto p-2 outline-none', className)}
       {...props}
     />
   );
@@ -95,7 +98,8 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
     <CommandPrimitive.Group
       data-slot='command-group'
       className={cn(
-        'overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-2.5 **:[[cmdk-group-heading]]:pt-2 **:[[cmdk-group-heading]]:pb-1 **:[[cmdk-group-heading]]:text-overline **:[[cmdk-group-heading]]:text-muted-foreground',
+        // Headings in sentence case (`caption`, not `overline`): a palette's groups read as sections, not menu labels.
+        'overflow-hidden text-foreground [[cmdk-group]:not([hidden])~&:not([cmdk-separator]+&)]:pt-2 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-1.5 **:[[cmdk-group-heading]]:pb-1.5 **:[[cmdk-group-heading]]:text-caption **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground',
         className,
       )}
       {...props}
@@ -107,7 +111,7 @@ function CommandSeparator({ className, ...props }: React.ComponentProps<typeof C
   return (
     <CommandPrimitive.Separator
       data-slot='command-separator'
-      className={cn('-mx-1 h-px bg-border', className)}
+      className={cn('-mx-2 my-2 h-px bg-border', className)}
       {...props}
     />
   );
@@ -118,7 +122,7 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
     <CommandPrimitive.Item
       data-slot='command-item'
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-inner px-2.5 py-2 text-control outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-foreground data-[selected=true]:bg-foreground/6 data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[selected=true]:*:[svg]:text-foreground",
+        "group/command-item relative flex cursor-default items-center gap-2 rounded-inner px-3 py-2.5 text-control outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-foreground data-[selected=true]:bg-foreground/6 data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[selected=true]:*:[svg]:text-foreground",
         className,
       )}
       {...props}
