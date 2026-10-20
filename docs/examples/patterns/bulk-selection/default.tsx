@@ -1,4 +1,4 @@
-import { CircleDotIcon, DownloadIcon, MailIcon, MoreHorizontalIcon, Trash2Icon, XIcon } from 'lucide-react';
+import { DownloadIcon, MailIcon, Trash2Icon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import {
@@ -14,14 +14,8 @@ import {
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import { Card, CardHeader, CardTitle } from '~/components/ui/card';
+import { Separator } from '~/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
 
 const TASKS = [
@@ -40,8 +34,9 @@ const tasks = (count: number) => `${count} ${count === 1 ? 'task' : 'tasks'}`;
 
 /**
  * Select rows, act on all of them: a checkbox column with select-all, and a bar below the table while anything is
- * selected. The bar reads by weight: the count as text, "Actions" (every action, in a menu) as the one raised
- * button, a quick action as a raised icon, and clear as a quiet ✕ at the end. Deleting asks in an alert dialog.
+ * selected. The bar holds two groups behind a hairline: the selection (the count in muted text, clear as a ghost ✕)
+ * and the actions, each a raised button with its label, Delete… last as a subtle destructive that asks in an alert
+ * dialog. In a container under 32rem the labels go to screen readers and the actions become icons.
  */
 export function BulkSelectionDefault() {
   const [rows, setRows] = useState<ReadonlyArray<(typeof TASKS)[number]>>(TASKS);
@@ -58,7 +53,7 @@ export function BulkSelectionDefault() {
   const clear = () => setSelected(new Set());
 
   return (
-    <div className='flex w-full max-w-2xl flex-col gap-group'>
+    <div className='@container flex w-full max-w-2xl flex-col gap-group'>
       <Card>
         <CardHeader>
           <CardTitle>Tasks</CardTitle>
@@ -104,38 +99,29 @@ export function BulkSelectionDefault() {
           role='toolbar'
           aria-label='Selection'
           data-surface='popup'
-          className='sticky bottom-4 flex items-center gap-1 self-center rounded-popup bg-popover p-1 text-control text-popover-foreground shadow-popup duration-enter ease-enter animate-in fade-in-0 slide-in-from-bottom-2'>
-          <span className='ps-3 pe-1 tabular-nums'>{selected.size} selected</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger render={<Button />}>
-              <MoreHorizontalIcon data-icon='inline-start' />
-              Actions
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side='top' className='w-48'>
-              <DropdownMenuItem>
-                <MailIcon />
-                Send reminder
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CircleDotIcon />
-                Change status
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <DownloadIcon />
-                Export
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem intent='destructive' onClick={() => setConfirming(true)}>
-                <Trash2Icon />
-                Delete…
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button size='icon' aria-label='Send reminder'>
-            <MailIcon />
-          </Button>
+          className='sticky bottom-4 flex items-center gap-related self-center rounded-popup bg-popover p-1.5 text-control text-popover-foreground shadow-popup duration-enter ease-enter animate-in fade-in-0 slide-in-from-bottom-2 @max-lg:gap-1'>
+          {/* 6px in from the 16px popup, the 10px buttons are concentric with it. */}
+          <span className='ps-2.5 whitespace-nowrap text-muted-foreground tabular-nums'>{selected.size} selected</span>
           <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
             <XIcon />
+          </Button>
+          <Separator orientation='vertical' className='my-1.5' />
+          {/* No `data-icon`: its padding would outweigh the square icon-only size below 32rem. */}
+          <Button className='@max-lg:w-9 @max-lg:px-0'>
+            <MailIcon />
+            <span className='@max-lg:sr-only'>Send reminder</span>
+          </Button>
+          <Button className='@max-lg:w-9 @max-lg:px-0'>
+            <DownloadIcon />
+            <span className='@max-lg:sr-only'>Export</span>
+          </Button>
+          <Button
+            intent='destructive'
+            emphasis='subtle'
+            className='@max-lg:w-9 @max-lg:px-0'
+            onClick={() => setConfirming(true)}>
+            <Trash2Icon />
+            <span className='@max-lg:sr-only'>Delete…</span>
           </Button>
         </div>
       )}
