@@ -283,7 +283,7 @@ function SelectCustomItem({ className, children }: { className?: string; childre
 /**
  * The fold of `SelectCustomInput`: grid rows 0fr ↔ 1fr, not height 0 ↔ auto, which ends on a swap back to `auto` that
  * stutters. A short critically damped spring, interruptible when the choice flips mid-fold, settled finely
- * (`restDelta`) because the value only spans 0–1fr.
+ * (`restDelta`) because the value only spans 0–1fr. Reduced motion: no fold, the field fades in and out in place.
  */
 const customFold = { type: 'spring', duration: 0.15, bounce: 0, restDelta: 0.001, restSpeed: 0.01 } as const;
 const folded = { gridTemplateRows: '0fr', opacity: 0 } as const;
@@ -305,7 +305,7 @@ function SelectCustomInput({
       {custom.chosen && (
         <motion.div
           data-slot='select-custom-reveal'
-          initial={reduceMotion ? false : folded}
+          initial={reduceMotion ? { ...unfolded, opacity: 0 } : folded}
           animate={{ ...unfolded, transition: customFold }}
           exit={reduceMotion ? { opacity: 0 } : { ...folded, transition: customFold }}
           // -mx-1/-mb-1 + px-1/pb-1: room for the focus ring inside the clip.
