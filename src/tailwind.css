@@ -13,7 +13,7 @@
   --edge-hover: oklch(0 0 0 / 0.12);
   /* Fields: a firmer ring, heavier at the bottom (light from above); dark lights the top edge instead. */
   --edge-field: oklch(0 0 0 / 0.1);
-  --edge-field-top: oklch(0 0 0 / 0);
+  --edge-field-top: transparent;
   --edge-field-bottom: oklch(0 0 0 / 0.045);
   --field-lift: oklch(0 0 0 / 0.05);
   --raised-lift: oklch(0 0 0 / 0.08);
@@ -21,11 +21,11 @@
   --raised-lift-hover: oklch(0 0 0 / 0.1);
   --raised-ambient-hover: oklch(0 0 0 / 0.06);
   /* Popups: the ring heavier at the bottom, like fields; dark lights the top edge instead. */
-  --popup-edge-top: oklch(0 0 0 / 0);
+  --popup-edge-top: transparent;
   --popup-edge-bottom: oklch(0 0 0 / 0.04);
   --popup-drop: oklch(0 0 0 / 0.05);
-  --shadow-drop-soft: oklch(0 0 0 / 0.05);
-  --shadow-drop-far: oklch(0 0 0 / 0.15);
+  --modal-drop-soft: oklch(0 0 0 / 0.05);
+  --modal-drop-far: oklch(0 0 0 / 0.15);
 
   --chart-1: oklch(0.837 0.128 66.29);
   --chart-2: oklch(0.705 0.213 47.604);
@@ -50,16 +50,16 @@
   --edge-hover: oklch(1 0 0 / 0.13);
   --edge-field: oklch(1 0 0 / 0.08);
   --edge-field-top: oklch(1 0 0 / 0.055);
-  --edge-field-bottom: oklch(0 0 0 / 0);
-  --field-lift: oklch(0 0 0 / 0);
-  --raised-lift: oklch(0 0 0 / 0);
-  --raised-ambient: oklch(0 0 0 / 0);
-  --raised-lift-hover: oklch(0 0 0 / 0);
-  --raised-ambient-hover: oklch(0 0 0 / 0);
+  --edge-field-bottom: transparent;
+  --field-lift: transparent;
+  --raised-lift: transparent;
+  --raised-ambient: transparent;
+  --raised-lift-hover: transparent;
+  --raised-ambient-hover: transparent;
   --popup-edge-top: oklch(1 0 0 / 0.06);
-  --popup-edge-bottom: oklch(0 0 0 / 0);
-  --shadow-drop-soft: oklch(0 0 0 / 0);
-  --shadow-drop-far: oklch(0 0 0 / 0.4);
+  --popup-edge-bottom: transparent;
+  --modal-drop-soft: transparent;
+  --modal-drop-far: oklch(0 0 0 / 0.4);
 }
 
 @theme inline {
@@ -141,7 +141,7 @@
   --shadow-popup:
     0 0 0 1px var(--edge), 0 -1px 0 0 var(--popup-edge-top), 0 1px 0 0 var(--popup-edge-bottom),
     0 10px 15px -3px var(--popup-drop), 0 4px 6px -4px var(--popup-drop);
-  --shadow-modal: 0 0 0 1px var(--edge), 0 8px 40px 0 var(--shadow-drop-soft), 0 12px 32px -16px var(--shadow-drop-far);
+  --shadow-modal: 0 0 0 1px var(--edge), 0 8px 40px 0 var(--modal-drop-soft), 0 12px 32px -16px var(--modal-drop-far);
 
   /* Re-declared per `[data-surface]` (`surfaceVars` in `lib/theme/theme-to-css.ts`). `field` is the quiet fill
      for file rows and inset boxes: opaque, so nested fills do not stack. Inputs sit on `surface` (`inputSurfaceVariants`). */
@@ -222,7 +222,6 @@
   --text-overline--letter-spacing: 0.06em;
   --text-overline--font-weight: 500;
 
-  --animate-shimmer: shimmer 2s linear infinite;
   /* Toast upsert replay (`components/ui/toast.tsx`): odd and even run the same keyframes, so each update restarts them. */
   --animate-toast-success-odd: toast-pulse 0.32s cubic-bezier(0.5, 1, 0.89, 1);
   --animate-toast-success-even: toast-pulse-again 0.32s cubic-bezier(0.5, 1, 0.89, 1);
@@ -343,15 +342,6 @@
       translate: 1px 0;
     }
   }
-
-  @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
 }
 
 @layer base {
@@ -397,40 +387,45 @@
   }
 }
 
-@layer utilities {
-  .text-overline {
-    text-transform: uppercase;
-  }
+@utility text-overline {
+  text-transform: uppercase;
+}
 
-  /* Scrolls without a scrollbar. */
-  .no-scrollbar {
-    scrollbar-width: none;
+/* Scrolls without a scrollbar. */
+@utility no-scrollbar {
+  scrollbar-width: none;
 
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  &::-webkit-scrollbar {
+    display: none;
   }
+}
 
-  .animate-shimmer {
-    --shimmer-base: color-mix(in oklch, var(--card), var(--foreground) 8%);
-    --shimmer-highlight: color-mix(in oklch, var(--card), var(--foreground) 18%);
-    background-color: var(--shimmer-base);
-    background-image: linear-gradient(
-      90deg,
-      var(--shimmer-base) 0%,
-      var(--shimmer-base) 40%,
-      var(--shimmer-highlight) 50%,
-      var(--shimmer-base) 60%,
-      var(--shimmer-base) 100%
-    );
-    background-size: 200% 100%;
-    background-repeat: no-repeat;
-  }
+/* Skeleton loading: a highlight sweeps across the fill; still under reduced motion. */
+@utility animate-shimmer {
+  --shimmer-base: color-mix(in oklch, var(--card), var(--foreground) 8%);
+  --shimmer-highlight: color-mix(in oklch, var(--card), var(--foreground) 18%);
+  background-color: var(--shimmer-base);
+  background-image: linear-gradient(
+    90deg,
+    var(--shimmer-base) 40%,
+    var(--shimmer-highlight) 50%,
+    var(--shimmer-base) 60%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: shimmer 2s linear infinite;
 
   @media (prefers-reduced-motion: reduce) {
-    .animate-shimmer {
-      animation: none;
-      background-image: none;
-    }
+    animation: none;
+    background-image: none;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }
