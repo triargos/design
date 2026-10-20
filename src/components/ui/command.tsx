@@ -39,7 +39,7 @@ function CommandDialog({
 }) {
   return (
     <Dialog {...props}>
-      <DialogContent className='top-1/3 translate-y-0 sm:max-w-sm' showCloseButton={false}>
+      <DialogContent size='sm' className='top-1/3 translate-y-0' showCloseButton={false}>
         <DialogHeader className='sr-only'>
           <DialogTitle>{title}</DialogTitle>
           {description !== undefined && <DialogDescription>{description}</DialogDescription>}

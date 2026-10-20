@@ -43,6 +43,7 @@ import { DialogNested } from '../examples/dialog/nested';
 import { DialogNoFooter } from '../examples/dialog/no-footer';
 import { DialogOpenedFromAMenu } from '../examples/dialog/opened-from-a-menu';
 import { DialogScrollingBody } from '../examples/dialog/scrolling-body';
+import { DialogSizes } from '../examples/dialog/sizes';
 import { DialogWithoutCloseButton } from '../examples/dialog/without-close-button';
 import { Code, ExampleSection, FoundationPage, FoundationSection } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -101,6 +102,16 @@ export default defineDocs({
         title='Default'
         description='Header and footer on the shell, DialogBody is the card. A form wraps DialogBody and DialogFooter (className="contents"); submit sits in the footer.'>
         <DialogDefault />
+      </ExampleSection>
+      <ExampleSection
+        title='Sizes'
+        description={
+          <>
+            <Code>size</Code>: <Code>sm</Code> 24rem · <Code>default</Code> 28rem · <Code>lg</Code> 42rem ·{' '}
+            <Code>xl</Code> 56rem from <Code>sm</Code> up.
+          </>
+        }>
+        <DialogSizes />
       </ExampleSection>
       <ExampleSection title='No footer' description='Without a footer the body ends the dialog.'>
         <DialogNoFooter />

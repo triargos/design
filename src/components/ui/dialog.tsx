@@ -23,6 +23,8 @@ interface DialogContentProps extends DialogPrimitive.Popup.Props, Pick<DialogPri
   showCloseButton?: boolean;
   /** The ✕'s accessible name. */
   closeLabel?: string;
+  /** Width from `sm` up: `sm` 24rem · `default` 28rem · `lg` 42rem · `xl` 56rem. Below `sm`, the screen minus 2rem. */
+  size?: 'sm' | 'default' | 'lg' | 'xl';
 }
 
 /**
@@ -38,6 +40,7 @@ function DialogContent({
   showCloseButton = true,
   closeLabel = 'Close',
   container,
+  size = 'default',
   ...props
 }: DialogContentProps) {
   return (
@@ -48,10 +51,12 @@ function DialogContent({
       />
       <DialogPrimitive.Popup
         data-slot='dialog-content'
+        data-size={size}
         className={cn(
           'flex flex-col bg-(--modal-shell) p-1 text-body text-popover-foreground shadow-modal outline-none [--modal-shell:var(--shell)] [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-dialog)]',
           'fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog duration-modal ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100',
-          'max-w-[calc(100%-2rem)] sm:max-w-md sm:min-w-min',
+          'max-w-[calc(100%-2rem)] sm:min-w-min',
+          { sm: 'sm:max-w-sm', default: 'sm:max-w-md', lg: 'sm:max-w-2xl', xl: 'sm:max-w-4xl' }[size],
           className,
         )}
         {...props}>

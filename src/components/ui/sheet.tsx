@@ -30,6 +30,7 @@ function SheetContent({
   showCloseButton = true,
   closeLabel = 'Close',
   container,
+  size = 'default',
   ...props
 }: SheetPrimitive.Popup.Props &
   Pick<SheetPrimitive.Portal.Props, 'container'> & {
@@ -38,6 +39,8 @@ function SheetContent({
     showCloseButton?: boolean;
     /** The ✕'s accessible name. */
     closeLabel?: string;
+    /** Width from `sm` up: `default` 24rem · `lg` 28rem. Below `sm`, three quarters of the screen. */
+    size?: 'default' | 'lg';
   }) {
   return (
     <SheetPrimitive.Portal data-slot='sheet-portal' container={container}>
@@ -48,9 +51,11 @@ function SheetContent({
       <SheetPrimitive.Popup
         data-slot='sheet-content'
         data-side={side}
+        data-size={size}
         className={cn(
           'flex flex-col bg-(--modal-shell) p-1 text-body text-popover-foreground shadow-modal outline-none [--modal-shell:var(--shell)] [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-dialog)]',
-          'fixed inset-y-0 z-50 h-full w-3/4 duration-move ease-enter data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0 sm:inset-y-2 sm:h-auto sm:max-w-sm sm:rounded-dialog',
+          'fixed inset-y-0 z-50 h-full w-3/4 duration-move ease-enter data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0 sm:inset-y-2 sm:h-auto sm:rounded-dialog',
+          { default: 'sm:max-w-sm', lg: 'sm:max-w-md' }[size],
           'data-[side=right]:right-0 data-[side=right]:rounded-l-dialog data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 sm:data-[side=right]:right-2',
           'data-[side=left]:left-0 data-[side=left]:rounded-r-dialog data-[side=left]:data-closed:slide-out-to-left-10 data-[side=left]:data-open:slide-in-from-left-10 sm:data-[side=left]:left-2',
           className,

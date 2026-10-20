@@ -28,7 +28,7 @@ export function ComboboxInADialog() {
   return (
     <Dialog>
       <DialogTrigger render={<Button />}>Change owner</DialogTrigger>
-      <DialogContent className='sm:max-w-sm'>
+      <DialogContent size='sm'>
         <DialogHeader>
           <DialogTitle>Change owner</DialogTitle>
         </DialogHeader>

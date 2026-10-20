@@ -24,7 +24,7 @@ export function DialogNested() {
         <DialogBody>
           <Dialog>
             <DialogTrigger render={<Button />}>Manage members</DialogTrigger>
-            <DialogContent className='sm:max-w-sm'>
+            <DialogContent size='sm'>
               <DialogHeader>
                 <DialogTitle>Members</DialogTitle>
                 <DialogDescription>Who can see and edit this project.</DialogDescription>
