@@ -158,7 +158,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | `duration-enter`    | 100ms                                  | Popups, menus entering and leaving (fade, zoom from 95%)          |
 | `duration-feedback` | 150ms                                  | Hover, press, color on controls and rows                          |
 | `duration-move`     | 200ms                                  | Something travelling: tab indicator, sheet, switch thumb, sidebar |
-| `duration-modal`    | 250ms                                  | Dialogs and their backdrop entering and leaving                   |
+| `duration-modal`    | 150ms                                  | Dialogs and their backdrop entering and leaving                   |
 | `ease-enter`        | `cubic-bezier(0.23, 1, 0.32, 1)`       | Enter and exit                                                    |
 | `ease-move`         | `cubic-bezier(0.645, 0.045, 0.355, 1)` | Moving what is already on screen                                  |
 
@@ -232,7 +232,7 @@ radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · pop
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal
 block         Card > CardHeader > CardContent [> ItemList [virtualized]]
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
-motion        duration-enter 100 · feedback 150 · move 200 · modal 250 · ease-enter · ease-move
+motion        duration-enter 100 · feedback 150 · move 200 · modal 150 · ease-enter · ease-move
 values        value + onValueChange · dates YYYY-MM-DD · options SelectOption
 new color     themeToCssVars + @theme inline, never a literal
 ```

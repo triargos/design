@@ -46,7 +46,7 @@ function SheetContent({
     <SheetPrimitive.Portal data-slot='sheet-portal' container={container}>
       <SheetPrimitive.Backdrop
         data-slot='sheet-overlay'
-        className='fixed inset-0 isolate z-50 bg-black/32 duration-modal ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:fill-mode-forwards data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-sm'
+        className='fixed inset-0 isolate z-50 bg-black/32 duration-move ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:fill-mode-forwards data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-sm'
       />
       <SheetPrimitive.Popup
         data-slot='sheet-content'

@@ -30,9 +30,9 @@ const durations = [
   },
   {
     className: 'duration-modal',
-    ms: 250,
+    ms: 150,
     use: 'Dialogs and their backdrop: enter and exit. Larger than a popup, so slower',
-    owner: 'Dialog, AlertDialog, Sheet',
+    owner: 'Dialog, AlertDialog',
   },
 ] as const;
 

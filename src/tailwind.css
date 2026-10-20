@@ -211,7 +211,7 @@
   --transition-duration-enter: 100ms;
   --transition-duration-feedback: 150ms;
   --transition-duration-move: 200ms;
-  --transition-duration-modal: 250ms;
+  --transition-duration-modal: 150ms;
   --ease-enter: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-move: cubic-bezier(0.645, 0.045, 0.355, 1);
 
