@@ -18,7 +18,7 @@ const ENTRIES = [
 
 export function TimelineHorizontal() {
   return (
-    <Timeline defaultValue={3} orientation='horizontal' className='w-full max-w-3xl'>
+    <Timeline value={3} orientation='horizontal' className='w-full max-w-3xl'>
       {ENTRIES.map((entry, index) => (
         <TimelineItem key={entry.title} step={index + 1}>
           <TimelineHeader>

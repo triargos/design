@@ -5,7 +5,7 @@ import { cn } from '~/lib/utils';
 
 // Markup for a TanStack Table (`useTable`, `table.FlexRender`) or a static table. Three variants:
 // - `default`: a plain table; rows separated by hairlines.
-// - `flush`: `default` filling a card edge to edge, as `ItemList variant='flush'` does:
+// - `flush`: `default` filling a card edge to edge, as an `ItemList` does:
 //   `<InsetCardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `group` in,
 //   on the card header's text.
 // - `card`: the table is the content of an `InsetCard`, in place of `InsetCardContent`. Header and footer rows sit on
@@ -174,14 +174,4 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
   );
 }
 
-function TableCaption({ className, ...props }: ComponentProps<'caption'>) {
-  return (
-    <caption
-      data-slot='table-caption'
-      className={cn('mt-4 text-caption text-muted-foreground', className)}
-      {...props}
-    />
-  );
-}
-
-export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, type TableVariant };
+export { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow };

@@ -4,52 +4,18 @@ import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-type TimelineContextValue = {
-  activeStep: number;
-  setActiveStep: (step: number) => void;
-};
+/** The last reached step; it and the steps before it are completed. */
+const ReachedStepContext = React.createContext(0);
 
-const TimelineContext = React.createContext<TimelineContextValue | undefined>(undefined);
-
-const useTimeline = () => {
-  const context = React.useContext(TimelineContext);
-  if (!context) {
-    throw new Error('useTimeline must be used within a Timeline');
-  }
-  return context;
-};
-
-interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
-  defaultValue?: number;
+interface TimelineProps extends React.ComponentProps<'div'> {
+  /** The last reached step, 1-based. */
   value?: number;
-  onValueChange?: (value: number) => void;
   orientation?: 'horizontal' | 'vertical';
 }
 
-function Timeline({
-  defaultValue = 1,
-  value,
-  onValueChange,
-  orientation = 'vertical',
-  className,
-  ...props
-}: TimelineProps) {
-  const [activeStep, setInternalStep] = React.useState(defaultValue);
-
-  const setActiveStep = React.useCallback(
-    (step: number) => {
-      if (value === undefined) {
-        setInternalStep(step);
-      }
-      onValueChange?.(step);
-    },
-    [value, onValueChange],
-  );
-
-  const currentStep = value ?? activeStep;
-
+function Timeline({ value = 1, orientation = 'vertical', className, ...props }: TimelineProps) {
   return (
-    <TimelineContext.Provider value={{ activeStep: currentStep, setActiveStep }}>
+    <ReachedStepContext value={value}>
       <div
         data-slot='timeline'
         className={cn(
@@ -59,11 +25,11 @@ function Timeline({
         data-orientation={orientation}
         {...props}
       />
-    </TimelineContext.Provider>
+    </ReachedStepContext>
   );
 }
 
-function TimelineContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function TimelineContent({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot='timeline-content' className={cn('text-body text-muted-foreground', className)} {...props} />;
 }
 
@@ -84,15 +50,11 @@ function TimelineDate({ className, render, ...props }: useRender.ComponentProps<
   });
 }
 
-function TimelineHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div data-slot='timeline-header' className={cn(className)} {...props} />;
+function TimelineHeader(props: React.ComponentProps<'div'>) {
+  return <div data-slot='timeline-header' {...props} />;
 }
 
-interface TimelineIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
-  asChild?: boolean;
-}
-
-function TimelineIndicator({ asChild = false, className, children, ...props }: TimelineIndicatorProps) {
+function TimelineIndicator({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='timeline-indicator'
@@ -101,18 +63,17 @@ function TimelineIndicator({ asChild = false, className, children, ...props }: T
         className,
       )}
       aria-hidden='true'
-      {...props}>
-      {children}
-    </div>
+      {...props}
+    />
   );
 }
 
-interface TimelineItemProps extends React.HTMLAttributes<HTMLDivElement> {
+interface TimelineItemProps extends React.ComponentProps<'div'> {
   step: number;
 }
 
 function TimelineItem({ step, className, ...props }: TimelineItemProps) {
-  const { activeStep } = useTimeline();
+  const reachedStep = React.use(ReachedStepContext);
 
   return (
     <div
@@ -121,13 +82,13 @@ function TimelineItem({ step, className, ...props }: TimelineItemProps) {
         'group/timeline-item relative flex flex-1 flex-col gap-0.5 group-data-[orientation=horizontal]/timeline:mt-8 not-last:group-data-[orientation=horizontal]/timeline:pe-8 group-data-[orientation=vertical]/timeline:ms-8 not-last:group-data-[orientation=vertical]/timeline:pb-12 **:data-[slot=timeline-separator]:has-[+[data-completed]]:bg-primary-solid',
         className,
       )}
-      data-completed={step <= activeStep || undefined}
+      data-completed={step <= reachedStep || undefined}
       {...props}
     />
   );
 }
 
-function TimelineSeparator({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function TimelineSeparator({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='timeline-separator'
@@ -141,7 +102,7 @@ function TimelineSeparator({ className, ...props }: React.HTMLAttributes<HTMLDiv
   );
 }
 
-function TimelineTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+function TimelineTitle({ className, ...props }: React.ComponentProps<'h3'>) {
   return <h3 data-slot='timeline-title' className={cn('text-caption text-muted-foreground', className)} {...props} />;
 }
 

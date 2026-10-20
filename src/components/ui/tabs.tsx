@@ -8,14 +8,14 @@ import { useUiStrings } from '~/lib/ui-config';
 import { cn } from '~/lib/utils';
 
 /**
- * One tab component, three variants, after Interfere's `Tabs`:
+ * One tab component, three variants:
  * - `segmented`: a track on the shell, the active tab a raised chip that slides. Page-level views (`as='nav'`).
  * - `underline`: tabs on a hairline, the active one underlined. Sections inside a card or a popup.
  * - `pill`: separate pills, the active one in the brand fill. Filters and choices (`as='radio'`).
  *
- * `TabsList as` picks the semantics (Base UI tabs, route links, radios); see `TabsListAs`.
+ * `TabsList as` picks the semantics (Base UI tabs, route links, radios); see `TabsListProps`.
  */
-export type TabsVariant = 'segmented' | 'underline' | 'pill';
+type TabsVariant = 'segmented' | 'underline' | 'pill';
 
 const tabsListVariants = cva('relative isolate flex w-fit max-w-full items-center', {
   variants: {
@@ -67,8 +67,8 @@ const indicatorVariants = cva(
 );
 
 interface TabsListContextValue {
-  readonly as: TabsListAs;
   readonly variant: TabsVariant;
+  /** Set only inside `TabsList as='radio'`. */
   readonly radio: RadioState | null;
 }
 
@@ -77,24 +77,23 @@ interface RadioState {
   readonly onValueChange: (value: string) => void;
 }
 
-const TabsListContext = React.createContext<TabsListContextValue>({ as: 'tabs', variant: 'segmented', radio: null });
+const TabsListContext = React.createContext<TabsListContextValue>({ variant: 'segmented', radio: null });
 
 function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
   return <TabsPrimitive.Root data-slot='tabs' className={cn('group/tabs', className)} {...props} />;
 }
 
+type TabsListVariantProps = { variant?: TabsVariant };
+
 /**
- * What the list renders as:
+ * What the list renders as (`as`):
  * - `tabs` (default): Base UI tabs inside `Tabs`, with `TabsContent` panels.
- * - `nav`: a `<nav>` of route links; `TabsTrigger` takes `to`. The active route carries `aria-current=page`.
+ * - `nav`: a `<nav>` of route links; `TabsTrigger` takes `href` or a router link through `render`. The active route
+ *   carries `aria-current=page`.
  * - `radio`: a single choice; the list takes `value` and `onValueChange`, `TabsTrigger` takes `value`. Every trigger
  *   is a tab stop and Enter/Space select it — not the roving-focus radio pattern, which hides all but one from Tab and
  *   swallows Enter.
  */
-export type TabsListAs = 'tabs' | 'nav' | 'radio';
-
-type TabsListVariantProps = { variant?: TabsVariant };
-
 type TabsListProps =
   | ({ as?: 'tabs' } & TabsListVariantProps & TabsPrimitive.List.Props)
   | ({ as: 'nav' } & TabsListVariantProps & React.ComponentProps<'nav'>)
@@ -121,9 +120,8 @@ function PrimitiveTabsList({
   children,
   ...props
 }: Extract<TabsListProps, { as?: 'tabs' }>) {
-  const context = React.useMemo(() => ({ as: 'tabs' as const, variant, radio: null }), [variant]);
   return (
-    <TabsListContext.Provider value={context}>
+    <TabsListContext value={{ variant, radio: null }}>
       <TabsPrimitive.List
         data-slot='tabs-list'
         data-variant={variant}
@@ -132,7 +130,7 @@ function PrimitiveTabsList({
         <TabsPrimitive.Indicator data-slot='tabs-indicator' className={indicatorVariants({ variant })} />
         {children}
       </TabsPrimitive.List>
-    </TabsListContext.Provider>
+    </TabsListContext>
   );
 }
 
@@ -144,9 +142,8 @@ function NavTabsList({
   ...props
 }: Extract<TabsListProps, { as: 'nav' }>) {
   const strings = useUiStrings();
-  const context = React.useMemo(() => ({ as: 'nav' as const, variant, radio: null }), [variant]);
   return (
-    <TabsListContext.Provider value={context}>
+    <TabsListContext value={{ variant, radio: null }}>
       <nav
         data-slot='tabs-list'
         data-variant={variant}
@@ -156,7 +153,7 @@ function NavTabsList({
         <SlidingIndicator activeSelector='[aria-current=page]' variant={variant} />
         {children}
       </nav>
-    </TabsListContext.Provider>
+    </TabsListContext>
   );
 }
 
@@ -169,12 +166,8 @@ function RadioTabsList({
   children,
   ...props
 }: Extract<TabsListProps, { as: 'radio' }>) {
-  const context = React.useMemo(
-    () => ({ as: 'radio' as const, variant, radio: { value, onValueChange } }),
-    [variant, value, onValueChange],
-  );
   return (
-    <TabsListContext.Provider value={context}>
+    <TabsListContext value={{ variant, radio: { value, onValueChange } }}>
       <div
         role='radiogroup'
         data-slot='tabs-list'
@@ -184,7 +177,7 @@ function RadioTabsList({
         <SlidingIndicator activeSelector='[aria-checked=true]' variant={variant} />
         {children}
       </div>
-    </TabsListContext.Provider>
+    </TabsListContext>
   );
 }
 
@@ -204,16 +197,16 @@ type TabsValueTriggerProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'val
 };
 
 function TabsLinkTrigger({ className, render, current, ...props }: TabsLinkTriggerProps) {
-  const { variant } = React.useContext(TabsListContext);
+  const { variant } = React.use(TabsListContext);
   return useRender({
     defaultTagName: 'a',
     render,
+    state: { slot: 'tabs-trigger' },
     props: mergeProps<'a'>(
       {
-        'data-slot': 'tabs-trigger',
         'aria-current': current ? 'page' : undefined,
         className: cn(tabsTriggerVariants({ variant }), className),
-      } as React.ComponentProps<'a'>,
+      },
       props,
     ),
   });
@@ -221,10 +214,10 @@ function TabsLinkTrigger({ className, render, current, ...props }: TabsLinkTrigg
 
 /** A tab. A link (`href` or `render`) inside `TabsList as='nav'`, `value` otherwise. */
 function TabsTrigger(props: TabsLinkTriggerProps | TabsValueTriggerProps) {
-  const { as, variant, radio } = React.useContext(TabsListContext);
+  const { variant, radio } = React.use(TabsListContext);
   if (props.value === undefined) return <TabsLinkTrigger {...props} />;
-  if (as === 'radio' && radio !== null) return <RadioTabsTrigger {...props} variant={variant} radio={radio} />;
-  const { className, render: _render, current: _current, ...rest } = props;
+  if (radio !== null) return <RadioTabsTrigger {...props} variant={variant} radio={radio} />;
+  const { className, ...rest } = props;
   return (
     <TabsPrimitive.Tab data-slot='tabs-trigger' className={cn(tabsTriggerVariants({ variant }), className)} {...rest} />
   );
@@ -236,8 +229,6 @@ function RadioTabsTrigger({
   onClick,
   variant,
   radio,
-  render: _render,
-  current: _current,
   ...props
 }: TabsValueTriggerProps & { variant: TabsVariant; radio: RadioState }) {
   const checked = radio.value === value;
@@ -278,9 +269,9 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
 }
 
 /**
- * The indicator for `as='nav'` and `as='radio'`, which Base UI does not own. The first child of the list: it finds the sibling that matches `activeSelector` and slides to it, with `Tabs`' geometry and styles.
- * Re-measures when an `aria-current` or `aria-checked` changes and when the list or a tab resizes; hidden while nothing
- * matches.
+ * The indicator for `as='nav'` and `as='radio'`, which Base UI does not own. The first child of the list: it slides to
+ * the sibling that matches `activeSelector`, with `Tabs`' geometry and styles. Re-measures when an `aria-current` or
+ * `aria-checked` changes and when the list or a tab resizes; hidden while nothing matches.
  */
 function SlidingIndicator({ activeSelector, variant }: { activeSelector: string; variant: TabsVariant }) {
   const ref = React.useRef<HTMLSpanElement>(null);

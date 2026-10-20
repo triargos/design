@@ -46,13 +46,13 @@ const GROUPS = [
   },
 ] as const;
 
-/** `collapsible='icon'`, closed: icons only. The trigger or ⌘B toggles it. */
+/** `collapsible='icon'`, closed: icons only. The trigger or ⌘[ toggles it. */
 export function SidebarCollapsed() {
   return (
     <div className='relative h-[600px] w-full overflow-hidden rounded-panel bg-sidebar'>
       <SidebarProvider className='h-full' defaultOpen={false}>
         <div className='flex h-full min-h-0 w-full md:pt-3 md:pr-3 md:pb-3'>
-          <Sidebar className='border-r-0!' collapsible='icon'>
+          <Sidebar collapsible='icon'>
             <SidebarHeader className='px-5 pt-group group-data-[collapsible=icon]:px-2'>
               <div className='flex items-center gap-2'>
                 <span className='flex size-8 shrink-0 items-center justify-center rounded-control-sm bg-primary-solid text-caption font-medium text-primary-solid-foreground'>

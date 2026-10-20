@@ -23,7 +23,7 @@ export const Board: Story = {
         title='Default'
         description={
           <>
-            <Code>defaultValue={'{3}'}</Code>: three steps reached.
+            <Code>value={'{3}'}</Code>: three steps reached.
           </>
         }>
         <TimelineDefault />

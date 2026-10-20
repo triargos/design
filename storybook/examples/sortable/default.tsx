@@ -61,7 +61,7 @@ export function SortableDefault() {
               {items.map((item) => (
                 <SortableItem key={item.id} id={item.id} render={<Item className='flex-nowrap bg-card' />}>
                   <ItemMedia>
-                    <SortableItemHandle />
+                    <SortableItemHandle aria-label={`${item.title} verschieben`} />
                   </ItemMedia>
                   <ItemContent className='flex-none'>
                     <ItemTitle className='whitespace-nowrap'>

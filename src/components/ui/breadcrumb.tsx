@@ -5,8 +5,8 @@ import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-function Breadcrumb({ className, ...props }: React.ComponentProps<'nav'>) {
-  return <nav aria-label='breadcrumb' data-slot='breadcrumb' className={cn(className)} {...props} />;
+function Breadcrumb(props: React.ComponentProps<'nav'>) {
+  return <nav aria-label='breadcrumb' data-slot='breadcrumb' {...props} />;
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
@@ -26,16 +26,9 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
 function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProps<'a'>) {
   return useRender({
     defaultTagName: 'a',
-    props: mergeProps<'a'>(
-      {
-        className: cn('transition-colors hover:text-foreground', className),
-      },
-      props,
-    ),
     render,
-    state: {
-      slot: 'breadcrumb-link',
-    },
+    state: { slot: 'breadcrumb-link' },
+    props: mergeProps<'a'>({ className: cn('transition-colors hover:text-foreground', className) }, props),
   });
 }
 
@@ -65,6 +58,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
   );
 }
 
+/** Decorative: screen readers skip it, so collapsed items need another way in (a menu) to stay reachable. */
 function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
@@ -74,7 +68,6 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'
       className={cn('flex size-5 items-center justify-center [&>svg]:size-4', className)}
       {...props}>
       <MoreHorizontalIcon />
-      <span className='sr-only'>More</span>
     </span>
   );
 }

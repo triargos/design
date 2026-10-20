@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 
 import { cn } from '~/lib/utils';
 
-const maxWithVariants = cva('w-full', {
+const maxWidthVariants = cva('mx-auto w-full space-y-group', {
   variants: {
     size: {
       sm: 'max-w-[640px]',
@@ -17,11 +17,12 @@ const maxWithVariants = cva('w-full', {
   },
 });
 
-interface MaxWidthProps extends VariantProps<typeof maxWithVariants> {
+interface MaxWidthProps extends VariantProps<typeof maxWidthVariants> {
   children: ReactNode;
   className?: string;
 }
 
+/** Caps the page column and centers it; its blocks sit `group` apart. */
 export const MaxWidth = ({ children, className, size }: MaxWidthProps) => {
-  return <div className={cn(maxWithVariants({ size }), className, 'mx-auto w-full space-y-4')}>{children}</div>;
+  return <div className={cn(maxWidthVariants({ size }), className)}>{children}</div>;
 };

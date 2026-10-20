@@ -1,81 +1,29 @@
-'use client';
-
 import { CheckIcon, LoaderCircleIcon } from 'lucide-react';
 import * as React from 'react';
-import { createContext, useContext } from 'react';
 
 import { cn } from '~/lib/utils';
 
-type StepperContextValue = {
-  activeStep: number;
-  setActiveStep: (step: number) => void;
-  orientation: 'horizontal' | 'vertical';
-};
+type StepState = 'active' | 'completed' | 'inactive';
 
 type StepItemContextValue = {
   step: number;
   state: StepState;
-  isDisabled: boolean;
   isLoading: boolean;
 };
 
-type StepState = 'active' | 'completed' | 'inactive';
+/** The active step; steps before it are done. */
+const ActiveStepContext = React.createContext(0);
+const StepItemContext = React.createContext<StepItemContextValue | null>(null);
 
-const StepperContext = createContext<StepperContextValue | undefined>(undefined);
-const StepItemContext = createContext<StepItemContextValue | undefined>(undefined);
-
-const useStepper = () => {
-  const context = useContext(StepperContext);
-  if (!context) {
-    throw new Error('useStepper must be used within a Stepper');
-  }
-  return context;
-};
-
-const useStepItem = () => {
-  const context = useContext(StepItemContext);
-  if (!context) {
-    throw new Error('useStepItem must be used within a StepperItem');
-  }
-  return context;
-};
-
-interface StepperProps extends React.HTMLAttributes<HTMLDivElement> {
-  defaultValue?: number;
-  value?: number;
-  onValueChange?: (value: number) => void;
+interface StepperProps extends React.ComponentProps<'div'> {
+  /** The active step, 1-based; past the last step every step is done. */
+  value: number;
   orientation?: 'horizontal' | 'vertical';
 }
 
-function Stepper({
-  defaultValue = 0,
-  value,
-  onValueChange,
-  orientation = 'horizontal',
-  className,
-  ...props
-}: StepperProps) {
-  const [activeStep, setInternalStep] = React.useState(defaultValue);
-
-  const setActiveStep = React.useCallback(
-    (step: number) => {
-      if (value === undefined) {
-        setInternalStep(step);
-      }
-      onValueChange?.(step);
-    },
-    [value, onValueChange],
-  );
-
-  const currentStep = value ?? activeStep;
-
+function Stepper({ value, orientation = 'horizontal', className, ...props }: StepperProps) {
   return (
-    <StepperContext.Provider
-      value={{
-        activeStep: currentStep,
-        orientation,
-        setActiveStep,
-      }}>
+    <ActiveStepContext value={value}>
       <div
         role='list'
         className={cn(
@@ -86,14 +34,13 @@ function Stepper({
         data-slot='stepper'
         {...props}
       />
-    </StepperContext.Provider>
+    </ActiveStepContext>
   );
 }
 
-interface StepperItemProps extends React.HTMLAttributes<HTMLDivElement> {
+interface StepperItemProps extends React.ComponentProps<'div'> {
   step: number;
-  completed?: boolean;
-  disabled?: boolean;
+  /** Spins the indicator while this step is the active one. */
   loading?: boolean;
 }
 
@@ -102,23 +49,13 @@ interface StepperItemProps extends React.HTMLAttributes<HTMLDivElement> {
  * Vertical: indicator column on the left, `StepperContent` beside it; `StepperSeparator` draws the
  * connector down to the next step.
  */
-function StepperItem({
-  step,
-  completed = false,
-  disabled = false,
-  loading = false,
-  className,
-  children,
-  ...props
-}: StepperItemProps) {
-  const { activeStep } = useStepper();
-
-  const state: StepState = completed || step < activeStep ? 'completed' : activeStep === step ? 'active' : 'inactive';
-
-  const isLoading = loading && step === activeStep;
+function StepperItem({ step, loading = false, className, children, ...props }: StepperItemProps) {
+  const activeStep = React.use(ActiveStepContext);
+  const state: StepState = step < activeStep ? 'completed' : step === activeStep ? 'active' : 'inactive';
+  const isLoading = loading && state === 'active';
 
   return (
-    <StepItemContext.Provider value={{ isDisabled: disabled, isLoading, state, step }}>
+    <StepItemContext value={{ isLoading, state, step }}>
       <div
         role='listitem'
         aria-current={state === 'active' ? 'step' : undefined}
@@ -130,16 +67,12 @@ function StepperItem({
         )}
         data-slot='stepper-item'
         data-state={state}
-        {...(isLoading ? { 'data-loading': true } : {})}
+        data-loading={isLoading || undefined}
         {...props}>
         {children}
       </div>
-    </StepItemContext.Provider>
+    </StepItemContext>
   );
-}
-
-interface StepperIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
-  asChild?: boolean;
 }
 
 /**
@@ -147,8 +80,11 @@ interface StepperIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
  * todo `muted`, active `primary-subtle`, done `primary-solid`. A ring on a 20px circle antialiases unevenly in Safari
  * (see `RadioGroupItem`).
  */
-function StepperIndicator({ asChild = false, className, children, ...props }: StepperIndicatorProps) {
-  const { state, step, isLoading } = useStepItem();
+function StepperIndicator({ className, ...props }: React.ComponentProps<'span'>) {
+  const item = React.use(StepItemContext);
+  if (!item) {
+    throw new Error('StepperIndicator must be used within a StepperItem');
+  }
 
   return (
     <span
@@ -160,35 +96,29 @@ function StepperIndicator({ asChild = false, className, children, ...props }: St
         className,
       )}
       data-slot='stepper-indicator'
-      data-state={state}
+      data-state={item.state}
       {...props}>
-      {asChild ? (
-        children
-      ) : (
-        <>
-          <span className='transition-[opacity,scale] duration-feedback group-data-loading/step:scale-0 group-data-loading/step:opacity-0 group-data-[state=completed]/step:scale-0 group-data-[state=completed]/step:opacity-0'>
-            {step}
-          </span>
-          <CheckIcon
-            aria-hidden='true'
-            strokeWidth={3}
-            className='absolute size-3 scale-0 opacity-0 transition-[opacity,scale] duration-feedback group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100'
-          />
-          {isLoading && <LoaderCircleIcon aria-hidden='true' className='absolute size-3 animate-spin' />}
-        </>
-      )}
+      <span className='transition-[opacity,scale] duration-feedback group-data-loading/step:scale-0 group-data-loading/step:opacity-0 group-data-[state=completed]/step:scale-0 group-data-[state=completed]/step:opacity-0'>
+        {item.step}
+      </span>
+      <CheckIcon
+        aria-hidden='true'
+        strokeWidth={3}
+        className='absolute size-3 scale-0 opacity-0 transition-[opacity,scale] duration-feedback group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100'
+      />
+      {item.isLoading && <LoaderCircleIcon aria-hidden='true' className='absolute size-3 animate-spin' />}
     </span>
   );
 }
 
 /** Vertical only: the column beside the indicator that holds title, description and step content. */
-function StepperContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function StepperContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-tight', className)} data-slot='stepper-content' {...props} />
   );
 }
 
-function StepperTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+function StepperTitle({ className, ...props }: React.ComponentProps<'h3'>) {
   return (
     <h3
       className={cn(
@@ -201,12 +131,12 @@ function StepperTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingE
   );
 }
 
-function StepperDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+function StepperDescription({ className, ...props }: React.ComponentProps<'p'>) {
   return <p className={cn('text-body text-muted-foreground', className)} data-slot='stepper-description' {...props} />;
 }
 
 /** Connects the step to the next one; brand once the step is done. Hidden on the last step. */
-function StepperSeparator({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function StepperSeparator({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       aria-hidden='true'

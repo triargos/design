@@ -3,7 +3,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
-import { createContext, useContext } from 'react';
+import { type ComponentProps, createContext, use } from 'react';
 
 import { cn } from '~/lib/utils';
 
@@ -33,28 +33,27 @@ export const SortableItem = ({ id, render, ...props }: SortableItemProps) => {
     ),
   });
 
-  return (
-    <SortableItemHandleContext.Provider value={{ attributes, listeners }}>{element}</SortableItemHandleContext.Provider>
-  );
+  return <SortableItemHandleContext value={{ attributes, listeners }}>{element}</SortableItemHandleContext>;
 };
 
 /**
- * The grip. As an `ItemMedia`, it pulls in so the dots, not the button, sit on the row's content edge, and lays out at
- * 16px tall so it centres on the title's line.
+ * The grip; give it an `aria-label`. As an `ItemMedia`, it pulls in so the dots, not the button, sit on the row's
+ * content edge, and lays out at 16px tall so it centres on the title's line.
  */
-export const SortableItemHandle = ({ className }: { className?: string }) => {
-  const handle = useContext(SortableItemHandleContext);
+export const SortableItemHandle = ({ className, ...props }: ComponentProps<'button'>) => {
+  const handle = use(SortableItemHandleContext);
 
   return (
     <button
-      type={'button'}
+      type='button'
       className={cn(
         'hit-area relative flex size-6 shrink-0 cursor-grab items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-1 in-data-[slot=item-media]:-mr-1 in-data-[slot=item-media]:-ml-2',
         className,
       )}
+      {...props}
       {...handle?.listeners}
       {...handle?.attributes}>
-      <GripVertical aria-hidden className={'size-4'} />
+      <GripVertical aria-hidden className='size-4' />
     </button>
   );
 };

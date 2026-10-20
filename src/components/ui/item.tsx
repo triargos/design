@@ -59,46 +59,31 @@ function ItemList({ className, animate = true, children }: ItemListProps) {
   );
 }
 
+const itemClassName =
+  'group/item flex w-full flex-wrap items-center gap-2.5 rounded-control-lg border border-transparent px-3 py-2.5 text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-[selected]:bg-muted data-[targeted]:bg-muted/40 [a]:no-underline [a]:hover:bg-row-hover';
+
 /**
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
  * under the pointer; a selected row (`data-selected`) fills with `muted`.
  */
-const itemClassName =
-  'group/item flex w-full flex-wrap items-center rounded-control-lg border border-transparent text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-[selected]:bg-muted data-[targeted]:bg-muted/40 [a]:no-underline [a]:transition-colors [a]:hover:bg-row-hover gap-2.5 px-3 py-2.5';
-
 function Item({ className, render, ...props }: useRender.ComponentProps<'div'>) {
   return useRender({
     defaultTagName: 'div',
-    props: mergeProps<'div'>(
-      {
-        className: cn(itemClassName, className),
-      },
-      props,
-    ),
     render,
     state: { slot: 'item' },
+    props: mergeProps<'div'>({ className: cn(itemClassName, className) }, props),
   });
 }
 
-// `default` media up to 17px (an icon, a checkbox, a dot) is centred on the title's line; taller media start 2px down.
-// `image` sits at the title's top. `icon` is a quiet square tile, centred: 32px beside a title alone, 40px beside a
-// title and description (a field-height tile, a little shorter than the two lines).
-const itemMediaOnTitleLine = cn(
-  'group-has-data-[slot=item-description]/item:self-start',
-  'group-has-data-[slot=item-description]/item:min-h-lh group-has-data-[slot=item-description]/item:py-0.5',
-);
-const itemMediaTopAligned =
-  'group-has-data-[slot=item-description]/item:translate-y-0.5 group-has-data-[slot=item-description]/item:self-start';
-
+// Beside a title and description: `default` media up to 17px (an icon, a checkbox, a dot) stays on the title's line,
+// taller media start 2px down; `icon` is a quiet square tile, centred, 32px beside a title alone and 40px beside both
+// (a field-height tile, a little shorter than the two lines).
 const itemMediaVariants = cva('flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none', {
   variants: {
     variant: {
-      default: cn('bg-transparent', itemMediaOnTitleLine),
+      default:
+        'group-has-data-[slot=item-description]/item:min-h-lh group-has-data-[slot=item-description]/item:self-start group-has-data-[slot=item-description]/item:py-0.5',
       icon: "size-8 rounded-control-lg bg-muted text-muted-foreground group-has-data-[slot=item-description]/item:size-10 [&_svg:not([class*='size-'])]:size-4",
-      image: cn(
-        'size-10 overflow-hidden rounded-control-sm [&_img]:size-full [&_img]:object-cover',
-        itemMediaTopAligned,
-      ),
     },
   },
   defaultVariants: {
@@ -115,7 +100,7 @@ function ItemMedia({
     <div
       data-slot='item-media'
       data-variant={variant}
-      className={cn(itemMediaVariants({ variant, className }))}
+      className={cn(itemMediaVariants({ variant }), className)}
       {...props}
     />
   );
@@ -158,24 +143,15 @@ function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot='item-actions' className={cn('flex items-center gap-related', className)} {...props} />;
 }
 
+/** A full-width line above or below the row's media and content (the row wraps). */
+const itemEdgeRow = 'flex basis-full items-center justify-between gap-2';
+
 function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot='item-header'
-      className={cn('flex basis-full items-center justify-between gap-2', className)}
-      {...props}
-    />
-  );
+  return <div data-slot='item-header' className={cn(itemEdgeRow, className)} {...props} />;
 }
 
 function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot='item-footer'
-      className={cn('flex basis-full items-center justify-between gap-2', className)}
-      {...props}
-    />
-  );
+  return <div data-slot='item-footer' className={cn(itemEdgeRow, className)} {...props} />;
 }
 
 export { Item, ItemList, ItemMedia, ItemContent, ItemActions, ItemTitle, ItemDescription, ItemHeader, ItemFooter };

@@ -55,7 +55,7 @@ export function SidebarDefault() {
     <div className='relative h-[600px] w-full overflow-hidden rounded-panel bg-sidebar'>
       <SidebarProvider className='h-full'>
         <div className='flex h-full min-h-0 w-full md:pt-3 md:pr-3 md:pb-3'>
-          <Sidebar className='border-r-0!'>
+          <Sidebar>
             <SidebarHeader className='px-5 pt-group'>
               <div className='flex items-center gap-2'>
                 <span className='flex size-8 shrink-0 items-center justify-center rounded-control-sm bg-primary-solid text-caption font-medium text-primary-solid-foreground'>

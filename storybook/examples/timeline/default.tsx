@@ -16,10 +16,10 @@ const ENTRIES = [
   { date: 'offen', title: 'Einschulung', body: 'Am 1. September um 9 Uhr in der Aula.' },
 ] as const;
 
-/** `defaultValue={3}`: three steps reached. Reached steps take the brand edge and line. */
+/** `value={3}`: three steps reached. Reached steps take the brand edge and line. */
 export function TimelineDefault() {
   return (
-    <Timeline defaultValue={3} orientation='vertical' className='max-w-md'>
+    <Timeline value={3} orientation='vertical' className='max-w-md'>
       {ENTRIES.map((entry, index) => (
         <TimelineItem key={entry.title} step={index + 1}>
           <TimelineHeader>

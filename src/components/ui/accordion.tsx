@@ -61,23 +61,16 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
 }
 
 /**
- * The inner wrapper indents the content to the trigger's title (`ps-9`); override it through `className`.
- * `panelClassName`'s `overflow-hidden` clips shadows and focus rings; widen it with negative margin + matching
- * padding when the content needs bleed room.
+ * `className` styles the inner wrapper, which indents the content to the trigger's title (`ps-9`). The panel clips
+ * (`overflow-hidden`, for the height animation), so shadows and focus rings in the content need room inside it.
  */
-function AccordionContent({
-  className,
-  panelClassName,
-  children,
-  ...props
-}: AccordionPrimitive.Panel.Props & { panelClassName?: string }) {
+function AccordionContent({ className, children, ...props }: AccordionPrimitive.Panel.Props) {
   return (
     <AccordionPrimitive.Panel
       data-slot='accordion-content'
-      className={cn(
-        'h-(--accordion-panel-height) overflow-hidden text-body transition-[height] duration-move ease-move data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none',
-        panelClassName,
-      )}
+      className={
+        'h-(--accordion-panel-height) overflow-hidden text-body transition-[height] duration-move ease-move data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none'
+      }
       {...props}>
       <div
         className={cn(

@@ -29,7 +29,7 @@ export const Board: Story = {
         title='Collapsed'
         description={
           <>
-            <Code>collapsible='icon'</Code>, closed: icons only. The trigger or ⌘B toggles it.
+            <Code>collapsible='icon'</Code>, closed: icons only. The trigger or ⌘[ toggles it.
           </>
         }
         bare>

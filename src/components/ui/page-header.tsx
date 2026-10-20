@@ -7,11 +7,6 @@ import { alignToInsetCardText } from '~/components/ui/inset-card';
 
 import { cn } from '~/lib/utils';
 
-interface HeaderProps {
-  children?: ReactNode;
-  className?: string;
-}
-
 export const PageHeaderRow = ({ className, ...props }: ComponentProps<'div'>) => {
   return <div className={cn('flex flex-wrap items-start justify-between gap-group', className)} {...props} />;
 };
@@ -65,41 +60,34 @@ export const PageHeaderMeta = ({ className, ...props }: ComponentProps<'div'>) =
 };
 
 /**
- * Title and its description or meta, 4px apart, with 16px below. Inside a `PageContent` header, `PageContent` removes
- * the 16px and sets the gap to the content itself, so a `pb-*` className has no effect there.
+ * Title and its description or meta, `tight` apart, with `group` below. Inside a `PageContent` header, `PageContent`
+ * removes the bottom padding and sets the gap to the content itself, so a `pb-*` className has no effect there.
  */
-export const PageHeaderGroup = ({ children, className }: { children?: ReactNode; className?: string }) => {
+export const PageHeaderGroup = ({ className, ...props }: ComponentProps<'hgroup'>) => {
   return (
-    <hgroup data-slot='page-header-group' className={cn('flex flex-col gap-tight pb-4', className)}>
-      {children}
-    </hgroup>
+    <hgroup data-slot='page-header-group' className={cn('flex flex-col gap-tight pb-group', className)} {...props} />
   );
 };
 
-export const PageHeader = ({ children, className }: HeaderProps) => {
-  return <h1 className={cn('text-title text-balance', className)}>{children}</h1>;
+export const PageHeader = ({ className, ...props }: ComponentProps<'h1'>) => {
+  return <h1 className={cn('text-title text-balance', className)} {...props} />;
 };
 
-interface PageDescriptionProps {
-  children?: ReactNode;
-  className?: string;
-}
-
-export const PageDescription = ({ children, className }: PageDescriptionProps) => (
-  <p className={cn('max-w-prose text-body text-pretty text-muted-foreground', className)}>{children}</p>
-);
+export const PageDescription = ({ className, ...props }: ComponentProps<'p'>) => {
+  return <p className={cn('max-w-prose text-body text-pretty text-muted-foreground', className)} {...props} />;
+};
 
 /** Indented to the text of the `InsetCard` headers below it, so title and card text share one edge. */
-export const SectionHeaderGroup = ({ children, className }: HeaderProps) => {
-  return <hgroup className={cn('space-y-tight', alignToInsetCardText, className)}>{children}</hgroup>;
+export const SectionHeaderGroup = ({ className, ...props }: ComponentProps<'hgroup'>) => {
+  return <hgroup className={cn('space-y-tight', alignToInsetCardText, className)} {...props} />;
 };
 
-export const SectionTitle = ({ children, className }: HeaderProps) => {
-  return <h2 className={cn('text-heading text-balance', className)}>{children}</h2>;
+export const SectionTitle = ({ className, ...props }: ComponentProps<'h2'>) => {
+  return <h2 className={cn('text-heading text-balance', className)} {...props} />;
 };
 
-export const SectionDescription = ({ children, className }: HeaderProps) => {
-  return <p className={cn('text-body text-pretty text-muted-foreground', className)}>{children}</p>;
+export const SectionDescription = ({ className, ...props }: ComponentProps<'p'>) => {
+  return <p className={cn('text-body text-pretty text-muted-foreground', className)} {...props} />;
 };
 
 interface PageSectionProps extends Omit<ComponentProps<'section'>, 'title'> {
@@ -109,7 +97,7 @@ interface PageSectionProps extends Omit<ComponentProps<'section'>, 'title'> {
 
 /**
  * A titled group of blocks on a page: the section header, then the blocks, `group` apart. Inside a `PageContent` it
- * sits `section` from its neighbours. The header is indented to the card header text (`SectionHeaderGroup`).
+ * sits `section` from its neighbours.
  */
 export const PageSection = ({ title, description, children, className, ...props }: PageSectionProps) => {
   return (
