@@ -1,7 +1,8 @@
 import { AccordionControlled } from '../examples/accordion/controlled';
 import { AccordionDefault } from '../examples/accordion/default';
-import { AccordionFullBleedRows } from '../examples/accordion/full-bleed-rows';
+import { AccordionFlush } from '../examples/accordion/flush';
 import { AccordionInACard } from '../examples/accordion/in-a-card';
+import { AccordionInASheet } from '../examples/accordion/in-a-sheet';
 import { AccordionMultiple } from '../examples/accordion/multiple';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -14,6 +15,17 @@ export default defineDocs({
     <FoundationPage title='Accordion' description='Sections that open in place, for content people scan by title.'>
       <ExampleSection title='Default' description='One open at a time.'>
         <AccordionDefault />
+      </ExampleSection>
+      <ExampleSection
+        title='Flush'
+        description={
+          <>
+            <Code>variant='flush'</Code> in <Code>CardContent className='overflow-hidden'</Code>: rows to the card edge,
+            a <Code>row-hover</Code> fill, the content indented to the title.
+          </>
+        }
+        bare>
+        <AccordionFlush />
       </ExampleSection>
       <ExampleSection
         title='Multiple'
@@ -37,10 +49,13 @@ export default defineDocs({
         <AccordionInACard />
       </ExampleSection>
       <ExampleSection
-        title='Full-bleed rows'
-        description='Rows that paint to the card edge: the item drops its pb-1, the trigger and content set their own padding.'
-        bare>
-        <AccordionFullBleedRows />
+        title='In a sheet'
+        description={
+          <>
+            <Code>variant='flush'</Code> in a <Code>SheetBody</Code> runs to the sheet's edge.
+          </>
+        }>
+        <AccordionInASheet />
       </ExampleSection>
     </FoundationPage>
   ),
