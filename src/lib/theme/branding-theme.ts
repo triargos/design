@@ -1,7 +1,7 @@
 import { BRAND_ANCHORS } from './brand-anchors';
 import type { BrandingTheme } from './branding';
 import { generateTheme, type ThemeInput } from './theme-generator';
-import { surfaceRules, themeToCssVars, type FillTint } from './theme-to-css';
+import { inverseSurfaceVars, surfaceRules, themeToCssVars, type FillTint } from './theme-to-css';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -73,16 +73,19 @@ const declarations = (vars: Record<string, string>): string =>
 
 /**
  * The page rule (`:root` or `.dark`) and one rule per nested surface. Dark surface selectors are prefixed with `.dark`,
- * so they outrank the light ones on the same element.
+ * so they outrank the light ones on the same element. Each mode also writes the inverted surface of the other: dark
+ * tokens on `[data-surface=inverse]`, light ones on `.dark [data-surface=inverse]`, which outranks it.
  */
 const modeCss = (theme: BrandingTheme, mode: ThemeMode, contrast: number): string => {
   const page = generateTheme(brandingThemeInput(theme, mode, contrast));
   const tint = fillTint(theme, mode);
-  const pageVars = themeToCssVars(page, tint, BRAND_ANCHORS[theme.destructiveColor]);
+  const destructive = BRAND_ANCHORS[theme.destructiveColor];
+  const pageVars = themeToCssVars(page, tint, destructive);
   const surfaces = surfaceRules(page, tint).map(
     ({ selector, vars }) => `${mode === 'light' ? '' : '.dark '}${selector} {${declarations(vars)}}`,
   );
-  return [`${mode === 'light' ? ':root' : '.dark'} {${declarations(pageVars)}}`, ...surfaces].join(' ');
+  const inverse = `${mode === 'light' ? '.dark ' : ''}[data-surface=inverse] {${declarations(inverseSurfaceVars(page, tint, destructive))}}`;
+  return [`${mode === 'light' ? ':root' : '.dark'} {${declarations(pageVars)}}`, ...surfaces, inverse].join(' ');
 };
 
 const cssCache = new Map<string, string>();

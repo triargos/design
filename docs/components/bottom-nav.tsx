@@ -5,21 +5,21 @@ import { defineDocs } from '../kit/docs';
 
 export default defineDocs({
   title: 'Bottom Nav',
-  description: 'The app navigation on a phone: a floating pill of icon tabs and the main action.',
+  description:
+    'The app navigation on a phone: a floating bar of icon tabs and the main action, on the inverted surface.',
   group: 'Components',
   Page: () => (
     <FoundationPage
       title='Bottom Nav'
-      description='The app navigation on a phone: a floating pill of 3–5 icon tabs and the main action beside it, hidden from md up where the Sidebar takes over.'>
+      description='The app navigation on a phone: a floating bar of 3–5 icon tabs and the main action beside it, dark on a light page and light on a dark one. Hidden from md up, where the Sidebar takes over.'>
       <ExampleSection
         title='Default'
         description={
           <>
-            <Code>BottomNavList</Code> holds a <Code>BottomNavLink current</Code> per page and a{' '}
-            <Code>BottomNavButton</Code> for "More": a menu with the rest, or{' '}
-            <Code>onClick=&#123;toggleSidebar&#125;</Code> (<Code>useSidebar</Code>) for the sidebar sheet.{' '}
-            <Code>BottomNavAction</Code> is the main action. Labels are for screen readers; a count is a{' '}
-            <Code>Badge</Code> in the tab.
+            <Code>BottomNavList</Code> holds a <Code>BottomNavLink current</Code> per page and{' '}
+            <Code>BottomNavMore</Code>, which morphs the bar into a list of the rest, one <Code>BottomNavMoreItem</Code>{' '}
+            per link. <Code>BottomNavAction</Code> is the main action. Labels are for screen readers; a count is a{' '}
+            <Code>Badge</Code> in the tab. Open "More".
           </>
         }
         bare>
@@ -29,8 +29,8 @@ export default defineDocs({
         title='With selection'
         description={
           <>
-            Under a <Code>BottomNavProvider</Code>, a page's open <Code>ActionBar</Code> docks in the nav: the tabs and
-            the main action step aside until it closes. Select a task.
+            Under a <Code>BottomNavProvider</Code>, a page's open <Code>ActionBar</Code> docks in the nav: the bar
+            squeezes, springs to the toolbar's size and its actions cascade in; clearing morphs it back. Select a task.
           </>
         }
         bare>

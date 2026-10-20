@@ -4,7 +4,6 @@ import {
   FolderIcon,
   HomeIcon,
   InboxIcon,
-  MoreHorizontalIcon,
   PlusIcon,
   SettingsIcon,
   UsersIcon,
@@ -12,14 +11,15 @@ import {
 import { useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
-import { BottomNav, BottomNavAction, BottomNavButton, BottomNavLink, BottomNavList } from '~/components/ui/bottom-nav';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
+  BottomNav,
+  BottomNavAction,
+  BottomNavLink,
+  BottomNavList,
+  BottomNavMore,
+  BottomNavMoreItem,
+} from '~/components/ui/bottom-nav';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 const TABS = [
   { label: 'Home', icon: <HomeIcon /> },
@@ -35,8 +35,8 @@ const MORE = [
 ] as const;
 
 /**
- * A phone frame: the nav floats over the scrolling panel, which keeps `pb-24` to clear it. Three tabs and "More", a
- * menu with the rest ("More" is current while its menu holds the page), and the main action at the end. `absolute
+ * A phone frame: the nav floats over the scrolling panel, which keeps `pb-24` to clear it. Three tabs, the main action,
+ * and "More": the bar morphs into a list of the rest, and "More" is current while that list holds the page. `absolute
  * md:grid` keeps the nav in this frame at desktop width; an app leaves it `fixed` and hidden from `md` up.
  */
 export function BottomNavDefault() {
@@ -74,20 +74,14 @@ export function BottomNavDefault() {
               )}
             </BottomNavLink>
           ))}
-          <DropdownMenu>
-            <DropdownMenuTrigger render={<BottomNavButton current={MORE.some((item) => item.label === page)} />}>
-              <MoreHorizontalIcon />
-              <span>More</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side='top' align='center' sideOffset={8} className='w-48'>
-              {MORE.map((item) => (
-                <DropdownMenuItem key={item.label} render={<a href='#' />} onClick={go(item.label)}>
-                  {item.icon}
-                  {item.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <BottomNavMore>
+            {MORE.map((item) => (
+              <BottomNavMoreItem key={item.label} href='#' current={page === item.label} onClick={go(item.label)}>
+                {item.icon}
+                <span>{item.label}</span>
+              </BottomNavMoreItem>
+            ))}
+          </BottomNavMore>
         </BottomNavList>
         <BottomNavAction aria-label='New task'>
           <PlusIcon />

@@ -201,6 +201,20 @@ function textLevelVars(theme: Theme): Record<string, string> {
 }
 
 /**
+ * The inverted surface (`[data-surface=inverse]`): the other mode's page tokens, with its popup as the surface, so a
+ * floating control reads dark on a light page and light on a dark one, and what sits on it keeps its contrast. `theme`
+ * is the mode the surface shows: the light page theme for `.dark`, the dark one otherwise.
+ */
+export function inverseSurfaceVars(theme: Theme, tint: FillTint, destructive: Color): Record<string, string> {
+  const { popup, popupCard } = surfaceThemes(theme);
+  return {
+    ...themeToCssVars(theme, tint, destructive),
+    ...surfaceVars(popup, tint),
+    '--card': popupCard.color.bgBase,
+  };
+}
+
+/**
  * One rule per nested surface. Inside a popup, `--card` moves up with it so a card in a popup sits above it. A card on
  * a card sets its own `--card`, since `bg-card` resolves on the card itself; the popup rules come after, so a card in a
  * popup keeps the popup's steps.
