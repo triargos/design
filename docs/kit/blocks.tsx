@@ -140,10 +140,14 @@ export function Preview({
   const docs = use(DocsModeContext);
   if (docs !== null) {
     // The docs stage is flat: a hairline frame around the example on the page itself (or the chosen surface), not a
-    // card that lifts it. The code strip sits under a hairline.
+    // card that lifts it. The code strip sits under a hairline; its code card sits 4px inside the 1px border, so
+    // `rounded-inner` stays concentric with the frame.
     const surface = docs.surface ?? 'page';
     return (
-      <div data-slot='preview' data-title={title} className='min-w-0 overflow-hidden rounded-card border border-border'>
+      <div
+        data-slot='preview'
+        data-title={title}
+        className='min-w-0 overflow-hidden rounded-card border border-border [--outer-inset:calc(--spacing(1)+1px)] [--outer-radius:var(--radius-card)]'>
         <div
           data-surface={surface === 'page' ? undefined : surface}
           className={cn('flex flex-wrap items-center gap-related p-group', STAGE_SURFACE[surface], className)}>
