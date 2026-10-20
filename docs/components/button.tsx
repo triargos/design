@@ -14,7 +14,6 @@ import { ButtonDisabled } from '../examples/button/disabled';
 import { ButtonIconOnly } from '../examples/button/icon-only';
 import { ButtonOpen } from '../examples/button/open';
 import { ButtonPending } from '../examples/button/pending';
-import { ButtonPressed } from '../examples/button/pressed';
 import { ButtonSizes } from '../examples/button/sizes';
 import { ButtonVariants } from '../examples/button/intent-and-emphasis';
 import { ButtonWithIcon } from '../examples/button/with-icon';
@@ -169,15 +168,6 @@ export default defineDocs({
           </>
         }>
         <ButtonOpen />
-      </ExampleSection>
-      <ExampleSection
-        title='Pressed'
-        description={
-          <>
-            Ghost + <Code>aria-pressed</Code>, in a muted toolbar.
-          </>
-        }>
-        <ButtonPressed />
       </ExampleSection>
       <ExampleSection
         title='Pending'
