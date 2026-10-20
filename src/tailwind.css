@@ -7,11 +7,9 @@
 /* Branded colors come from `<style data-organization-branding>` (`brandingThemeCss` in `lib/theme/branding-theme.ts`),
    rendered by `root.tsx`. Only non-branded values live here. */
 :root {
-  /* Edges and elevation (DESIGN.md, Elevation). Every depth edge is a translucent ring outside the fill: it darkens (light)
-     or lightens (dark) whatever sits behind it, so it takes the color of the page, shell, card or a tinted callout instead
-     of drawing one gray, and no seam opens where an edge and a fill antialias against each other. Borders stay for
-     structure only (dividers, table rules, dashed drop zones) and for states (focus, invalid). In dark, drops vanish
-     and the white ring carries the edge. */
+  /* Edges and elevation (DESIGN.md, Surfaces and elevation): a translucent ring outside the fill takes the color of
+     whatever sits behind it, so no gray edge and no seam between edge and fill. In dark, drops vanish and a white ring
+     carries the edge. */
   --edge: oklch(0 0 0 / 0.08);
   --edge-hover: oklch(0 0 0 / 0.12);
   /* Fields: a firmer ring, heavier at the bottom (light from above); dark lights the top edge instead. */
@@ -61,7 +59,6 @@
   --raised-ambient-hover: oklch(0 0 0 / 0);
   --popup-edge-top: oklch(1 0 0 / 0.06);
   --popup-edge-bottom: oklch(0 0 0 / 0);
-  --popup-drop: oklch(0 0 0 / 0.05);
   --shadow-drop-soft: oklch(0 0 0 / 0);
   --shadow-drop-far: oklch(0 0 0 / 0.4);
 }
@@ -151,8 +148,6 @@
   --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
@@ -189,11 +184,12 @@
   --radius-inner: max(0px, calc(var(--outer-radius, 0px) - var(--outer-inset, 0px)));
 }
 
+/* The named radius, spacing, motion and type roles are registered in `cn` (`lib/utils.ts`); a new name goes there too,
+   or `twMerge` misreads it. Storybook's Tokens panel tunes radius, spacing and type. */
 @theme {
   --font-sans: 'Inter Variable', sans-serif;
 
-  /* Radius (DESIGN.md, Shape): fixed 2px steps, and the roles that pick from them. A control's radius follows its height;
-     nested corners use `rounded-inner`. Tunable in Storybook's Tokens panel. */
+  /* Radius (DESIGN.md, Shape): fixed steps, and the roles that pick from them. A control's radius follows its height. */
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 6px;
@@ -212,16 +208,14 @@
   --radius-dialog: 20px;
   --radius-panel: 20px;
 
-  /* Spacing scale (DESIGN.md, Spacing): `gap-group`, `p-group`, `space-y-tight`. Utilities read the variables, so
-     Storybook's Tokens panel can tune them. Register new steps in `cn` (`lib/utils.ts`). */
+  /* Spacing (DESIGN.md, Spacing): `gap-group`, `p-group`, `space-y-tight`. */
   --spacing-tight: 0.25rem;
   --spacing-related: 0.5rem;
   --spacing-group: 1rem;
   --spacing-page: 2rem;
   --spacing-section: 3rem;
 
-  /* Motion (DESIGN.md, Motion): `duration-enter`, `ease-enter`. Named by what moves, not by the number. Register new
-     roles in `cn` (`lib/utils.ts`). Springs (interruptible motion) live in code: `insetCardRevealTransition`. */
+  /* Motion (DESIGN.md, Motion), named by what moves. Springs (interruptible motion) live in code. */
   --transition-duration-enter: 100ms;
   --transition-duration-feedback: 150ms;
   --transition-duration-move: 200ms;
@@ -233,7 +227,7 @@
   --text-*: initial;
 
   /* Type roles (DESIGN.md, Typography). Each sets size, line height, tracking and weight; `font-medium`,
-     `leading-*` and `tracking-*` still override. Register new roles in `cn` (`lib/utils.ts`). */
+     `leading-*` and `tracking-*` still override. */
   --text-title: 1.75rem;
   --text-title--line-height: 2.25rem;
   --text-title--letter-spacing: -0.02em;
@@ -244,7 +238,7 @@
   --text-heading--font-weight: 500;
   --text-body: 0.875rem;
   --text-body--line-height: 1.3125rem;
-  /* Buttons, fields, menus, tables. On touch, fields render 16px and scale to this (`--input-scale`), so iOS does not zoom. */
+  /* Buttons, fields, menus, tables. Touch fields render 16px and scale down to this (`input-scale`). */
   --text-control: 0.875rem;
   --text-control--line-height: 1.25rem;
   --text-caption: 0.75rem;
@@ -389,10 +383,8 @@
     }
   }
 
-  /* Stepped loop over a duplicated 3-card set: hold, then spring one card slot
-     with an overshoot curve. The 3 steps (−1/6, −2/6, −3/6) are baked into the
-     percentages, so the track must render exactly 3 cards twice; −50% lands on
-     the copy and the loop restart is invisible. */
+  /* Stepped loop over a duplicated 3-card set: hold, then spring one card slot with an overshoot. The steps (−1/6,
+     −2/6, −3/6) are baked in, so the track renders exactly 3 cards twice; −50% lands on the copy, hiding the restart. */
   @keyframes skeleton-carousel {
     0%,
     21% {
@@ -467,12 +459,10 @@
   }
 }
 
-/* `BottomFloatMenu`: the children of a bar or panel fade in together, in place, once the shell is nearly open: the
-   shape leads, like the Dynamic Island, and earlier its growing edges would cut through the content. Together and
-   opacity only: a late or blurred child, above all a saturated one like the green Save button, reads as a flash. Per
-   child, so one mounted later (`Gespeichert`, panel rows) fades in too. Runs once on mount; `backwards` holds the
-   first frame through the delay. Plain `ease`, not `--ease-enter`: that curve does most of an opacity fade in one
-   frame, so the content popped in. */
+/* `BottomFloatMenu`: a bar's or panel's children fade in together once the shell is nearly open, so its growing edges
+   never cut through them. Opacity only: a late or blurred child (the green Save button) reads as a flash. Per child,
+   so one mounted later fades in too; `backwards` holds the first frame through the delay. Plain `ease`: `ease-enter`
+   does most of an opacity fade in one frame. */
 @utility float-menu-content-in {
   & > * {
     animation: float-menu-in 220ms ease 80ms backwards;
@@ -495,55 +485,13 @@
     text-transform: uppercase;
   }
 
-  /* `no-scrollbar` is what the list scrollers use; it was never defined, so with always-visible scrollbars their
-     track showed and took height. */
+  /* Scrolls without a scrollbar. Two names for the same utility; both have callers. */
   .scrollbar-hide,
   .no-scrollbar {
-    -ms-overflow-style: none;
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
       display: none;
-    }
-  }
-
-  .thin-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: var(--muted) transparent;
-
-    .dark & {
-      scrollbar-color: var(--secondary) var(--background);
-    }
-
-    ::-webkit-scrollbar {
-      background: var(--background);
-      height: 3px;
-      width: 0px;
-      border-radius: 0;
-
-      .dark & {
-        background: var(--border);
-      }
-    }
-
-    ::-webkit-scrollbar-track {
-      -webkit-box-shadow: inset 0 0 6px var(--border);
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-
-      .dark & {
-        -webkit-box-shadow: inset 0 0 6px var(--border);
-      }
-    }
-
-    ::-webkit-scrollbar-thumb {
-      -webkit-border-radius: 5px;
-      border-radius: 5px;
-      background: var(--muted-foreground);
-
-      .dark & {
-        -webkit-box-shadow: inset 0 0 6px var(--border);
-      }
     }
   }
 

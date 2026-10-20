@@ -1,5 +1,5 @@
 /**
- * Color math, based on Linear's color converter.
+ * The color math `generateTheme` and the branding use, based on Linear's color converter.
  *
  * Colors are CIE LCH tuples `[L, C, H, A?]` against the D50 white point (CSS `lch()`).
  * Conversions run LCH → Lab → XYZ(D50) → Bradford D50→D65 → linear sRGB / Display-P3 → gamma.
@@ -15,40 +15,23 @@ type Matrix3 = [Vec3, Vec3, Vec3];
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const round3 = (value: number) => parseFloat(value.toFixed(3));
 
-export const HEX_REGEX_LOOSE = /#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?/i;
-export const HEX_REGEX = RegExp(`^${HEX_REGEX_LOOSE.source}$`, 'i');
-export const HEX_REGEX_SMALL_LOOSE = /#?([a-f\d])([a-f\d])([a-f\d])/i;
-export const HEX_REGEX_SMALL = RegExp(`^${HEX_REGEX_SMALL_LOOSE.source}$`, 'i');
-export const HEX_REGEX_STRICT = /^#([a-f\d]{6}|[a-f\d]{3})$/i;
-export const LCH_REGEX_LOOSE =
+const HEX_REGEX_LOOSE = /#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?/i;
+const HEX_REGEX = RegExp(`^${HEX_REGEX_LOOSE.source}$`, 'i');
+const HEX_REGEX_SMALL_LOOSE = /#?([a-f\d])([a-f\d])([a-f\d])/i;
+const HEX_REGEX_SMALL = RegExp(`^${HEX_REGEX_SMALL_LOOSE.source}$`, 'i');
+const LCH_REGEX_LOOSE =
   /lch\((\d{1,3}(?:\.\d+)?)\% (\d{1,3}(?:\.\d+)?) (\d{1,3}(?:\.\d+)?)(?: \/ ([1|0](?:\.\d+)?)?)?\)/i;
-export const LCH_REGEX = RegExp(`^${LCH_REGEX_LOOSE.source}$`, 'i');
-export const P3_REGEX_LOOSE =
+const LCH_REGEX = RegExp(`^${LCH_REGEX_LOOSE.source}$`, 'i');
+const P3_REGEX_LOOSE =
   /color\(display-p3 (\d{1,3}(?:\.\d+)?)\ (\d{1,3}(?:\.\d+)?) (\d{1,3}(?:\.\d+)?)(?: \/ ([1|0](?:\.\d+)?)?)?\)/i;
-export const P3_REGEX = RegExp(`^${P3_REGEX_LOOSE.source}$`, 'i');
-export const ANY_COLOR_REGEX_LOOSE = RegExp(
+const P3_REGEX = RegExp(`^${P3_REGEX_LOOSE.source}$`, 'i');
+const ANY_COLOR_REGEX_LOOSE = RegExp(
   `(?:${HEX_REGEX_LOOSE.source})|(?:${LCH_REGEX_LOOSE.source})|(?:${P3_REGEX_LOOSE.source})`,
   'i',
 );
 export const ANY_COLOR_REGEX = RegExp(`^${ANY_COLOR_REGEX_LOOSE.source}$`, 'i');
 
 const D50: Vec3 = [0.3457 / 0.3585, 1, 0.2958 / 0.3585];
-
-let cachedColorFormat: ColorFormat | undefined;
-
-export function getColorFormat(): ColorFormat {
-  return (
-    cachedColorFormat ||
-    (cachedColorFormat =
-      typeof window === 'undefined' || window.CSS === undefined
-        ? 'RGB'
-        : window.CSS.supports('color', 'lch(0% 0 0)')
-          ? 'LCH'
-          : window.CSS.supports('color', 'color(display-p3 0 0 0)')
-            ? 'P3'
-            : 'RGB')
-  );
-}
 
 export function toCss(format: ColorFormat, [l, c, h, a]: Color): string {
   return format === 'LCH'
@@ -88,41 +71,9 @@ export function fromCss(css: string): Color {
   return [0, 0, 0];
 }
 
-export function cssWithAlpha(css: string, alpha: number, format: ColorFormat = getColorFormat()): string {
-  return toCss(format, adjustTo(fromCss(css), { a: alpha }));
-}
-
 /** Saturated colors read lighter, so `C * 0.075` is subtracted before the cutoff. */
 export function getTextColor([l, c, h]: Color): Color {
   return [l - c * 0.075 > 65 ? 0 : 100, Math.min(c / 2, c), h];
-}
-
-/** CMC l:c (1:1) color difference. */
-export function deltaE(first: Color, second: Color): number {
-  const [l1, a1, b1] = lchToLab(first);
-  const [l2, a2, b2] = lchToLab(second);
-  const c1 = Math.sqrt(a1 * a1 + b1 * b1);
-  const c2 = Math.sqrt(a2 * a2 + b2 * b2);
-  const sl = l1 < 16 ? 0.511 : (0.040975 * l1) / (1 + 0.01765 * l1);
-  const sc = (0.0638 * c1) / (1 + 0.0131 * c1) + 0.638;
-  let h1 = c1 < 1e-6 ? 0 : (Math.atan2(b1, a1) * 180) / Math.PI;
-  while (h1 < 0) h1 += 360;
-  while (h1 >= 360) h1 -= 360;
-  const t =
-    h1 >= 164 && h1 <= 345
-      ? 0.56 + Math.abs(0.2 * Math.cos((Math.PI * (h1 + 168)) / 180))
-      : 0.36 + Math.abs(0.4 * Math.cos((Math.PI * (h1 + 35)) / 180));
-  const c1Pow4 = c1 * c1 * c1 * c1;
-  const f = Math.sqrt(c1Pow4 / (c1Pow4 + 1900));
-  const sh = sc * (f * t + 1 - f);
-  const dl = l1 - l2;
-  const dc = c1 - c2;
-  const da = a1 - a2;
-  const db = b1 - b2;
-  const dhSquared = da * da + db * db - dc * dc;
-  const vl = dl / (1 * sl);
-  const vc = dc / (3 * sc);
-  return Math.sqrt(vl * vl + vc * vc + dhSquared / (sh * sh));
 }
 
 const APCA_BLACK_THRESHOLD = 0.022;
@@ -133,7 +84,7 @@ function apcaSoftClamp(y: number): number {
 }
 
 /** APCA-like contrast in 0..100+ on LCH lightness, not a WCAG ratio. */
-export function apcaContrast(text: Color, background: Color): number {
+function apcaContrast(text: Color, background: Color): number {
   const offset = 0.027;
   const textY = apcaSoftClamp(text[0] / 100);
   const backgroundY = apcaSoftClamp(background[0] / 100);
@@ -148,10 +99,6 @@ export function apcaContrast(text: Color, background: Color): number {
 
 export function sufficientContrastForText(text: Color, background: Color, threshold = 38): boolean {
   return apcaContrast(text, background) > threshold;
-}
-
-export function isBright(color: Color): boolean {
-  return color[0] > 50;
 }
 
 export function adjust(color: Color, delta: ColorAdjustment): Color {
@@ -186,11 +133,7 @@ export function mix(from: Color, to: Color, amount: number): Color {
   return [clamp(l, 0, 100), clamp(c, 0, 132), clamp(h, 0, 360), fromAlpha * (1 - amount) + toAlpha * amount];
 }
 
-export function mixCss(from: string, to: string, amount: number, format: ColorFormat = getColorFormat()): string {
-  return toCss(format, mix(fromCss(from), fromCss(to), amount));
-}
-
-export function lchToRgbString(color: Color): string {
+function lchToRgbString(color: Color): string {
   const [r, g, b] = lchToRgb(color)
     .map((channel) => channel.toString(16).split('.')[0])
     .map((channel) => (channel.length === 1 ? '0' + channel : channel));
@@ -200,36 +143,6 @@ export function lchToRgbString(color: Color): string {
 
 function padHex(value: string): string {
   return value.length === 1 ? '0' + value : value;
-}
-
-export type ColorValidationOptions =
-  | { format?: undefined }
-  | { format: 'hex'; level?: 'loose' | 'small' | 'strict' }
-  | { format: 'p3' | 'lch' | 'any' };
-
-export function isValidColor(css: string, options?: ColorValidationOptions): boolean {
-  if (!options?.format) return ANY_COLOR_REGEX.test(css);
-  switch (options.format) {
-    case 'hex':
-      switch (options.level) {
-        case 'loose':
-          return HEX_REGEX_LOOSE.test(css);
-        case 'small':
-          return HEX_REGEX_SMALL.test(css);
-        default:
-          return HEX_REGEX_STRICT.test(css);
-      }
-    case 'p3':
-      return P3_REGEX.test(css);
-    case 'lch':
-      return LCH_REGEX.test(css);
-    default:
-      return ANY_COLOR_REGEX.test(css);
-  }
-}
-
-export function cssToRgb(css: string): string {
-  return HEX_REGEX.test(css) ? css : lchToRgbString(fromCss(css));
 }
 
 function lchToP3String(color: Color): string {
@@ -243,24 +156,12 @@ function lchToP3(color: Color): Vec3 {
     .map((channel) => clamp(channel, 0, 1)) as Vec3;
 }
 
-export function rgbToLch(rgb: Vec3): Color {
+function rgbToLch(rgb: Vec3): Color {
   return labToLch(xyzToLab(bradfordD65ToD50(linearSrgbToXyzD65(srgbLinear(rgb)))));
 }
 
-/** Golden-ratio hue walk: `count` distinct hex colors at fixed lightness and chroma (both 0..1). */
-export function palette(count: number, seed: number, lightness: number, chroma: number): string[] {
-  let hue = seed;
-  const colors: string[] = [];
-  for (let index = 0; index < count; index++) {
-    hue += 0.618033988749895;
-    hue %= 1;
-    colors[index] = lchToRgbString([lightness * 100, chroma * 100, hue * 360]);
-  }
-  return colors;
-}
-
 /** 0..255 channels, not rounded. */
-export function lchToRgb(color: Color): Vec3 {
+function lchToRgb(color: Color): Vec3 {
   return labToRgb(lchToLab(color));
 }
 
@@ -268,7 +169,7 @@ function p3ToLch(p3: Vec3): Color {
   return labToLch(xyzToLab(bradfordD65ToD50(linearP3ToXyzD65(srgbLinear(p3)))));
 }
 
-export function multiplyMatrix([[a, b, c], [d, e, f], [g, h, i]]: Matrix3, [x, y, z]: Vec3): Vec3 {
+function multiplyMatrix([[a, b, c], [d, e, f], [g, h, i]]: Matrix3, [x, y, z]: Vec3): Vec3 {
   return [a * x + b * y + c * z, d * x + e * y + f * z, g * x + h * y + i * z];
 }
 
@@ -286,7 +187,7 @@ function srgbTransfer(value: number): number {
 }
 
 /** Linear 0..1 → gamma-encoded 0..255. */
-export function srgbGamma(rgb: Vec3): Vec3 {
+function srgbGamma(rgb: Vec3): Vec3 {
   return rgb.map((channel) => 255 * srgbTransfer(channel)) as Vec3;
 }
 
@@ -381,7 +282,7 @@ function labToLch(lab: Vec3): Color {
   return [lab[0], Math.sqrt(lab[1] ** 2 + lab[2] ** 2), hue >= 0 ? hue : hue + 360, 1];
 }
 
-export function lchToLab(color: Color): Vec3 {
+function lchToLab(color: Color): Vec3 {
   return [color[0], color[1] * Math.cos((color[2] * Math.PI) / 180), color[1] * Math.sin((color[2] * Math.PI) / 180)];
 }
 
@@ -392,6 +293,6 @@ function srgbDecode(value: number): number {
 }
 
 /** Gamma-encoded 0..255 → linear 0..1. */
-export function srgbLinear(rgb: Vec3): Vec3 {
+function srgbLinear(rgb: Vec3): Vec3 {
   return rgb.map((channel) => srgbDecode(channel / 255)) as Vec3;
 }

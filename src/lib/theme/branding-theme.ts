@@ -1,9 +1,7 @@
-import type { BrandingTheme } from '~/lib/theme/branding';
-
 import { BRAND_ANCHORS } from './brand-anchors';
-import { toCss, type Color } from './color';
+import type { BrandingTheme } from './branding';
 import { generateTheme, type ThemeInput } from './theme-generator';
-import { intentVars, surfaceRules, themeToShadcnVars, type FillTint } from './theme-to-css';
+import { surfaceRules, themeToShadcnVars, type FillTint } from './theme-to-css';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -52,11 +50,7 @@ function tintToward([chroma, hue]: [number, number], towardHue: number, tint: nu
   return [Math.hypot(a, b), (Math.atan2(b, a) / radians + 360) % 360];
 }
 
-export function brandingThemeInput(
-  theme: BrandingTheme,
-  mode: ThemeMode,
-  contrast: number = CONTRAST[mode],
-): ThemeInput {
+function brandingThemeInput(theme: BrandingTheme, mode: ThemeMode, contrast: number): ThemeInput {
   const [, baseChroma, baseHue] = BRAND_ANCHORS[theme.baseColor];
   const primary = BRAND_ANCHORS[theme.primaryColor];
   const [chroma, hue] = tintToward(
@@ -72,14 +66,6 @@ export function brandingThemeInput(
   };
 }
 
-/** The destructive intent on the organization's destructive anchor instead of the generator's red; its solid is the anchor. */
-export function destructiveVars(anchor: Color, mode: ThemeMode): Record<string, string> {
-  return {
-    ...intentVars('destructive', anchor[2], mode === 'dark'),
-    '--destructive-solid': toCss('LCH', anchor),
-  };
-}
-
 const declarations = (vars: Record<string, string>): string =>
   Object.entries(vars)
     .map(([name, value]) => `${name}: ${value};`)
@@ -92,15 +78,11 @@ const declarations = (vars: Record<string, string>): string =>
 const modeCss = (theme: BrandingTheme, mode: ThemeMode, contrast: number): string => {
   const page = generateTheme(brandingThemeInput(theme, mode, contrast));
   const tint = fillTint(theme, mode);
-  const pageVars = {
-    ...themeToShadcnVars(page, tint),
-    ...destructiveVars(BRAND_ANCHORS[theme.destructiveColor], mode),
-  };
-  const scope = mode === 'light' ? ':root' : '.dark';
+  const pageVars = themeToShadcnVars(page, tint, BRAND_ANCHORS[theme.destructiveColor]);
   const surfaces = surfaceRules(page, tint).map(
     ({ selector, vars }) => `${mode === 'light' ? '' : '.dark '}${selector} {${declarations(vars)}}`,
   );
-  return [`${scope} {${declarations(pageVars)}}`, ...surfaces].join(' ');
+  return [`${mode === 'light' ? ':root' : '.dark'} {${declarations(pageVars)}}`, ...surfaces].join(' ');
 };
 
 const cssCache = new Map<string, string>();
@@ -113,9 +95,9 @@ export function brandingThemeCss(theme: BrandingTheme): string {
   const key = `${theme.baseColor}/${theme.primaryColor}/${theme.destructiveColor}`;
   const cached = cssCache.get(key);
   if (cached !== undefined) return cached;
-  const regular = `${modeCss(theme, 'light', CONTRAST.light)} ${modeCss(theme, 'dark', CONTRAST.dark)}`;
-  const more = `${modeCss(theme, 'light', CONTRAST_MORE.light)} ${modeCss(theme, 'dark', CONTRAST_MORE.dark)}`;
-  const css = `${regular} @media (prefers-contrast: more) {${more}}`;
+  const rules = (contrast: Record<ThemeMode, number>) =>
+    `${modeCss(theme, 'light', contrast.light)} ${modeCss(theme, 'dark', contrast.dark)}`;
+  const css = `${rules(CONTRAST)} @media (prefers-contrast: more) {${rules(CONTRAST_MORE)}}`;
   cssCache.set(key, css);
   return css;
 }

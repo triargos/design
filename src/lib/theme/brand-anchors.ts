@@ -1,5 +1,4 @@
-import type { BrandBaseColor, BrandDestructiveColor, BrandPrimaryColor } from '~/lib/theme/branding';
-
+import type { BrandBaseColor, BrandDestructiveColor, BrandPrimaryColor } from './branding';
 import type { Color } from './color';
 
 export type BrandColor = BrandBaseColor | BrandPrimaryColor | BrandDestructiveColor;

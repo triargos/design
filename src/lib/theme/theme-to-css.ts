@@ -69,7 +69,7 @@ function surfaceThemes(page: Theme): { card: Theme; cardCard: Theme; popup: Them
  * surface's own color. `--shell` is the tint wrapping a card (card shell, dialog shell, tab track). `--muted`,
  * `--shell` and `--field` take the `FillTint`.
  */
-export function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
+function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
   const { color } = theme;
   const mode = theme.isDark ? 'dark' : 'light';
   const fieldTint = { c: tint.c * FIELD_TINT_SCALE, h: tint.h };
@@ -95,9 +95,9 @@ export function surfaceVars(theme: Theme, tint: FillTint): Record<string, string
 /**
  * Projects a generated theme onto the shadcn custom properties `tailwind.css` maps: the page's surface tokens plus the
  * global ones. `*Thin` tokens are skipped: they depend on the display density, so the server and client render would
- * differ.
+ * differ. `destructive` is the organization's anchor; it replaces the generator's red.
  */
-export function themeToShadcnVars(theme: Theme, tint: FillTint): Record<string, string> {
+export function themeToShadcnVars(theme: Theme, tint: FillTint, destructive: Color): Record<string, string> {
   const { color } = theme;
   const sidebar = theme.sidebarTheme().color;
   const surfaces = surfaceThemes(theme);
@@ -112,17 +112,17 @@ export function themeToShadcnVars(theme: Theme, tint: FillTint): Record<string, 
     '--secondary-foreground': color.controlSecondaryLabel,
     '--muted-foreground': color.labelMuted,
     '--accent-foreground': color.labelTitle,
-    // Status hues are fixed, not branded; `--destructive` follows the brand (`destructiveVars` in `branding-theme.ts`).
+    // Status hues are fixed, not branded; destructive follows the brand, its solid the anchor itself.
     ...intentVars('info', INTENT_HUE.info, theme.isDark),
     ...intentVars('success', INTENT_HUE.success, theme.isDark),
     ...intentVars('warning', INTENT_HUE.warning, theme.isDark),
-    ...intentVars('destructive', fromCss(color.redBase)[2], theme.isDark),
+    ...intentVars('destructive', destructive[2], theme.isDark),
+    '--destructive-solid': toCss('LCH', destructive),
     ...primaryVars(theme),
     ...textLevelVars(theme),
     '--ring': color.focusColor,
-    // Field edge and lift (`inputSurfaceVariants`, after coss ui): pure black/white alpha, so they read on any surface.
-    // Light weighs the bottom edge (light from above); dark lights the top edge instead. Dark has no lift; it is
-    // invisible on dark surfaces.
+    // A bordered field edge and lift (`EmptyState` skeleton cards): pure black/white alpha, so they read on any surface.
+    // Light weighs the bottom edge (light from above); dark lights the top edge and drops the lift.
     '--field-border': theme.isDark ? 'oklch(1 0 0 / 0.08)' : 'oklch(0 0 0 / 0.1)',
     '--field-border-top': theme.isDark ? 'oklch(1 0 0 / 0.135)' : 'oklch(0 0 0 / 0.1)',
     '--field-border-bottom': theme.isDark ? 'oklch(1 0 0 / 0.08)' : 'oklch(0 0 0 / 0.14)',
@@ -132,16 +132,12 @@ export function themeToShadcnVars(theme: Theme, tint: FillTint): Record<string, 
     '--sidebar-border': sidebar.bgBorder,
     '--sidebar-accent': sidebar.sidebarLinkBgActive,
     '--sidebar-accent-foreground': sidebar.labelTitle,
-    '--sidebar-primary': color.controlPrimary,
-    '--sidebar-primary-foreground': color.controlPrimaryLabel,
     '--sidebar-ring': color.focusColor,
   };
 }
 
 /** The fixed hues of the status intents, after the generator's blue, green and orange. */
-export const INTENT_HUE = { info: 267, success: 152, warning: 60 } as const;
-
-export type Intent = 'primary' | 'info' | 'success' | 'warning' | 'destructive';
+const INTENT_HUE = { info: 267, success: 152, warning: 60 } as const;
 
 /**
  * Lightness and chroma of each intent role, per mode. `text` is the generator's status text step (light 50, dark 80).
@@ -171,7 +167,11 @@ const lch = (l: number, c: number, h: number, a?: number): string =>
   toCss('LCH', a === undefined ? [l, c, h] : [l, c, h, a]);
 
 /** One intent's set: `--{i}` the hue for text and icons, `-solid` and `-subtle` fills with their text, `-border`. */
-export function intentVars(intent: Exclude<Intent, 'primary'>, hue: number, isDark: boolean): Record<string, string> {
+function intentVars(
+  intent: 'info' | 'success' | 'warning' | 'destructive',
+  hue: number,
+  isDark: boolean,
+): Record<string, string> {
   const step = INTENT_STEP[isDark ? 'dark' : 'light'];
   const solid = intent === 'warning' ? step.warningSolid : step.solid;
   return {

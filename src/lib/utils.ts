@@ -1,22 +1,19 @@
 import { clsx, type ClassValue } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 
-// The type roles, spacing steps, radius roles, shadows and motion roles in `tailwind.css`. Unregistered, `twMerge` reads `text-body`
-// as a color and drops `text-muted-foreground`, does not see that `gap-4` overrides `gap-group`, and keeps both
-// `shadow-raised` and `shadow-none`.
+// The named scales in `tailwind.css`. Unregistered, `twMerge` reads `text-body` as a color and drops the text color
+// next to it, does not see that `gap-4` overrides `gap-group`, and keeps both `shadow-raised` and `shadow-none`.
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
+      text: ['title', 'heading', 'body', 'control', 'caption', 'overline'],
       spacing: ['tight', 'related', 'group', 'page', 'section'],
-      radius: ['control-xs', 'control-sm', 'control', 'control-lg', 'popup', 'card', 'dialog', 'panel'],
+      radius: ['control-xs', 'control-sm', 'control', 'control-lg', 'popup', 'card', 'dialog', 'panel', 'inner'],
       shadow: ['border', 'field', 'field-flat', 'raised', 'raised-hover', 'popup', 'modal'],
       ease: ['enter', 'move', 'sheet'],
     },
-    classGroups: {
-      'font-size': [{ text: ['title', 'heading', 'body', 'control', 'caption', 'overline'] }],
-      rounded: ['rounded-inner'],
-      duration: [{ duration: ['enter', 'feedback', 'move', 'sheet'] }],
-    },
+    // `tailwind-merge` has no theme scale for durations.
+    classGroups: { duration: [{ duration: ['enter', 'feedback', 'move', 'sheet'] }] },
   },
 });
 

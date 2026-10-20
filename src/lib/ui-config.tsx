@@ -133,4 +133,4 @@ export function UiConfigProvider({
 
 export const useUiConfig = (): UiConfig => use(UiConfigContext);
 
-export const useUiStrings = (): UiStrings => use(UiConfigContext).strings;
+export const useUiStrings = (): UiStrings => useUiConfig().strings;

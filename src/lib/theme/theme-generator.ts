@@ -14,10 +14,10 @@ import {
   type ColorFormat,
 } from './color';
 
-export type ThemeType = 'base' | 'elevated' | 'sub' | 'sidebar' | 'menu' | 'selected' | 'focus';
+type ThemeType = 'base' | 'elevated' | 'sub' | 'sidebar' | 'menu' | 'selected' | 'focus';
 
 /** A custom theme: `{ base, accent, contrast, sidebarInput? }`, contrast 0..100. */
-export interface CustomThemeColors {
+interface CustomThemeColors {
   base: Color;
   accent: Color;
   contrast: number;
@@ -31,7 +31,7 @@ export interface ThemeInput extends CustomThemeColors {
   sidebarInput?: CustomThemeColors & { colorFormat?: ColorFormat };
 }
 
-export type ThemeColorToken =
+type ThemeColorToken =
   | 'bgSub'
   | 'bgSubHover'
   | 'bgBase'
@@ -149,7 +149,7 @@ export type ThemeColorToken =
   | 'sidebarLinkBg'
   | 'sidebarLinkBgActive';
 
-export type ThemeColor = Record<ThemeColorToken, string>;
+type ThemeColor = Record<ThemeColorToken, string>;
 
 export interface Theme {
   hash: string;
