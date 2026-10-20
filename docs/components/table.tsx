@@ -3,6 +3,7 @@ import { TableEmpty } from '../examples/table/empty';
 import { TableFlush } from '../examples/table/flush';
 import { TableGroupedRows } from '../examples/table/grouped-rows';
 import { TableInACard } from '../examples/table/in-a-card';
+import { TableRowLinks } from '../examples/table/row-links';
 import { TableSortable } from '../examples/table/sortable';
 import { TableWithHeader } from '../examples/table/with-header';
 import { TableWithSelection } from '../examples/table/with-selection';
@@ -78,6 +79,16 @@ export default defineDocs({
         }
         bare>
         <TableGroupedRows />
+      </ExampleSection>
+      <ExampleSection
+        title='Row links'
+        description={
+          <>
+            <Code>TableRowLink</Code> in one cell: its click area covers the row; the row’s other controls sit above it.
+          </>
+        }
+        bare>
+        <TableRowLinks />
       </ExampleSection>
       <ExampleSection title='Empty' description='One cell over every column holds an Empty.' bare>
         <TableEmpty />

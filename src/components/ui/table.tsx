@@ -1,3 +1,5 @@
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useRender } from '@base-ui/react/use-render';
 import { IconArrowsSort, IconArrowUp, IconChevronDown } from '@tabler/icons-react';
 import { cva } from 'class-variance-authority';
 import { type ComponentProps, createContext, type ReactNode, use } from 'react';
@@ -15,6 +17,7 @@ import { cn } from '~/lib/utils';
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
 // - groups: `TableGroupRow`, one full-width band over every column; with `onOpenChange` it folds its rows.
+// - a row that opens a page: `TableRowLink` in one cell; its click area covers the row (a `tr` cannot be a link).
 
 type TableVariant = 'default' | 'flush' | 'card';
 type TableSection = 'head' | 'body' | 'foot';
@@ -96,6 +99,10 @@ function TableRow({ className, selected = false, ...props }: ComponentProps<'tr'
       className={cn(
         variant !== 'card' && 'border-b border-border-subtle transition-colors data-selected:bg-muted',
         variant !== 'card' && section === 'body' && 'hover:bg-row-hover',
+        // A row link's click area covers the row; the row's other controls sit above it.
+        'has-data-[slot=table-row-link]:relative',
+        '[&:has([data-slot=table-row-link])_:is(a,button,input,select,textarea,label):not([data-slot=table-row-link])]:relative',
+        '[&:has([data-slot=table-row-link])_:is(a,button,input,select,textarea,label):not([data-slot=table-row-link])]:z-10',
         className,
       )}
       {...props}
@@ -284,6 +291,28 @@ function TableGroupRow({
   );
 }
 
+/**
+ * The link of a row that opens a page, in one cell (`render={<a href … />}` or a router link). A `tr` cannot be a
+ * link, so the click area is the link's `::after`, stretched over the row; the keyboard ring draws on it. The row's
+ * other controls (buttons, checkboxes, links) sit above it.
+ */
+function TableRowLink({ className, render, ...props }: useRender.ComponentProps<'a'>) {
+  return useRender({
+    defaultTagName: 'a',
+    render,
+    state: { slot: 'table-row-link' },
+    props: mergeProps<'a'>(
+      {
+        className: cn(
+          'text-foreground no-underline outline-none after:absolute after:inset-0 focus-visible:after:ring-3 focus-visible:after:ring-ring/24 focus-visible:after:ring-inset',
+          className,
+        ),
+      },
+      props,
+    ),
+  });
+}
+
 export {
   Table,
   TableBody,
@@ -293,6 +322,7 @@ export {
   TableHead,
   TableHeader,
   TableRow,
+  TableRowLink,
   type TableSort,
   type TableVariant,
 };
