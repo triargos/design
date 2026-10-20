@@ -39,7 +39,7 @@ export function ListInCardVirtualized() {
     <Card className='w-full max-w-2xl'>
       <CardHeader
         actions={
-          <Button emphasis='ghost' size='xs'>
+          <Button size='xs'>
             <PlusIcon data-icon='inline-start' />
             Invite
           </Button>

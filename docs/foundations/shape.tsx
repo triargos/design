@@ -67,7 +67,7 @@ export default defineDocs({
               <Card>
                 <CardHeader
                   actions={
-                    <Button emphasis='ghost' size='icon-sm' aria-label='More'>
+                    <Button size='icon-xs' aria-label='More'>
                       <MoreHorizontalIcon />
                     </Button>
                   }>

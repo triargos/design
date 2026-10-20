@@ -55,8 +55,13 @@ const PAIRS: ReadonlyArray<{
     props: "intent='primary'",
     use: 'The one main action of a page, card or dialog.',
   },
-  { intent: 'neutral', emphasis: 'raised', props: 'no props', use: 'Every other action, on any surface.' },
-  { intent: 'neutral', emphasis: 'ghost', props: "emphasis='ghost'", use: 'Header, row, toolbar and close actions.' },
+  {
+    intent: 'neutral',
+    emphasis: 'raised',
+    props: 'no props',
+    use: 'Every other action, on any surface; card header actions.',
+  },
+  { intent: 'neutral', emphasis: 'ghost', props: "emphasis='ghost'", use: 'Row, toolbar and close actions.' },
   {
     intent: 'destructive',
     emphasis: 'solid',
@@ -304,7 +309,7 @@ export default defineDocs({
           <Card>
             <CardHeader
               actions={
-                <Button emphasis='ghost' size='icon-sm' aria-label='Edit'>
+                <Button size='icon-xs' aria-label='Edit'>
                   <PencilIcon />
                 </Button>
               }>
@@ -318,7 +323,7 @@ export default defineDocs({
                     <ItemDescription>Row actions: ghost</ItemDescription>
                   </ItemContent>
                   <ItemActions>
-                    <Button emphasis='ghost' size='icon-sm' aria-label='More'>
+                    <Button emphasis='ghost' size='icon-xs' aria-label='More'>
                       <MoreHorizontalIcon />
                     </Button>
                   </ItemActions>
