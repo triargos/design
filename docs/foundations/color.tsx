@@ -83,7 +83,7 @@ const surfaces: ReadonlyArray<SwatchToken> = [
   { token: 'sidebar', role: 'App frame behind the page panel', on: 'var(--sidebar-foreground)' },
   { token: 'background', role: 'Page panel, the main reading surface', on: 'var(--foreground)' },
   { token: 'shell', role: 'Card shell; one step from its surface', on: 'var(--foreground)' },
-  { token: 'card', role: 'Card body: CardContent, DialogBody', on: 'var(--card-foreground)' },
+  { token: 'card', role: 'Card body: CardContent', on: 'var(--card-foreground)' },
   { token: 'popover', role: 'Menus, popovers, default dialogs', on: 'var(--popover-foreground)' },
   { token: 'surface', role: 'Field surface (inputSurfaceVariants)', on: 'var(--foreground)' },
 ];

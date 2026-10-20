@@ -7,12 +7,12 @@ import { defineDocs } from '../kit/docs';
 
 export default defineDocs({
   title: 'Sheet',
-  description: 'A side panel: the dialog shell at full height.',
+  description: 'A side panel: the dialog surface at full height.',
   group: 'Components',
   Page: () => (
     <FoundationPage
       title='Sheet'
-      description='A side panel: the dialog shell at full height, for a task next to the page. SheetBody scrolls; from sm the panel floats 8px in.'>
+      description='A side panel: the dialog surface at full height, for a task next to the page. SheetBody scrolls; from sm the panel floats 8px in.'>
       <ExampleSection title='Default'>
         <SheetDefault />
       </ExampleSection>

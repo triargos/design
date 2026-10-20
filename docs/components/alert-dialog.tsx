@@ -12,7 +12,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Alert Dialog'
-      description='Asks to confirm an action before it happens. The header is the card, the actions sit on the shell; no close button. AlertDialogAction is primary unless set, and does not close the dialog on its own: close it when the action is done.'>
+      description='Asks to confirm an action before it happens. The question in the header, the actions in the footer band; no close button. AlertDialogAction is primary unless set, and does not close the dialog on its own: close it when the action is done.'>
       <ExampleSection title='Default'>
         <AlertDialogDefault />
       </ExampleSection>

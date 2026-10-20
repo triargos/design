@@ -120,7 +120,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | `rounded-dialog`     | 20  | Dialogs, sheets                                         |
 | `rounded-panel`      | 20  | The page panel                                          |
 
-- Concentric corners: `inner = outer − inset`. The outer surface sets `--outer-radius` and `--outer-inset`; what sits inside takes `rounded-inner`. Owners: `Card` (content 4px in), `Alert` (action 6px in), popups (items 4px in), modals (✕ 12px in), `InputGroup` buttons (4px in), combobox chips (4px in).
+- Concentric corners: `inner = outer − inset`. The outer surface sets `--outer-radius` and `--outer-inset`; what sits inside takes `rounded-inner`. Owners: `Card` (content 4px in), `Alert` (action 6px in), popups (items 4px in), `InputGroup` buttons (4px in), combobox chips (4px in).
 - `Avatar` `shape='square'` is the one exception: its radius steps with its size (`rounded-xs` at 12px to `rounded-2xl` at 80px), an icon-like scale no role covers.
 - Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons in a card keep `rounded-control*`: a 10px field 21px into the 12px content is two layers, not a failed concentric pair.
 - Control heights:
@@ -136,14 +136,14 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 
 ## Surfaces and elevation
 
-| Layer      | Classes                                                                             | Owner                                                                                      |
-| ---------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| App frame  | `bg-sidebar`                                                                        | `body`, `Sidebar`                                                                          |
-| Page panel | `bg-background md:rounded-panel`                                                    | the page frame                                                                             |
-| Card shell | `rounded-card bg-(--card-shell)`, default `--shell`                                 | `Card`                                                                                     |
-| Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), `shadow-card`     | `CardContent`, `DialogBody`, `SheetBody`, `AlertDialogHeader`, `Table variant='card'` body |
-| Popup      | `rounded-popup bg-popover shadow-popup`, fade + zoom from 95% over `duration-enter` | `PopoverContent`, menus, `SelectContent`, `ComboboxContent`                                |
-| Modal      | a `--modal-shell` shell (`--shell` + `shadow-modal`), the body a card, centered     | `DialogContent`, `AlertDialogContent`, `SheetContent`                                      |
+| Layer      | Classes                                                                                                                                                 | Owner                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| App frame  | `bg-sidebar`                                                                                                                                            | `body`, `Sidebar`                                           |
+| Page panel | `bg-background md:rounded-panel`                                                                                                                        | the page frame                                              |
+| Card shell | `rounded-card bg-(--card-shell)`, default `--shell`                                                                                                     | `Card`                                                      |
+| Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), `shadow-card`                                                                         | `CardContent`, `Table variant='card'` body                  |
+| Popup      | `rounded-popup bg-popover shadow-popup`, fade + zoom from 95% over `duration-enter`                                                                     | `PopoverContent`, menus, `SelectContent`, `ComboboxContent` |
+| Modal      | `rounded-dialog bg-popover shadow-modal`; header and body `--modal-inset` (24px) in, the footer a `muted` band under a rule; backdrop `black/32` + blur | `DialogContent`, `AlertDialogContent`, `SheetContent`       |
 
 - Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`), `shadow-popup`, `shadow-modal`.
 - Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop.
@@ -231,7 +231,7 @@ spacing       tight 4 · related 8 · group 16 · card 20 · page 32 · section 
 radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 16 · dialog 20 · panel 20 · rounded-inner
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal
 block         Card > CardHeader > CardContent [> ItemList [virtualized]]
-modal         DialogContent > DialogHeader · DialogBody (card) · DialogFooter
+modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
 motion        duration-enter 100 · feedback 150 · move 200 · modal 250 · ease-enter · ease-move
 values        value + onValueChange · dates YYYY-MM-DD · options SelectOption
 new color     themeToCssVars + @theme inline, never a literal

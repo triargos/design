@@ -20,7 +20,7 @@ import { Textarea } from '~/components/ui/textarea';
 const SEND_DELAY_MS = 1000;
 
 /**
- * Header and footer on the shell, the body in a card. A form wraps `DialogBody` and `DialogFooter` with
+ * Header and body on the popup surface, the footer a muted band. A form wraps `DialogBody` and `DialogFooter` with
  * `className='contents'`, so the modal's layout is unchanged and Enter submits; the submit button sits in the footer.
  */
 export function DialogDefault() {

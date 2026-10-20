@@ -14,8 +14,8 @@ function AlertDialogTrigger(props: AlertDialogPrimitive.Trigger.Props) {
 }
 
 /**
- * A confirmation in the modal shape: the header is the body (a card), the footer sits on the
- * shell. `size='sm'`: centered, the two actions in equal columns.
+ * A confirmation in the modal shape: the header holds the question on the popup surface, the footer is a `muted` band
+ * with the actions. `size='sm'`: centered, the two actions in equal columns.
  */
 function AlertDialogContent({
   className,
@@ -31,14 +31,18 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal data-slot='alert-dialog-portal' container={container}>
       <AlertDialogPrimitive.Backdrop
         data-slot='alert-dialog-overlay'
-        className='fixed inset-0 isolate z-50 bg-black/10 duration-modal ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:fill-mode-forwards data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-xs'
+        className='fixed inset-0 isolate z-50 bg-black/32 duration-modal ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:fill-mode-forwards data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-sm'
       />
       <AlertDialogPrimitive.Popup
         data-slot='alert-dialog-content'
+        data-surface='popup'
         data-size={size}
         className={cn(
-          'flex flex-col bg-(--modal-shell) p-1 text-body text-popover-foreground shadow-modal outline-none [--modal-shell:var(--shell)] [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-dialog)]',
+          'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none [--modal-inset:calc(var(--spacing-group)+var(--spacing-related))]',
           'fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog duration-modal ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100',
+          // Under an open nested dialog it steps back: smaller per level, dimmed by an overlay (`after:`).
+          'transition-[scale] ease-move data-nested-dialog-open:scale-[calc(1-0.04*var(--nested-dialogs))] motion-reduce:data-nested-dialog-open:scale-100',
+          'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-black/0 after:transition-colors after:duration-modal data-nested-dialog-open:after:bg-black/8',
           'group/alert-dialog-content max-w-xs data-[size=default]:sm:max-w-sm',
           className,
         )}
@@ -52,9 +56,8 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<'div'>)
   return (
     <div
       data-slot='alert-dialog-header'
-      data-surface='card'
       className={cn(
-        'flex flex-col gap-group rounded-inner border border-(--edge) bg-card bg-clip-padding p-group text-card-foreground',
+        'p-(--modal-inset)',
         'grid grid-rows-[auto_1fr] place-items-center gap-tight text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-4 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]',
         className,
       )}
@@ -68,7 +71,7 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<'div'>)
     <div
       data-slot='alert-dialog-footer'
       className={cn(
-        'flex flex-col-reverse gap-related px-[calc(var(--spacing-group)+1px)] pt-3 pb-3 sm:flex-row sm:justify-end',
+        'flex flex-col-reverse gap-related border-t bg-muted px-(--modal-inset) py-group sm:flex-row sm:justify-end',
         'group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2',
         className,
       )}

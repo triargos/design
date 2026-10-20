@@ -97,10 +97,10 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Dialog'
-      description='One modal shape: a shell with the header and footer on it, the content in a card. Dialog, alert dialog and side panel share it.'>
+      description='One modal shape: a single popup surface, the footer a muted band under a rule. Dialog, alert dialog and side panel share it.'>
       <ExampleSection
         title='Default'
-        description='Header and footer on the shell, DialogBody is the card. A form wraps DialogBody and DialogFooter (className="contents"); submit sits in the footer.'>
+        description='Header and body on the popup surface, the footer a muted band. A form wraps DialogBody and DialogFooter (className="contents"); submit sits in the footer.'>
         <DialogDefault />
       </ExampleSection>
       <ExampleSection
@@ -128,7 +128,9 @@ export default defineDocs({
       <ExampleSection title='Scrolling body' description='A long body scrolls; header and footer stay.'>
         <DialogScrollingBody />
       </ExampleSection>
-      <ExampleSection title='Nested' description='A dialog opened from a dialog stacks on it.'>
+      <ExampleSection
+        title='Nested'
+        description='A dialog opened from a dialog stacks on it; the one below steps back.'>
         <DialogNested />
       </ExampleSection>
       <ExampleSection
@@ -139,7 +141,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Dialog'
-        description='DialogHeader and DialogFooter sit on the shell, DialogBody is the card. Without a footer the body ends the dialog.'>
+        description='DialogHeader and DialogBody sit 24px in; DialogFooter is a muted band. Without a footer the body ends the dialog.'>
         <div className='flex flex-col gap-group'>
           <Stage label={<Code>DialogHeader · DialogBody · DialogFooter</Code>}>
             {(container) => (
@@ -180,7 +182,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Confirmation'
-        description='Every confirmation is an AlertDialog (Components/Alert Dialog): the header is the card, the actions sit on the shell; no close button.'>
+        description='Every confirmation is an AlertDialog (Components/Alert Dialog): the question in the header, the actions in the footer band; no close button.'>
         <div className='flex flex-col gap-group'>
           <Stage label={<Code>AlertDialog</Code>} className='h-[280px]'>
             {(container) => (
@@ -224,7 +226,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Side panel'
-        description='Sheet: the same shell, full height. SheetBody scrolls; from sm the panel floats 8px in.'>
+        description='Sheet: the same surface, full height. SheetBody scrolls; from sm the panel floats 8px in.'>
         <Stage label={<Code>SheetHeader · SheetBody · SheetFooter</Code>} className='h-[560px]'>
           {(container) => (
             <Sheet defaultOpen modal={false}>

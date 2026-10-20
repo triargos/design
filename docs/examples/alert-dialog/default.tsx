@@ -13,7 +13,7 @@ import {
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 
-/** The header is the card, the actions sit on the shell; no close button. The action closes it in `onClick`. */
+/** The question in the header, the actions in the footer band; no close button. The action closes it in `onClick`. */
 export function AlertDialogDefault() {
   const [open, setOpen] = useState(false);
   return (

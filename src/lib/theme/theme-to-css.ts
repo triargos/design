@@ -201,7 +201,7 @@ function textLevelVars(theme: Theme): Record<string, string> {
 }
 
 /**
- * One rule per nested surface. Inside a popup, `--card` moves up with it so `DialogBody` sits above the popup. A card on
+ * One rule per nested surface. Inside a popup, `--card` moves up with it so a card in a popup sits above it. A card on
  * a card sets its own `--card`, since `bg-card` resolves on the card itself; the popup rules come after, so a card in a
  * popup keeps the popup's steps.
  */
