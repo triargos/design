@@ -165,7 +165,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | `ease-move`         | `cubic-bezier(0.645, 0.045, 0.355, 1)` | Moving what is already on screen                                  |
 
 - Hover and color changes use the default `ease`, never `linear` or `ease-in`. Interruptible motion is a spring in code (`CardFooter`).
-- Reduced motion stops movement: `motion-reduce:` in CSS, `useReducedMotion()` in code.
+- Reduced motion keeps fades and color changes and drops movement (zoom, slide, press scale, a travelling indicator, a height fold, springs): popups, dialogs and sheets fade in place. `motion-reduce:` in CSS (`motion-reduce:data-open:zoom-in-100`), `useReducedMotion()` in code.
 - Interaction states:
 
   | State    | Behavior                                   |
