@@ -12,6 +12,8 @@ const docsModules = import.meta.glob<DocsModule>('../docs/{foundations,component
 });
 const exampleSources = import.meta.glob<string>('../docs/examples/**/*.tsx', { query: '?raw', import: 'default' });
 
+const REPO = 'https://github.com/triargos/design';
+
 export const pathOf = (page: DocsPageEntry) => `/${page.slug}`;
 export const pageAt = (pathname: string) => pages.find((page) => pathOf(page) === pathname);
 
@@ -105,6 +107,8 @@ export function DocsPage({ page }: { page: DocsPageEntry }) {
             </>
           ),
           hideSpecs: true,
+          // A component page's slug is its file in `src/components/ui` (`scripts/registry.mjs`).
+          ...(page.group === 'Components' && { sourceHref: `${REPO}/blob/main/src/components/ui/${page.slug}.tsx` }),
           surface,
         };
   return (

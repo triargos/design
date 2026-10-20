@@ -1,4 +1,4 @@
-import { IconChevronRight } from '@tabler/icons-react';
+import { IconBrandGithubFilled, IconChevronRight } from '@tabler/icons-react';
 import {
   createContext,
   Fragment,
@@ -29,6 +29,8 @@ export interface DocsMode {
   readonly afterHeader?: ReactNode;
   /** Component and pattern pages: spec sections out, the lead sentence only. Foundation pages keep both. */
   readonly hideSpecs?: boolean;
+  /** The page's source on GitHub; a link next to the title. */
+  readonly sourceHref?: string;
   /** The surface examples render on; default `page`, as they would sit on a plain page. */
   readonly surface?: DocsSurface;
 }
@@ -64,7 +66,19 @@ export function FoundationPage({
   return (
     <div className='mx-auto flex w-full max-w-3xl flex-col gap-page'>
       <header className='flex flex-col gap-tight'>
-        <h1 className='text-heading'>{title}</h1>
+        <div className='flex items-center gap-tight'>
+          <h1 className='text-heading'>{title}</h1>
+          {docs?.sourceHref !== undefined && (
+            <Button
+              emphasis='ghost'
+              size='icon-xs'
+              aria-label={`${title} source on GitHub`}
+              className='text-muted-foreground'
+              render={<a href={docs.sourceHref} target='_blank' rel='noreferrer' />}>
+              <IconBrandGithubFilled />
+            </Button>
+          )}
+        </div>
         <p className='max-w-prose text-body text-pretty text-muted-foreground'>
           {docs?.hideSpecs ? firstSentence(description) : description}
         </p>
