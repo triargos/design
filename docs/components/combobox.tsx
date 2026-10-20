@@ -3,6 +3,7 @@ import { ComboboxDefault } from '../examples/combobox/default';
 import { ComboboxInADialog } from '../examples/combobox/in-a-dialog';
 import { ComboboxInAField } from '../examples/combobox/in-a-field';
 import { ComboboxMultiple } from '../examples/combobox/multiple';
+import { ComboboxMultipleAllowCustom } from '../examples/combobox/multiple-allow-custom';
 import { ComboboxStates } from '../examples/combobox/states';
 import { ComboboxVirtualized } from '../examples/combobox/virtualized';
 import { ComboboxWithDescription } from '../examples/combobox/with-description';
@@ -51,6 +52,16 @@ export default defineDocs({
           </>
         }>
         <ComboboxAllowCustom />
+      </ExampleSection>
+      <ExampleSection
+        title='Multiple, allow custom'
+        description={
+          <>
+            <Code>multiple allowCustom</Code>: chips of options and typed text. A typed chip’s value and label are its
+            text.
+          </>
+        }>
+        <ComboboxMultipleAllowCustom />
       </ExampleSection>
       <ExampleSection
         title='Virtualized'
