@@ -13,11 +13,7 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from '~/components/ui/combobox';
-import {
-  useVirtualizedCombobox,
-  VirtualizedComboboxList,
-  type VirtualizerInstance,
-} from '~/components/ui/virtualized-combobox';
+import { useVirtualizedCombobox, VirtualizedComboboxList } from '~/components/ui/virtualized-combobox';
 
 type SearchSelectKey = string | number;
 
@@ -86,6 +82,11 @@ function DefaultItem({ label, item }: { label: string; item: unknown }) {
   );
 }
 
+function SearchSelectEmpty({ pending, text }: { pending: boolean; text: string | undefined }) {
+  const strings = useUiStrings();
+  return <ComboboxEmpty>{pending ? strings.selectPending : (text ?? strings.selectEmpty)}</ComboboxEmpty>;
+}
+
 /**
  * A select you can type into, for any list length: the list is always virtualized. One value (`ComboboxInput`, clear
  * button), many (`multiple`, chips in the field), or one that may be typed (`allowCustom`). Not bound to a form: wire
@@ -112,22 +113,24 @@ function SearchSelectPick<Item, Key extends SearchSelectKey>(
     onBlur,
     className,
   } = props;
-  const strings = useUiStrings();
-  const [open, setOpen] = React.useState(false);
-  const virtualizerRef = React.useRef<VirtualizerInstance | null>(null);
-  const { onItemHighlighted } = useVirtualizedCombobox({ open, virtualizerRef });
+  const virtual = useVirtualizedCombobox();
   const anchorRef = useComboboxAnchor();
 
   const itemsByKey = React.useMemo(() => new Map(items.map((item) => [itemKey(item), item])), [items, itemKey]);
-  const isItemEqualToValue = (a: Item, b: Item) => itemKey(a) === itemKey(b);
-  const content = (item: Item) => renderItem?.(item) ?? <DefaultItem label={itemLabel(item)} item={item} />;
-  const empty = pending ? strings.selectPending : (emptyText ?? strings.selectEmpty);
+  const rootProps = {
+    ...virtual.root,
+    virtualized: true,
+    itemToStringLabel: itemLabel,
+    itemToStringValue: (item: Item) => String(itemKey(item)),
+    isItemEqualToValue: (a: Item, b: Item) => itemKey(a) === itemKey(b),
+    disabled,
+  };
 
   const popup = (
     <ComboboxContent anchor={props.multiple ? anchorRef : undefined}>
-      <ComboboxEmpty>{empty}</ComboboxEmpty>
-      <VirtualizedComboboxList open={open} virtualizerRef={virtualizerRef} itemKey={itemKey}>
-        {content}
+      <SearchSelectEmpty pending={pending} text={emptyText} />
+      <VirtualizedComboboxList {...virtual.list} itemKey={itemKey}>
+        {(item: Item) => renderItem?.(item) ?? <DefaultItem label={itemLabel(item)} item={item} />}
       </VirtualizedComboboxList>
     </ComboboxContent>
   );
@@ -137,18 +140,11 @@ function SearchSelectPick<Item, Key extends SearchSelectKey>(
     const { onValueChange } = props;
     return (
       <Combobox
-        virtualized
+        {...rootProps}
         multiple
         items={items}
         value={selected}
-        onValueChange={(next: Item[]) => onValueChange(next.map((item) => itemKey(item)))}
-        itemToStringLabel={itemLabel}
-        itemToStringValue={(item: Item) => String(itemKey(item))}
-        isItemEqualToValue={isItemEqualToValue}
-        open={open}
-        onOpenChange={setOpen}
-        onItemHighlighted={onItemHighlighted}
-        disabled={disabled}>
+        onValueChange={(next: Item[]) => onValueChange(next.map((item) => itemKey(item)))}>
         <ComboboxChips ref={anchorRef} aria-invalid={invalid || undefined} className={className}>
           <ComboboxValue>
             {(value: Item[]) =>
@@ -175,17 +171,10 @@ function SearchSelectPick<Item, Key extends SearchSelectKey>(
   const { onValueChange } = props;
   return (
     <Combobox
-      virtualized
+      {...rootProps}
       items={selectedFirst(items, selected)}
       value={selected}
-      onValueChange={(next: Item | null) => onValueChange(next === null ? null : itemKey(next))}
-      itemToStringLabel={itemLabel}
-      itemToStringValue={(item: Item) => String(itemKey(item))}
-      isItemEqualToValue={isItemEqualToValue}
-      open={open}
-      onOpenChange={setOpen}
-      onItemHighlighted={onItemHighlighted}
-      disabled={disabled}>
+      onValueChange={(next: Item | null) => onValueChange(next === null ? null : itemKey(next))}>
       <ComboboxInput
         id={id}
         placeholder={placeholder}
@@ -229,33 +218,28 @@ function SearchSelectCustom<Item>({
 }: SearchSelectCustomProps<Item>) {
   type Entry = Item | CustomEntry;
   const strings = useUiStrings();
-  const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState('');
-  const virtualizerRef = React.useRef<VirtualizerInstance | null>(null);
-  const { onItemHighlighted } = useVirtualizedCombobox({ open, virtualizerRef });
+  const virtual = useVirtualizedCombobox();
   const noteId = React.useId();
 
   const itemsByKey = React.useMemo(() => new Map(items.map((item) => [itemKey(item), item])), [items, itemKey]);
   const labels = React.useMemo(() => new Set(items.map((item) => itemLabel(item).toLowerCase())), [items, itemLabel]);
 
-  // One instance per custom text: Base UI compares values by identity and resets the input to the selected label when
-  // the value changes, so a fresh `CustomEntry` each render would undo every keystroke.
-  const customEntry = React.useMemo(
-    () => (value && !itemsByKey.has(value) ? new CustomEntry(value) : null),
-    [value, itemsByKey],
-  );
-  const selected: Entry | null = !value ? null : (itemsByKey.get(value) ?? customEntry);
-  const custom = customEntry !== null;
+  // Base UI resets the input to the selected label when the value changes identity or drops out of `items`; either
+  // would undo every keystroke. So: one `CustomEntry` per custom text (keyed by the text, not by `itemsByKey`, which
+  // an inline `itemKey` rebuilds each render), and it stays in `items`.
+  const listed = value ? itemsByKey.get(value) : undefined;
+  const custom = Boolean(value) && listed === undefined;
+  const customEntry = React.useMemo(() => (custom && value ? new CustomEntry(value) : null), [custom, value]);
+  const selected: Entry | null = listed ?? customEntry;
 
-  // The selected custom value stays an item while the user types: Base UI resets the input to the selected label when
-  // the value drops out of `items`, which would undo every keystroke. The typed row comes last, while the query names
-  // neither an item nor the custom value.
+  // The typed row comes last, while the query names neither an item nor the custom value.
   const entries = React.useMemo((): ReadonlyArray<Entry> => {
     const typed = query.trim();
     const typedRow =
       typed !== '' && typed !== value && !labels.has(typed.toLowerCase()) ? [new CustomEntry(typed)] : [];
-    const listed: ReadonlyArray<Entry> = customEntry !== null ? [...items, customEntry] : items;
-    return [...selectedFirst(listed, selected), ...typedRow];
+    const all: ReadonlyArray<Entry> = customEntry !== null ? [...items, customEntry] : items;
+    return [...selectedFirst(all, selected), ...typedRow];
   }, [items, labels, query, customEntry, value, selected]);
 
   const label = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : itemLabel(entry));
@@ -288,11 +272,11 @@ function SearchSelectCustom<Item>({
       </span>
     );
   };
-  const empty = pending ? strings.selectPending : (emptyText ?? strings.selectEmpty);
 
   return (
     <div className={className}>
       <Combobox
+        {...virtual.root}
         virtualized
         items={entries}
         value={selected}
@@ -307,9 +291,6 @@ function SearchSelectCustom<Item>({
             ? a instanceof CustomEntry && b instanceof CustomEntry && a.text === b.text
             : itemKey(a) === itemKey(b)
         }
-        open={open}
-        onOpenChange={setOpen}
-        onItemHighlighted={onItemHighlighted}
         disabled={disabled}>
         <ComboboxInput
           id={id}
@@ -321,10 +302,9 @@ function SearchSelectCustom<Item>({
           disabled={disabled}
         />
         <ComboboxContent>
-          <ComboboxEmpty>{empty}</ComboboxEmpty>
+          <SearchSelectEmpty pending={pending} text={emptyText} />
           <VirtualizedComboboxList
-            open={open}
-            virtualizerRef={virtualizerRef}
+            {...virtual.list}
             itemKey={(entry: Entry) => (entry instanceof CustomEntry ? `custom:${entry.text}` : itemKey(entry))}
             indicator={(entry: Entry) =>
               entry instanceof CustomEntry && !isPicked(entry) ? (

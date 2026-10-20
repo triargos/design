@@ -53,6 +53,9 @@ export type OptionSelectProps<Item, Key extends OptionSelectKey> =
 /** The select's own value for the other row; never emitted, so no key or typed text can collide with it. */
 const OTHER = { other: true } as const;
 
+/** A type guard, not `===`: only a guard narrows `Item | typeof OTHER` on a generic `Item`. */
+const isOther = (choice: unknown): choice is typeof OTHER => choice === OTHER;
+
 /**
  * A select over `items`, with SearchSelect's API, for short lists: no typing, no virtualization. `allowCustom` adds
  * an „Andere“ row with a text field for a value outside the list. Not bound to a form: wire it through `Controller` +
@@ -78,11 +81,10 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
   const selected: Choice | null = otherChosen ? OTHER : listed;
 
   const select = (
-    <Select<Choice | null>
+    <Select<Choice>
       value={selected}
       onValueChange={(next) => {
-        if (next === null) return;
-        if (next === OTHER) {
+        if (isOther(next)) {
           if (!props.allowCustom) return;
           focusOther.current = true;
           setTypedOther('');
@@ -90,17 +92,13 @@ export function OptionSelect<Item, Key extends OptionSelectKey>(props: OptionSel
           return;
         }
         setTypedOther(null);
-        // `Item | typeof OTHER` does not narrow on a generic `Item`.
-        const item = next as Item;
-        if (props.allowCustom) props.onValueChange(props.itemKey(item));
-        else props.onValueChange(props.itemKey(item));
+        // The same call twice: each branch narrows `props`, so the key fits its callback.
+        if (props.allowCustom) props.onValueChange(props.itemKey(next));
+        else props.onValueChange(props.itemKey(next));
       }}
-      itemToStringLabel={(choice) =>
-        choice === null ? '' : choice === OTHER ? strings.selectOther : itemLabel(choice as Item)
-      }
-      isItemEqualToValue={(a, b) =>
-        a === OTHER || b === OTHER || a === null || b === null ? a === b : itemKey(a as Item) === itemKey(b as Item)
-      }
+      // Base UI calls neither with `null`.
+      itemToStringLabel={(choice) => (isOther(choice) ? strings.selectOther : itemLabel(choice))}
+      isItemEqualToValue={(a, b) => (isOther(a) || isOther(b) ? a === b : itemKey(a) === itemKey(b))}
       // The popup returns focus to the trigger as it closes; move on to the text field only after that.
       onOpenChangeComplete={(open) => {
         if (open || !focusOther.current) return;

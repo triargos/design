@@ -16,10 +16,8 @@ interface VirtualizedListProps<T> {
   onLoadMore?: () => void;
 
   estimatedItemSize?: number;
-  overscan?: number;
 
   emptyState?: ReactNode;
-  loadingIndicator?: ReactNode;
   className?: string;
   showSeparators?: boolean;
 }
@@ -32,9 +30,7 @@ export function VirtualizedList<T>({
   isLoadingMore = false,
   onLoadMore,
   estimatedItemSize = 72,
-  overscan = 5,
   emptyState,
-  loadingIndicator,
   className,
   showSeparators = false,
 }: VirtualizedListProps<T>) {
@@ -44,15 +40,14 @@ export function VirtualizedList<T>({
     count: scrollElement ? items.length : 0,
     getScrollElement: () => scrollElement,
     estimateSize: () => estimatedItemSize,
-    overscan,
+    overscan: 5,
   });
 
   const virtualItems = virtualizer.getVirtualItems();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
 
-  // Not framer-motion's useInView: it doesn't re-run when ref.current changes from null
-  // to an element, so items.length and hasMore re-setup the observer.
+  // Re-observe when `hasMore` mounts the sentinel and after each page, so a sentinel still in view reports again.
   useEffect(() => {
     const element = sentinelRef.current;
     if (!element) {
@@ -86,8 +81,7 @@ export function VirtualizedList<T>({
             transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
           }}>
           {virtualItems.map((virtualItem) => {
-            const item = items[virtualItem.index];
-            if (!item) return null;
+            const item = items[virtualItem.index]!;
             const isLast = virtualItem.index === items.length - 1;
 
             return (
@@ -111,7 +105,7 @@ export function VirtualizedList<T>({
 
       {isLoadingMore && (
         <div className='flex justify-center py-4'>
-          {loadingIndicator ?? <Loader className='text-muted-foreground' size={20} />}
+          <Loader className='text-muted-foreground' size={20} />
         </div>
       )}
     </div>

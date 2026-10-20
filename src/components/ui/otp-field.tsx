@@ -23,7 +23,7 @@ const OTPFieldContext = React.createContext<OTPFieldContextValue>({ invalid: fal
 
 const slotSelector = 'input[data-slot=otp-field-input]';
 
-type OTPFieldProps = Omit<React.ComponentProps<typeof OTPFieldPrimitive.Root>, 'className'> & {
+type OTPFieldProps = Omit<OTPFieldPrimitive.Root.Props, 'className'> & {
   className?: string;
   /** Marks the slots invalid and shakes the row once as it turns invalid. Incomplete: only the empty slots. */
   'aria-invalid'?: boolean | 'true' | 'false';
@@ -49,14 +49,10 @@ function OTPField({
 }: OTPFieldProps) {
   const invalid = ariaInvalid === true || ariaInvalid === 'true';
   const rootRef = React.useRef<HTMLDivElement>(null);
-  const latest = React.useRef(value ?? defaultValue ?? '');
+  /** The uncontrolled value; controlled, `value` is the baseline the next entry is diffed against. */
+  const latest = React.useRef(defaultValue ?? '');
   const [entry, setEntry] = React.useState<OTPFieldContextValue['entry']>(null);
   const [rejected, setRejected] = React.useState<OTPFieldContextValue['rejected']>(null);
-
-  // A controlled reset (cleared after a refused code) moves the baseline the next entry is diffed against.
-  React.useEffect(() => {
-    if (value !== undefined) latest.current = value;
-  }, [value]);
 
   const slots = () => Array.from(rootRef.current?.querySelectorAll<HTMLInputElement>(slotSelector) ?? []);
 
@@ -74,7 +70,7 @@ function OTPField({
   );
 
   const handleValueChange: NonNullable<OTPFieldProps['onValueChange']> = (next, details) => {
-    const previous = latest.current;
+    const previous = value ?? latest.current;
     latest.current = next;
     onValueChange?.(next, details);
     // Deleting shifts the characters after it: that is not an entry.
@@ -103,10 +99,8 @@ function OTPField({
     setRejected((current) => ({ index, parity: flip(current?.parity) }));
   };
 
-  const context = React.useMemo(() => ({ invalid, entry, rejected }), [invalid, entry, rejected]);
-
   return (
-    <OTPFieldContext.Provider value={context}>
+    <OTPFieldContext.Provider value={{ invalid, entry, rejected }}>
       <OTPFieldPrimitive.Root
         ref={rootRef}
         data-slot='otp-field'
@@ -126,7 +120,7 @@ function OTPField({
   );
 }
 
-type OTPFieldInputProps = Omit<React.ComponentProps<typeof OTPFieldPrimitive.Input>, 'className' | 'render'> & {
+type OTPFieldInputProps = Omit<OTPFieldPrimitive.Input.Props, 'className' | 'render'> & {
   className?: string;
 };
 
@@ -184,7 +178,7 @@ function OTPFieldInput({ className, ...props }: OTPFieldInputProps) {
   );
 }
 
-type OTPFieldSeparatorProps = Omit<React.ComponentProps<typeof OTPFieldPrimitive.Separator>, 'className'> & {
+type OTPFieldSeparatorProps = Omit<OTPFieldPrimitive.Separator.Props, 'className'> & {
   className?: string;
 };
 

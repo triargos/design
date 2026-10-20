@@ -10,7 +10,7 @@ export function ColorPickerInline() {
   const [color, setColor] = useState<string | undefined>('#8b5cf6');
   return (
     <div className={cn(popupSurface, 'w-fit p-3')}>
-      <ColorPicker value={color} onChange={setColor} custom='inline' aria-label='Farbe' />
+      <ColorPicker value={color} onChange={setColor} custom='inline' />
     </div>
   );
 }

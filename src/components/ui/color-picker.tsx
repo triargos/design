@@ -15,7 +15,7 @@ import { cn } from '~/lib/utils';
  * Tailwind 500s: they read as a 6px dot and as a status-icon stroke on light and dark surfaces. The default submission
  * statuses use these values, so they show up as presets.
  */
-export const COLOR_PRESETS = [
+const COLOR_PRESETS = [
   { name: 'gray', value: '#6b7280' },
   { name: 'red', value: '#ef4444' },
   { name: 'orange', value: '#f97316' },
@@ -48,7 +48,8 @@ const swatchClassName = cn(
   'disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50',
 );
 
-const swatchFillClassName = 'size-full rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12';
+/** The edge of a color dot: a faint ring, so a light color still reads on a light surface. */
+const swatchEdge = 'rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12';
 
 /** Fill scale per state; selected leaves a 4px gap inside the 2px ring. */
 const FILL_SCALE = { rest: 1, hover: 0.92, press: 0.84, checked: 0.625, checkedPress: 0.58 } as const;
@@ -101,7 +102,7 @@ const SwatchFill = ({
   return (
     <motion.span
       aria-hidden
-      className={swatchFillClassName}
+      className={cn('size-full', swatchEdge)}
       style={style}
       initial={false}
       animate={{ scale }}
@@ -156,8 +157,6 @@ interface ColorPickerProps {
   onChange: (value: string) => void;
   /** `popover`: a custom swatch opens the picker. `inline`: the picker sits under the presets (inside a popover). */
   custom?: 'popover' | 'inline';
-  /** Called after a preset is picked, not on custom changes: a surrounding popover closes here. */
-  onPresetSelect?: () => void;
   'aria-labelledby'?: string;
 }
 
@@ -165,7 +164,6 @@ export const ColorPicker = ({
   value,
   onChange,
   custom = 'popover',
-  onPresetSelect,
   'aria-labelledby': labelledBy,
 }: ColorPickerProps) => {
   const t = useUiStrings().colorPicker;
@@ -176,10 +174,7 @@ export const ColorPicker = ({
   const presets = (
     <RadioGroup
       value={preset?.value ?? null}
-      onValueChange={(next: string) => {
-        onChange(next);
-        onPresetSelect?.();
-      }}
+      onValueChange={onChange}
       aria-labelledby={labelledBy}
       aria-label={labelledBy ? undefined : t.label}
       className={cn(
@@ -216,7 +211,7 @@ export const ColorPicker = ({
 };
 
 /** The free choice: a saturation/hue area and a hex field that takes typed or pasted values. */
-export const CustomColor = ({ value, onChange }: Pick<ColorPickerProps, 'value' | 'onChange'>) => {
+const CustomColor = ({ value, onChange }: Pick<ColorPickerProps, 'value' | 'onChange'>) => {
   const t = useUiStrings().colorPicker;
   const color = value ?? DEFAULT_COLOR;
 
@@ -231,11 +226,7 @@ export const CustomColor = ({ value, onChange }: Pick<ColorPickerProps, 'value' 
       />
       <InputGroup>
         <InputGroupAddon>
-          <span
-            aria-hidden
-            className='size-4 rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
-            style={{ background: color }}
-          />
+          <span aria-hidden className={cn('size-4', swatchEdge)} style={{ background: color }} />
         </InputGroupAddon>
         <span data-slot='input-group-input' className='flex h-full min-w-0 flex-1 items-center px-3.5 text-control'>
           <HexColorInput

@@ -5,10 +5,9 @@ import { inputSurfaceVariants } from '~/components/ui/input';
 import { cn } from '~/lib/utils';
 
 /**
- * A button that looks like a field, for pickers that open a popup (the date picker). It
- * shares the field surface, 40px height, padding and text with `Input` and `SelectTrigger`, so it lines up with them.
- * Pass it as a trigger's `render` element. Wrap the value in a `<span>`: a bare text node cannot shrink, so a long value
- * would push the icon out of the field; a span child truncates instead.
+ * A button that looks like a field, for pickers that open a popup (the date picker): the field surface, 40px height,
+ * padding and text of `Input` and `SelectTrigger`, so it lines up with them. Pass it as a trigger's `render` element.
+ * Wrap the value in a `<span>`: a bare text node cannot shrink, so a long value would push the icon out; a span truncates.
  */
 function PickerTrigger({ className, type = 'button', ...props }: React.ComponentProps<'button'>) {
   return (

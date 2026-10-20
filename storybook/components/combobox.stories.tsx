@@ -58,7 +58,7 @@ export const Board: Story = {
       </ExampleSection>
       <ExampleSection
         title='Trigger with search'
-        description='After coss ui: a select-like trigger; the search field sits in the popup.'>
+        description='A select-like trigger; the search field sits in the popup.'>
         <ComboboxTriggerWithSearch />
       </ExampleSection>
       <ExampleSection

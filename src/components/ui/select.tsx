@@ -1,26 +1,29 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select';
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-import * as React from 'react';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 import { popupSurface } from '~/components/ui/popover';
 
 import { cn } from '~/lib/utils';
 
-/** `focus` is structural: `visible` for the trigger button itself, `within` for a
- *  wrapper whose inner input receives focus. */
+/** `focus`: `visible` for the trigger button itself, `within` for a wrapper whose inner input takes the focus. */
 export const selectTriggerVariants = cva(
-  "flex h-10 w-full items-center justify-between gap-2 px-3.5 py-1 text-control whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+  "flex w-full items-center justify-between gap-2 px-3.5 py-1 text-control whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
   {
     variants: {
       focus: {
         visible: inputSurfaceVariants({ scope: 'self' }),
         within: inputSurfaceVariants({ scope: 'within' }),
       },
+      size: {
+        default: 'h-10',
+        sm: 'h-9',
+      },
     },
     defaultVariants: {
       focus: 'visible',
+      size: 'default',
     },
   },
 );
@@ -29,8 +32,8 @@ type SelectProps<Value> = Omit<SelectPrimitive.Root.Props<Value>, 'onValueChange
   onValueChange?: (value: Value, eventDetails: SelectPrimitive.Root.ChangeEventDetails) => void;
 };
 
-/** Single-value select. Base UI reports `null` only for a null-valued item; none of our selects
- *  has one, so `onValueChange` keeps the non-null signature callers already rely on. */
+/** Single-value select. Base UI reports `null` only for a null-valued item; none of our selects has one, so
+ *  `onValueChange` takes the value without `null`. */
 function Select<Value>({ onValueChange, ...props }: SelectProps<Value>) {
   return (
     <SelectPrimitive.Root<Value>
@@ -61,15 +64,13 @@ function SelectTrigger({
   size = 'default',
   children,
   ...props
-}: SelectPrimitive.Trigger.Props & {
-  size?: 'sm' | 'default';
-}) {
+}: SelectPrimitive.Trigger.Props & Pick<VariantProps<typeof selectTriggerVariants>, 'size'>) {
   return (
     <SelectPrimitive.Trigger
       data-slot='select-trigger'
       data-size={size}
       className={cn(
-        selectTriggerVariants(),
+        selectTriggerVariants({ size }),
         'data-placeholder:text-muted-foreground *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2',
         className,
       )}
@@ -159,43 +160,25 @@ function SelectSeparator({ className, ...props }: SelectPrimitive.Separator.Prop
   );
 }
 
-function SelectScrollUpButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollUpArrow>) {
+const scrollArrowClassName =
+  "z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4";
+
+function SelectScrollUpButton() {
   return (
-    <SelectPrimitive.ScrollUpArrow
-      data-slot='select-scroll-up-button'
-      className={cn(
-        "top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      {...props}>
+    <SelectPrimitive.ScrollUpArrow data-slot='select-scroll-up-button' className={cn('top-0', scrollArrowClassName)}>
       <ChevronUpIcon />
     </SelectPrimitive.ScrollUpArrow>
   );
 }
 
-function SelectScrollDownButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollDownArrow>) {
+function SelectScrollDownButton() {
   return (
     <SelectPrimitive.ScrollDownArrow
       data-slot='select-scroll-down-button'
-      className={cn(
-        "bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      {...props}>
+      className={cn('bottom-0', scrollArrowClassName)}>
       <ChevronDownIcon />
     </SelectPrimitive.ScrollDownArrow>
   );
 }
 
-export {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-};
+export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue };

@@ -25,7 +25,7 @@ const TOWNS: ReadonlyArray<Town> = [
   { value: 'muenchen', label: 'München' },
 ];
 
-/** After coss ui: a select-like trigger; the search field sits in the popup. */
+/** A select-like trigger; the search field sits in the popup. */
 export function ComboboxTriggerWithSearch() {
   return (
     <Combobox items={TOWNS} defaultValue={TOWNS[0]} itemToStringLabel={(town: Town) => town.label}>
