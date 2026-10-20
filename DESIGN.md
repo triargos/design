@@ -231,7 +231,7 @@ button        (none) neutral/raised · intent='primary' · emphasis='ghost' · i
 text          foreground · muted-foreground · faint-foreground · disabled-foreground
 type          title 28 · heading 18 · body 14 · control 14 · caption 12 · overline 10
 spacing       tight 4 · related 8 · group 16 · card 20 · page 32 · section 48
-radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 16 · dialog 20 · panel 20 · rounded-inner
+radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · dialog 20 · panel 20 · rounded-inner
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal
 block         Card > CardHeader > CardContent [> ItemList [virtualized]]
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
