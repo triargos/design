@@ -10,7 +10,6 @@
     "build-storybook": "storybook build -o dist-storybook",
     "registry:build": "shadcn build --output public/r",
     "typecheck": "tsc",
-    "shot": "node tooling/shot/cli.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check"
   },
