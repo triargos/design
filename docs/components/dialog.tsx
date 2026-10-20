@@ -107,7 +107,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Dialog'
-      description='One modal shape: a shell with the header and footer on it, the content in a card. Dialog, alert dialog and side panel share it (components/ui/modal.ts); the touch drawer has its own.'>
+      description='One modal shape: a shell with the header and footer on it, the content in a card. Dialog, alert dialog and side panel share it; the touch drawer has its own.'>
       <ExampleSection
         title='Default'
         description='Header and footer on the shell, DialogBody is the card. A form wraps DialogBody and DialogFooter (className="contents"); submit sits in the footer.'>

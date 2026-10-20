@@ -1,5 +1,5 @@
 import { Badge } from '~/components/ui/badge';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
 
 const PAYMENTS = [
@@ -16,14 +16,14 @@ const STATUS = {
 
 const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
-/** `variant='flush'` inside InsetCardContent with overflow-hidden: the header row sits in the card. */
+/** `variant='flush'` inside CardContent with overflow-hidden: the header row sits in the card. */
 export function TableFlush() {
   return (
-    <InsetCard className='w-full max-w-2xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Invoices</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-2xl'>
+      <CardHeader>
+        <CardTitle>Invoices</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <Table variant='flush'>
           <TableHeader>
             <TableRow>
@@ -46,7 +46,7 @@ export function TableFlush() {
             ))}
           </TableBody>
         </Table>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,19 +1,9 @@
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
+import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from '~/components/ui/drawer';
-import {
-  menuContent,
-  menuIndicator,
-  menuIndicatorItem,
-  menuItem,
-  menuItemDestructive,
-  menuLabel,
-  menuSeparator,
-  menuShortcut,
-  menuSubTrigger,
-} from '~/components/ui/menu';
 
 import { useIsMobile } from '~/hooks/use-mobile';
 import { cn } from '~/lib/utils';
@@ -27,9 +17,33 @@ const CloseMenu = React.createContext<() => void>(() => {});
 /** The radio group's value, for the drawer's radio rows (Base UI's menu context is not there). */
 const MobileRadioGroup = React.createContext<{ value: string; onValueChange: (value: string) => void } | null>(null);
 
-const mobileItem =
-  'flex w-full items-center gap-2 rounded-control-lg bg-muted p-3 text-left font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/24 disabled:text-disabled-foreground [&>svg]:size-4 [&>svg]:shrink-0';
-const mobileList = 'no-scrollbar flex min-h-0 flex-col gap-2 overflow-y-auto';
+/**
+ * A row in the popup, highlighted by pointer or keyboard, `rounded-inner` 4px in. `indicator` leaves the left gutter
+ * for a check or dot. `destructive`: the row and its icon take the destructive hue; highlighted, its subtle fill.
+ */
+const menuItemVariants = cva(
+  "relative flex cursor-default items-center gap-2 rounded-inner py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      intent: {
+        neutral: '',
+        destructive:
+          'text-destructive data-highlighted:bg-destructive-subtle data-highlighted:text-destructive *:[svg]:text-destructive!',
+      },
+      indicator: { false: 'px-2.5', true: 'pr-2.5 pl-8.5' },
+    },
+    defaultVariants: { intent: 'neutral', indicator: false },
+  },
+);
+
+/** A row in the drawer below 768px: a filled button, 44px and up. */
+const drawerItemVariants = cva(
+  'flex w-full items-center gap-2 rounded-control-lg bg-muted p-3 text-left font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/24 disabled:text-disabled-foreground [&>svg]:size-4 [&>svg]:shrink-0',
+  {
+    variants: { intent: { neutral: '', destructive: 'text-destructive *:[svg]:text-destructive!' } },
+    defaultVariants: { intent: 'neutral' },
+  },
+);
 
 function DropdownMenu({
   children,
@@ -109,7 +123,7 @@ function DropdownMenuContent({
       // `className` sizes the desktop popup (`w-56`); the drawer is always full width.
       <DrawerContent className='h-max max-h-[95%] min-h-[65%] space-y-2 p-4'>
         <DrawerTitle className='sr-only'>{label}</DrawerTitle>
-        <div className={mobileList}>{children}</div>
+        <div className='no-scrollbar flex min-h-0 flex-col gap-2 overflow-y-auto'>{children}</div>
       </DrawerContent>
     );
   }
@@ -139,7 +153,14 @@ function MenuPopup({
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.Positioner className='isolate z-50 outline-none' {...position}>
-        <MenuPrimitive.Popup data-slot={slot} data-surface='popup' className={cn(menuContent, className)}>
+        <MenuPrimitive.Popup
+          data-slot={slot}
+          data-surface='popup'
+          className={cn(
+            'max-h-(--available-height) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-1 text-popover-foreground shadow-popup outline-none [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-popup)]',
+            'duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+            className,
+          )}>
           {children}
         </MenuPrimitive.Popup>
       </MenuPrimitive.Positioner>
@@ -166,13 +187,12 @@ function DropdownMenuItem({
   children,
 }: DropdownMenuItemProps) {
   const close = React.use(CloseMenu);
-  const intentClassName = intent === 'destructive' && menuItemDestructive;
   if (React.use(IsMobileMenu)) {
     return (
       <button
         type='button'
         disabled={disabled}
-        className={cn(mobileItem, intentClassName, className)}
+        className={cn(drawerItemVariants({ intent }), className)}
         onClick={(event) => {
           onClick?.(event);
           if (closeOnClick) close();
@@ -188,7 +208,7 @@ function DropdownMenuItem({
       disabled={disabled}
       closeOnClick={closeOnClick}
       onClick={onClick}
-      className={cn(menuItem, intentClassName, className)}>
+      className={cn(menuItemVariants({ intent }), className)}>
       {children}
     </MenuPrimitive.Item>
   );
@@ -220,7 +240,7 @@ function DropdownMenuCheckboxItem({
         role='checkbox'
         aria-checked={checked}
         disabled={disabled}
-        className={cn(mobileItem, className)}
+        className={cn(drawerItemVariants(), className)}
         onClick={() => {
           onCheckedChange?.(!checked);
           if (closeOnClick) close();
@@ -237,8 +257,8 @@ function DropdownMenuCheckboxItem({
       onCheckedChange={onCheckedChange}
       disabled={disabled}
       closeOnClick={closeOnClick}
-      className={cn(menuIndicatorItem, className)}>
-      <span className={menuIndicator}>
+      className={cn(menuItemVariants({ indicator: true }), className)}>
+      <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
         <MenuPrimitive.CheckboxItemIndicator>
           <CheckIcon />
         </MenuPrimitive.CheckboxItemIndicator>
@@ -297,7 +317,7 @@ function DropdownMenuRadioItem({
         role='radio'
         aria-checked={checked}
         disabled={disabled}
-        className={cn(mobileItem, className)}
+        className={cn(drawerItemVariants(), className)}
         onClick={() => {
           group?.onValueChange(value);
           if (closeOnClick) close();
@@ -313,8 +333,8 @@ function DropdownMenuRadioItem({
       value={value}
       disabled={disabled}
       closeOnClick={closeOnClick}
-      className={cn(menuIndicatorItem, className)}>
-      <span className={menuIndicator}>
+      className={cn(menuItemVariants({ indicator: true }), className)}>
+      <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
         <MenuPrimitive.RadioItemIndicator>
           <CircleIcon className='size-2 fill-current' />
         </MenuPrimitive.RadioItemIndicator>
@@ -345,7 +365,10 @@ function DropdownMenuLabel({ className, ...props }: React.ComponentProps<'div'>)
   return (
     <div
       data-slot='dropdown-menu-label'
-      className={cn(isMobile ? 'px-3 pt-1 text-body font-medium text-muted-foreground' : menuLabel, className)}
+      className={cn(
+        isMobile ? 'px-3 pt-1 text-body font-medium text-muted-foreground' : 'px-2.5 py-1.5 text-body font-medium',
+        className,
+      )}
       {...props}
     />
   );
@@ -353,13 +376,24 @@ function DropdownMenuLabel({ className, ...props }: React.ComponentProps<'div'>)
 
 function DropdownMenuSeparator({ className }: { className?: string }) {
   if (React.use(IsMobileMenu)) return <div role='separator' className={cn('mx-3 h-px bg-border', className)} />;
-  return <MenuPrimitive.Separator data-slot='dropdown-menu-separator' className={cn(menuSeparator, className)} />;
+  return (
+    <MenuPrimitive.Separator
+      data-slot='dropdown-menu-separator'
+      className={cn('-mx-1 my-1 h-px bg-border', className)}
+    />
+  );
 }
 
 /** The item's keyboard shortcut. Hidden in the drawer: a touch screen has no keyboard to press it on. */
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<'span'>) {
   if (React.use(IsMobileMenu)) return null;
-  return <span data-slot='dropdown-menu-shortcut' className={cn(menuShortcut, className)} {...props} />;
+  return (
+    <span
+      data-slot='dropdown-menu-shortcut'
+      className={cn('ml-auto text-caption tracking-widest text-faint-foreground', className)}
+      {...props}
+    />
+  );
 }
 
 /** One level of submenu: beside the menu on desktop, a drawer stacked on the menu's below 768px. */
@@ -371,14 +405,16 @@ function DropdownMenuSub({ children }: { children?: React.ReactNode }) {
 function DropdownMenuSubTrigger({ className, children }: { className?: string; children?: React.ReactNode }) {
   if (React.use(IsMobileMenu)) {
     return (
-      <DrawerTrigger className={cn(mobileItem, className)}>
+      <DrawerTrigger className={cn(drawerItemVariants(), className)}>
         {children}
         <ChevronRightIcon className='ml-auto text-muted-foreground' />
       </DrawerTrigger>
     );
   }
   return (
-    <MenuPrimitive.SubmenuTrigger data-slot='dropdown-menu-sub-trigger' className={cn(menuSubTrigger, className)}>
+    <MenuPrimitive.SubmenuTrigger
+      data-slot='dropdown-menu-sub-trigger'
+      className={cn(menuItemVariants(), 'data-popup-open:bg-foreground/6 data-popup-open:text-foreground', className)}>
       {children}
       <ChevronRightIcon className='ml-auto' />
     </MenuPrimitive.SubmenuTrigger>
@@ -394,7 +430,7 @@ function DropdownMenuSubContent({
     return (
       <DrawerContent className='h-max max-h-[95%] min-h-[55%] space-y-2 p-2'>
         <DrawerTitle className='sr-only'>{label}</DrawerTitle>
-        <div className={mobileList}>{children}</div>
+        <div className='no-scrollbar flex min-h-0 flex-col gap-2 overflow-y-auto'>{children}</div>
       </DrawerContent>
     );
   }

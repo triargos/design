@@ -2,7 +2,7 @@ import { KeyRoundIcon } from 'lucide-react';
 import { type ReactNode, useEffect, useRef } from 'react';
 
 import { CopyButton } from '~/components/ui/copy-button';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 import { CopyButtonDefault } from '../examples/copy-button/default';
@@ -111,11 +111,11 @@ export default defineDocs({
       </FoundationSection>
 
       <FoundationSection title='Usages'>
-        <InsetCard>
-          <InsetCardHeader>
-            <InsetCardTitle>In a row</InsetCardTitle>
-          </InsetCardHeader>
-          <InsetCardContent className='overflow-hidden'>
+        <Card>
+          <CardHeader>
+            <CardTitle>In a row</CardTitle>
+          </CardHeader>
+          <CardContent className='overflow-hidden'>
             <ItemList>
               <Item>
                 <ItemMedia variant='icon'>
@@ -130,8 +130,8 @@ export default defineDocs({
                 </ItemActions>
               </Item>
             </ItemList>
-          </InsetCardContent>
-        </InsetCard>
+          </CardContent>
+        </Card>
       </FoundationSection>
     </FoundationPage>
   ),

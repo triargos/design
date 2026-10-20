@@ -1,7 +1,7 @@
 import { IntlDateDay } from '../examples/intl-date/day';
 import { IntlDateDefault } from '../examples/intl-date/default';
 import { IntlDateLocale } from '../examples/intl-date/locale';
-import { IntlDateRangeExample } from '../examples/intl-date/range';
+import { IntlDateRange } from '../examples/intl-date/range';
 import { IntlDateRelative } from '../examples/intl-date/relative';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -36,7 +36,7 @@ export default defineDocs({
         title='Relative'
         description={
           <>
-            <Code>RelativeIntlDate</Code>: the exact moment in a tooltip.
+            <Code>relative</Code>: the exact moment in a tooltip.
           </>
         }>
         <IntlDateRelative />
@@ -45,10 +45,10 @@ export default defineDocs({
         title='Range'
         description={
           <>
-            <Code>IntlDateRange</Code>: shared parts said once.
+            <Code>end</Code>: a range, shared parts said once.
           </>
         }>
-        <IntlDateRangeExample />
+        <IntlDateRange />
       </ExampleSection>
       <ExampleSection
         title='Locale'

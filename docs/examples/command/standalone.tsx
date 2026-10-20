@@ -1,16 +1,16 @@
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '~/components/ui/command';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 const WORKSPACES = ['Acme', 'Globex', 'Initech', 'Umbrella'];
 
 /** Inline in a card: a filterable list without a popup. */
 export function CommandStandalone() {
   return (
-    <InsetCard className='w-full max-w-md'>
-      <InsetCardHeader>
-        <InsetCardTitle>Switch workspace</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-md'>
+      <CardHeader>
+        <CardTitle>Switch workspace</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <Command>
           <CommandInput placeholder='Search workspaces' />
           <CommandList>
@@ -20,7 +20,7 @@ export function CommandStandalone() {
             ))}
           </CommandList>
         </Command>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

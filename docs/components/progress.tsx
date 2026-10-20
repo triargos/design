@@ -10,7 +10,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Progress'
-      description='Known progress, like an upload: a 4px track in the muted fill, the brand fill for what is done. For unknown progress, Loader or Skeleton.'>
+      description='Known progress, like an upload: a 4px track in the muted fill, the brand fill for what is done. For unknown progress, Spinner or Skeleton.'>
       <ExampleSection title='Default'>
         <ProgressDefault />
       </ExampleSection>

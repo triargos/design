@@ -24,7 +24,7 @@ export default defineDocs({
         title='Range'
         description={
           <>
-            <Code>RangeCalendar</Code>: the first click sets the start, the second the end.
+            <Code>mode='range'</Code>: the first click sets the start, the second the end.
           </>
         }>
         <CalendarRange />

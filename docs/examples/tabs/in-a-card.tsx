@@ -1,13 +1,13 @@
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 export function TabsInACard() {
   return (
-    <InsetCard className='w-full max-w-md'>
-      <InsetCardHeader>
-        <InsetCardTitle>Website redesign</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='p-group'>
+    <Card className='w-full max-w-md'>
+      <CardHeader>
+        <CardTitle>Website redesign</CardTitle>
+      </CardHeader>
+      <CardContent className='p-group'>
         <Tabs defaultValue='details'>
           <TabsList variant='underline'>
             <TabsTrigger value='details'>Details</TabsTrigger>
@@ -24,7 +24,7 @@ export function TabsInACard() {
             Created on March 12.
           </TabsContent>
         </Tabs>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

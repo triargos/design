@@ -8,7 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '~/components/ui/chart';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 const SERIES = [
   { key: 'engineering', label: 'Engineering', color: 'var(--chart-1)' },
@@ -33,11 +33,11 @@ const DATA = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'].map((month, index) => ({
 
 export function ChartLine() {
   return (
-    <InsetCard className='w-full max-w-2xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Tasks closed</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='p-group'>
+    <Card className='w-full max-w-2xl'>
+      <CardHeader>
+        <CardTitle>Tasks closed</CardTitle>
+      </CardHeader>
+      <CardContent className='p-group'>
         <ChartContainer config={config} className='aspect-auto h-56 w-full'>
           <LineChart data={DATA} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
@@ -62,7 +62,7 @@ export function ChartLine() {
             <ChartLegend content={<ChartLegendContent />} />
           </LineChart>
         </ChartContainer>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

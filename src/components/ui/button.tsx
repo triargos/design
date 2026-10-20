@@ -4,7 +4,7 @@ import { AnimatePresence, motion, type Transition, useReducedMotion } from 'fram
 import * as React from 'react';
 
 import { type Emphasis, type Intent, intentVariants } from '~/components/ui/intent-variants';
-import { Loader } from '~/components/ui/loader';
+import { Spinner } from '~/components/ui/spinner';
 
 import { cn } from '~/lib/utils';
 
@@ -13,8 +13,7 @@ import { cn } from '~/lib/utils';
  * `neutral`/`raised`, every ordinary action. `intent='primary'` is the one main action, `emphasis='ghost'` a header,
  * row or toolbar action, `intent='destructive'` an irreversible action inside its confirmation or a danger zone, and
  * `intent='destructive' emphasis='subtle'` a destructive action that opens its confirmation. `emphasis` defaults to
- * `raised` for `neutral` and to `solid` for every other intent. A button that looks like a field is `PickerTrigger`; a
- * text link is a link.
+ * `raised` for `neutral` and to `solid` for every other intent. A text link is a link, not a button.
  */
 const buttonShape = cva(
   [
@@ -167,7 +166,7 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
               animate={{ opacity: 1, y: 0 }}
               exit={below}
               transition={pendingSwap}>
-              <Loader size={LOADER_SIZE[size]} />
+              <Spinner size={LOADER_SIZE[size]} />
             </motion.span>
           )}
         </AnimatePresence>

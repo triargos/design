@@ -15,7 +15,7 @@ import { Button } from '~/components/ui/button';
 import { CopyButton } from '~/components/ui/copy-button';
 import { Field, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
 const NAME = 'Website redesign';
@@ -29,11 +29,11 @@ export function DangerZoneDefault() {
   const inputId = useId();
   const [value, setValue] = useState('');
   return (
-    <InsetCard intent='destructive' className='w-full max-w-2xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Danger zone</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card intent='destructive' className='w-full max-w-2xl'>
+      <CardHeader>
+        <CardTitle>Danger zone</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <ItemList>
           <Item>
             <ItemContent>
@@ -90,7 +90,7 @@ export function DangerZoneDefault() {
             </ItemActions>
           </Item>
         </ItemList>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

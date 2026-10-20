@@ -201,29 +201,33 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
   return <li data-slot='sidebar-menu-item' className={cn('relative', className)} {...props} />;
 }
 
-/** Shared by menu buttons and sub-buttons: the row's shape, its hover and press fills, and the raised current row. */
-const sidebarRowClasses = cn(
-  'flex items-center gap-2 overflow-hidden rounded-xl px-3 text-body outline-hidden focus-visible:ring-3 focus-visible:ring-ring/24 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
-  'hover:bg-black/5 hover:text-sidebar-accent-foreground active:bg-black/10 active:text-sidebar-accent-foreground dark:hover:bg-white/5 dark:active:bg-white/10',
-  'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
-  'aria-[current=page]:bg-background aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground aria-[current=page]:shadow-[0_0_0_1px_rgb(0_0_0/0.03),0_1px_2px_rgb(0_0_0/0.04),0_2px_4px_rgb(0_0_0/0.03)] aria-[current=page]:hover:bg-background dark:aria-[current=page]:bg-foreground/10 dark:aria-[current=page]:hover:bg-foreground/10',
-);
-
+/**
+ * A menu row: its shape, its hover and press fills, and the raised current row. `level='sub'` is a nested link row,
+ * 28px and hidden while the sidebar is collapsed to icons.
+ */
 const sidebarMenuButtonVariants = cva(
   [
-    sidebarRowClasses,
-    'h-8 w-full py-2 text-left transition-[width,height,padding] group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
-    'data-popup-open:hover:bg-black/5 data-popup-open:hover:text-sidebar-accent-foreground dark:data-popup-open:hover:bg-white/5',
+    'flex items-center gap-2 overflow-hidden rounded-xl px-3 text-body outline-hidden focus-visible:ring-3 focus-visible:ring-ring/24 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+    'hover:bg-black/5 hover:text-sidebar-accent-foreground active:bg-black/10 active:text-sidebar-accent-foreground dark:hover:bg-white/5 dark:active:bg-white/10',
+    'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
+    'aria-[current=page]:bg-background aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground aria-[current=page]:shadow-[0_0_0_1px_rgb(0_0_0/0.03),0_1px_2px_rgb(0_0_0/0.04),0_2px_4px_rgb(0_0_0/0.03)] aria-[current=page]:hover:bg-background dark:aria-[current=page]:bg-foreground/10 dark:aria-[current=page]:hover:bg-foreground/10',
   ],
   {
     variants: {
+      level: {
+        item: [
+          'h-8 w-full py-2 text-left transition-[width,height,padding] group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
+          'data-popup-open:hover:bg-black/5 data-popup-open:hover:text-sidebar-accent-foreground dark:data-popup-open:hover:bg-white/5',
+        ],
+        sub: 'h-7 min-w-0 text-sidebar-foreground group-data-[collapsible=icon]:hidden',
+      },
       emphasis: {
         ghost: '',
         outline:
           'bg-background shadow-[0_0_0_1px_var(--sidebar-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--sidebar-accent)]',
       },
     },
-    defaultVariants: { emphasis: 'ghost' },
+    defaultVariants: { level: 'item', emphasis: 'ghost' },
   },
 );
 
@@ -295,11 +299,7 @@ function SidebarMenuSubButton({
     props: mergeProps<'a'>(
       {
         'aria-current': current ? 'page' : undefined,
-        className: cn(
-          sidebarRowClasses,
-          'h-7 min-w-0 text-sidebar-foreground group-data-[collapsible=icon]:hidden',
-          className,
-        ),
+        className: cn(sidebarMenuButtonVariants({ level: 'sub' }), className),
         onClick: () => setOpenMobile(false),
       },
       props,

@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 const MEMBERS = [
@@ -20,22 +20,22 @@ const MEMBERS = [
 ] as const;
 
 /**
- * Every list on a page: `InsetCardContent className='overflow-hidden'` around an `ItemList`. The header holds the
+ * Every list on a page: `CardContent className='overflow-hidden'` around an `ItemList`. The header holds the
  * add action; each row ends in a status and a ghost menu, on one column with the header action.
  */
 export function ListInCardDefault() {
   return (
-    <InsetCard className='w-full max-w-2xl'>
-      <InsetCardHeader
+    <Card className='w-full max-w-2xl'>
+      <CardHeader
         actions={
           <Button emphasis='ghost' size='xs'>
             <PlusIcon data-icon='inline-start' />
             Invite
           </Button>
         }>
-        <InsetCardTitle>Members</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+        <CardTitle>Members</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <ItemList>
           {MEMBERS.map((member) => (
             <Item key={member.email}>
@@ -73,7 +73,7 @@ export function ListInCardDefault() {
             </Item>
           ))}
         </ItemList>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

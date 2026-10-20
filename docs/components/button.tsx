@@ -2,10 +2,9 @@ import { ArrowRightIcon, MoreHorizontalIcon, PencilIcon, PlusIcon } from 'lucide
 import { type ReactNode } from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle, cardSurface } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { EMPHASES, INTENTS } from '~/components/ui/intent-variants';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
-import { popupSurface } from '~/components/ui/popover';
 
 import { cn } from '~/lib/utils';
 
@@ -280,10 +279,13 @@ export default defineDocs({
           <SurfaceSample label='shell' className='bg-shell'>
             <SurfaceColumn />
           </SurfaceSample>
-          <SurfaceSample label='card' surface='card' className={cardSurface}>
+          <SurfaceSample label='card' surface='card' className='border border-(--edge) bg-card bg-clip-padding'>
             <SurfaceColumn />
           </SurfaceSample>
-          <SurfaceSample label='popup' surface='popup' className={popupSurface}>
+          <SurfaceSample
+            label='popup'
+            surface='popup'
+            className='rounded-popup bg-popover text-popover-foreground shadow-popup'>
             <SurfaceColumn />
           </SurfaceSample>
         </div>
@@ -299,16 +301,16 @@ export default defineDocs({
             <Button>Keep</Button>
             <Button intent='destructive'>Delete forever</Button>
           </Preview>
-          <InsetCard>
-            <InsetCardHeader
+          <Card>
+            <CardHeader
               actions={
                 <Button emphasis='ghost' size='icon-sm' aria-label='Edit'>
                   <PencilIcon />
                 </Button>
               }>
-              <InsetCardTitle>Card header action</InsetCardTitle>
-            </InsetCardHeader>
-            <InsetCardContent className='overflow-hidden'>
+              <CardTitle>Card header action</CardTitle>
+            </CardHeader>
+            <CardContent className='overflow-hidden'>
               <ItemList>
                 <Item className='px-4'>
                   <ItemContent>
@@ -322,8 +324,8 @@ export default defineDocs({
                   </ItemActions>
                 </Item>
               </ItemList>
-            </InsetCardContent>
-          </InsetCard>
+            </CardContent>
+          </Card>
           <Preview title='Danger zone' className='justify-between'>
             <span className='text-body text-muted-foreground'>Delete the workspace and all its data</span>
             <Button intent='destructive' size='sm'>

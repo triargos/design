@@ -2,7 +2,7 @@ import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 import { CheckIcon } from 'lucide-react';
 
-import { selectionControlSurface } from '~/components/ui/checkbox';
+import { selectionControlVariants } from '~/components/ui/checkbox';
 
 import { cn } from '~/lib/utils';
 
@@ -11,15 +11,14 @@ function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
 }
 
 /**
- * The `Checkbox` surface as a circle. A 1px ring antialiases lighter on a curve than on a square, so the rim is a
- * stronger color (`foreground/24`), not a wider ring: a fractional width (1.5px) blurs into a lopsided band in Safari
- * at 1x. Checked: the brand fill and a 6px dot that scales in and out; with reduced motion it only fades.
+ * The `Checkbox` surface as a circle. Checked: the brand fill and a 6px dot that scales in and out; with reduced motion
+ * it only fades.
  */
 function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
   return (
     <RadioPrimitive.Root
       data-slot='radio-group-item'
-      className={cn(selectionControlSurface, 'rounded-full inset-ring-foreground/24', className)}
+      className={cn(selectionControlVariants({ shape: 'round' }), className)}
       {...props}>
       <RadioPrimitive.Indicator
         data-slot='radio-group-indicator'

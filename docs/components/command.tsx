@@ -11,7 +11,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Command'
-      description='A filterable list of commands (cmdk): the palette in a dialog, or a list inline. For picking a value in a form, Search Select.'>
+      description='A filterable list of commands (cmdk): the palette in a dialog, or a list inline. For picking a value in a form, Combobox.'>
       <ExampleSection
         title='Default'
         description={

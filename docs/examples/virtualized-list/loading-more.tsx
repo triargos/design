@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemTitle } from '~/components/ui/item';
 import { VirtualizedList } from '~/components/ui/virtualized-list';
 
@@ -25,13 +25,13 @@ export function VirtualizedListLoadingMore() {
     }, 800);
   };
   return (
-    <InsetCard className='w-full max-w-md'>
-      <InsetCardHeader>
-        <InsetCardTitle>
+    <Card className='w-full max-w-md'>
+      <CardHeader>
+        <CardTitle>
           {items.length} of {TOTAL} invoices
-        </InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <VirtualizedList
           className='h-80'
           items={items}
@@ -48,7 +48,7 @@ export function VirtualizedListLoadingMore() {
             </Item>
           )}
         />
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

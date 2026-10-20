@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
-import { DateInput } from '~/components/ui/date-input';
+import { DateInput, TimeInput } from '~/components/ui/date-input';
 import { Field, FieldGroup, FieldLabel } from '~/components/ui/field';
-import { TimeInput } from '~/components/ui/time-input';
 
 export function DateInputInAForm() {
   const [date, setDate] = useState('2025-03-14');

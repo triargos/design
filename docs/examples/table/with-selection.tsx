@@ -2,7 +2,7 @@ import { createColumnHelper, rowSelectionFeature, tableFeatures, useTable } from
 
 import { Badge } from '~/components/ui/badge';
 import { Checkbox } from '~/components/ui/checkbox';
-import { InsetCard } from '~/components/ui/inset-card';
+import { Card } from '~/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
 
 interface Payment {
@@ -73,7 +73,7 @@ export function TableWithSelection() {
     (state) => ({ rowSelection: state.rowSelection }),
   );
   return (
-    <InsetCard className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -98,6 +98,6 @@ export function TableWithSelection() {
           ))}
         </TableBody>
       </Table>
-    </InsetCard>
+    </Card>
   );
 }

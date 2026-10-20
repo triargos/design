@@ -2,7 +2,7 @@ import { MoreHorizontalIcon } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { InsetCard, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardHeader, CardTitle } from '~/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
 
 const PAYMENTS = [
@@ -19,18 +19,18 @@ const STATUS = {
 
 const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
-/** InsetCardHeader above the table; no footer, so the shell shows as a 4px rim below the body. */
+/** CardHeader above the table; no footer, so the shell shows as a 4px rim below the body. */
 export function TableWithHeader() {
   return (
-    <InsetCard className='w-full max-w-2xl'>
-      <InsetCardHeader
+    <Card className='w-full max-w-2xl'>
+      <CardHeader
         actions={
           <Button emphasis='ghost' size='icon-xs' aria-label='More'>
             <MoreHorizontalIcon />
           </Button>
         }>
-        <InsetCardTitle>Invoices</InsetCardTitle>
-      </InsetCardHeader>
+        <CardTitle>Invoices</CardTitle>
+      </CardHeader>
       <Table variant='card'>
         <TableHeader>
           <TableRow>
@@ -53,6 +53,6 @@ export function TableWithHeader() {
           ))}
         </TableBody>
       </Table>
-    </InsetCard>
+    </Card>
   );
 }

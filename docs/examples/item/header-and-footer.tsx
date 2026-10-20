@@ -1,16 +1,16 @@
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemFooter, ItemHeader, ItemList, ItemTitle } from '~/components/ui/item';
 
 /** `ItemHeader` and `ItemFooter` span the full width. */
 export function ItemHeaderAndFooter() {
   return (
-    <InsetCard className='w-full max-w-xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Review requests</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-xl'>
+      <CardHeader>
+        <CardTitle>Review requests</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <ItemList>
           <Item>
             <ItemHeader>
@@ -27,7 +27,7 @@ export function ItemHeaderAndFooter() {
             </ItemFooter>
           </Item>
         </ItemList>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

@@ -14,13 +14,7 @@ import {
 
 import { Button } from '~/components/ui/button';
 import { CopyButton } from '~/components/ui/copy-button';
-import {
-  InsetCard,
-  InsetCardContent,
-  InsetCardFooter,
-  InsetCardHeader,
-  InsetCardTitle,
-} from '~/components/ui/inset-card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 
 import { cn } from '~/lib/utils';
 
@@ -160,17 +154,15 @@ export function Preview({
     );
   }
   return (
-    <InsetCard data-slot='preview' data-title={title} className='min-w-0'>
+    <Card data-slot='preview' data-title={title} className='min-w-0'>
       {title !== undefined && (
-        <InsetCardHeader className='py-2'>
-          <InsetCardTitle className='text-caption text-muted-foreground'>{title}</InsetCardTitle>
-        </InsetCardHeader>
+        <CardHeader className='py-2'>
+          <CardTitle className='text-caption text-muted-foreground'>{title}</CardTitle>
+        </CardHeader>
       )}
-      <InsetCardContent className={cn('flex flex-wrap items-center gap-related p-group', className)}>
-        {children}
-      </InsetCardContent>
+      <CardContent className={cn('flex flex-wrap items-center gap-related p-group', className)}>{children}</CardContent>
       {footer}
-    </InsetCard>
+    </Card>
   );
 }
 
@@ -206,7 +198,7 @@ export function ExampleCode({ section }: { section: string }) {
         </Button>
         <CopyButton value={source} label='Copy code' size='icon-xs' />
       </div>
-      <InsetCardFooter show={open} className='px-0 pt-1'>
+      <CardFooter show={open} className='px-0 pt-1'>
         <pre
           id={codeId}
           tabIndex={0}
@@ -214,7 +206,7 @@ export function ExampleCode({ section }: { section: string }) {
           className='max-h-120 overflow-auto rounded-inner border border-(--edge) bg-card p-group font-mono text-caption text-foreground'>
           <code>{source}</code>
         </pre>
-      </InsetCardFooter>
+      </CardFooter>
     </div>
   );
 }
@@ -266,9 +258,9 @@ export function ExampleSection({
 /** Labelled `SpecimenRow`s in one card, separated by hairlines. */
 export function SpecimenList({ children }: { children: ReactNode }) {
   return (
-    <InsetCard>
-      <InsetCardContent className='flex flex-col overflow-hidden'>{children}</InsetCardContent>
-    </InsetCard>
+    <Card>
+      <CardContent className='flex flex-col overflow-hidden'>{children}</CardContent>
+    </Card>
   );
 }
 
@@ -362,8 +354,8 @@ export function Matrix({
   const labelFont = useLabelFont();
   const grid = { gridTemplateColumns: `8rem repeat(${columns.length}, minmax(${columnWidth}, 1fr))` };
   return (
-    <InsetCard>
-      <InsetCardContent className='overflow-x-auto'>
+    <Card>
+      <CardContent className='overflow-x-auto'>
         <div className='grid min-w-fit items-center gap-x-related' style={grid}>
           <span />
           {columns.map((column) => (
@@ -388,8 +380,8 @@ export function Matrix({
             </div>
           ))}
         </div>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }
 

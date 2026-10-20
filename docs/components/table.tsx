@@ -20,8 +20,8 @@ export default defineDocs({
         title='In a card'
         description={
           <>
-            <Code>variant='card'</Code> straight in an InsetCard, in place of InsetCardContent: header and footer rows
-            sit on the shell, the body is the card.
+            <Code>variant='card'</Code> straight in an Card, in place of CardContent: header and footer rows sit on the
+            shell, the body is the card.
           </>
         }
         bare>
@@ -29,7 +29,7 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='With header'
-        description='InsetCardHeader above the table; no footer, so the shell shows as a 4px rim below the body.'
+        description='CardHeader above the table; no footer, so the shell shows as a 4px rim below the body.'
         bare>
         <TableWithHeader />
       </ExampleSection>
@@ -37,8 +37,8 @@ export default defineDocs({
         title='Flush'
         description={
           <>
-            <Code>variant='flush'</Code> inside InsetCardContent with overflow-hidden: the header row sits in the card;
-            first and last column on the card title’s edge.
+            <Code>variant='flush'</Code> inside CardContent with overflow-hidden: the header row sits in the card; first
+            and last column on the card title’s edge.
           </>
         }
         bare>
@@ -55,7 +55,7 @@ export default defineDocs({
         bare>
         <TableWithSelection />
       </ExampleSection>
-      <ExampleSection title='Empty' description='One cell over every column holds an EmptyState.' bare>
+      <ExampleSection title='Empty' description='One cell over every column holds an Empty.' bare>
         <TableEmpty />
       </ExampleSection>
     </FoundationPage>

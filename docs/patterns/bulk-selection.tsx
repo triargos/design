@@ -9,7 +9,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Bulk Selection'
-      description='Select rows, act on all of them: a checkbox column with select-all in a card table, and a Bottom Float Menu with the count, clear and the actions while anything is selected.'>
+      description='Select rows, act on all of them: a checkbox column with select-all in a card table, and a bar with the count, the actions and clear while anything is selected. Deleting asks in an Alert Dialog.'>
       <ExampleSection title='Default' bare>
         <BulkSelectionDefault />
       </ExampleSection>

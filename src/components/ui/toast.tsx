@@ -1,5 +1,6 @@
 import { Toast } from '@base-ui/react/toast';
 import { CircleAlertIcon, CircleCheckIcon, InfoIcon, LoaderCircleIcon, TriangleAlertIcon } from 'lucide-react';
+import { cva } from 'class-variance-authority';
 import type { ReactNode } from 'react';
 
 import { buttonVariants } from '~/components/ui/button';
@@ -23,43 +24,51 @@ type ToastType = keyof typeof TOAST_ICONS;
 
 const isToastType = (type: string | undefined): type is ToastType => type !== undefined && type in TOAST_ICONS;
 
-/** Two class names per animation that alternate, so every upsert restarts the keyframes: [odd, even]. */
-const UPSERT_REPLAY = {
-  error: ['animate-toast-error-odd', 'animate-toast-error-even'],
-  other: ['animate-toast-success-odd', 'animate-toast-success-even'],
-} as const;
-
-function upsertReplayClassName({ type, updateKey = 0 }: { type?: string | undefined; updateKey?: number | undefined }) {
-  if (updateKey <= 0) return undefined;
-  const [odd, even] = UPSERT_REPLAY[type === 'error' ? 'error' : 'other'];
-  return `${updateKey % 2 === 0 ? even : odd} motion-reduce:animate-none`;
-}
-
-const toastRootClassName = [
-  'absolute right-0 bottom-0 left-auto top-auto z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full origin-[50%_calc(50%+50%*min(var(--toast-index,0),1))] rounded-popup text-popover-foreground shadow-popup select-none',
-  // Toasts behind the front one darken a step each; expanded, they all take the popup fill.
-  'bg-[color-mix(in_srgb,var(--popover),black_calc(1%*max(0,var(--toast-index,0))))] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),black_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover',
-  '[transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s]',
-  // Gap fill, so hovering between expanded toasts keeps them expanded
-  'after:absolute after:bottom-full after:left-0 after:h-[calc(var(--toast-gap)+1px)] after:w-full',
-  '[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-gap:--spacing(3)] [--toast-peek:--spacing(3)] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]',
-  '[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--toast-gap)*-1+var(--toast-swipe-movement-y))]',
-  // Stacked
-  'transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--toast-peek))-(var(--toast-shrink)*var(--toast-calc-height))))_scale(var(--toast-scale))]',
-  'data-limited:opacity-0',
-  // Expanded
-  'data-expanded:h-(--toast-height)',
-  'data-expanded:transform-[translateX(var(--toast-swipe-movement-x))_translateY(var(--toast-calc-offset-y))]',
-  // Enter
-  'motion-safe:data-starting-style:transform-[translateY(calc(100%+var(--toast-inset)))]',
-  'data-ending-style:opacity-0',
-  // Reduced motion: fade in and out in place
-  'motion-reduce:[transition:opacity_.5s,height_.15s,background-color_.5s] motion-reduce:data-starting-style:opacity-0',
-  // Exit: down, or the way it was swiped
-  'motion-safe:data-ending-style:not-data-limited:not-data-swipe-direction:transform-[translateY(calc(100%+var(--toast-inset)))]',
-  'data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+100%+var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]',
-  'data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]',
-].join(' ');
+/**
+ * A toast in the stack. Behind the front one, each darkens a step and peeks out; expanded, they spread out. `replay`
+ * alternates between two class names per animation, so every upsert restarts the keyframes: a pulse, or a shake for an
+ * error.
+ */
+const toastVariants = cva(
+  [
+    'absolute right-0 bottom-0 left-auto top-auto z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full origin-[50%_calc(50%+50%*min(var(--toast-index,0),1))] rounded-popup text-popover-foreground shadow-popup select-none',
+    // Toasts behind the front one darken a step each; expanded, they all take the popup fill.
+    'bg-[color-mix(in_srgb,var(--popover),black_calc(1%*max(0,var(--toast-index,0))))] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),black_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover',
+    '[transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s]',
+    // Gap fill, so hovering between expanded toasts keeps them expanded
+    'after:absolute after:bottom-full after:left-0 after:h-[calc(var(--toast-gap)+1px)] after:w-full',
+    '[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-gap:--spacing(3)] [--toast-peek:--spacing(3)] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]',
+    '[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--toast-gap)*-1+var(--toast-swipe-movement-y))]',
+    // Stacked
+    'transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--toast-peek))-(var(--toast-shrink)*var(--toast-calc-height))))_scale(var(--toast-scale))]',
+    'data-limited:opacity-0',
+    // Expanded
+    'data-expanded:h-(--toast-height)',
+    'data-expanded:transform-[translateX(var(--toast-swipe-movement-x))_translateY(var(--toast-calc-offset-y))]',
+    // Enter
+    'motion-safe:data-starting-style:transform-[translateY(calc(100%+var(--toast-inset)))]',
+    'data-ending-style:opacity-0',
+    // Reduced motion: fade in and out in place
+    'motion-reduce:[transition:opacity_.5s,height_.15s,background-color_.5s] motion-reduce:data-starting-style:opacity-0',
+    // Exit: down, or the way it was swiped
+    'motion-safe:data-ending-style:not-data-limited:not-data-swipe-direction:transform-[translateY(calc(100%+var(--toast-inset)))]',
+    'data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+100%+var(--toast-inset)))_translateY(var(--toast-calc-offset-y))]',
+    'data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+100%+var(--toast-inset)))]',
+  ],
+  {
+    variants: {
+      replay: { none: '', odd: 'motion-reduce:animate-none', even: 'motion-reduce:animate-none' },
+      kind: { error: '', other: '' },
+    },
+    compoundVariants: [
+      { replay: 'odd', kind: 'error', className: 'animate-toast-error-odd' },
+      { replay: 'even', kind: 'error', className: 'animate-toast-error-even' },
+      { replay: 'odd', kind: 'other', className: 'animate-toast-success-odd' },
+      { replay: 'even', kind: 'other', className: 'animate-toast-success-even' },
+    ],
+    defaultVariants: { replay: 'none', kind: 'other' },
+  },
+);
 
 function Toasts({ container }: Pick<ToastProviderProps, 'container'>) {
   const { toasts } = Toast.useToastManager();
@@ -74,7 +83,10 @@ function Toasts({ container }: Pick<ToastProviderProps, 'container'>) {
           return (
             <Toast.Root
               key={item.id}
-              className={cn(toastRootClassName, upsertReplayClassName(item))}
+              className={toastVariants({
+                replay: !item.updateKey ? 'none' : item.updateKey % 2 === 0 ? 'even' : 'odd',
+                kind: item.type === 'error' ? 'error' : 'other',
+              })}
               data-slot='toast'
               swipeDirection={['right', 'down']}
               toast={item}>

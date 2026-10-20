@@ -7,18 +7,8 @@ import useMeasure from 'react-use-measure';
 
 import { cn } from '~/lib/utils';
 
-// The hairline stops at the row padding (`group`), so it lines up with the row content instead of running into the
-// card's rounded edge. Row padding targets direct item children, so it sits on the inner measure wrapper.
-const itemListRowClasses = cn(
-  '[&>[data-slot=item]]:px-group',
-  '[&>[data-slot=item]:not(:last-child)]:relative',
-  '[&>[data-slot=item]:not(:last-child)]:after:absolute [&>[data-slot=item]:not(:last-child)]:after:bottom-0',
-  '[&>[data-slot=item]:not(:last-child)]:after:h-px [&>[data-slot=item]:not(:last-child)]:after:bg-border-subtle',
-  '[&>[data-slot=item]:not(:last-child)]:after:right-group [&>[data-slot=item]:not(:last-child)]:after:left-group',
-);
-
 /**
- * Rows that run to the card's edge, hairlines between them: put it in `InsetCardContent className='overflow-hidden'`.
+ * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-hidden'`.
  * Springs its height when rows come and go.
  */
 function ItemList({ className, children }: { className?: string; children?: React.ReactNode }) {
@@ -37,15 +27,22 @@ function ItemList({ className, children }: { className?: string; children?: Reac
         damping: 55,
         mass: 0.4,
       }}>
-      <div ref={measureRef} className={itemListRowClasses}>
+      {/* The hairline stops at the row padding (`group`), so it lines up with the row content instead of running into
+          the card's rounded edge. Row padding targets direct item children, so it sits on this measured wrapper. */}
+      <div
+        ref={measureRef}
+        className={cn(
+          '[&>[data-slot=item]]:px-group',
+          '[&>[data-slot=item]:not(:last-child)]:relative',
+          '[&>[data-slot=item]:not(:last-child)]:after:absolute [&>[data-slot=item]:not(:last-child)]:after:bottom-0',
+          '[&>[data-slot=item]:not(:last-child)]:after:h-px [&>[data-slot=item]:not(:last-child)]:after:bg-border-subtle',
+          '[&>[data-slot=item]:not(:last-child)]:after:right-group [&>[data-slot=item]:not(:last-child)]:after:left-group',
+        )}>
         {children}
       </div>
     </motion.div>
   );
 }
-
-const itemClassName =
-  'group/item flex w-full flex-wrap items-center gap-2.5 rounded-control-lg border border-transparent px-3 py-2.5 text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover';
 
 /**
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
@@ -61,7 +58,15 @@ function Item({
     defaultTagName: 'div',
     render,
     state: { slot: 'item', selected },
-    props: mergeProps<'div'>({ className: cn(itemClassName, className) }, props),
+    props: mergeProps<'div'>(
+      {
+        className: cn(
+          'group/item flex w-full flex-wrap items-center gap-2.5 rounded-control-lg border border-transparent px-3 py-2.5 text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
+          className,
+        ),
+      },
+      props,
+    ),
   });
 }
 
@@ -133,15 +138,26 @@ function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot='item-actions' className={cn('flex items-center gap-related', className)} {...props} />;
 }
 
-/** A full-width line above or below the row's media and content (the row wraps). */
-const itemEdgeRow = 'flex basis-full items-center justify-between gap-2';
-
+/** A full-width line above the row's media and content (the row wraps). */
 function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='item-header' className={cn(itemEdgeRow, className)} {...props} />;
+  return (
+    <div
+      data-slot='item-header'
+      className={cn('flex basis-full items-center justify-between gap-2', className)}
+      {...props}
+    />
+  );
 }
 
+/** A full-width line below the row's media and content. */
 function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='item-footer' className={cn(itemEdgeRow, className)} {...props} />;
+  return (
+    <div
+      data-slot='item-footer'
+      className={cn('flex basis-full items-center justify-between gap-2', className)}
+      {...props}
+    />
+  );
 }
 
 export { Item, ItemList, ItemMedia, ItemContent, ItemActions, ItemTitle, ItemDescription, ItemHeader, ItemFooter };

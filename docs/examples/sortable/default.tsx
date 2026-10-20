@@ -17,7 +17,7 @@ import { MoreHorizontalIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemActions, ItemContent, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 import { SortableItem, SortableItemHandle } from '~/components/ui/sortable';
 import { StatusDot } from '~/components/ui/status-dot';
@@ -50,11 +50,11 @@ export function SortableDefault() {
     );
   };
   return (
-    <InsetCard className='w-full max-w-xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Task statuses</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-xl'>
+      <CardHeader>
+        <CardTitle>Task statuses</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <DndContext id='sortable-statuses' sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
           <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
             <ItemList>
@@ -80,7 +80,7 @@ export function SortableDefault() {
             </ItemList>
           </SortableContext>
         </DndContext>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

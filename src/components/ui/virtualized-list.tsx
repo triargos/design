@@ -1,7 +1,7 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
-import { Loader } from '~/components/ui/loader';
+import { Spinner } from '~/components/ui/spinner';
 
 import { cn } from '~/lib/utils';
 
@@ -95,7 +95,7 @@ export function VirtualizedList<T>({
 
       {isLoadingMore && (
         <div className='flex justify-center py-4'>
-          <Loader className='text-muted-foreground' size={20} />
+          <Spinner className='text-muted-foreground' size={20} />
         </div>
       )}
     </div>

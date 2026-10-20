@@ -4,18 +4,6 @@ import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-const withinSurface = [
-  'focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/24 focus-within:shadow-none',
-  'has-aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
-  'focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 dark:focus-within:has-aria-invalid:ring-destructive/24',
-  // The wrapper itself may carry `aria-invalid` (`ComboboxChips`).
-  'aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
-  'focus-within:aria-invalid:border-destructive/64 focus-within:aria-invalid:ring-destructive/16 dark:focus-within:aria-invalid:ring-destructive/24',
-  'has-[[readonly],[data-readonly]]:text-muted-foreground has-[[readonly],[data-readonly]]:shadow-field-flat',
-  'has-[[readonly],[data-readonly]]:focus-within:border-transparent has-[[readonly],[data-readonly]]:focus-within:shadow-field-flat has-[[readonly],[data-readonly]]:focus-within:ring-0',
-  'has-disabled:bg-disabled has-disabled:text-disabled-foreground has-disabled:shadow-field-flat',
-];
-
 /**
  * `scope` is structural:
  * - `self`: the focusable control itself; an open popup trigger (`aria-expanded`) shows the focus ring.
@@ -56,23 +44,23 @@ export const inputSurfaceVariants = cva(
           'has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:text-muted-foreground has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:shadow-field-flat',
           'has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:border-transparent has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:shadow-field-flat has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:ring-0',
         ],
-        within: withinSurface,
+        within: [
+          'focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/24 focus-within:shadow-none',
+          'has-aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
+          'focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 dark:focus-within:has-aria-invalid:ring-destructive/24',
+          // The wrapper itself may carry `aria-invalid` (`ComboboxChips`).
+          'aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
+          'focus-within:aria-invalid:border-destructive/64 focus-within:aria-invalid:ring-destructive/16 dark:focus-within:aria-invalid:ring-destructive/24',
+          'has-[[readonly],[data-readonly]]:text-muted-foreground has-[[readonly],[data-readonly]]:shadow-field-flat',
+          'has-[[readonly],[data-readonly]]:focus-within:border-transparent has-[[readonly],[data-readonly]]:focus-within:shadow-field-flat has-[[readonly],[data-readonly]]:focus-within:ring-0',
+          'has-disabled:bg-disabled has-disabled:text-disabled-foreground has-disabled:shadow-field-flat',
+        ],
       },
     },
     defaultVariants: {
       scope: 'self',
     },
   },
-);
-
-/**
- * The native input inside a field surface. On touch it renders 16px and is scaled to the control size (`input-scale`),
- * so iOS does not zoom on focus and the field looks the same on every device. The surface owns size, padding and
- * text style; the input inherits them.
- */
-export const inputControlClassName = cn(
-  'input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
-  'file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-control file:font-medium file:text-foreground',
 );
 
 /**
@@ -94,7 +82,16 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         event.preventDefault();
         event.currentTarget.querySelector('input')?.focus();
       }}>
-      <InputPrimitive data-slot='input-control' className={inputControlClassName} {...props} />
+      {/* On touch the native input renders 16px and is scaled to the control size (`input-scale`), so iOS does not zoom on
+          focus. The surface owns size, padding and text style; the input inherits them. */}
+      <InputPrimitive
+        data-slot='input-control'
+        className={cn(
+          'input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
+          'file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-control file:font-medium file:text-foreground',
+        )}
+        {...props}
+      />
     </span>
   );
 }

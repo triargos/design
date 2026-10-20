@@ -23,7 +23,6 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 
 import { PopoverDefault } from '../examples/popover/default';
-import { PopoverPicker } from '../examples/popover/picker';
 import { PopoverPositions } from '../examples/popover/positions';
 import { Code, ExampleSection, FoundationPage, FoundationSection } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -120,15 +119,6 @@ export default defineDocs({
       </FoundationSection>
       <ExampleSection title='Default'>
         <PopoverDefault />
-      </ExampleSection>
-      <ExampleSection
-        title='Picker'
-        description={
-          <>
-            A <Code>PickerTrigger</Code> that opens a calendar: the shape of every picker.
-          </>
-        }>
-        <PopoverPicker />
       </ExampleSection>
       <ExampleSection
         title='Positions'

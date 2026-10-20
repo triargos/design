@@ -10,7 +10,7 @@ import {
   type AvatarSize,
   getInitials,
 } from '~/components/ui/avatar';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 import { AvatarDefault } from '../examples/avatar/default';
@@ -147,11 +147,11 @@ export default defineDocs({
       </FoundationSection>
 
       <FoundationSection title='Usages'>
-        <InsetCard>
-          <InsetCardHeader>
-            <InsetCardTitle>Members</InsetCardTitle>
-          </InsetCardHeader>
-          <InsetCardContent className='overflow-hidden'>
+        <Card>
+          <CardHeader>
+            <CardTitle>Members</CardTitle>
+          </CardHeader>
+          <CardContent className='overflow-hidden'>
             <ItemList>
               {PEOPLE.slice(0, 2).map((person, index) => (
                 <Item key={person.name}>
@@ -168,8 +168,8 @@ export default defineDocs({
                 </Item>
               ))}
             </ItemList>
-          </InsetCardContent>
-        </InsetCard>
+          </CardContent>
+        </Card>
       </FoundationSection>
     </FoundationPage>
   ),

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   Combobox,
   ComboboxContent,
@@ -6,31 +8,31 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '~/components/ui/combobox';
+import type { SelectOption } from '~/components/ui/select';
 
-interface Project {
-  readonly value: string;
-  readonly label: string;
-}
+const PROJECTS: ReadonlyArray<SelectOption> = [
+  'Atlas',
+  'Beacon',
+  'Comet',
+  'Delta',
+  'Harbor',
+  'Orbit',
+  'Pioneer',
+  'Summit',
+].map((name) => ({ value: name.toLowerCase(), label: name }));
 
-const PROJECTS: ReadonlyArray<Project> = [
-  { value: 'atlas', label: 'Atlas' },
-  { value: 'beacon', label: 'Beacon' },
-  { value: 'comet', label: 'Comet' },
-  { value: 'delta', label: 'Delta' },
-  { value: 'orbit', label: 'Orbit' },
-];
-
-/** A field that filters a list as you type; with a value, a clear button replaces the ⇅ button. */
+/** Type to filter, Enter picks the first match; with a value, a clear button takes the place of the ⇅ button. */
 export function ComboboxDefault() {
+  const [project, setProject] = useState<string | null>('beacon');
   return (
-    <Combobox items={PROJECTS} defaultValue={PROJECTS[2]} itemToStringLabel={(project: Project) => project.label}>
-      <ComboboxInput placeholder='Search projects' aria-label='Project' className='w-64' />
+    <Combobox items={PROJECTS} value={project} onValueChange={setProject}>
+      <ComboboxInput aria-label='Project' placeholder='Choose a project' className='w-64' />
       <ComboboxContent>
         <ComboboxEmpty>No projects found</ComboboxEmpty>
         <ComboboxList>
-          {(project: Project) => (
-            <ComboboxItem key={project.value} value={project}>
-              {project.label}
+          {(item) => (
+            <ComboboxItem key={item.value} value={item}>
+              {item.label}
             </ComboboxItem>
           )}
         </ComboboxList>

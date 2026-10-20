@@ -7,6 +7,7 @@ import { TooltipAlignment } from '../examples/tooltip/alignment';
 import { TooltipDefault } from '../examples/tooltip/default';
 import { TooltipDelayGroup } from '../examples/tooltip/delay-group';
 import { TooltipPositions } from '../examples/tooltip/positions';
+import { TooltipWithShortcut } from '../examples/tooltip/with-shortcut';
 import { ExampleSection, FoundationPage, FoundationSection, Preview } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
 
@@ -26,6 +27,9 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection title='Alignment'>
         <TooltipAlignment />
+      </ExampleSection>
+      <ExampleSection title='With shortcut' description='Kbd in the tooltip; the shortcut is not part of the name.'>
+        <TooltipWithShortcut />
       </ExampleSection>
       <ExampleSection
         title='Delay group'

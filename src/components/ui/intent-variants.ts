@@ -39,7 +39,7 @@ export const intentVariants = cva('', {
       // translucent ring (`shadow-raised`). The ring and the dark veil take the color of whatever sits behind them.
       raised: 'bg-card bg-clip-border text-(--intent-subtle-foreground) shadow-raised dark:bg-foreground/10',
     },
-    /** Hover and open states, for controls. Static elements (badges, callouts) leave it off. */
+    /** Hover and open states, for controls. Static elements (badges, alerts) leave it off. */
     interactive: {
       true: '',
       false: '',

@@ -1,6 +1,6 @@
 import { motion, type Transition, useReducedMotion } from 'framer-motion';
 
-// Springs with a short settle: `restDelta`/`restSpeed` as in `insetCardRevealTransition`, so the end does not snap.
+// Springs with a short settle: `restDelta`/`restSpeed` as in `cardRevealTransition`, so the end does not snap.
 /** The check pops in past full size and settles. */
 const popIn: Transition = { type: 'spring', duration: 0.4, bounce: 0.45, restDelta: 0.001, restSpeed: 0.01 };
 /** The leaving icon shrinks away without overshoot. */

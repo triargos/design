@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
-import { inputControlClassName, inputSurfaceVariants } from '~/components/ui/input';
+import { inputSurfaceVariants } from '~/components/ui/input';
 
 import { cn } from '~/lib/utils';
 
@@ -123,7 +123,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
 
 /**
  * The text control of an `InputGroup`: a box that takes the space between the addons and carries the padding and text
- * style (`className` goes here), around the native input (`inputControlClassName`, every other prop and the ref). The
+ * style (`className` goes here), around the native input (every other prop and the ref; it renders 16px on touch, scaled to the control size). The
  * group owns the surface, focus ring, invalid state and disabled fill.
  */
 function InputGroupInput({ className, style, ...props }: React.ComponentProps<'input'>) {
@@ -132,7 +132,11 @@ function InputGroupInput({ className, style, ...props }: React.ComponentProps<'i
       data-slot='input-group-input'
       style={style}
       className={cn('flex h-full min-w-0 flex-1 cursor-text items-center px-3.5 text-control', className)}>
-      <InputPrimitive data-slot='input-group-control' className={inputControlClassName} {...props} />
+      <InputPrimitive
+        data-slot='input-group-control'
+        className='input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed'
+        {...props}
+      />
     </span>
   );
 }

@@ -1,13 +1,7 @@
 import { Badge } from '~/components/ui/badge';
-import {
-  InsetCard,
-  InsetCardContent,
-  InsetCardDescription,
-  InsetCardHeader,
-  InsetCardTitle,
-} from '~/components/ui/inset-card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
-import { PageDescription, PageHeaderGroup, PageSection, PageTitle } from '~/components/ui/page-header';
+import { PageDescription, PageHeaderGroup, PageSection, PageTitle } from '../kit/page-layout';
 
 import { Code, FoundationPage, FoundationSection, SpecimenList, SpecimenRow } from '../kit/blocks';
 import { defineDocs, useTokens } from '../kit/docs';
@@ -28,19 +22,19 @@ const roles = [
     className: 'text-title',
     role: 'title',
     use: 'Page title; stat values with tabular-nums',
-    owner: 'PageTitle',
+    owner: 'Page title (Page pattern)',
   },
   {
     className: 'text-heading',
     role: 'heading',
     use: 'Section, dialog, sheet and empty-state titles',
-    owner: 'PageSection, DialogTitle, SheetTitle, EmptyStateTitle',
+    owner: 'Section title (Page pattern), DialogTitle, SheetTitle, EmptyTitle',
   },
   {
     className: 'text-body',
     role: 'body',
     use: 'Reading text, descriptions (muted), titles of rows and cards (medium)',
-    owner: 'InsetCardTitle, ItemTitle, *Description',
+    owner: 'CardTitle, ItemTitle, *Description',
   },
   {
     className: 'text-control',
@@ -126,12 +120,12 @@ export default defineDocs({
               <PageDescription>{paragraph}</PageDescription>
             </PageHeaderGroup>
             <PageSection title='Project details' description='Only admins see these details.'>
-              <InsetCard>
-                <InsetCardHeader>
-                  <InsetCardTitle>Members</InsetCardTitle>
-                  <InsetCardDescription>They get every project update.</InsetCardDescription>
-                </InsetCardHeader>
-                <InsetCardContent className='overflow-hidden'>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Members</CardTitle>
+                  <CardDescription>They get every project update.</CardDescription>
+                </CardHeader>
+                <CardContent className='overflow-hidden'>
                   <ItemList>
                     <Item className='px-4'>
                       <ItemContent>
@@ -148,8 +142,8 @@ export default defineDocs({
                       <span className='text-caption text-muted-foreground tabular-nums'>3 days ago</span>
                     </Item>
                   </ItemList>
-                </InsetCardContent>
-              </InsetCard>
+                </CardContent>
+              </Card>
             </PageSection>
             <PageSection title='Overview'>
               <div className='grid grid-cols-3 gap-4'>

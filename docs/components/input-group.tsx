@@ -56,7 +56,7 @@ export default defineDocs({
       <ExampleSection title='With shortcut' description='A Kbd in the end addon.'>
         <InputGroupWithShortcut />
       </ExampleSection>
-      <ExampleSection title='Pending' description='A Loader in the end addon while results load.'>
+      <ExampleSection title='Pending' description='A Spinner in the end addon while results load.'>
         <InputGroupPending />
       </ExampleSection>
       <ExampleSection

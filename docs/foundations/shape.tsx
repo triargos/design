@@ -2,9 +2,9 @@ import { MoreHorizontalIcon } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { Callout, CalloutAction, CalloutContent } from '~/components/ui/callout';
+import { Alert, AlertAction, AlertContent } from '~/components/ui/alert';
 import { Input } from '~/components/ui/input';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 import { Code, FoundationPage, FoundationSection, SpecimenList, SpecimenRow, Tile, TileGrid } from '../kit/blocks';
 import { defineDocs, useTokens } from '../kit/docs';
@@ -64,25 +64,25 @@ export default defineDocs({
           description='The outer surface sets --outer-radius and --outer-inset; what sits inside takes rounded-inner.'>
           <SpecimenList>
             <SpecimenRow name='Card' meta={<Code>rounded-card · p-1 → rounded-inner</Code>}>
-              <InsetCard>
-                <InsetCardHeader
+              <Card>
+                <CardHeader
                   actions={
                     <Button emphasis='ghost' size='icon-sm' aria-label='More'>
                       <MoreHorizontalIcon />
                     </Button>
                   }>
-                  <InsetCardTitle>Header action, aligned with row actions</InsetCardTitle>
-                </InsetCardHeader>
-                <InsetCardContent className='p-group text-body text-muted-foreground'>Content, 4px in</InsetCardContent>
-              </InsetCard>
+                  <CardTitle>Header action, aligned with row actions</CardTitle>
+                </CardHeader>
+                <CardContent className='p-group text-body text-muted-foreground'>Content, 4px in</CardContent>
+              </Card>
             </SpecimenRow>
-            <SpecimenRow name='Callout' meta={<Code>rounded-card · action 6px in</Code>}>
-              <Callout>
-                <CalloutContent>The trial ends on March 31.</CalloutContent>
-                <CalloutAction>
+            <SpecimenRow name='Alert' meta={<Code>rounded-card · action 6px in</Code>}>
+              <Alert>
+                <AlertContent>The trial ends on March 31.</AlertContent>
+                <AlertAction>
                   <Button>Upgrade</Button>
-                </CalloutAction>
-              </Callout>
+                </AlertAction>
+              </Alert>
             </SpecimenRow>
           </SpecimenList>
         </FoundationSection>

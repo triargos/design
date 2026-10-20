@@ -1,7 +1,7 @@
 import { CheckIcon, ClockIcon } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { INTENTS } from '~/components/ui/intent-variants';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
@@ -109,11 +109,11 @@ export default defineDocs({
       </FoundationSection>
 
       <FoundationSection title='Usages'>
-        <InsetCard>
-          <InsetCardHeader>
-            <InsetCardTitle>Tasks</InsetCardTitle>
-          </InsetCardHeader>
-          <InsetCardContent className='overflow-hidden'>
+        <Card>
+          <CardHeader>
+            <CardTitle>Tasks</CardTitle>
+          </CardHeader>
+          <CardContent className='overflow-hidden'>
             <ItemList>
               <Item className='px-4'>
                 <ItemContent>
@@ -144,8 +144,8 @@ export default defineDocs({
                 </Badge>
               </Item>
             </ItemList>
-          </InsetCardContent>
-        </InsetCard>
+          </CardContent>
+        </Card>
       </FoundationSection>
     </FoundationPage>
   ),

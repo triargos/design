@@ -38,7 +38,7 @@ export default defineDocs({
       </FoundationSection>
       <FoundationSection title='Components' description='Each has its own page under Components.'>
         <SpecimenList>
-          <SpecimenRow name='Loader' meta={<Code>Components › Loader</Code>}>
+          <SpecimenRow name='Spinner' meta={<Code>Components › Spinner</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
               The spinner alone, in currentColor. Inside a button, use isLoading instead.
             </p>
@@ -51,8 +51,10 @@ export default defineDocs({
               A loading region in the shape of its content, in shimmer.
             </p>
           </SpecimenRow>
-          <SpecimenRow name='Fade In' meta={<Code>Components › Fade In</Code>}>
-            <p className='text-body text-pretty text-muted-foreground'>The content that replaces it fades in once.</p>
+          <SpecimenRow name='Arriving content' meta={<Code>animate-in fade-in-0 duration-feedback</Code>}>
+            <p className='text-body text-pretty text-muted-foreground'>
+              The content that replaces it fades in once, only when it arrives after the first render.
+            </p>
           </SpecimenRow>
         </SpecimenList>
       </FoundationSection>

@@ -82,8 +82,8 @@ const text: ReadonlyArray<SwatchToken> = [
 const surfaces: ReadonlyArray<SwatchToken> = [
   { token: 'sidebar', role: 'App frame behind the page panel', on: 'var(--sidebar-foreground)' },
   { token: 'background', role: 'Page panel, the main reading surface', on: 'var(--foreground)' },
-  { token: 'shell', role: 'InsetCard shell; one step from its surface', on: 'var(--foreground)' },
-  { token: 'card', role: 'Card body: InsetCardContent, DialogBody', on: 'var(--card-foreground)' },
+  { token: 'shell', role: 'Card shell; one step from its surface', on: 'var(--foreground)' },
+  { token: 'card', role: 'Card body: CardContent, DialogBody', on: 'var(--card-foreground)' },
   { token: 'popover', role: 'Menus, popovers, default dialogs', on: 'var(--popover-foreground)' },
   { token: 'surface', role: 'Field surface (inputSurfaceVariants)', on: 'var(--foreground)' },
 ];
@@ -151,7 +151,7 @@ export default defineDocs({
 
       <FoundationSection
         title='One status pattern per intent'
-        description='A state is a subtle Badge. A dot or a hue only next to a label that names it; a Callout for a notice.'>
+        description='A state is a subtle Badge. A dot or a hue only next to a label that names it; a Alert for a notice.'>
         <SpecimenList>
           <SpecimenRow name='Badge' meta={<Code>intent · emphasis='subtle'</Code>}>
             <div className='flex flex-wrap gap-related'>

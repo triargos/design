@@ -1,8 +1,6 @@
-import { SkeletonListExample } from '../examples/skeleton/list';
 import { SkeletonShapes } from '../examples/skeleton/shapes';
-import { SkeletonStepper } from '../examples/skeleton/stepper';
 import { SkeletonTextBlock } from '../examples/skeleton/text-block';
-import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
+import { ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
 
 export default defineDocs({
@@ -18,25 +16,6 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection title='Text block' description='A paragraph: full lines, the last one short.'>
         <SkeletonTextBlock />
-      </ExampleSection>
-      <ExampleSection
-        title='List'
-        description={
-          <>
-            <Code>SkeletonList</Code>: n full-width lines.
-          </>
-        }
-        bare>
-        <SkeletonListExample />
-      </ExampleSection>
-      <ExampleSection
-        title='Stepper'
-        description={
-          <>
-            <Code>StepperSkeleton</Code>: the stepper while its steps load.
-          </>
-        }>
-        <SkeletonStepper />
       </ExampleSection>
     </FoundationPage>
   ),

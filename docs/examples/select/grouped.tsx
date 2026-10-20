@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   Select,
   SelectContent,
@@ -21,9 +23,11 @@ const TEAMS = ['Design', 'Engineering'].map((label) => ({
   items: PROJECTS.filter((project) => project.team === label),
 }));
 
+/** `SelectGroup` + `SelectLabel`, a `SelectSeparator` between groups. */
 export function SelectGrouped() {
+  const [project, setProject] = useState<string | null>('beacon');
   return (
-    <Select items={PROJECTS} defaultValue='beacon'>
+    <Select items={PROJECTS} value={project} onValueChange={setProject}>
       <SelectTrigger aria-label='Project' className='w-56'>
         <SelectValue />
       </SelectTrigger>
@@ -32,9 +36,9 @@ export function SelectGrouped() {
           <SelectGroup key={team.label}>
             {index > 0 && <SelectSeparator />}
             <SelectLabel>{team.label}</SelectLabel>
-            {team.items.map((project) => (
-              <SelectItem key={project.value} value={project.value}>
-                {project.label}
+            {team.items.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
               </SelectItem>
             ))}
           </SelectGroup>

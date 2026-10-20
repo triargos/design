@@ -5,27 +5,19 @@ import { Button } from '~/components/ui/button';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '~/components/ui/input-group';
-import {
-  InsetCard,
-  InsetCardContent,
-  InsetCardDescription,
-  InsetCardFooter,
-  InsetCardHeader,
-  InsetCardTitle,
-} from '~/components/ui/inset-card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Textarea } from '~/components/ui/textarea';
-import { UnsavedChangesIndicator } from '~/components/ui/unsaved-changes-indicator';
 
 /** A form is fields in a card; the footer shows while there are changes. */
 export function FieldInACard() {
   const [dirty, setDirty] = useState(true);
   return (
-    <InsetCard className='w-full max-w-xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Profile</InsetCardTitle>
-        <InsetCardDescription>What other members of the workspace see.</InsetCardDescription>
-      </InsetCardHeader>
-      <InsetCardContent className='p-group'>
+    <Card className='w-full max-w-xl'>
+      <CardHeader>
+        <CardTitle>Profile</CardTitle>
+        <CardDescription>What other members of the workspace see.</CardDescription>
+      </CardHeader>
+      <CardContent className='p-group'>
         <FieldGroup>
           <FieldGroup columns={2}>
             <Field>
@@ -57,13 +49,13 @@ export function FieldInACard() {
             <Textarea id='profile-bio' placeholder='Optional' rows={3} onChange={() => setDirty(true)} />
           </Field>
         </FieldGroup>
-      </InsetCardContent>
-      <InsetCardFooter show={dirty} className='flex items-center justify-end gap-3'>
-        <UnsavedChangesIndicator show={dirty} animated={false} />
+      </CardContent>
+      <CardFooter show={dirty} className='flex items-center justify-end gap-3'>
+        <span className='text-body text-muted-foreground'>Unsaved changes</span>
         <Button intent='primary' size='sm' onClick={() => setDirty(false)}>
           Save
         </Button>
-      </InsetCardFooter>
-    </InsetCard>
+      </CardFooter>
+    </Card>
   );
 }

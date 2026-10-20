@@ -1,16 +1,16 @@
 import { ChevronRightIcon } from 'lucide-react';
 
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
 /** `render={<a />}`, or a router link: the row highlights on hover. */
 export function ItemLink() {
   return (
-    <InsetCard className='w-full max-w-xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Projects</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-xl'>
+      <CardHeader>
+        <CardTitle>Projects</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <ItemList>
           <Item render={<a href='#website-redesign' />}>
             <ItemContent>
@@ -31,7 +31,7 @@ export function ItemLink() {
             </ItemActions>
           </Item>
         </ItemList>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

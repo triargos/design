@@ -1,11 +1,11 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type * as React from 'react';
 
-import { insetCardCollapseTransition } from '~/components/ui/inset-card';
+import { cardCollapseTransition } from '~/components/ui/card';
 
 import { cn } from '~/lib/utils';
 
-// grid-template-rows, not height: fr values interpolate without the `auto` swap (see `InsetCardFooter`).
+// grid-template-rows, not height: fr values interpolate without the `auto` swap (see `CardFooter`).
 const collapsed = { gridTemplateRows: '0fr', opacity: 0 } as const;
 const expanded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 
@@ -32,8 +32,8 @@ function FieldReveal({
         <motion.div
           data-slot='field-reveal'
           initial={reduceMotion ? false : collapsed}
-          animate={{ ...expanded, transition: insetCardCollapseTransition }}
-          exit={reduceMotion ? { opacity: 0 } : { ...collapsed, transition: insetCardCollapseTransition }}
+          animate={{ ...expanded, transition: cardCollapseTransition }}
+          exit={reduceMotion ? { opacity: 0 } : { ...collapsed, transition: cardCollapseTransition }}
           // -mx-1/-mb-1 + px-1/pb-1: room for a focus ring inside the clip.
           className='-mx-1 -mb-1 grid overflow-hidden'>
           {/* min-h-0: grid items refuse to shrink below their content as the row folds to 0fr. */}

@@ -1,5 +1,5 @@
 import { Badge } from '~/components/ui/badge';
-import { InsetCard } from '~/components/ui/inset-card';
+import { Card } from '~/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '~/components/ui/table';
 
 const PAYMENTS = [
@@ -18,10 +18,10 @@ const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD',
 
 const total = usd.format(PAYMENTS.reduce((sum, payment) => sum + payment.amount, 0));
 
-/** `variant='card'` straight in an InsetCard, in place of InsetCardContent: header and footer rows on the shell. */
+/** `variant='card'` straight in an Card, in place of CardContent: header and footer rows on the shell. */
 export function TableInACard() {
   return (
-    <InsetCard className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           <TableRow>
@@ -50,6 +50,6 @@ export function TableInACard() {
           </TableRow>
         </TableFooter>
       </Table>
-    </InsetCard>
+    </Card>
   );
 }

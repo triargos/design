@@ -1,5 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion';
-import { InsetCard, InsetCardContent } from '~/components/ui/inset-card';
+import { Card, CardContent } from '~/components/ui/card';
 
 const QUESTIONS = [
   {
@@ -22,8 +22,8 @@ const QUESTIONS = [
 /** Rows that paint to the card edge: the item drops its pb-1, the trigger and content set their own padding. */
 export function AccordionFullBleedRows() {
   return (
-    <InsetCard className='w-full max-w-md'>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-md'>
+      <CardContent className='overflow-hidden'>
         <Accordion defaultValue={['documents']}>
           {QUESTIONS.map((item) => (
             <AccordionItem key={item.value} value={item.value} className='pb-0'>
@@ -36,7 +36,7 @@ export function AccordionFullBleedRows() {
             </AccordionItem>
           ))}
         </Accordion>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

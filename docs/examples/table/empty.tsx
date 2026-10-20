@@ -1,11 +1,11 @@
-import { EmptyState, EmptyStateDescription, EmptyStateTitle } from '~/components/ui/empty-state';
-import { InsetCard } from '~/components/ui/inset-card';
+import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from '~/components/ui/empty';
+import { Card } from '~/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
 
-/** No rows: one cell over every column holds an EmptyState. */
+/** No rows: one cell over every column holds an Empty. */
 export function TableEmpty() {
   return (
-    <InsetCard className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           <TableRow>
@@ -18,14 +18,15 @@ export function TableEmpty() {
         <TableBody>
           <TableRow>
             <TableCell colSpan={4}>
-              <EmptyState size='sm'>
-                <EmptyStateTitle>No invoices</EmptyStateTitle>
-                <EmptyStateDescription>Invoices show up here once you send one.</EmptyStateDescription>
-              </EmptyState>
+              <Empty size='sm'>
+                <EmptyMedia />
+                <EmptyTitle>No invoices</EmptyTitle>
+                <EmptyDescription>Invoices show up here once you send one.</EmptyDescription>
+              </Empty>
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
-    </InsetCard>
+    </Card>
   );
 }

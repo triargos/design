@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   Combobox,
   ComboboxChip,
@@ -9,40 +11,38 @@ import {
   ComboboxList,
   ComboboxValue,
 } from '~/components/ui/combobox';
+import type { SelectOption } from '~/components/ui/select';
 
-interface Label {
-  readonly value: string;
-  readonly label: string;
-}
+const MEMBERS: ReadonlyArray<SelectOption> = [
+  'Maya Chen',
+  'Jonas Weber',
+  'Priya Patel',
+  'Leo Martin',
+  'Sofia Rossi',
+  'Noah Kim',
+  'Emma Larsen',
+  'Omar Haddad',
+].map((name) => ({ value: name.toLowerCase().replace(' ', '-'), label: name }));
 
-const LABELS: ReadonlyArray<Label> = [
-  { value: 'bug', label: 'Bug' },
-  { value: 'feature', label: 'Feature' },
-  { value: 'design', label: 'Design' },
-  { value: 'docs', label: 'Docs' },
-  { value: 'research', label: 'Research' },
-];
-
-/** Chips in the field: 32px, 4px in, rounded-inner. The popup anchors to the chips field. */
+/** `multiple`: chips in the field; the popup anchors to them. */
 export function ComboboxMultiple() {
+  const [members, setMembers] = useState<string[]>(['maya-chen', 'priya-patel', 'noah-kim']);
   return (
-    <Combobox
-      multiple
-      items={LABELS}
-      defaultValue={LABELS.slice(0, 2)}
-      itemToStringLabel={(label: Label) => label.label}>
+    <Combobox multiple items={MEMBERS} value={members} onValueChange={setMembers}>
       <ComboboxChips className='w-80'>
         <ComboboxValue>
-          {(value: Label[]) => value.map((label) => <ComboboxChip key={label.value}>{label.label}</ComboboxChip>)}
+          {(selected: SelectOption[]) =>
+            selected.map((item) => <ComboboxChip key={item.value}>{item.label}</ComboboxChip>)
+          }
         </ComboboxValue>
-        <ComboboxChipsInput placeholder='Add labels' aria-label='Labels' />
+        <ComboboxChipsInput aria-label='Members' placeholder={members.length === 0 ? 'Add members' : undefined} />
       </ComboboxChips>
       <ComboboxContent>
-        <ComboboxEmpty>No labels found</ComboboxEmpty>
+        <ComboboxEmpty>No members found</ComboboxEmpty>
         <ComboboxList>
-          {(label: Label) => (
-            <ComboboxItem key={label.value} value={label}>
-              {label.label}
+          {(item) => (
+            <ComboboxItem key={item.value} value={item}>
+              {item.label}
             </ComboboxItem>
           )}
         </ComboboxList>

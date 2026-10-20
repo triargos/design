@@ -6,11 +6,11 @@ import { cn } from '~/lib/utils';
 // Markup for a TanStack Table (`useTable`, `table.FlexRender`) or a static table. Three variants:
 // - `default`: a plain table; rows separated by hairlines.
 // - `flush`: `default` filling a card edge to edge, as an `ItemList` does:
-//   `<InsetCardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `group` in,
+//   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `group` in,
 //   on the card header's text.
-// - `card`: the table is the content of an `InsetCard`, in place of `InsetCardContent`. Header and footer rows sit on
+// - `card`: the table is the content of an `Card`, in place of `CardContent`. Header and footer rows sit on
 //   the shell; the body is the card (`bg-card`, an `--edge` ring, `rounded-inner` corners). Put it straight in the
-//   shell: `<InsetCard><Table variant='card'>…</Table></InsetCard>`.
+//   shell: `<Card><Table variant='card'>…</Table></Card>`.
 
 type TableVariant = 'default' | 'flush' | 'card';
 type TableSection = 'head' | 'body' | 'foot';
@@ -99,7 +99,7 @@ function TableRow({ className, selected = false, ...props }: ComponentProps<'tr'
   );
 }
 
-// Flush and card: the first and last cell line up with `InsetCardHeader` text (`group` + the card's 1px edge in). Flush
+// Flush and card: the first and last cell line up with `CardHeader` text (`group` + the card's 1px edge in). Flush
 // cells sit inside the edge already; card head and foot cells sit on the shell, so they add the 1px. A checkbox column
 // shrinks to the box.
 const tableCellEdges = cva(
@@ -132,7 +132,7 @@ function TableHead({ className, ...props }: ComponentProps<'th'>) {
 
 // Card body: the cells are the card, not the `tbody` (a `tbody` is no containing block in Safari, so a surface hung on
 // it lands on the table). Each cell fills with `bg-card`; the outer cells carry the `--edge` ring as a border, and
-// `bg-clip-padding` keeps the fill inside it, so the ring sits on the shell, as `cardSurface` does. Separators are
+// `bg-clip-padding` keeps the fill inside it, so the ring sits on the shell, as `CardContent` does. Separators are
 // `border-subtle` (opaque, so the shell behind the clipped border does not show). The first and last cell pad `group`
 // inside the edge, on the head and foot cells' `group` + 1px. WebKit antialiases each cell's fill at fractional column
 // edges and the shell shows through as a seam; a 1px shadow in the fill color reaches under the next cell and closes it.

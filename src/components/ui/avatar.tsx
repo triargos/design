@@ -1,4 +1,5 @@
 import { Avatar as AvatarPrimitive } from '@base-ui/react/avatar';
+import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
 import { cn } from '~/lib/utils';
@@ -10,84 +11,99 @@ type AvatarSize = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4x
 type AvatarShape = 'circle' | 'square';
 
 /**
- * Per size: the box, the group count's box, the initials (below the caption role, 12px, they scale with the box like an
- * icon), the `square` radius, and in a group the cut around the next avatar (`--avatar-gap`) and how far each one slides
- * under the previous (`--avatar-overlap`).
+ * An avatar, or a group's count (`part='count'`, a pill that widens with the number). Per size: the box, the initials
+ * (below the caption role, 12px, they scale with the box like an icon) and the `square` radius. Size classes are plain,
+ * not `data-[size=…]:` variants, so a caller's `size-*` in `className` overrides them. The hairline is a 1px
+ * translucent inset ring on a layer above the photo, not a 0.5px outline: sub-pixel outlines snap to whole device
+ * pixels unevenly around a curve and look jagged at 1x.
  */
-const avatarSizes = {
-  xxs: {
-    box: 'size-3',
-    count: 'h-3 min-w-3',
-    text: 'text-[0.5rem]/3',
-    square: 'rounded-xs',
-    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+const avatarVariants = cva(
+  [
+    'relative flex shrink-0 items-center justify-center bg-muted font-medium text-muted-foreground select-none',
+    'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:inset-ring after:inset-ring-foreground/10',
+  ],
+  {
+    variants: {
+      size: {
+        xxs: 'text-[0.5rem]/3',
+        xs: 'text-[0.5rem]/3',
+        sm: 'text-[0.5rem]/3',
+        md: 'text-[0.625rem]/3.5',
+        lg: 'text-caption',
+        xl: 'text-caption',
+        '2xl': 'text-body',
+        '3xl': 'text-heading',
+        '4xl': 'text-title',
+      },
+      shape: { circle: 'rounded-full', square: '' },
+      part: { avatar: 'group/avatar', count: 'px-1 tabular-nums' },
+    },
+    compoundVariants: [
+      { part: 'avatar', size: 'xxs', className: 'size-3' },
+      { part: 'count', size: 'xxs', className: 'h-3 min-w-3' },
+      { part: 'avatar', size: 'xs', className: 'size-4' },
+      { part: 'count', size: 'xs', className: 'h-4 min-w-4' },
+      { part: 'avatar', size: 'sm', className: 'size-5' },
+      { part: 'count', size: 'sm', className: 'h-5 min-w-5' },
+      { part: 'avatar', size: 'md', className: 'size-6' },
+      { part: 'count', size: 'md', className: 'h-6 min-w-6' },
+      { part: 'avatar', size: 'lg', className: 'size-7' },
+      { part: 'count', size: 'lg', className: 'h-7 min-w-7' },
+      { part: 'avatar', size: 'xl', className: 'size-8' },
+      { part: 'count', size: 'xl', className: 'h-8 min-w-8' },
+      { part: 'avatar', size: '2xl', className: 'size-10' },
+      { part: 'count', size: '2xl', className: 'h-10 min-w-10' },
+      { part: 'avatar', size: '3xl', className: 'size-12' },
+      { part: 'count', size: '3xl', className: 'h-12 min-w-12' },
+      { part: 'avatar', size: '4xl', className: 'size-20' },
+      { part: 'count', size: '4xl', className: 'h-20 min-w-20' },
+      { shape: 'square', size: 'xxs', className: 'rounded-xs' },
+      { shape: 'square', size: 'xs', className: 'rounded-xs' },
+      { shape: 'square', size: 'sm', className: 'rounded-sm' },
+      { shape: 'square', size: 'md', className: 'rounded-sm' },
+      { shape: 'square', size: 'lg', className: 'rounded-md' },
+      { shape: 'square', size: 'xl', className: 'rounded-lg' },
+      { shape: 'square', size: '2xl', className: 'rounded-xl' },
+      { shape: 'square', size: '3xl', className: 'rounded-xl' },
+      { shape: 'square', size: '4xl', className: 'rounded-2xl' },
+    ],
+    defaultVariants: { size: 'md', shape: 'circle', part: 'avatar' },
   },
-  xs: {
-    box: 'size-4',
-    count: 'h-4 min-w-4',
-    text: 'text-[0.5rem]/3',
-    square: 'rounded-xs',
-    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1.5)]',
-  },
-  sm: {
-    box: 'size-5',
-    count: 'h-5 min-w-5',
-    text: 'text-[0.5rem]/3',
-    square: 'rounded-sm',
-    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-  },
-  md: {
-    box: 'size-6',
-    count: 'h-6 min-w-6',
-    text: 'text-[0.625rem]/3.5',
-    square: 'rounded-sm',
-    group: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-  },
-  lg: {
-    box: 'size-7',
-    count: 'h-7 min-w-7',
-    text: 'text-caption',
-    square: 'rounded-md',
-    group: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
-  },
-  xl: {
-    box: 'size-8',
-    count: 'h-8 min-w-8',
-    text: 'text-caption',
-    square: 'rounded-lg',
-    group: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
-  },
-  '2xl': {
-    box: 'size-10',
-    count: 'h-10 min-w-10',
-    text: 'text-body',
-    square: 'rounded-xl',
-    group: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1.5)]',
-  },
-  '3xl': {
-    box: 'size-12',
-    count: 'h-12 min-w-12',
-    text: 'text-heading',
-    square: 'rounded-xl',
-    group: '[--avatar-gap:3px] [--avatar-overlap:--spacing(1.5)]',
-  },
-  '4xl': {
-    box: 'size-20',
-    count: 'h-20 min-w-20',
-    text: 'text-title',
-    square: 'rounded-2xl',
-    group: '[--avatar-gap:4px] [--avatar-overlap:--spacing(2)]',
-  },
-} satisfies Record<AvatarSize, { box: string; count: string; text: string; square: string; group: string }>;
+);
 
-const avatarRadius = (shape: AvatarShape, size: AvatarSize) =>
-  shape === 'circle' ? 'rounded-full' : avatarSizes[size].square;
-
-// The hairline is a 1px translucent inset ring on a layer above the photo, not a 0.5px outline: sub-pixel outlines snap
-// to whole device pixels unevenly around a curve and look jagged at 1x.
-const avatarSurface = cn(
-  'relative flex shrink-0 items-center justify-center bg-muted font-medium text-muted-foreground select-none',
-  'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:inset-ring after:inset-ring-foreground/10',
+/**
+ * Each avatar slides under the previous one (`--avatar-overlap`) and is cut out around the next (`--avatar-gap`): a
+ * radial mask for circles, a linear one for squares.
+ */
+const avatarGroupVariants = cva(
+  [
+    'group/avatar-group flex items-center',
+    '[--avatar-cutout-x:calc(150%_-_var(--avatar-overlap))] rtl:[--avatar-cutout-x:calc(-50%_+_var(--avatar-overlap))]',
+    '[--avatar-cutout-direction:to_right] rtl:[--avatar-cutout-direction:to_left]',
+    '*:not-first:-ms-(--avatar-overlap)',
+  ],
+  {
+    variants: {
+      size: {
+        xxs: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+        xs: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1.5)]',
+        sm: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+        md: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+        lg: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
+        xl: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
+        '2xl': '[--avatar-gap:2px] [--avatar-overlap:--spacing(1.5)]',
+        '3xl': '[--avatar-gap:3px] [--avatar-overlap:--spacing(1.5)]',
+        '4xl': '[--avatar-gap:4px] [--avatar-overlap:--spacing(2)]',
+      },
+      shape: {
+        circle:
+          '*:not-last:[mask-image:radial-gradient(ellipse_calc(50%_+_var(--avatar-gap))_calc(50%_+_var(--avatar-gap))_at_var(--avatar-cutout-x)_50%,transparent_calc(100%_-_0.5px),#000_100%)]',
+        square:
+          '*:not-last:[mask-image:linear-gradient(var(--avatar-cutout-direction),#000_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)_-_0.5px),transparent_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)))]',
+      },
+    },
+    defaultVariants: { size: 'md', shape: 'circle' },
+  },
 );
 
 const AvatarGroupContext = React.createContext<{ size?: AvatarSize; shape?: AvatarShape }>({});
@@ -109,15 +125,7 @@ function Avatar({
       data-slot='avatar'
       data-size={size}
       data-shape={shape}
-      // Size classes stay plain, not `data-[size=…]:` variants, so a caller's `size-*` in `className` overrides them.
-      className={cn(
-        'group/avatar',
-        avatarSurface,
-        avatarSizes[size].box,
-        avatarSizes[size].text,
-        avatarRadius(shape, size),
-        className,
-      )}
+      className={cn(avatarVariants({ size, shape }), className)}
       {...props}
     />
   );
@@ -159,15 +167,6 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<'span'>) {
   );
 }
 
-const avatarGroupShape = [
-  'group/avatar-group flex items-center',
-  '[--avatar-cutout-x:calc(150%_-_var(--avatar-overlap))] rtl:[--avatar-cutout-x:calc(-50%_+_var(--avatar-overlap))]',
-  '[--avatar-cutout-direction:to_right] rtl:[--avatar-cutout-direction:to_left]',
-  '*:not-first:-ms-(--avatar-overlap)',
-  '*:not-last:[mask-image:radial-gradient(ellipse_calc(50%_+_var(--avatar-gap))_calc(50%_+_var(--avatar-gap))_at_var(--avatar-cutout-x)_50%,transparent_calc(100%_-_0.5px),#000_100%)]',
-  'data-[shape=square]:*:not-last:[mask-image:linear-gradient(var(--avatar-cutout-direction),#000_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)_-_0.5px),transparent_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)))]',
-];
-
 /** Overlapping avatars; `size` and `shape` apply to every `Avatar` and the `AvatarGroupCount` inside. */
 function AvatarGroup({
   className,
@@ -181,7 +180,7 @@ function AvatarGroup({
         data-slot='avatar-group'
         data-size={size}
         data-shape={shape}
-        className={cn(avatarGroupShape, avatarSizes[size].group, className)}
+        className={cn(avatarGroupVariants({ size, shape }), className)}
         {...props}
       />
     </AvatarGroupContext>
@@ -194,14 +193,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<'div'>) 
   return (
     <div
       data-slot='avatar-group-count'
-      className={cn(
-        avatarSurface,
-        'px-1 tabular-nums',
-        avatarSizes[size].count,
-        avatarSizes[size].text,
-        avatarRadius(shape, size),
-        className,
-      )}
+      className={cn(avatarVariants({ size, shape, part: 'count' }), className)}
       {...props}
     />
   );

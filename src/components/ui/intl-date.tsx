@@ -22,53 +22,6 @@ const toFormatInput = (iso: string, timeZone: string | undefined) =>
 const DATE: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 const DATE_TIME: Intl.DateTimeFormatOptions = { ...DATE, hour: 'numeric', minute: '2-digit' };
 
-/** Formats a day or a moment: `format` defaults to the medium date, plus the time for a moment. */
-function formatIntlDate(
-  iso: string,
-  { locale = 'en-US', timeZone, format }: FormatProps & { format?: Intl.DateTimeFormatOptions },
-) {
-  const input = toFormatInput(iso, timeZone);
-  return new Intl.DateTimeFormat(locale, {
-    ...(format ?? (input.isDay ? DATE : DATE_TIME)),
-    timeZone: input.timeZone,
-  }).format(input.date);
-}
-
-/** A date for reading. `date` is a day (`YYYY-MM-DD`, the same for every viewer) or an ISO moment (in `timeZone`). */
-function IntlDate({
-  date,
-  format,
-  locale,
-  timeZone,
-}: FormatProps & { date: string; format?: Intl.DateTimeFormatOptions }) {
-  return (
-    <time suppressHydrationWarning dateTime={date}>
-      {formatIntlDate(date, { locale, timeZone, format })}
-    </time>
-  );
-}
-
-/** Two days or two moments as one range ("Mar 10 – 14, 2025"), shared parts said once. */
-function IntlDateRange({
-  start,
-  end,
-  format,
-  locale = 'en-US',
-  timeZone,
-}: FormatProps & { start: string; end: string; format?: Intl.DateTimeFormatOptions }) {
-  const from = toFormatInput(start, timeZone);
-  const to = toFormatInput(end, timeZone);
-  const formatter = new Intl.DateTimeFormat(locale, {
-    ...(format ?? (from.isDay ? DATE : DATE_TIME)),
-    timeZone: from.timeZone,
-  });
-  return (
-    <time suppressHydrationWarning dateTime={start}>
-      {formatter.formatRange(from.date, to.date)}
-    </time>
-  );
-}
-
 const UNITS: ReadonlyArray<[Intl.RelativeTimeFormatUnit, number]> = [
   ['year', 365 * 86_400_000],
   ['month', 30 * 86_400_000],
@@ -86,23 +39,56 @@ function relativeParts(ms: number): [number, Intl.RelativeTimeFormatUnit] {
   return [0, 'minute'];
 }
 
-/** A moment as how long ago or how far ahead ("2 hours ago"), the exact moment in a tooltip. */
-function RelativeIntlDate({ date, locale = 'en-US', timeZone }: FormatProps & { date: string }) {
-  const [value, unit] = relativeParts(new Date(date).getTime() - Date.now());
+type IntlDateProps = FormatProps &
+  (
+    | {
+        /** A day (`YYYY-MM-DD`, the same for every viewer) or an ISO moment (shown in `timeZone`). */
+        date: string;
+        /** The range's end, of the same kind as `date`: "Mar 10 – 14, 2025", the shared parts said once. */
+        end?: string;
+        /** Default: the medium date, plus the time for a moment. */
+        format?: Intl.DateTimeFormatOptions;
+        relative?: false;
+      }
+    | {
+        date: string;
+        /** How long ago or how far ahead ("2 hours ago"), the exact moment in a tooltip. */
+        relative: true;
+      }
+  );
+
+/** A date for reading, from an ISO string: a day, a moment, a range, or relative to now. */
+function IntlDate(props: IntlDateProps) {
+  const { date, locale = 'en-US', timeZone } = props;
+  if (props.relative) {
+    const [value, unit] = relativeParts(new Date(date).getTime() - Date.now());
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <time data-slot='intl-date' suppressHydrationWarning dateTime={date}>
+              {new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, unit)}
+            </time>
+          }
+        />
+        <TooltipContent>
+          <IntlDate date={date} locale={locale} timeZone={timeZone} />
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+  const from = toFormatInput(date, timeZone);
+  const formatter = new Intl.DateTimeFormat(locale, {
+    ...(props.format ?? (from.isDay ? DATE : DATE_TIME)),
+    timeZone: from.timeZone,
+  });
   return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <time suppressHydrationWarning dateTime={date}>
-            {new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, unit)}
-          </time>
-        }
-      />
-      <TooltipContent>
-        <IntlDate date={date} locale={locale} timeZone={timeZone} />
-      </TooltipContent>
-    </Tooltip>
+    <time data-slot='intl-date' suppressHydrationWarning dateTime={date}>
+      {props.end === undefined
+        ? formatter.format(from.date)
+        : formatter.formatRange(from.date, toFormatInput(props.end, timeZone).date)}
+    </time>
   );
 }
 
-export { IntlDate, IntlDateRange, RelativeIntlDate };
+export { IntlDate };

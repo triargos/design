@@ -1,9 +1,7 @@
 import { CheckSquareIcon, FolderIcon, HomeIcon, InboxIcon, SettingsIcon, UsersIcon } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
-import { PageContent } from '~/components/ui/page-content';
-import { PageDescription, PageHeaderGroup, PageTitle } from '~/components/ui/page-header';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Sidebar,
   SidebarContent,
@@ -107,20 +105,18 @@ export function SidebarCollapsed() {
               <SidebarTrigger />
             </div>
             <div className='px-5 pt-10 pb-28 md:px-10'>
-              <PageContent
-                header={
-                  <PageHeaderGroup>
-                    <PageTitle>Tasks</PageTitle>
-                    <PageDescription>Everything assigned to you this week.</PageDescription>
-                  </PageHeaderGroup>
-                }>
-                <InsetCard>
-                  <InsetCardHeader>
-                    <InsetCardTitle>Due today</InsetCardTitle>
-                  </InsetCardHeader>
-                  <InsetCardContent className='h-24' />
-                </InsetCard>
-              </PageContent>
+              <div className='flex flex-col gap-page'>
+                <hgroup className='flex flex-col gap-tight'>
+                  <h1 className='text-title text-balance'>Tasks</h1>
+                  <p className='text-body text-pretty text-muted-foreground'>Everything assigned to you this week.</p>
+                </hgroup>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Due today</CardTitle>
+                  </CardHeader>
+                  <CardContent className='h-24' />
+                </Card>
+              </div>
             </div>
           </div>
         </div>

@@ -1,17 +1,27 @@
-import { ArrowLeftIcon, CircleDotIcon, CommandIcon, DownloadIcon, MailIcon, Trash2Icon, XIcon } from 'lucide-react';
+import { CircleDotIcon, DownloadIcon, MailIcon, MoreHorizontalIcon, Trash2Icon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
-import { Badge } from '~/components/ui/badge';
 import {
-  BottomFloatMenu,
-  type BottomFloatMenuDismissReason,
-  BottomFloatMenuItem,
-  type BottomFloatMenuPanel,
-  BottomFloatMenuRow,
-} from '~/components/ui/bottom-float-menu';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '~/components/ui/alert-dialog';
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
-import { InsetCard, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu';
+import { Card, CardHeader, CardTitle } from '~/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~/components/ui/table';
 
 const TASKS = [
@@ -28,17 +38,15 @@ const TASKS = [
 
 const tasks = (count: number) => `${count} ${count === 1 ? 'task' : 'tasks'}`;
 
-type Panel = 'actions' | 'delete' | null;
-
 /**
- * Select rows, act on all of them: a checkbox column with select-all, and a Bottom Float Menu while anything is
- * selected. The bar reads by weight: the count as text, "Actions" (every action, in a panel) as the one raised
- * button, a quick action as a raised icon, and clear as a quiet ✕ at the end. Deleting asks in its own panel level.
+ * Select rows, act on all of them: a checkbox column with select-all, and a bar below the table while anything is
+ * selected. The bar reads by weight: the count as text, "Actions" (every action, in a menu) as the one raised
+ * button, a quick action as a raised icon, and clear as a quiet ✕ at the end. Deleting asks in an alert dialog.
  */
 export function BulkSelectionDefault() {
   const [rows, setRows] = useState<ReadonlyArray<(typeof TASKS)[number]>>(TASKS);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set(['1', '3']));
-  const [panel, setPanel] = useState<Panel>(null);
+  const [confirming, setConfirming] = useState(false);
   const all = rows.length > 0 && selected.size === rows.length;
   const toggle = (id: string, checked: boolean) =>
     setSelected((current) => {
@@ -47,63 +55,14 @@ export function BulkSelectionDefault() {
       else next.delete(id);
       return next;
     });
-  const clear = () => {
-    setPanel(null);
-    setSelected(new Set());
-  };
-
-  const actions: BottomFloatMenuPanel = {
-    key: 'actions',
-    label: 'Actions',
-    content: (
-      <>
-        <BottomFloatMenuRow icon={<MailIcon />} onClick={() => setPanel(null)}>
-          Send reminder
-        </BottomFloatMenuRow>
-        <BottomFloatMenuRow icon={<CircleDotIcon />} onClick={() => setPanel(null)}>
-          Change status
-        </BottomFloatMenuRow>
-        <BottomFloatMenuRow icon={<DownloadIcon />} onClick={() => setPanel(null)}>
-          Export
-        </BottomFloatMenuRow>
-        <BottomFloatMenuRow icon={<Trash2Icon />} opensPanel onClick={() => setPanel('delete')}>
-          Delete
-        </BottomFloatMenuRow>
-      </>
-    ),
-  };
-  const confirmDelete: BottomFloatMenuPanel = {
-    key: 'delete',
-    label: `Delete ${tasks(selected.size)}`,
-    content: (
-      <>
-        <BottomFloatMenuRow icon={<ArrowLeftIcon />} onClick={() => setPanel('actions')}>
-          Back
-        </BottomFloatMenuRow>
-        <div className='p-1'>
-          <Button
-            intent='destructive'
-            className='w-full'
-            onClick={() => {
-              setRows((current) => current.filter((row) => !selected.has(row.id)));
-              clear();
-            }}>
-            <Trash2Icon data-icon='inline-start' />
-            Delete {tasks(selected.size)}
-          </Button>
-        </div>
-      </>
-    ),
-  };
-  const dismiss = (reason: BottomFloatMenuDismissReason) =>
-    setPanel((current) => (reason === 'escape' && current === 'delete' ? 'actions' : null));
+  const clear = () => setSelected(new Set());
 
   return (
-    <>
-      <InsetCard className='w-full max-w-2xl'>
-        <InsetCardHeader>
-          <InsetCardTitle>Tasks</InsetCardTitle>
-        </InsetCardHeader>
+    <div className='flex w-full max-w-2xl flex-col gap-group'>
+      <Card>
+        <CardHeader>
+          <CardTitle>Tasks</CardTitle>
+        </CardHeader>
         <Table variant='card'>
           <TableHeader>
             <TableRow>
@@ -139,30 +98,67 @@ export function BulkSelectionDefault() {
             ))}
           </TableBody>
         </Table>
-      </InsetCard>
-      <BottomFloatMenu
-        show={selected.size > 0}
-        label='Selection'
-        panel={panel === 'actions' ? actions : panel === 'delete' ? confirmDelete : null}
-        onPanelDismiss={dismiss}>
-        <span className='ps-4 pe-1 tabular-nums'>{selected.size} selected</span>
-        <BottomFloatMenuItem>
-          <Button onClick={() => setPanel('actions')}>
-            <CommandIcon data-icon='inline-start' />
-            Actions
-          </Button>
-        </BottomFloatMenuItem>
-        <BottomFloatMenuItem>
-          <Button size='icon-lg' aria-label='Send reminder'>
+      </Card>
+      {selected.size > 0 && (
+        <div
+          role='toolbar'
+          aria-label='Selection'
+          data-surface='popup'
+          className='sticky bottom-4 flex items-center gap-1 self-center rounded-popup bg-popover p-1 text-control text-popover-foreground shadow-popup duration-enter ease-enter animate-in fade-in-0 slide-in-from-bottom-2'>
+          <span className='ps-3 pe-1 tabular-nums'>{selected.size} selected</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button />}>
+              <MoreHorizontalIcon data-icon='inline-start' />
+              Actions
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side='top' className='w-48'>
+              <DropdownMenuItem>
+                <MailIcon />
+                Send reminder
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <CircleDotIcon />
+                Change status
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <DownloadIcon />
+                Export
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem intent='destructive' onClick={() => setConfirming(true)}>
+                <Trash2Icon />
+                Delete…
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button size='icon' aria-label='Send reminder'>
             <MailIcon />
           </Button>
-        </BottomFloatMenuItem>
-        <BottomFloatMenuItem>
-          <Button emphasis='ghost' size='icon-lg' aria-label='Clear selection' onClick={clear}>
+          <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
             <XIcon />
           </Button>
-        </BottomFloatMenuItem>
-      </BottomFloatMenu>
-    </>
+        </div>
+      )}
+      <AlertDialog open={confirming} onOpenChange={setConfirming}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {tasks(selected.size)}?</AlertDialogTitle>
+            <AlertDialogDescription>Their comments and files are deleted for everyone.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              intent='destructive'
+              onClick={() => {
+                setRows((current) => current.filter((row) => !selected.has(row.id)));
+                clear();
+                setConfirming(false);
+              }}>
+              Delete {tasks(selected.size)}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }

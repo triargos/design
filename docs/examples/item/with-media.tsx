@@ -1,16 +1,16 @@
 import { FileTextIcon } from 'lucide-react';
 
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 /** `ItemMedia variant='icon'`; an Avatar for people. */
 export function ItemWithMedia() {
   return (
-    <InsetCard className='w-full max-w-xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Documents</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-xl'>
+      <CardHeader>
+        <CardTitle>Documents</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <ItemList>
           <Item>
             <ItemMedia variant='icon'>
@@ -30,7 +30,7 @@ export function ItemWithMedia() {
             </ItemContent>
           </Item>
         </ItemList>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

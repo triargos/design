@@ -1,4 +1,4 @@
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemTitle } from '~/components/ui/item';
 import { VirtualizedList } from '~/components/ui/virtualized-list';
 
@@ -14,11 +14,11 @@ const ACTIVITY = Array.from({ length: 1000 }, (_, index) => ({
 /** Only the rows in view render, measured as they mount; the list scrolls itself. */
 export function VirtualizedListDefault() {
   return (
-    <InsetCard className='w-full max-w-md'>
-      <InsetCardHeader>
-        <InsetCardTitle>Activity</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='overflow-hidden'>
+    <Card className='w-full max-w-md'>
+      <CardHeader>
+        <CardTitle>Activity</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
         <VirtualizedList
           className='h-80'
           items={ACTIVITY}
@@ -33,7 +33,7 @@ export function VirtualizedListDefault() {
             </Item>
           )}
         />
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,13 +1,7 @@
 import { useState } from 'react';
 
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '~/components/ui/field';
-import {
-  InsetCard,
-  InsetCardContent,
-  InsetCardDescription,
-  InsetCardHeader,
-  InsetCardTitle,
-} from '~/components/ui/inset-card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 
@@ -20,12 +14,12 @@ const DIGESTS = [
 export function FieldHorizontal() {
   const [digest, setDigest] = useState('instant');
   return (
-    <InsetCard className='w-full max-w-xl'>
-      <InsetCardHeader>
-        <InsetCardTitle>Notifications</InsetCardTitle>
-        <InsetCardDescription>How you hear about changes to your tasks.</InsetCardDescription>
-      </InsetCardHeader>
-      <InsetCardContent className='p-group'>
+    <Card className='w-full max-w-xl'>
+      <CardHeader>
+        <CardTitle>Notifications</CardTitle>
+        <CardDescription>How you hear about changes to your tasks.</CardDescription>
+      </CardHeader>
+      <CardContent className='p-group'>
         <FieldGroup>
           <Field orientation='horizontal'>
             <FieldContent>
@@ -54,7 +48,7 @@ export function FieldHorizontal() {
             <Switch id='field-mentions' defaultChecked />
           </Field>
         </FieldGroup>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

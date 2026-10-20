@@ -10,9 +10,9 @@ import { AvatarGroupExample } from '../docs/examples/avatar/group';
 import { BadgeStatus } from '../docs/examples/badge/status';
 import { ButtonVariants } from '../docs/examples/button/intent-and-emphasis';
 import { CalendarDefault } from '../docs/examples/calendar/default';
-import { OTPFieldFourDigits } from '../docs/examples/otp-field/four-digits';
-import { OptionSelectAllowCustom } from '../docs/examples/option-select/allow-custom';
-import { SearchSelectCustomValue } from '../docs/examples/search-select/custom-value';
+import { ComboboxAllowCustom } from '../docs/examples/combobox/allow-custom';
+import { SelectAllowCustom } from '../docs/examples/select/allow-custom';
+import { InputOTPFourDigits } from '../docs/examples/input-otp/four-digits';
 import { SliderWithLabelAndValue } from '../docs/examples/slider/with-label-and-value';
 import { SwitchWithLabel } from '../docs/examples/switch/with-label';
 import { TabsDefault } from '../docs/examples/tabs/default';
@@ -76,11 +76,11 @@ export function Home() {
         <Tile slug='badge' className='md:col-span-4'>
           <BadgeStatus />
         </Tile>
-        <Tile slug='option-select' className='md:col-span-3'>
-          <OptionSelectAllowCustom />
+        <Tile slug='select' className='md:col-span-3'>
+          <SelectAllowCustom />
         </Tile>
-        <Tile slug='search-select' className='md:col-span-3'>
-          <SearchSelectCustomValue />
+        <Tile slug='combobox' className='md:col-span-3'>
+          <ComboboxAllowCustom />
         </Tile>
         <Tile slug='switch' className='md:col-span-2'>
           <SwitchWithLabel />
@@ -90,8 +90,8 @@ export function Home() {
             <SliderWithLabelAndValue />
           </div>
         </Tile>
-        <Tile slug='otp-field' className='md:col-span-2'>
-          <OTPFieldFourDigits />
+        <Tile slug='input-otp' className='md:col-span-2'>
+          <InputOTPFourDigits />
         </Tile>
       </section>
     </div>

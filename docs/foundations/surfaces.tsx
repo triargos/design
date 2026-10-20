@@ -1,13 +1,6 @@
 import type { ReactNode } from 'react';
 
-import {
-  InsetCard,
-  InsetCardContent,
-  InsetCardDescription,
-  InsetCardHeader,
-  InsetCardTitle,
-} from '~/components/ui/inset-card';
-import { popupSurface } from '~/components/ui/popover';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 
 import { cn } from '~/lib/utils';
 
@@ -72,19 +65,21 @@ export default defineDocs({
       <FoundationSection title='Stack' description='Each layer shows the same fill classes.'>
         <div className='flex flex-col gap-6'>
           <Layer name='Page panel' owner={<Code>MainLayout · bg-background</Code>} />
-          <InsetCard>
-            <InsetCardHeader>
-              <InsetCardTitle>Card shell</InsetCardTitle>
-              <InsetCardDescription>The label strip sits on the shell, not on a second surface.</InsetCardDescription>
-            </InsetCardHeader>
-            <InsetCardContent className='p-4'>
-              <Layer name='Card' owner={<Code>InsetCardContent · cardSurface</Code>}>
-                <div data-surface='popup' className={cn(popupSurface, 'mt-2 max-w-sm p-4')}>
-                  <Layer name='Popup' owner={<Code>popupSurface · shadow-popup</Code>} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Card shell</CardTitle>
+              <CardDescription>The label strip sits on the shell, not on a second surface.</CardDescription>
+            </CardHeader>
+            <CardContent className='p-4'>
+              <Layer name='Card' owner={<Code>CardContent</Code>}>
+                <div
+                  data-surface='popup'
+                  className={cn('rounded-popup bg-popover text-popover-foreground shadow-popup', 'mt-2 max-w-sm p-4')}>
+                  <Layer name='Popup' owner={<Code>PopoverContent · shadow-popup</Code>} />
                 </div>
               </Layer>
-            </InsetCardContent>
-          </InsetCard>
+            </CardContent>
+          </Card>
         </div>
       </FoundationSection>
     </FoundationPage>

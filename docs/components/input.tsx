@@ -1,5 +1,5 @@
-import { ChevronsUpDownIcon, SearchIcon } from 'lucide-react';
-import { type ReactNode } from 'react';
+import { SearchIcon } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
 
 import {
   Combobox,
@@ -14,10 +14,14 @@ import {
 } from '~/components/ui/combobox';
 import { Input } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '~/components/ui/input-group';
-import { cardSurface } from '~/components/ui/inset-card';
-import { PickerTrigger } from '~/components/ui/picker-trigger';
-import { popupSurface } from '~/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  type SelectOption,
+} from '~/components/ui/select';
 import { Textarea } from '~/components/ui/textarea';
 
 import { cn } from '~/lib/utils';
@@ -60,7 +64,7 @@ function TeamSelect({ state }: { state: FieldState }) {
   return (
     <Select
       items={TEAMS}
-      defaultValue={state === 'empty' ? undefined : 'design'}
+      defaultValue={state === 'empty' ? null : 'design'}
       disabled={state === 'disabled'}
       readOnly={state === 'read-only'}>
       <SelectTrigger aria-invalid={state === 'invalid' || undefined}>
@@ -77,27 +81,26 @@ function TeamSelect({ state }: { state: FieldState }) {
   );
 }
 
-type Team = (typeof TEAMS)[number];
-
 function TeamChips({ state }: { state: FieldState }) {
+  const [teams, setTeams] = useState<string[]>(state === 'empty' ? [] : ['design', 'engineering']);
   return (
     <Combobox
       multiple
       items={TEAMS}
-      defaultValue={state === 'empty' ? [] : TEAMS.slice(0, 2)}
-      itemToStringLabel={(team: Team) => team.label}
+      value={teams}
+      onValueChange={setTeams}
       disabled={state === 'disabled'}
       readOnly={state === 'read-only'}>
       <ComboboxChips aria-invalid={state === 'invalid' || undefined}>
         <ComboboxValue>
-          {(value: Team[]) => value.map((team) => <ComboboxChip key={team.value}>{team.label}</ComboboxChip>)}
+          {(value: SelectOption[]) => value.map((team) => <ComboboxChip key={team.value}>{team.label}</ComboboxChip>)}
         </ComboboxValue>
-        <ComboboxChipsInput placeholder={state === 'empty' ? 'Choose teams' : undefined} />
+        <ComboboxChipsInput placeholder={teams.length === 0 ? 'Choose teams' : undefined} />
       </ComboboxChips>
       <ComboboxContent>
         <ComboboxEmpty>No teams found</ComboboxEmpty>
         <ComboboxList>
-          {(team: Team) => (
+          {(team) => (
             <ComboboxItem key={team.value} value={team}>
               {team.label}
             </ComboboxItem>
@@ -132,19 +135,6 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
     ),
   },
   { name: 'Select', meta: 'SelectTrigger', render: (state) => <TeamSelect state={state} /> },
-  {
-    name: 'PickerTrigger',
-    meta: 'opens a popup: date, virtualized combobox',
-    render: (state) => (
-      <PickerTrigger
-        aria-invalid={state === 'invalid' || undefined}
-        disabled={state === 'disabled'}
-        className={cn(state === 'empty' && 'text-muted-foreground')}>
-        <span>{state === 'empty' ? 'Choose an assignee' : 'Maya Chen'}</span>
-        <ChevronsUpDownIcon />
-      </PickerTrigger>
-    ),
-  },
   {
     name: 'Combobox chips',
     meta: '32px chips, 4px in, rounded-inner',
@@ -228,7 +218,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Fields'
-        description='Each row: empty, filled, read-only, invalid, disabled. Focus: Tab into one. PickerTrigger has no read-only; it shows filled.'>
+        description='Each row: empty, filled, read-only, invalid, disabled. Focus: Tab into one.'>
         <SpecimenList>
           {FIELDS.map((field) => (
             <SpecimenRow key={field.name} name={field.name} meta={field.meta}>
@@ -250,8 +240,12 @@ export default defineDocs({
         <div className='grid gap-group md:grid-cols-2 xl:grid-cols-4'>
           <SurfaceSample label='page' className='bg-background ring-1 ring-border' />
           <SurfaceSample label='shell' className='bg-shell' />
-          <SurfaceSample label='card' surface='card' className={cardSurface} />
-          <SurfaceSample label='popup' surface='popup' className={popupSurface} />
+          <SurfaceSample label='card' surface='card' className='border border-(--edge) bg-card bg-clip-padding' />
+          <SurfaceSample
+            label='popup'
+            surface='popup'
+            className='rounded-popup bg-popover text-popover-foreground shadow-popup'
+          />
         </div>
       </FoundationSection>
     </FoundationPage>

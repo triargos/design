@@ -1,25 +1,13 @@
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { Callout, CalloutContent } from '~/components/ui/callout';
-import { EmptyState, EmptyStateContent, EmptyStateDescription, EmptyStateTitle } from '~/components/ui/empty-state';
+import { Alert, AlertContent } from '~/components/ui/alert';
+import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from '~/components/ui/empty';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
-import {
-  InsetCard,
-  InsetCardContent,
-  InsetCardDescription,
-  InsetCardHeader,
-  InsetCardTitle,
-} from '~/components/ui/inset-card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
-import { PageContent } from '~/components/ui/page-content';
-import {
-  PageDescription,
-  PageHeaderBackLink,
-  PageHeaderGroup,
-  PageSection,
-  PageTitle,
-} from '~/components/ui/page-header';
+import { PageContent } from '../kit/page-layout';
+import { PageDescription, PageHeaderBackLink, PageHeaderGroup, PageSection, PageTitle } from '../kit/page-layout';
 
 import { Code, FoundationPage, FoundationSection, GapRuler, SpecimenList, SpecimenRow } from '../kit/blocks';
 import { defineDocs, useTokens } from '../kit/docs';
@@ -28,16 +16,19 @@ import { SPACING_STEPS, type SpacingStepName, spacingValue } from '../kit/tokens
 const usage: Record<SpacingStepName, { relation: string; owners: string }> = {
   tight: {
     relation: 'A title and its description: one unit',
-    owners: 'PageHeaderGroup, PageSection (title → description), ItemContent, FieldContent, DialogHeader, EmptyState',
+    owners: 'Page header and section titles (title → description), ItemContent, FieldContent, DialogHeader, Empty',
   },
-  related: { relation: 'Items that work together', owners: 'Field (label → control), PageHeaderActions, ItemActions' },
+  related: {
+    relation: 'Items that work together',
+    owners: 'Field (label → control), page header actions, ItemActions',
+  },
   group: {
     relation: 'Peer blocks; a heading → its content; padding inside a surface',
     owners:
-      'PageContent (back link → title), PageSection, FieldGroup, FieldSet, FieldLegend, InsetCardContent, InsetCardHeader (inline), DialogBody, SheetBody',
+      'Page header (back link → title), sections, FieldGroup, FieldSet, FieldLegend, CardContent, CardHeader (inline), DialogBody, SheetBody',
   },
-  page: { relation: 'Page title → content', owners: 'PageContent' },
-  section: { relation: 'Section ↔ section', owners: 'PageContent (around a PageSection)' },
+  page: { relation: 'Page title → content', owners: 'Page pattern' },
+  section: { relation: 'Section ↔ section', owners: 'Page pattern (between sections)' },
 };
 
 const Row = ({ name, detail }: { name: string; detail: string }) => (
@@ -62,47 +53,47 @@ const SamplePage = () => (
           </PageHeaderGroup>
         </>
       }>
-      <Callout>
-        <CalloutContent>
+      <Alert>
+        <AlertContent>
           <p className='font-medium'>Due March 31</p>
           <p>After that, the project moves to review.</p>
-        </CalloutContent>
-      </Callout>
+        </AlertContent>
+      </Alert>
       <PageSection title='Team' description='Only admins see these details.'>
-        <InsetCard>
-          <InsetCardHeader>
-            <InsetCardTitle>Members</InsetCardTitle>
-            <InsetCardDescription>They get every project update.</InsetCardDescription>
-          </InsetCardHeader>
-          <InsetCardContent className='overflow-hidden'>
+        <Card>
+          <CardHeader>
+            <CardTitle>Members</CardTitle>
+            <CardDescription>They get every project update.</CardDescription>
+          </CardHeader>
+          <CardContent className='overflow-hidden'>
             <ItemList>
               <Row name='Anna Schmidt' detail='anna@example.com' />
               <Row name='Jonas Weber' detail='jonas@example.com' />
             </ItemList>
-          </InsetCardContent>
-        </InsetCard>
-        <InsetCard>
-          <InsetCardHeader>
-            <InsetCardTitle>Owner</InsetCardTitle>
-          </InsetCardHeader>
-          <InsetCardContent className='overflow-hidden'>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Owner</CardTitle>
+          </CardHeader>
+          <CardContent className='overflow-hidden'>
             <ItemList>
               <Row name='Mia Chen' detail='Project lead' />
             </ItemList>
-          </InsetCardContent>
-        </InsetCard>
+          </CardContent>
+        </Card>
       </PageSection>
       <PageSection title='Documents'>
-        <InsetCard>
-          <InsetCardHeader>
-            <InsetCardTitle>Files</InsetCardTitle>
-          </InsetCardHeader>
-          <InsetCardContent className='overflow-hidden'>
+        <Card>
+          <CardHeader>
+            <CardTitle>Files</CardTitle>
+          </CardHeader>
+          <CardContent className='overflow-hidden'>
             <ItemList>
               <Row name='project-brief.pdf' detail='Uploaded March 12' />
             </ItemList>
-          </InsetCardContent>
-        </InsetCard>
+          </CardContent>
+        </Card>
       </PageSection>
     </PageContent>
   </div>
@@ -150,7 +141,7 @@ export default defineDocs({
 
         <FoundationSection
           title='Page'
-          description='PageContent, PageSection and InsetCard place every gap; the page writes none.'>
+          description='Components place every gap inside them; the page layout (the Page pattern) places the gaps between them.'>
           <GapRuler show={gaps}>
             <SamplePage />
           </GapRuler>
@@ -158,14 +149,14 @@ export default defineDocs({
 
         <FoundationSection title='Components' description='Inside the main components.'>
           <SpecimenList>
-            <SpecimenRow name='Form card' meta={<Code>InsetCardHeader · FieldGroup · Field · FieldContent</Code>}>
+            <SpecimenRow name='Form card' meta={<Code>CardHeader · FieldGroup · Field · FieldContent</Code>}>
               <GapRuler show={gaps}>
-                <InsetCard className='max-w-lg'>
-                  <InsetCardHeader>
-                    <InsetCardTitle>Contact</InsetCardTitle>
-                    <InsetCardDescription>How your team reaches you.</InsetCardDescription>
-                  </InsetCardHeader>
-                  <InsetCardContent className='p-4'>
+                <Card className='max-w-lg'>
+                  <CardHeader>
+                    <CardTitle>Contact</CardTitle>
+                    <CardDescription>How your team reaches you.</CardDescription>
+                  </CardHeader>
+                  <CardContent className='p-4'>
                     <FieldGroup>
                       <Field>
                         <FieldLabel htmlFor='spacing-email'>Email</FieldLabel>
@@ -177,19 +168,20 @@ export default defineDocs({
                         <Input id='spacing-phone' placeholder='Optional' />
                       </Field>
                     </FieldGroup>
-                  </InsetCardContent>
-                </InsetCard>
+                  </CardContent>
+                </Card>
               </GapRuler>
             </SpecimenRow>
             <SpecimenRow name='Empty state' meta={<Code>media → title 16 · title → description 4 · → actions 24</Code>}>
               <GapRuler show={gaps}>
-                <EmptyState>
-                  <EmptyStateTitle>No projects yet</EmptyStateTitle>
-                  <EmptyStateDescription>Projects you create show up here.</EmptyStateDescription>
-                  <EmptyStateContent>
+                <Empty>
+                  <EmptyMedia />
+                  <EmptyTitle>No projects yet</EmptyTitle>
+                  <EmptyDescription>Projects you create show up here.</EmptyDescription>
+                  <EmptyContent>
                     <Button>New project</Button>
-                  </EmptyStateContent>
-                </EmptyState>
+                  </EmptyContent>
+                </Empty>
               </GapRuler>
             </SpecimenRow>
           </SpecimenList>

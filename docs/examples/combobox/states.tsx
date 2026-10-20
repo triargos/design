@@ -6,54 +6,51 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '~/components/ui/combobox';
+import type { SelectOption } from '~/components/ui/select';
 
-interface Project {
-  readonly value: string;
-  readonly label: string;
-}
+const PROJECTS: ReadonlyArray<SelectOption> = ['Atlas', 'Beacon', 'Comet', 'Delta'].map((name) => ({
+  value: name.toLowerCase(),
+  label: name,
+}));
 
-const PROJECTS: ReadonlyArray<Project> = [
-  { value: 'atlas', label: 'Atlas' },
-  { value: 'beacon', label: 'Beacon' },
-  { value: 'comet', label: 'Comet' },
-  { value: 'delta', label: 'Delta' },
-  { value: 'orbit', label: 'Orbit' },
+const STATES = [
+  { label: 'Project', items: PROJECTS, value: null },
+  { label: 'Project, loading', items: [], value: null, empty: 'Loading projects…' },
+  { label: 'Project, invalid', items: PROJECTS, value: null, invalid: true },
+  { label: 'Project, read-only', items: PROJECTS, value: 'beacon', readOnly: true },
+  { label: 'Project, disabled', items: PROJECTS, value: 'beacon', disabled: true },
 ];
 
-/** Invalid and disabled. With no match the list shows `ComboboxEmpty`. */
+/** Placeholder; loading (`ComboboxEmpty` while the items load); invalid, read-only, disabled. */
 export function ComboboxStates() {
   return (
     <div className='grid w-64 gap-2'>
-      <Combobox items={PROJECTS} itemToStringLabel={(project: Project) => project.label}>
-        <ComboboxInput placeholder='Search projects' aria-label='Project, invalid' aria-invalid />
-        <ComboboxContent>
-          <ComboboxEmpty>No projects found</ComboboxEmpty>
-          <ComboboxList>
-            {(project: Project) => (
-              <ComboboxItem key={project.value} value={project}>
-                {project.label}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-      <Combobox
-        items={PROJECTS}
-        defaultValue={PROJECTS[0]}
-        disabled
-        itemToStringLabel={(project: Project) => project.label}>
-        <ComboboxInput placeholder='Search projects' aria-label='Project, disabled' />
-        <ComboboxContent>
-          <ComboboxEmpty>No projects found</ComboboxEmpty>
-          <ComboboxList>
-            {(project: Project) => (
-              <ComboboxItem key={project.value} value={project}>
-                {project.label}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
+      {STATES.map((state) => (
+        <Combobox
+          key={state.label}
+          items={state.items}
+          value={state.value}
+          onValueChange={() => undefined}
+          readOnly={state.readOnly}
+          disabled={state.disabled}>
+          <ComboboxInput
+            aria-label={state.label}
+            aria-invalid={state.invalid}
+            disabled={state.disabled}
+            placeholder='Choose a project'
+          />
+          <ComboboxContent>
+            <ComboboxEmpty>{state.empty ?? 'No projects found'}</ComboboxEmpty>
+            <ComboboxList>
+              {(item) => (
+                <ComboboxItem key={item.value} value={item}>
+                  {item.label}
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      ))}
     </div>
   );
 }

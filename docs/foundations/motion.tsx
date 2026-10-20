@@ -13,8 +13,8 @@ const durations = [
   {
     className: 'duration-enter',
     ms: 100,
-    use: 'Popups, menus, dialogs: enter and exit',
-    owner: 'popupSurface users, modal.ts',
+    use: 'Popups and menus: enter and exit',
+    owner: 'Popover, Select, Combobox, menus',
   },
   {
     className: 'duration-feedback',
@@ -27,6 +27,12 @@ const durations = [
     ms: 200,
     use: 'Something that travels on screen',
     owner: 'Tabs indicator, Sheet, Switch thumb',
+  },
+  {
+    className: 'duration-modal',
+    ms: 250,
+    use: 'Dialogs and their backdrop: enter and exit. Larger than a popup, so slower',
+    owner: 'Dialog, AlertDialog, Sheet',
   },
   {
     className: 'duration-sheet',
@@ -144,16 +150,16 @@ export default defineDocs({
               Never from 0.
             </p>
           </SpecimenRow>
-          <SpecimenRow name='Springs' meta={<Code>insetCardRevealTransition</Code>}>
+          <SpecimenRow name='Springs' meta={<Code>cardRevealTransition</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
               Motion that can be interrupted (a footer that shows and hides while typing, a dialog acknowledging) is a
               spring in code, so it keeps its speed when it turns around.
             </p>
           </SpecimenRow>
-          <SpecimenRow name='Arriving content' meta={<Code>Components › Fade In</Code>}>
+          <SpecimenRow name='Arriving content' meta={<Code>animate-in fade-in-0 duration-feedback</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
-              Content that arrives after a load fades in once, opacity only. A confirmation check pops in: Components ›
-              Pop Check.
+              Content that arrives after a load fades in once, opacity only. A confirmation check pops in and draws its
+              stroke (Checkbox, Copy Button).
             </p>
           </SpecimenRow>
           <SpecimenRow name='Reduced motion' meta={<Code>motion-reduce:</Code>}>

@@ -1,23 +1,47 @@
 import { Combobox as ComboboxPrimitive } from '@base-ui/react/combobox';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { CheckIcon, ChevronsUpDownIcon, SearchIcon, XIcon } from 'lucide-react';
+import { CheckIcon, ChevronsUpDownIcon, PlusIcon, XIcon } from 'lucide-react';
 import * as React from 'react';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
-import { popupSurface } from '~/components/ui/popover';
-import { selectTriggerVariants } from '~/components/ui/select';
+import type { SelectOption } from '~/components/ui/select';
 
 import { cn } from '~/lib/utils';
 
 type Virtualizer = ReturnType<typeof useVirtualizer<HTMLDivElement, Element>>;
 
-/** What the root shares with its parts: the chips field the popup anchors to, and the state of a virtualized list. */
+/** A typed value of a `Combobox allowCustom`: not an item, its text is the value. */
+class CustomEntry {
+  constructor(readonly text: string) {}
+}
+
+type Entry = SelectOption | CustomEntry;
+
+const entryLabel = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : entry.label);
+const entryValue = (entry: Entry) => (entry instanceof CustomEntry ? entry.text : entry.value);
+const entryKey = (entry: Entry) => (entry instanceof CustomEntry ? `custom:${entry.text}` : entry.value);
+const isSameEntry = (a: Entry, b: Entry) =>
+  a instanceof CustomEntry || b instanceof CustomEntry
+    ? a instanceof CustomEntry && b instanceof CustomEntry && a.text === b.text
+    : a.value === b.value;
+
+/** What the root shares with its parts. */
 interface ComboboxContextValue {
+  /** The chips field the popup anchors to. */
   readonly chips: HTMLDivElement | null;
   readonly setChips: (element: HTMLDivElement | null) => void;
   readonly open: boolean;
+  readonly virtualized: boolean;
   readonly virtualizerRef: React.RefObject<Virtualizer | null>;
+  readonly custom: {
+    /** The value is typed text, not an item's. */
+    readonly active: boolean;
+    readonly value: string | null;
+    readonly label: string;
+    readonly optionLabel: (text: React.ReactNode) => React.ReactNode;
+    readonly noteId: string;
+  } | null;
 }
 
 const ComboboxContext = React.createContext<ComboboxContextValue | null>(null);
@@ -28,21 +52,84 @@ const useComboboxContext = () => {
   return context;
 };
 
+interface ComboboxBaseProps extends Pick<
+  ComboboxPrimitive.Root.Props<SelectOption>,
+  'disabled' | 'readOnly' | 'open' | 'onOpenChange' | 'name' | 'required' | 'children'
+> {
+  readonly items: ReadonlyArray<SelectOption>;
+  /** Only the rows in view render: for lists of hundreds of items and up. Rows keep to one line. */
+  readonly virtualized?: boolean;
+}
+
+type ComboboxProps = ComboboxBaseProps &
+  (
+    | {
+        readonly multiple?: false;
+        readonly value: string | null;
+        readonly onValueChange: (value: string | null) => void;
+        /**
+         * The value is an item's value or the typed text. While the query matches no item's label, the list ends in
+         * a row that takes it; Enter picks it once nothing else matches.
+         */
+        readonly allowCustom?: boolean;
+        /** Marks a typed value: in its row, and as the field's description. */
+        readonly customLabel?: string;
+        /** The row that takes the query; `text` is the typed text, cut to fit. */
+        readonly customOptionLabel?: (text: React.ReactNode) => React.ReactNode;
+      }
+    | {
+        /** Many values, as chips: compose `ComboboxChips` instead of `ComboboxInput`. */
+        readonly multiple: true;
+        readonly value: ReadonlyArray<string>;
+        readonly onValueChange: (values: string[]) => void;
+        readonly allowCustom?: false;
+      }
+  );
+
+/** The selected entry leads the list, so a reopened combobox shows it first; the rest keep their order. */
+function selectedFirst(entries: ReadonlyArray<Entry>, selected: Entry | null): ReadonlyArray<Entry> {
+  if (selected === null || !entries.includes(selected)) return entries;
+  return [selected, ...entries.filter((entry) => entry !== selected)];
+}
+
 /**
- * Typing highlights the first match (Base UI defaults `autoHighlight` to off), so Enter picks it. With `virtualized`,
- * render the rows through `ComboboxVirtualizedList`: Base UI cannot scroll a row it has not rendered into view, so a
- * keyboard highlight asks the virtualizer to.
+ * A field that filters a list as you type. Values are the items' `value` strings. Typing highlights the first match
+ * (Base UI defaults `autoHighlight` to off), so Enter picks it. For a short list without typing, `Select`.
  */
-function Combobox<Value, Multiple extends boolean | undefined = false, Item = Value>({
-  autoHighlight = true,
-  onOpenChange,
-  onItemHighlighted,
-  ...props
-}: ComboboxPrimitive.Root.Props<Value, Multiple, Item>) {
-  const [openState, setOpenState] = React.useState(props.defaultOpen ?? false);
+function Combobox(props: ComboboxProps) {
+  const { items, virtualized = false, onOpenChange, children, ...root } = props;
+  const [openState, setOpenState] = React.useState(false);
   const [chips, setChips] = React.useState<HTMLDivElement | null>(null);
+  const [query, setQuery] = React.useState('');
   const virtualizerRef = React.useRef<Virtualizer | null>(null);
-  const open = props.open ?? openState;
+  const noteId = React.useId();
+
+  const optionsByValue = React.useMemo(() => new Map(items.map((option) => [option.value, option])), [items]);
+  const labels = React.useMemo(() => new Set(items.map((option) => option.label.toLowerCase())), [items]);
+
+  const allowCustom = !props.multiple && props.allowCustom === true;
+  const single = props.multiple ? null : props.value;
+  const listed = single === null ? undefined : optionsByValue.get(single);
+  const customActive = allowCustom && Boolean(single) && listed === undefined;
+  // Base UI resets the input to the selected label when the value changes identity or drops out of `items`; either
+  // would undo every keystroke. So: one `CustomEntry` per custom text, and it stays in `items`.
+  const customEntry = React.useMemo(
+    () => (customActive && single ? new CustomEntry(single) : null),
+    [customActive, single],
+  );
+  const selected: Entry | null = listed ?? customEntry;
+
+  // Single: the selected entry first, then (custom) the row that takes the query.
+  const entries = React.useMemo((): ReadonlyArray<Entry> => {
+    if (props.multiple) return items;
+    const typed = query.trim();
+    const typedRow =
+      allowCustom && typed !== '' && typed !== single && !labels.has(typed.toLowerCase())
+        ? [new CustomEntry(typed)]
+        : [];
+    const all: ReadonlyArray<Entry> = customEntry !== null ? [...items, customEntry] : items;
+    return [...selectedFirst(all, selected), ...typedRow];
+  }, [props.multiple, items, allowCustom, query, single, labels, customEntry, selected]);
 
   const scrollToHighlight = ({ reason, index }: ComboboxPrimitive.Root.HighlightEventDetails) => {
     const virtualizer = virtualizerRef.current;
@@ -54,39 +141,77 @@ function Combobox<Value, Multiple extends boolean | undefined = false, Item = Va
     }
   };
 
+  const shared = {
+    items: entries,
+    virtualized,
+    autoHighlight: true,
+    itemToStringLabel: entryLabel,
+    itemToStringValue: entryValue,
+    isItemEqualToValue: isSameEntry,
+    disabled: root.disabled,
+    readOnly: root.readOnly,
+    name: root.name,
+    required: root.required,
+    open: root.open,
+    onOpenChange: (next: boolean, details: ComboboxPrimitive.Root.ChangeEventDetails) => {
+      setOpenState(next);
+      onOpenChange?.(next, details);
+    },
+    onInputValueChange: setQuery,
+    // Base UI cannot scroll a row it has not rendered into view, so a keyboard highlight asks the virtualizer to.
+    onItemHighlighted: (item: Entry | undefined, details: ComboboxPrimitive.Root.HighlightEventDetails) => {
+      if (item !== undefined) scrollToHighlight(details);
+    },
+  };
+
   return (
-    <ComboboxContext value={{ chips, setChips, open, virtualizerRef }}>
-      <ComboboxPrimitive.Root
-        autoHighlight={autoHighlight}
-        onOpenChange={(next, details) => {
-          setOpenState(next);
-          onOpenChange?.(next, details);
-        }}
-        onItemHighlighted={(item, details) => {
-          if (item !== undefined) scrollToHighlight(details);
-          onItemHighlighted?.(item, details);
-        }}
-        {...props}
-      />
+    <ComboboxContext
+      value={{
+        chips,
+        setChips,
+        open: root.open ?? openState,
+        virtualized,
+        virtualizerRef,
+        custom: props.multiple
+          ? null
+          : allowCustom
+            ? {
+                active: customActive,
+                value: single,
+                label: props.customLabel ?? 'Custom',
+                optionLabel: props.customOptionLabel ?? ((text) => <>Use “{text}”</>),
+                noteId,
+              }
+            : null,
+      }}>
+      {props.multiple ? (
+        <ComboboxPrimitive.Root<Entry, true>
+          {...shared}
+          multiple
+          value={props.value.flatMap((key) => optionsByValue.get(key) ?? [])}
+          onValueChange={(next) => props.onValueChange(next.map(entryValue))}>
+          {children}
+        </ComboboxPrimitive.Root>
+      ) : (
+        <ComboboxPrimitive.Root<Entry>
+          {...shared}
+          value={selected}
+          onValueChange={(next) => props.onValueChange(next === null ? null : entryValue(next))}>
+          {children}
+          {/* No visible mark for a typed value: the input reads the note, its list row shows the same label. */}
+          {customActive && (
+            <span id={noteId} className='sr-only'>
+              {props.customLabel ?? 'Custom'}
+            </span>
+          )}
+        </ComboboxPrimitive.Root>
+      )}
     </ComboboxContext>
   );
 }
 
 function ComboboxValue(props: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value data-slot='combobox-value' {...props} />;
-}
-
-/** A select-like trigger; pair it with a `ComboboxSearch` in the popup. Children: a `ComboboxValue`. */
-function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Trigger.Props) {
-  return (
-    <ComboboxPrimitive.Trigger
-      data-slot='combobox-trigger'
-      className={cn(selectTriggerVariants(), className)}
-      {...props}>
-      {children}
-      <ChevronsUpDownIcon />
-    </ComboboxPrimitive.Trigger>
-  );
 }
 
 interface ComboboxInputProps extends ComboboxPrimitive.Input.Props {
@@ -99,7 +224,7 @@ interface ComboboxInputProps extends ComboboxPrimitive.Input.Props {
 /**
  * The field: Base UI's `InputGroup` on our `InputGroup` surface, so the popup anchors to the whole field, not the
  * native input. A ⇅ button opens the list; once there is a value, a clear button takes its place (Base UI unmounts
- * `Clear` while empty).
+ * `Clear` while empty). `className` goes to the field.
  */
 function ComboboxInput({
   className,
@@ -108,9 +233,14 @@ function ComboboxInput({
   openLabel = 'Open list',
   ...props
 }: ComboboxInputProps) {
+  const { custom } = useComboboxContext();
   return (
     <ComboboxPrimitive.InputGroup render={<InputGroup className={cn('w-auto', className)} />}>
-      <ComboboxPrimitive.Input render={<InputGroupInput disabled={disabled} />} {...props} />
+      <ComboboxPrimitive.Input
+        render={<InputGroupInput disabled={disabled} />}
+        aria-describedby={custom?.active ? custom.noteId : undefined}
+        {...props}
+      />
       <InputGroupAddon align='inline-end'>
         <InputGroupButton
           size='icon-xs'
@@ -136,19 +266,6 @@ function ComboboxInput({
   );
 }
 
-/** The search field inside the popup, under a `ComboboxTrigger`: 36px, 4px in, a search icon ahead of the text. */
-function ComboboxSearch({ className, ...props }: ComboboxPrimitive.Input.Props) {
-  return (
-    <ComboboxPrimitive.InputGroup
-      render={<InputGroup className={cn('m-1 mb-0 h-9 w-auto rounded-inner', className)} />}>
-      <InputGroupAddon align='inline-start' className='[&>svg:not([class*=text-])]:text-faint-foreground'>
-        <SearchIcon />
-      </InputGroupAddon>
-      <ComboboxPrimitive.Input render={<InputGroupInput />} {...props} />
-    </ComboboxPrimitive.InputGroup>
-  );
-}
-
 /** Anchored to the field, or to `ComboboxChips` when there are chips. */
 function ComboboxContent({ className, ...props }: ComboboxPrimitive.Popup.Props) {
   const { chips } = useComboboxContext();
@@ -159,9 +276,9 @@ function ComboboxContent({ className, ...props }: ComboboxPrimitive.Popup.Props)
           data-slot='combobox-content'
           data-surface='popup'
           className={cn(
-            popupSurface,
             // At least as wide as the field, wider for long items, up to the window.
-            'group/combobox-content relative flex max-h-[min(var(--available-height),23rem)] max-w-(--available-width) min-w-(--anchor-width) origin-(--transform-origin) flex-col overflow-hidden duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+            'group/combobox-content relative flex max-h-[min(var(--available-height),23rem)] max-w-(--available-width) min-w-(--anchor-width) origin-(--transform-origin) flex-col overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-popup)]',
+            'duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
             className,
           )}
           {...props}
@@ -171,62 +288,51 @@ function ComboboxContent({ className, ...props }: ComboboxPrimitive.Popup.Props)
   );
 }
 
-function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
-  return (
-    <ComboboxPrimitive.List
-      data-slot='combobox-list'
-      className={cn('min-h-0 flex-1 scroll-py-1 overflow-y-auto overscroll-contain p-1 data-empty:p-0', className)}
-      {...props}
-    />
-  );
+/** Where a row sits in a virtualized list; `ComboboxItem` reads it. */
+interface VirtualRow {
+  readonly index: number;
+  readonly start: number;
+  readonly count: number;
+  readonly measure: (element: Element | null) => void;
 }
 
-/**
- * The check leads in its own 16px column, kept empty when unselected, so labels line up; the same place as the
- * indicator of a menu's checkbox item.
- */
-const itemClassName =
-  "grid w-full cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-inner px-2.5 py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
-
-const itemCheck = (
-  <ComboboxPrimitive.ItemIndicator className='col-start-1 flex'>
-    <CheckIcon />
-  </ComboboxPrimitive.ItemIndicator>
-);
-
-function ComboboxItem({ className, children, ...props }: ComboboxPrimitive.Item.Props) {
-  return (
-    <ComboboxPrimitive.Item data-slot='combobox-item' className={cn(itemClassName, className)} {...props}>
-      {itemCheck}
-      {/* Long labels wrap. */}
-      <div className='col-start-2 flex min-w-0 items-center gap-2 wrap-anywhere'>{children}</div>
-    </ComboboxPrimitive.Item>
-  );
-}
+const VirtualRowContext = React.createContext<VirtualRow | null>(null);
 
 const ROW_ESTIMATE = 36;
 const OVERSCAN = 20;
 
-interface ComboboxVirtualizedListProps<T> {
-  readonly children: (item: T) => React.ReactNode;
-  /** The leading column for an item in place of the check (e.g. a plus on a create row); `undefined` keeps the check. */
-  readonly indicator?: (item: T) => React.ReactNode;
-  /** Keys the size cache by item, not index: a row never inherits the size of whatever sat at its index before. */
-  readonly itemKey?: (item: T) => React.Key;
+interface ComboboxListProps {
+  /** A row: a `ComboboxItem` with `value={option}`. A custom value's rows render themselves. */
+  readonly children: (option: SelectOption) => React.ReactNode;
+  readonly className?: string;
 }
 
-/** The list of a `Combobox virtualized`: only the rows in view render. `children` renders a row's content. */
-function ComboboxVirtualizedList<T>({ children, indicator, itemKey }: ComboboxVirtualizedListProps<T>) {
+/** The rows. With `Combobox virtualized` only those in view render, measured as they mount. */
+function ComboboxList({ children, className }: ComboboxListProps) {
+  const { virtualized } = useComboboxContext();
+  const row = (entry: Entry) => (entry instanceof CustomEntry ? <CustomRow entry={entry} /> : children(entry));
+  if (virtualized) return <VirtualizedRows row={row} className={className} />;
+  return (
+    <ComboboxPrimitive.List
+      data-slot='combobox-list'
+      className={cn('min-h-0 flex-1 scroll-py-1 overflow-y-auto overscroll-contain p-1 data-empty:p-0', className)}>
+      {(entry: Entry) => <React.Fragment key={entryKey(entry)}>{row(entry)}</React.Fragment>}
+    </ComboboxPrimitive.List>
+  );
+}
+
+function VirtualizedRows({ row, className }: { row: (entry: Entry) => React.ReactNode; className?: string }) {
   const { open, virtualizerRef } = useComboboxContext();
-  const filteredItems = ComboboxPrimitive.useFilteredItems<T>();
+  const filtered = ComboboxPrimitive.useFilteredItems<Entry>();
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
 
   const virtualizer = useVirtualizer({
     enabled: open,
-    count: filteredItems.length,
+    count: filtered.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => ROW_ESTIMATE,
-    getItemKey: itemKey && ((index) => itemKey(filteredItems[index]!)),
+    // Keys the size cache by item, not index: a row never inherits the size of whatever sat at its index before.
+    getItemKey: (index) => entryKey(filtered[index]!),
     overscan: OVERSCAN,
     // No paddingStart/End: the listbox's `p-1` is the one inset, on every side, so a row's `rounded-inner` stays
     // concentric with the popup. Scroll padding keeps a keyboard-scrolled row clear of the edge.
@@ -246,42 +352,25 @@ function ComboboxVirtualizedList<T>({ children, indicator, itemKey }: ComboboxVi
   );
 
   return (
-    <ComboboxPrimitive.List data-slot='combobox-list' className='overflow-hidden p-1 data-empty:p-0'>
-      {filteredItems.length > 0 && (
+    <ComboboxPrimitive.List data-slot='combobox-list' className={cn('overflow-hidden p-1 data-empty:p-0', className)}>
+      {filtered.length > 0 && (
         <div
           role='presentation'
           ref={handleScrollRef}
           className='no-scrollbar max-h-72 overflow-x-hidden overflow-y-auto overscroll-contain'>
           <div role='presentation' style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%' }}>
-            {virtualizer.getVirtualItems().map((virtualItem) => {
-              const item = filteredItems[virtualItem.index]!;
-              const lead = indicator?.(item);
-              return (
-                <ComboboxPrimitive.Item
-                  key={virtualItem.key}
-                  data-slot='combobox-item'
-                  index={virtualItem.index}
-                  data-index={virtualItem.index}
-                  ref={virtualizer.measureElement}
-                  aria-setsize={filteredItems.length}
-                  aria-posinset={virtualItem.index + 1}
-                  className={itemClassName}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    // No height from the virtualizer: the row keeps its natural height and `measureElement` reads it.
-                    // A height from the cache would make a stale size measure itself again and never shrink back.
-                    transform: `translateY(${virtualItem.start}px)`,
-                  }}
-                  value={item}>
-                  {lead === undefined ? itemCheck : <span className='col-start-1 flex'>{lead}</span>}
-                  {/* One line: a virtualized row cannot widen the popup. */}
-                  <div className='col-start-2 flex min-w-0 items-center gap-2 truncate'>{children(item)}</div>
-                </ComboboxPrimitive.Item>
-              );
-            })}
+            {virtualizer.getVirtualItems().map((item) => (
+              <VirtualRowContext
+                key={item.key}
+                value={{
+                  index: item.index,
+                  start: item.start,
+                  count: filtered.length,
+                  measure: virtualizer.measureElement,
+                }}>
+                {row(filtered[item.index]!)}
+              </VirtualRowContext>
+            ))}
           </div>
         </div>
       )}
@@ -289,28 +378,83 @@ function ComboboxVirtualizedList<T>({ children, indicator, itemKey }: ComboboxVi
   );
 }
 
-function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
+interface ComboboxItemProps extends ComboboxPrimitive.Item.Props {
+  /** The leading column in place of the check, e.g. an icon. */
+  readonly indicator?: React.ReactNode;
+}
+
+/**
+ * A row. The check leads in its own 16px column, kept empty when unselected, so labels line up; the same place as the
+ * indicator of a menu's checkbox item. Long labels wrap, except in a virtualized list, where a row keeps to one line.
+ */
+function ComboboxItem({ className, children, indicator, style, ...props }: ComboboxItemProps) {
+  const virtual = React.use(VirtualRowContext);
   return (
-    <ComboboxPrimitive.Group
-      data-slot='combobox-group'
-      className={cn('[[role=group]+&]:mt-1.5', className)}
-      {...props}
-    />
+    <ComboboxPrimitive.Item
+      data-slot='combobox-item'
+      className={cn(
+        "grid w-full cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-inner px-2.5 py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
+      {...(virtual && {
+        index: virtual.index,
+        'data-index': virtual.index,
+        ref: virtual.measure,
+        'aria-setsize': virtual.count,
+        'aria-posinset': virtual.index + 1,
+      })}
+      style={
+        virtual
+          ? {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              // No height from the virtualizer: the row keeps its natural height and `measureElement` reads it. A
+              // height from the cache would make a stale size measure itself again and never shrink back.
+              transform: `translateY(${virtual.start}px)`,
+              ...style,
+            }
+          : style
+      }
+      {...props}>
+      {indicator === undefined ? (
+        <ComboboxPrimitive.ItemIndicator className='col-start-1 flex'>
+          <CheckIcon />
+        </ComboboxPrimitive.ItemIndicator>
+      ) : (
+        <span className='col-start-1 flex'>{indicator}</span>
+      )}
+      <div className={cn('col-start-2 flex min-w-0 items-center gap-2', virtual ? 'truncate' : 'wrap-anywhere')}>
+        {children}
+      </div>
+    </ComboboxPrimitive.Item>
   );
 }
 
-function ComboboxLabel({ className, ...props }: ComboboxPrimitive.GroupLabel.Props) {
+/** A custom value's row: the picked text marked with `customLabel`, or the row that takes the query. */
+function CustomRow({ entry }: { entry: CustomEntry }) {
+  const { custom } = useComboboxContext();
+  if (!custom) return null;
+  if (entry.text === custom.value) {
+    return (
+      <ComboboxItem value={entry}>
+        <span className='truncate'>{entry.text}</span>
+        {/* At the row's end: the value truncates first, the hint keeps its width. */}
+        <span className='ms-auto shrink-0 text-caption text-muted-foreground in-data-highlighted:text-foreground'>
+          {custom.label}
+        </span>
+      </ComboboxItem>
+    );
+  }
+  // One line, as tall as the other rows: the typed text truncates, the words and quotes around it keep their width.
   return (
-    <ComboboxPrimitive.GroupLabel
-      data-slot='combobox-label'
-      className={cn('px-2.5 py-1.5 text-caption font-medium text-muted-foreground', className)}
-      {...props}
-    />
+    <ComboboxItem value={entry} indicator={<PlusIcon className='text-muted-foreground' />}>
+      <span className='flex min-w-0 whitespace-pre'>
+        {custom.optionLabel(<span className='truncate'>{entry.text}</span>)}
+      </span>
+    </ComboboxItem>
   );
-}
-
-function ComboboxCollection(props: ComboboxPrimitive.Collection.Props) {
-  return <ComboboxPrimitive.Collection data-slot='combobox-collection' {...props} />;
 }
 
 function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
@@ -390,16 +534,10 @@ export {
   ComboboxChip,
   ComboboxChips,
   ComboboxChipsInput,
-  ComboboxCollection,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxGroup,
   ComboboxInput,
   ComboboxItem,
-  ComboboxLabel,
   ComboboxList,
-  ComboboxSearch,
-  ComboboxTrigger,
   ComboboxValue,
-  ComboboxVirtualizedList,
 };

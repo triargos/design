@@ -1,5 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion';
-import { InsetCard, InsetCardContent, InsetCardHeader, InsetCardTitle } from '~/components/ui/inset-card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 const QUESTIONS = [
   {
@@ -21,11 +21,11 @@ const QUESTIONS = [
 
 export function AccordionInACard() {
   return (
-    <InsetCard className='w-full max-w-md'>
-      <InsetCardHeader>
-        <InsetCardTitle>Questions</InsetCardTitle>
-      </InsetCardHeader>
-      <InsetCardContent className='p-2'>
+    <Card className='w-full max-w-md'>
+      <CardHeader>
+        <CardTitle>Questions</CardTitle>
+      </CardHeader>
+      <CardContent className='p-2'>
         <Accordion defaultValue={['invite']}>
           {QUESTIONS.map((item) => (
             <AccordionItem key={item.value} value={item.value}>
@@ -34,7 +34,7 @@ export function AccordionInACard() {
             </AccordionItem>
           ))}
         </Accordion>
-      </InsetCardContent>
-    </InsetCard>
+      </CardContent>
+    </Card>
   );
 }

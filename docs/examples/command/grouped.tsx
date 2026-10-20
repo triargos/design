@@ -10,14 +10,13 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '~/components/ui/command';
-import { popupSurface } from '~/components/ui/popover';
 
 import { cn } from '~/lib/utils';
 
 /** `CommandGroup heading`, `CommandSeparator`, `CommandShortcut`. */
 export function CommandGrouped() {
   return (
-    <div className={cn(popupSurface, 'w-96 overflow-hidden')}>
+    <div className={cn('rounded-popup bg-popover text-popover-foreground shadow-popup', 'w-96 overflow-hidden')}>
       <Command>
         <CommandInput placeholder='Search pages and actions' />
         <CommandList>
