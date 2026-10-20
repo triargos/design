@@ -1,6 +1,6 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { IconCheck, IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { Input, inputSurfaceVariants } from '~/components/ui/input';
@@ -189,7 +189,7 @@ function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigge
       )}
       {...props}>
       {children}
-      <SelectPrimitive.Icon render={<ChevronDownIcon className='pointer-events-none size-4 text-faint-foreground' />} />
+      <SelectPrimitive.Icon render={<IconChevronDown className='pointer-events-none size-4 text-faint-foreground' />} />
     </SelectPrimitive.Trigger>
   );
 }
@@ -214,11 +214,11 @@ function SelectContent({
           )}
           {...props}>
           <SelectPrimitive.ScrollUpArrow className="top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4">
-            <ChevronUpIcon />
+            <IconChevronUp />
           </SelectPrimitive.ScrollUpArrow>
           <SelectPrimitive.List className='p-1'>{children}</SelectPrimitive.List>
           <SelectPrimitive.ScrollDownArrow className="bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4">
-            <ChevronDownIcon />
+            <IconChevronDown />
           </SelectPrimitive.ScrollDownArrow>
         </SelectPrimitive.Popup>
       </SelectPrimitive.Positioner>
@@ -250,7 +250,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={<span className='pointer-events-none absolute right-2.5 flex size-3.5 items-center justify-center' />}>
-        <CheckIcon className='size-4' />
+        <IconCheck className='size-4' />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   );

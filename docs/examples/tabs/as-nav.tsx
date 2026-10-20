@@ -1,4 +1,4 @@
-import { InboxIcon, SettingsIcon, UsersIcon } from 'lucide-react';
+import { IconInbox, IconSettings, IconUsers } from '@tabler/icons-react';
 
 import { TabsLink, TabsNav } from '~/components/ui/tabs';
 
@@ -7,15 +7,15 @@ export function TabsAsNav() {
   return (
     <TabsNav>
       <TabsLink href='#overview' current>
-        <InboxIcon />
+        <IconInbox />
         Overview
       </TabsLink>
       <TabsLink href='#members'>
-        <UsersIcon />
+        <IconUsers />
         Members
       </TabsLink>
       <TabsLink href='#settings'>
-        <SettingsIcon />
+        <IconSettings />
         Settings
       </TabsLink>
     </TabsNav>

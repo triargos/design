@@ -1,4 +1,4 @@
-import { CircleDotIcon, MoreHorizontalIcon, PencilIcon } from 'lucide-react';
+import { IconCircleDot, IconDots, IconPencil } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -18,16 +18,16 @@ export function DropdownMenuSubmenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button size='icon' aria-label='Actions' />}>
-        <MoreHorizontalIcon />
+        <IconDots />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>
         <DropdownMenuItem>
-          <PencilIcon />
+          <IconPencil />
           Edit
         </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <CircleDotIcon />
+            <IconCircleDot />
             Change status
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent className='w-40'>

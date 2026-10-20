@@ -1,4 +1,4 @@
-import { FolderIcon, InboxIcon, SearchIcon, SettingsIcon, UserPlusIcon } from 'lucide-react';
+import { IconFolder, IconInbox, IconSearch, IconSettings, IconUserPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -23,7 +23,7 @@ export function CommandDefault() {
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        <SearchIcon data-icon='inline-start' />
+        <IconSearch data-icon='inline-start' />
         Search
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen} title='Commands' description='Find a page or an action.'>
@@ -33,12 +33,12 @@ export function CommandDefault() {
             <CommandEmpty>No results</CommandEmpty>
             <CommandGroup heading='Pages'>
               <CommandItem>
-                <InboxIcon />
+                <IconInbox />
                 Inbox
                 <CommandShortcut>G I</CommandShortcut>
               </CommandItem>
               <CommandItem>
-                <FolderIcon />
+                <IconFolder />
                 Projects
                 <CommandShortcut>G P</CommandShortcut>
               </CommandItem>
@@ -46,11 +46,11 @@ export function CommandDefault() {
             <CommandSeparator />
             <CommandGroup heading='Actions'>
               <CommandItem>
-                <UserPlusIcon />
+                <IconUserPlus />
                 Invite member
               </CommandItem>
               <CommandItem>
-                <SettingsIcon />
+                <IconSettings />
                 Settings
                 <CommandShortcut>⌘,</CommandShortcut>
               </CommandItem>

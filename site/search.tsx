@@ -1,4 +1,4 @@
-import { SearchIcon } from 'lucide-react';
+import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import pages from 'virtual:docs-index';
 
@@ -54,7 +54,7 @@ export function Search() {
         className='justify-between text-muted-foreground'
         aria-keyshortcuts='Meta+K Control+K'>
         <span className='flex items-center gap-2'>
-          <SearchIcon aria-hidden />
+          <IconSearch aria-hidden />
           Search
         </span>
         <KbdGroup className='pointer-coarse:hidden'>

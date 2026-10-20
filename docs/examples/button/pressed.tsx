@@ -1,4 +1,4 @@
-import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
+import { IconBold, IconItalic, IconUnderline } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -11,7 +11,7 @@ export function ButtonPressed() {
   return (
     <div className='flex items-center gap-0.5 text-muted-foreground'>
       <Button emphasis='ghost' size='icon-xs' aria-pressed={bold} aria-label='Bold' onClick={() => setBold(!bold)}>
-        <BoldIcon />
+        <IconBold />
       </Button>
       <Button
         emphasis='ghost'
@@ -19,7 +19,7 @@ export function ButtonPressed() {
         aria-pressed={italic}
         aria-label='Italic'
         onClick={() => setItalic(!italic)}>
-        <ItalicIcon />
+        <IconItalic />
       </Button>
       <Button
         emphasis='ghost'
@@ -27,7 +27,7 @@ export function ButtonPressed() {
         aria-pressed={underline}
         aria-label='Underline'
         onClick={() => setUnderline(!underline)}>
-        <UnderlineIcon />
+        <IconUnderline />
       </Button>
     </div>
   );

@@ -1,4 +1,4 @@
-import { SearchIcon } from 'lucide-react';
+import { IconSearch } from '@tabler/icons-react';
 
 import { InputGroup, InputGroupAddon, InputGroupInput } from '~/components/ui/input-group';
 
@@ -7,7 +7,7 @@ export function InputGroupWithIcon() {
   return (
     <InputGroup className='w-80'>
       <InputGroupAddon>
-        <SearchIcon />
+        <IconSearch />
       </InputGroupAddon>
       <InputGroupInput placeholder='Search members' aria-label='Search members' />
     </InputGroup>

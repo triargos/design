@@ -1,6 +1,6 @@
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { cva } from 'class-variance-authority';
-import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
+import { IconCheck, IconChevronRight, IconCircle } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { cn } from '~/lib/utils';
@@ -118,7 +118,7 @@ function DropdownMenuCheckboxItem({
       {...props}>
       <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
         <MenuPrimitive.CheckboxItemIndicator>
-          <CheckIcon />
+          <IconCheck />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -139,7 +139,7 @@ function DropdownMenuRadioItem({ className, children, closeOnClick = true, ...pr
       {...props}>
       <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
         <MenuPrimitive.RadioItemIndicator>
-          <CircleIcon className='size-2 fill-current' />
+          <IconCircle className='size-2 fill-current' />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}
@@ -182,7 +182,7 @@ function DropdownMenuSubTrigger({ className, children, ...props }: MenuPrimitive
       )}
       {...props}>
       {children}
-      <ChevronRightIcon className='ml-auto' />
+      <IconChevronRight className='ml-auto' />
     </MenuPrimitive.SubmenuTrigger>
   );
 }

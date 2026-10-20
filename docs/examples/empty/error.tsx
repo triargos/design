@@ -1,4 +1,4 @@
-import { CloudOffIcon } from 'lucide-react';
+import { IconCloudOff } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from '~/components/ui/empty';
@@ -14,7 +14,7 @@ export function EmptyError() {
       <CardContent className='p-4'>
         <Empty role='alert'>
           <EmptyMedia variant='icon'>
-            <CloudOffIcon />
+            <IconCloudOff />
           </EmptyMedia>
           <EmptyTitle>Can’t reach the server</EmptyTitle>
           <EmptyDescription>

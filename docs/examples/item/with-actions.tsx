@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -28,7 +28,7 @@ export function ItemWithActions() {
               <ItemActions>
                 <Badge intent={member.status.intent}>{member.status.label}</Badge>
                 <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`}>
-                  <MoreHorizontalIcon />
+                  <IconDots />
                 </Button>
               </ItemActions>
             </Item>

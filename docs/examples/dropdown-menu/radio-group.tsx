@@ -1,4 +1,4 @@
-import { ArrowUpDownIcon } from 'lucide-react';
+import { IconArrowsSort } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -18,7 +18,7 @@ export function DropdownMenuRadioGroupExample() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button />}>
-        <ArrowUpDownIcon data-icon='inline-start' />
+        <IconArrowsSort data-icon='inline-start' />
         Sort
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>

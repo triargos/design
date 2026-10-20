@@ -1,7 +1,7 @@
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
 import { cva } from 'class-variance-authority';
 import { AnimatePresence, motion, type Transition, useReducedMotion } from 'framer-motion';
-import { MinusIcon } from 'lucide-react';
+import { IconMinus } from '@tabler/icons-react';
 
 import { cn } from '~/lib/utils';
 
@@ -70,7 +70,7 @@ function DrawnCheck({ className }: { className?: string }) {
       stroke='currentColor'
       strokeLinecap='round'
       strokeLinejoin='round'
-      className={cn('lucide', className)}
+      className={cn('tabler-icon', className)}
       {...useIconSwap()}>
       <motion.path
         d='M4 12l5 5L20 6'
@@ -89,7 +89,7 @@ function CheckboxMark({ checked, indeterminate }: { checked: boolean; indetermin
     <AnimatePresence initial={false}>
       {indeterminate ? (
         <motion.span key='minus' className='grid' {...swap}>
-          <MinusIcon />
+          <IconMinus />
         </motion.span>
       ) : checked ? (
         <DrawnCheck key='check' />

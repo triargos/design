@@ -1,6 +1,6 @@
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
-import { CheckIcon } from 'lucide-react';
+import { IconCheck } from '@tabler/icons-react';
 
 import { selectionControlVariants } from '~/components/ui/checkbox';
 
@@ -53,7 +53,7 @@ function ChoiceCard({ className, children, ...props }: RadioPrimitive.Root.Props
       )}
       {...props}>
       <span className='min-w-0 truncate'>{children}</span>
-      <CheckIcon
+      <IconCheck
         aria-hidden
         className='size-4 shrink-0 text-primary opacity-0 transition-opacity duration-feedback group-data-checked/choice-card:opacity-100 group-data-disabled/choice-card:text-disabled-foreground'
       />

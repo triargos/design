@@ -1,4 +1,4 @@
-import { UploadIcon } from 'lucide-react';
+import { IconUpload } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from '~/components/ui/empty';
@@ -18,7 +18,7 @@ export function EmptyDefault() {
           <EmptyDescription>Uploaded documents show up here, ready to share with the team.</EmptyDescription>
           <EmptyContent>
             <Button>
-              <UploadIcon data-icon='inline-start' />
+              <IconUpload data-icon='inline-start' />
               Upload documents
             </Button>
           </EmptyContent>

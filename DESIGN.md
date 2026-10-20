@@ -84,7 +84,7 @@ Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other 
 | `text-caption`  | 12 / 16 · 400            | Meta, timestamps, badges, tooltips                                                                             | `Badge`, `TooltipContent`                               |
 | `text-overline` | 10 / 16 · 500, uppercase | Menu and group labels                                                                                          | menu labels                                             |
 
-- Icons (lucide) draw a 1.5px stroke at every size, the weight of regular text (`svg.lucide` in `tailwind.css`). Don't pass `strokeWidth`.
+- Icons (Tabler, `@tabler/icons-react`) draw a 1.5px stroke at every size, the weight of regular text (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
 - Below `sm` (640px), fields render 16px text (`max-sm:text-[1rem]`) and `FieldLabel` 16 / 18, so iOS does not zoom on focus. From `sm` up: 14px.
 - A new role goes in `tailwind.css` **and** in `cn` (`lib/utils.ts`). Otherwise `cn` drops the text color next to it.
 

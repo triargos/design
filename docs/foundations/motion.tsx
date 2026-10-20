@@ -1,4 +1,4 @@
-import { PlayIcon } from 'lucide-react';
+import { IconPlayerPlay } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -84,7 +84,7 @@ function Run({ className, label }: { className: string; label: string }) {
         />
       </div>
       <Button emphasis='ghost' size='icon' aria-label={`Play ${label}`} onClick={() => setEnd((value) => !value)}>
-        <PlayIcon />
+        <IconPlayerPlay />
       </Button>
     </div>
   );

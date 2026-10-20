@@ -1,13 +1,13 @@
 import {
-  CheckSquareIcon,
-  DownloadIcon,
-  HomeIcon,
-  InboxIcon,
-  PlusIcon,
-  SettingsIcon,
-  Trash2Icon,
-  XIcon,
-} from 'lucide-react';
+  IconDownload,
+  IconHome,
+  IconInbox,
+  IconPlus,
+  IconSettings,
+  IconSquareCheck,
+  IconTrash,
+  IconX,
+} from '@tabler/icons-react';
 import { useRef, useState } from 'react';
 
 import { ActionBar } from '~/components/ui/action-bar';
@@ -25,10 +25,10 @@ import { Item, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } fr
 import { Separator } from '~/components/ui/separator';
 
 const TABS = [
-  { label: 'Home', icon: <HomeIcon /> },
-  { label: 'Inbox', icon: <InboxIcon /> },
-  { label: 'Tasks', icon: <CheckSquareIcon /> },
-  { label: 'Settings', icon: <SettingsIcon /> },
+  { label: 'Home', icon: <IconHome /> },
+  { label: 'Inbox', icon: <IconInbox /> },
+  { label: 'Tasks', icon: <IconSquareCheck /> },
+  { label: 'Settings', icon: <IconSettings /> },
 ] as const;
 
 const TASKS = [
@@ -88,14 +88,14 @@ export function BottomNavWithSelection() {
               {lastCount.current} selected
             </span>
             <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
-              <XIcon />
+              <IconX />
             </Button>
             <Separator orientation='vertical' className='my-1.5' />
             <Button size='icon' aria-label='Export'>
-              <DownloadIcon />
+              <IconDownload />
             </Button>
             <Button intent='destructive' emphasis='subtle' size='icon' aria-label='Delete' onClick={clear}>
-              <Trash2Icon />
+              <IconTrash />
             </Button>
           </ActionBar>
         </div>
@@ -116,7 +116,7 @@ export function BottomNavWithSelection() {
             ))}
           </BottomNavList>
           <BottomNavAction aria-label='New task'>
-            <PlusIcon />
+            <IconPlus />
           </BottomNavAction>
         </BottomNav>
       </div>

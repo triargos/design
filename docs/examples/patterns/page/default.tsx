@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, PlusIcon } from 'lucide-react';
+import { IconChevronLeft, IconPlus } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -14,7 +14,7 @@ export function PagePatternDefault() {
         <a
           href='#projects'
           className='inline-flex min-h-6 items-center gap-1.5 self-start text-body text-muted-foreground transition-colors hover:text-foreground'>
-          <ChevronLeftIcon aria-hidden className='size-4' />
+          <IconChevronLeft aria-hidden className='size-4' />
           Projects
         </a>
         <div className='flex flex-wrap items-start justify-between gap-group'>
@@ -27,7 +27,7 @@ export function PagePatternDefault() {
           <div className='flex flex-wrap items-center gap-related'>
             <Button>Share</Button>
             <Button intent='primary'>
-              <PlusIcon data-icon='inline-start' />
+              <IconPlus data-icon='inline-start' />
               New task
             </Button>
           </div>

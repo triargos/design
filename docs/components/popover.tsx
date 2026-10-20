@@ -1,4 +1,4 @@
-import { ArchiveIcon, CopyIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon } from 'lucide-react';
+import { IconArchive, IconCopy, IconDots, IconPencil, IconTrash } from '@tabler/icons-react';
 import { type ReactNode } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -58,28 +58,28 @@ export default defineDocs({
           <Stage label={<Code>DropdownMenu</Code>}>
             <DropdownMenu defaultOpen modal={false}>
               <DropdownMenuTrigger render={<Button size='icon' aria-label='Actions' />}>
-                <MoreHorizontalIcon />
+                <IconDots />
               </DropdownMenuTrigger>
               <DropdownMenuContent align='start' className='w-56'>
                 <DropdownMenuLabel>Website redesign</DropdownMenuLabel>
                 <DropdownMenuItem>
-                  <PencilIcon />
+                  <IconPencil />
                   Edit
                   <DropdownMenuShortcut>E</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <CopyIcon />
+                  <IconCopy />
                   Duplicate
                   <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled>
-                  <ArchiveIcon />
+                  <IconArchive />
                   Archive
                 </DropdownMenuItem>
                 <DropdownMenuCheckboxItem checked>Notifications</DropdownMenuCheckboxItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem intent='destructive'>
-                  <Trash2Icon />
+                  <IconTrash />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

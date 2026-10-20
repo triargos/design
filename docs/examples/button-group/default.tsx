@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from 'lucide-react';
+import { IconChevronDown } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { ButtonGroup } from '~/components/ui/button-group';
@@ -10,7 +10,7 @@ export function ButtonGroupDefault() {
       <Button>Preview</Button>
       <Button>Download</Button>
       <Button size='icon' aria-label='More'>
-        <ChevronDownIcon />
+        <IconChevronDown />
       </Button>
     </ButtonGroup>
   );

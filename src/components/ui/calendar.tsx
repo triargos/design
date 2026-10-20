@@ -1,6 +1,6 @@
 import { type CalendarDate, parseDate } from '@internationalized/date';
 import { cva } from 'class-variance-authority';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import {
   Calendar as AriaCalendar,
   Button as AriaCalendarButton,
@@ -88,7 +88,7 @@ function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
             buttonVariants({ intent: 'neutral', emphasis: 'ghost' }),
             'size-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 disabled:text-disabled-foreground dark:hover:bg-foreground/6',
           )}>
-          <ChevronLeftIcon className='size-4' />
+          <IconChevronLeft className='size-4' />
         </AriaCalendarButton>
         <Heading className='text-body font-medium select-none' />
         <AriaCalendarButton
@@ -97,7 +97,7 @@ function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
             buttonVariants({ intent: 'neutral', emphasis: 'ghost' }),
             'size-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 disabled:text-disabled-foreground dark:hover:bg-foreground/6',
           )}>
-          <ChevronRightIcon className='size-4' />
+          <IconChevronRight className='size-4' />
         </AriaCalendarButton>
       </header>
       <CalendarGrid weekdayStyle='short' className='-my-2 border-separate border-spacing-x-0 border-spacing-y-2'>

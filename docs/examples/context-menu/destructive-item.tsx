@@ -1,4 +1,4 @@
-import { PencilIcon, Trash2Icon } from 'lucide-react';
+import { IconPencil, IconTrash } from '@tabler/icons-react';
 
 import {
   ContextMenu,
@@ -16,12 +16,12 @@ export function ContextMenuDestructiveItem() {
       </ContextMenuTrigger>
       <ContextMenuContent className='w-52'>
         <ContextMenuItem>
-          <PencilIcon />
+          <IconPencil />
           Rename
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem intent='destructive'>
-          <Trash2Icon />
+          <IconTrash />
           Delete
         </ContextMenuItem>
       </ContextMenuContent>

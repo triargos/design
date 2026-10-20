@@ -13,7 +13,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -72,7 +72,7 @@ export function SortableDefault() {
                   <ItemActions className='min-w-0 flex-1 justify-end'>
                     <span className='truncate text-muted-foreground'>{item.description}</span>
                     <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${item.title}`}>
-                      <MoreHorizontalIcon />
+                      <IconDots />
                     </Button>
                   </ItemActions>
                 </SortableItem>

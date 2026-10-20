@@ -1,5 +1,5 @@
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
-import { XIcon } from 'lucide-react';
+import { IconX } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -73,7 +73,7 @@ function DialogContent({
               // 24px in.
               <Button emphasis='ghost' size='icon' className='absolute top-4.5 right-4.5' />
             }>
-            <XIcon />
+            <IconX />
           </DialogClose>
         )}
       </DialogPrimitive.Popup>

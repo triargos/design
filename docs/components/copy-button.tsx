@@ -1,4 +1,4 @@
-import { KeyRoundIcon } from 'lucide-react';
+import { IconKey } from '@tabler/icons-react';
 import { type ReactNode, useEffect, useRef } from 'react';
 
 import { CopyButton } from '~/components/ui/copy-button';
@@ -119,7 +119,7 @@ export default defineDocs({
             <ItemList>
               <Item>
                 <ItemMedia variant='icon'>
-                  <KeyRoundIcon />
+                  <IconKey />
                 </ItemMedia>
                 <ItemContent>
                   <ItemTitle>API key</ItemTitle>

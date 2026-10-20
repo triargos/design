@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from 'lucide-react';
+import { IconArrowRight } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import pages from 'virtual:docs-index';
 
@@ -39,7 +39,7 @@ function Tile({ slug, className, children }: { slug: string; className?: string;
           <ItemTitle className='text-caption font-normal text-muted-foreground'>{page.name}</ItemTitle>
         </ItemContent>
         <ItemMedia>
-          <ArrowRightIcon aria-hidden className='size-3.5 text-muted-foreground rtl:-scale-x-100' />
+          <IconArrowRight aria-hidden className='size-3.5 text-muted-foreground rtl:-scale-x-100' />
         </ItemMedia>
       </Item>
     </div>

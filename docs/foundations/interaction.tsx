@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -49,7 +49,7 @@ export default defineDocs({
             row('Raised', <Code>neutral/raised</Code>, (state) => <Button disabled={off(state)}>Edit</Button>),
             row('Ghost', <Code>neutral/ghost</Code>, (state) => (
               <Button emphasis='ghost' size='icon' aria-label='More' disabled={off(state)}>
-                <MoreHorizontalIcon />
+                <IconDots />
               </Button>
             )),
             row('Field', <Code>Input</Code>, (state) => (
@@ -100,7 +100,7 @@ export default defineDocs({
             <div className='flex items-center gap-group'>
               <div className='relative flex size-11 shrink-0 items-center justify-center rounded-control-lg border border-dashed border-border-strong'>
                 <Button size='icon-xs' aria-label='More'>
-                  <MoreHorizontalIcon />
+                  <IconDots />
                 </Button>
               </div>
               <p className='text-body text-pretty text-muted-foreground'>

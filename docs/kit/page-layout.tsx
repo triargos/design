@@ -1,6 +1,6 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
-import { ChevronLeftIcon } from 'lucide-react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import type { ComponentProps, ReactNode } from 'react';
 
 import { cn } from '~/lib/utils';
@@ -78,7 +78,7 @@ export const PageHeaderBackLink = ({ className, children, render, ...props }: us
         ),
         children: (
           <>
-            <ChevronLeftIcon aria-hidden className='size-4' />
+            <IconChevronLeft aria-hidden className='size-4' />
             {children}
           </>
         ),

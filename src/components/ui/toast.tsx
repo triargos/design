@@ -1,6 +1,6 @@
 import { Toast } from '@base-ui/react/toast';
 import { cva } from 'class-variance-authority';
-import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from 'lucide-react';
+import { IconAlertCircle, IconAlertTriangle, IconCircleCheck, IconInfoCircle } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 
 import { buttonVariants } from '~/components/ui/button';
@@ -18,11 +18,11 @@ import { cn } from '~/lib/utils';
  * stack.
  */
 const TOAST_ICONS = {
-  error: CircleAlertIcon,
-  info: InfoIcon,
+  error: IconAlertCircle,
+  info: IconInfoCircle,
   loading: Spinner,
-  success: CircleCheckIcon,
-  warning: TriangleAlertIcon,
+  success: IconCircleCheck,
+  warning: IconAlertTriangle,
 } as const;
 
 type ToastType = keyof typeof TOAST_ICONS;

@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from 'lucide-react';
+import { IconArrowRight } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 
@@ -7,7 +7,7 @@ export function ButtonAsLink() {
   return (
     <Button render={<a href='#settings' />}>
       Open settings
-      <ArrowRightIcon data-icon='inline-end' />
+      <IconArrowRight data-icon='inline-end' />
     </Button>
   );
 }

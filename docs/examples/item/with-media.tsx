@@ -1,4 +1,4 @@
-import { FileTextIcon } from 'lucide-react';
+import { IconFileText } from '@tabler/icons-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
@@ -14,7 +14,7 @@ export function ItemWithMedia() {
         <ItemList>
           <Item>
             <ItemMedia variant='icon'>
-              <FileTextIcon />
+              <IconFileText />
             </ItemMedia>
             <ItemContent>
               <ItemTitle>Brand guidelines.pdf</ItemTitle>
@@ -23,7 +23,7 @@ export function ItemWithMedia() {
           </Item>
           <Item>
             <ItemMedia variant='icon'>
-              <FileTextIcon />
+              <IconFileText />
             </ItemMedia>
             <ItemContent>
               <ItemTitle>Q2 roadmap.pdf</ItemTitle>

@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 
@@ -7,13 +7,13 @@ export function ButtonIconOnly() {
   return (
     <div className='flex flex-wrap items-center gap-2'>
       <Button size='icon-xs' aria-label='More'>
-        <MoreHorizontalIcon />
+        <IconDots />
       </Button>
       <Button size='icon' aria-label='More'>
-        <MoreHorizontalIcon />
+        <IconDots />
       </Button>
       <Button size='icon-lg' aria-label='More'>
-        <MoreHorizontalIcon />
+        <IconDots />
       </Button>
     </div>
   );

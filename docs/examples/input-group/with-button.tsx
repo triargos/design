@@ -1,4 +1,4 @@
-import { CopyIcon, EyeIcon } from 'lucide-react';
+import { IconCopy, IconEye } from '@tabler/icons-react';
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
 
@@ -13,7 +13,7 @@ export function InputGroupWithButton() {
         <InputGroupInput type='password' defaultValue='sk_live_123456' aria-label='API key' />
         <InputGroupAddon align='inline-end'>
           <InputGroupButton size='icon-xs' aria-label='Show'>
-            <EyeIcon />
+            <IconEye />
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>
@@ -21,7 +21,7 @@ export function InputGroupWithButton() {
         <InputGroupInput readOnly defaultValue='https://example.com/invite/7f3a' aria-label='Invite link' />
         <InputGroupAddon align='inline-end'>
           <InputGroupButton>
-            <CopyIcon />
+            <IconCopy />
             Copy
           </InputGroupButton>
         </InputGroupAddon>

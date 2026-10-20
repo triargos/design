@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from 'lucide-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import { useId, useState, useSyncExternalStore } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -113,7 +113,7 @@ export function Install({ name, title }: { name: string; title: string }) {
               aria-controls={setupId}
               onClick={() => setSetupOpen((open) => !open)}
               className='text-muted-foreground'>
-              <ChevronRightIcon
+              <IconChevronRight
                 data-icon='inline-start'
                 aria-hidden
                 className={cn('transition-transform duration-150', setupOpen && 'rotate-90')}

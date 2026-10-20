@@ -1,5 +1,5 @@
 import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu';
-import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
+import { IconCheck, IconChevronRight, IconCircle } from '@tabler/icons-react';
 import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
@@ -111,7 +111,7 @@ function ContextMenuSubTrigger({ className, children, ...props }: ContextMenuPri
       )}
       {...props}>
       {children}
-      <ChevronRightIcon className='ml-auto' />
+      <IconChevronRight className='ml-auto' />
     </ContextMenuPrimitive.SubmenuTrigger>
   );
 }
@@ -134,7 +134,7 @@ function ContextMenuCheckboxItem({
       {...props}>
       <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
         <ContextMenuPrimitive.CheckboxItemIndicator>
-          <CheckIcon />
+          <IconCheck />
         </ContextMenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -160,7 +160,7 @@ function ContextMenuRadioItem({
       {...props}>
       <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
         <ContextMenuPrimitive.RadioItemIndicator>
-          <CircleIcon className='size-2 fill-current' />
+          <IconCircle className='size-2 fill-current' />
         </ContextMenuPrimitive.RadioItemIndicator>
       </span>
       {children}

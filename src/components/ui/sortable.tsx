@@ -2,7 +2,7 @@ import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
+import { IconGripVertical } from '@tabler/icons-react';
 import { type ComponentProps, createContext, use } from 'react';
 
 import { cn } from '~/lib/utils';
@@ -58,7 +58,7 @@ function SortableItemHandle({
       {...props}
       {...handle?.listeners}
       {...handle?.attributes}>
-      <GripVertical aria-hidden className='size-4' />
+      <IconGripVertical aria-hidden className='size-4' />
     </button>
   );
 }

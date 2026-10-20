@@ -1,4 +1,4 @@
-import { FolderIcon, InboxIcon, SettingsIcon, UserPlusIcon } from 'lucide-react';
+import { IconFolder, IconInbox, IconSettings, IconUserPlus } from '@tabler/icons-react';
 
 import {
   Command,
@@ -23,12 +23,12 @@ export function CommandGrouped() {
           <CommandEmpty>No results</CommandEmpty>
           <CommandGroup heading='Pages'>
             <CommandItem>
-              <InboxIcon />
+              <IconInbox />
               Inbox
               <CommandShortcut>G I</CommandShortcut>
             </CommandItem>
             <CommandItem>
-              <FolderIcon />
+              <IconFolder />
               Projects
               <CommandShortcut>G P</CommandShortcut>
             </CommandItem>
@@ -36,11 +36,11 @@ export function CommandGrouped() {
           <CommandSeparator />
           <CommandGroup heading='Actions'>
             <CommandItem>
-              <UserPlusIcon />
+              <IconUserPlus />
               Invite member
             </CommandItem>
             <CommandItem>
-              <SettingsIcon />
+              <IconSettings />
               Settings
               <CommandShortcut>⌘,</CommandShortcut>
             </CommandItem>

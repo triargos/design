@@ -1,4 +1,4 @@
-import { ArrowRightIcon, MoreHorizontalIcon, PencilIcon, PlusIcon } from 'lucide-react';
+import { IconArrowRight, IconDots, IconPencil, IconPlus } from '@tabler/icons-react';
 import { type ReactNode } from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
@@ -213,11 +213,11 @@ export default defineDocs({
                   Save
                 </Button>
                 <Button intent={intent} emphasis={emphasis}>
-                  <PlusIcon data-icon='inline-start' />
+                  <IconPlus data-icon='inline-start' />
                   New task
                 </Button>
                 <Button intent={intent} emphasis={emphasis} size='icon' aria-label='More'>
-                  <MoreHorizontalIcon />
+                  <IconDots />
                 </Button>
                 <Button intent={intent} emphasis={emphasis} disabled>
                   Disabled
@@ -261,14 +261,14 @@ export default defineDocs({
               </Button>,
               <Button key='r' size={size}>
                 Next
-                <ArrowRightIcon data-icon='inline-end' />
+                <IconArrowRight data-icon='inline-end' />
               </Button>,
               <Button key='g' emphasis='ghost' size={size}>
-                <PlusIcon data-icon='inline-start' />
+                <IconPlus data-icon='inline-start' />
                 New
               </Button>,
               <Button key='i' size={ICON_SIZES[index]} aria-label='More'>
-                <MoreHorizontalIcon />
+                <IconDots />
               </Button>,
             ],
           }))}
@@ -309,7 +309,7 @@ export default defineDocs({
             <CardHeader
               actions={
                 <Button size='icon-xs' aria-label='Edit'>
-                  <PencilIcon />
+                  <IconPencil />
                 </Button>
               }>
               <CardTitle>Card header action</CardTitle>
@@ -323,7 +323,7 @@ export default defineDocs({
                   </ItemContent>
                   <ItemActions>
                     <Button emphasis='ghost' size='icon-xs' aria-label='More'>
-                      <MoreHorizontalIcon />
+                      <IconDots />
                     </Button>
                   </ItemActions>
                 </Item>

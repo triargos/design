@@ -1,4 +1,4 @@
-import { ChevronDownIcon, MoreHorizontalIcon } from 'lucide-react';
+import { IconChevronDown, IconDots } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 
@@ -8,10 +8,10 @@ export function ButtonOpen() {
     <div className='flex items-center gap-2'>
       <Button aria-expanded aria-haspopup='menu'>
         Options
-        <ChevronDownIcon data-icon='inline-end' />
+        <IconChevronDown data-icon='inline-end' />
       </Button>
       <Button emphasis='ghost' size='icon' aria-expanded aria-haspopup='menu' aria-label='More'>
-        <MoreHorizontalIcon />
+        <IconDots />
       </Button>
     </div>
   );

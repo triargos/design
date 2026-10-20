@@ -1,5 +1,5 @@
 import { animate, motion, type PanInfo, useMotionValue, useReducedMotion } from 'framer-motion';
-import { RotateCcwIcon, SlidersHorizontalIcon } from 'lucide-react';
+import { IconAdjustmentsHorizontal, IconRotate } from '@tabler/icons-react';
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion';
@@ -333,7 +333,7 @@ export function CustomizeMenu() {
             'transition-transform duration-feedback ease-out focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-96 motion-reduce:transition-none',
             'data-popup-open:scale-96',
           )}>
-          <SlidersHorizontalIcon aria-hidden className='size-4' />
+          <IconAdjustmentsHorizontal aria-hidden className='size-4' />
           {customized && (
             <span
               aria-label='(changed)'
@@ -433,7 +433,7 @@ export function CustomizeMenu() {
         </div>
         <div className='border-t border-border-subtle p-related'>
           <Button className='w-full' disabled={!customized} onClick={() => write(null)}>
-            <RotateCcwIcon data-icon='inline-start' aria-hidden />
+            <IconRotate data-icon='inline-start' aria-hidden />
             Reset to defaults
           </Button>
         </div>

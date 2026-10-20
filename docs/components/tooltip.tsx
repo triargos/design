@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
@@ -41,7 +41,7 @@ export default defineDocs({
         <Preview title='TooltipContent' className='h-28 items-end justify-center'>
           <Tooltip open>
             <TooltipTrigger render={<Button emphasis='ghost' size='icon' aria-label='More actions' />}>
-              <MoreHorizontalIcon />
+              <IconDots />
             </TooltipTrigger>
             <TooltipContent>More actions</TooltipContent>
           </Tooltip>

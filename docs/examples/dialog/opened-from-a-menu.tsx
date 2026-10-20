@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon, PencilIcon } from 'lucide-react';
+import { IconDots, IconPencil } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -27,11 +27,11 @@ export function DialogOpenedFromAMenu() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button emphasis='ghost' size='icon' aria-label='Actions' />}>
-          <MoreHorizontalIcon />
+          <IconDots />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <PencilIcon />
+            <IconPencil />
             Rename…
           </DropdownMenuItem>
         </DropdownMenuContent>

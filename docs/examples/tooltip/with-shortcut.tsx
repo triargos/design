@@ -1,4 +1,4 @@
-import { FolderIcon } from 'lucide-react';
+import { IconFolder } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Kbd, KbdGroup } from '~/components/ui/kbd';
@@ -9,7 +9,7 @@ export function TooltipWithShortcut() {
   return (
     <Tooltip>
       <TooltipTrigger render={<Button emphasis='ghost' size='icon' aria-label='Projects' />}>
-        <FolderIcon />
+        <IconFolder />
       </TooltipTrigger>
       <TooltipContent className='flex items-center gap-1.5 px-2.5'>
         Projects

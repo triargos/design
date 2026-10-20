@@ -1,7 +1,7 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { PanelLeftClose, PanelRightOpen } from 'lucide-react';
+import { IconLayoutSidebarLeftCollapse, IconLayoutSidebarLeftExpand } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -138,7 +138,7 @@ function SidebarTrigger({
         toggleSidebar();
       }}
       {...props}>
-      {open ? <PanelLeftClose className='size-5' /> : <PanelRightOpen className='size-4' />}
+      {open ? <IconLayoutSidebarLeftCollapse className='size-5' /> : <IconLayoutSidebarLeftExpand className='size-4' />}
     </Button>
   );
 }

@@ -1,4 +1,4 @@
-import { ArchiveIcon, CopyIcon, MoreHorizontalIcon, PencilIcon } from 'lucide-react';
+import { IconArchive, IconCopy, IconDots, IconPencil } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -14,20 +14,20 @@ export function DropdownMenuDefault() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button size='icon' aria-label='Actions' />}>
-        <MoreHorizontalIcon />
+        <IconDots />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-56'>
         <DropdownMenuLabel>Website redesign</DropdownMenuLabel>
         <DropdownMenuItem>
-          <PencilIcon />
+          <IconPencil />
           Edit
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <CopyIcon />
+          <IconCopy />
           Duplicate
         </DropdownMenuItem>
         <DropdownMenuItem disabled>
-          <ArchiveIcon />
+          <IconArchive />
           Archive
         </DropdownMenuItem>
       </DropdownMenuContent>

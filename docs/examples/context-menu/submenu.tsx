@@ -1,4 +1,4 @@
-import { FolderInputIcon, PencilIcon } from 'lucide-react';
+import { IconFolderSymlink, IconPencil } from '@tabler/icons-react';
 
 import {
   ContextMenu,
@@ -18,12 +18,12 @@ export function ContextMenuSubmenu() {
       </ContextMenuTrigger>
       <ContextMenuContent className='w-52'>
         <ContextMenuItem>
-          <PencilIcon />
+          <IconPencil />
           Rename
         </ContextMenuItem>
         <ContextMenuSub>
           <ContextMenuSubTrigger>
-            <FolderInputIcon />
+            <IconFolderSymlink />
             Move to
           </ContextMenuSubTrigger>
           <ContextMenuSubContent className='w-40'>

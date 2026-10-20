@@ -1,4 +1,4 @@
-import { UploadIcon } from 'lucide-react';
+import { IconUpload } from '@tabler/icons-react';
 
 import { FieldError } from '~/components/ui/field';
 import { FileDropZone } from '~/components/ui/file-drop-zone';
@@ -9,7 +9,7 @@ export function FileDropZoneStates() {
       <div className='flex flex-col gap-2'>
         <FileDropZone onFiles={() => undefined} aria-invalid aria-label='Choose files'>
           <span className='flex size-9 items-center justify-center rounded-full bg-card shadow-raised'>
-            <UploadIcon className='size-4 text-muted-foreground' />
+            <IconUpload className='size-4 text-muted-foreground' />
           </span>
           <div>
             <p className='text-body text-foreground'>Drop files here or choose them</p>
@@ -20,7 +20,7 @@ export function FileDropZoneStates() {
       </div>
       <FileDropZone onFiles={() => undefined} disabled aria-label='Choose files'>
         <span className='flex size-9 items-center justify-center rounded-full bg-card shadow-raised'>
-          <UploadIcon className='size-4 text-muted-foreground' />
+          <IconUpload className='size-4 text-muted-foreground' />
         </span>
         <div>
           <p className='text-body text-foreground'>Drop files here or choose them</p>

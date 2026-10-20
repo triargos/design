@@ -1,4 +1,4 @@
-import { CopyIcon, MoreHorizontalIcon, PencilIcon, PrinterIcon } from 'lucide-react';
+import { IconCopy, IconDots, IconPencil, IconPrinter } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -14,21 +14,21 @@ export function DropdownMenuShortcuts() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button size='icon' aria-label='Actions' />}>
-        <MoreHorizontalIcon />
+        <IconDots />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-56'>
         <DropdownMenuItem>
-          <PencilIcon />
+          <IconPencil />
           Edit
           <DropdownMenuShortcut>E</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <CopyIcon />
+          <IconCopy />
           Duplicate
           <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <PrinterIcon />
+          <IconPrinter />
           Print
           <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
         </DropdownMenuItem>

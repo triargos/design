@@ -1,6 +1,6 @@
 import { Combobox as ComboboxPrimitive } from '@base-ui/react/combobox';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { CheckIcon, ChevronsUpDownIcon, PlusIcon, XIcon } from 'lucide-react';
+import { IconCheck, IconPlus, IconSelector, IconX } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
@@ -252,14 +252,14 @@ function ComboboxInput({
           data-slot='input-group-button'
           className='group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent'
           disabled={disabled}>
-          <ChevronsUpDownIcon className='pointer-events-none' />
+          <IconSelector className='pointer-events-none' />
         </InputGroupButton>
         <ComboboxPrimitive.Clear
           data-slot='combobox-clear'
           aria-label={clearLabel}
           render={<InputGroupButton size='icon-xs' />}
           disabled={disabled}>
-          <XIcon className='pointer-events-none' />
+          <IconX className='pointer-events-none' />
         </ComboboxPrimitive.Clear>
       </InputGroupAddon>
     </ComboboxPrimitive.InputGroup>
@@ -424,7 +424,7 @@ function ComboboxItem({ className, children, indicator, style, ...props }: Combo
       {...props}>
       {indicator === undefined ? (
         <ComboboxPrimitive.ItemIndicator className='col-start-1 flex'>
-          <CheckIcon />
+          <IconCheck />
         </ComboboxPrimitive.ItemIndicator>
       ) : (
         <span className='col-start-1 flex'>{indicator}</span>
@@ -453,7 +453,7 @@ function CustomRow({ entry }: { entry: CustomEntry }) {
   }
   // One line, as tall as the other rows: the typed text truncates, the words and quotes around it keep their width.
   return (
-    <ComboboxItem value={entry} indicator={<PlusIcon className='text-muted-foreground' />}>
+    <ComboboxItem value={entry} indicator={<IconPlus className='text-muted-foreground' />}>
       <span className='flex min-w-0 whitespace-pre'>
         {custom.optionLabel(<span className='truncate'>{entry.text}</span>)}
       </span>
@@ -513,7 +513,7 @@ function ComboboxChip({ className, children, removeLabel = 'Remove', ...props }:
         // The full chip height is the hit area; only the glyph shows, brightening on hover.
         className='flex h-full shrink-0 cursor-pointer items-center px-2 text-faint-foreground outline-none hover:text-foreground focus-visible:text-foreground'
         data-slot='combobox-chip-remove'>
-        <XIcon className='pointer-events-none size-3.5' />
+        <IconX className='pointer-events-none size-3.5' />
       </ComboboxPrimitive.ChipRemove>
     </ComboboxPrimitive.Chip>
   );

@@ -1,13 +1,13 @@
 import {
-  CalendarIcon,
-  CheckSquareIcon,
-  FolderIcon,
-  HomeIcon,
-  InboxIcon,
-  PlusIcon,
-  SettingsIcon,
-  UsersIcon,
-} from 'lucide-react';
+  IconCalendar,
+  IconFolder,
+  IconHome,
+  IconInbox,
+  IconPlus,
+  IconSettings,
+  IconSquareCheck,
+  IconUsers,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
@@ -22,16 +22,16 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 const TABS = [
-  { label: 'Home', icon: <HomeIcon /> },
-  { label: 'Inbox', icon: <InboxIcon />, count: 3 },
-  { label: 'Tasks', icon: <CheckSquareIcon /> },
+  { label: 'Home', icon: <IconHome /> },
+  { label: 'Inbox', icon: <IconInbox />, count: 3 },
+  { label: 'Tasks', icon: <IconSquareCheck /> },
 ] as const;
 
 const MORE = [
-  { label: 'Calendar', icon: <CalendarIcon /> },
-  { label: 'Projects', icon: <FolderIcon /> },
-  { label: 'Members', icon: <UsersIcon /> },
-  { label: 'Settings', icon: <SettingsIcon /> },
+  { label: 'Calendar', icon: <IconCalendar /> },
+  { label: 'Projects', icon: <IconFolder /> },
+  { label: 'Members', icon: <IconUsers /> },
+  { label: 'Settings', icon: <IconSettings /> },
 ] as const;
 
 /**
@@ -84,7 +84,7 @@ export function BottomNavDefault() {
           </BottomNavMore>
         </BottomNavList>
         <BottomNavAction aria-label='New task'>
-          <PlusIcon />
+          <IconPlus />
         </BottomNavAction>
       </BottomNav>
     </div>

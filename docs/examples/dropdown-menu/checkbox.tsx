@@ -1,4 +1,4 @@
-import { SlidersHorizontalIcon } from 'lucide-react';
+import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -17,7 +17,7 @@ export function DropdownMenuCheckbox() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button />}>
-        <SlidersHorizontalIcon data-icon='inline-start' />
+        <IconAdjustmentsHorizontal data-icon='inline-start' />
         Columns
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>

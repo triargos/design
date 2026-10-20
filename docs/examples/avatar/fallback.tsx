@@ -1,4 +1,4 @@
-import { CheckIcon } from 'lucide-react';
+import { IconCheck } from '@tabler/icons-react';
 
 import { Avatar, AvatarBadge, AvatarFallback, getInitials } from '~/components/ui/avatar';
 
@@ -12,7 +12,7 @@ export function AvatarFallbackExample() {
       <Avatar size='2xl'>
         <AvatarFallback>{getInitials('Sofia Rossi')}</AvatarFallback>
         <AvatarBadge>
-          <CheckIcon />
+          <IconCheck />
         </AvatarBadge>
       </Avatar>
     </div>

@@ -1,4 +1,4 @@
-import { SearchIcon } from 'lucide-react';
+import { IconSearch } from '@tabler/icons-react';
 import { type ReactNode, useState } from 'react';
 
 import {
@@ -146,7 +146,7 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
     render: (state) => (
       <InputGroup data-disabled={state === 'disabled' || undefined}>
         <InputGroupAddon>
-          <SearchIcon />
+          <IconSearch />
         </InputGroupAddon>
         <InputGroupInput
           placeholder='Search'

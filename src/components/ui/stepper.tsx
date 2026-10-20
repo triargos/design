@@ -1,4 +1,4 @@
-import { CheckIcon } from 'lucide-react';
+import { IconCheck } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { Spinner } from '~/components/ui/spinner';
@@ -97,7 +97,7 @@ function StepperIndicator({ step, loading }: { step: number; loading: boolean })
       <span className='transition-[opacity,scale] duration-feedback group-data-loading/step:scale-0 group-data-loading/step:opacity-0 group-data-[state=completed]/step:scale-0 group-data-[state=completed]/step:opacity-0'>
         {step}
       </span>
-      <CheckIcon
+      <IconCheck
         aria-hidden='true'
         className='absolute size-3 scale-0 opacity-0 transition-[opacity,scale] duration-feedback group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100'
       />

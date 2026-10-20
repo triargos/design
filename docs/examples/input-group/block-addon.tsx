@@ -1,4 +1,4 @@
-import { BoldIcon, ItalicIcon, LinkIcon } from 'lucide-react';
+import { IconBold, IconItalic, IconLink } from '@tabler/icons-react';
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '~/components/ui/input-group';
 
@@ -9,13 +9,13 @@ export function InputGroupBlockAddon() {
       <InputGroupTextarea placeholder='Add a comment' aria-label='Comment' />
       <InputGroupAddon align='block-end' className='border-t'>
         <InputGroupButton size='icon-xs' aria-label='Bold'>
-          <BoldIcon />
+          <IconBold />
         </InputGroupButton>
         <InputGroupButton size='icon-xs' aria-label='Italic'>
-          <ItalicIcon />
+          <IconItalic />
         </InputGroupButton>
         <InputGroupButton size='icon-xs' aria-label='Link'>
-          <LinkIcon />
+          <IconLink />
         </InputGroupButton>
       </InputGroupAddon>
     </InputGroup>

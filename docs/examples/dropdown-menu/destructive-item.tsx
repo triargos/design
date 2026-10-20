@@ -1,4 +1,4 @@
-import { CopyIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon } from 'lucide-react';
+import { IconCopy, IconDots, IconPencil, IconTrash } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -14,20 +14,20 @@ export function DropdownMenuDestructiveItem() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button size='icon' aria-label='Actions' />}>
-        <MoreHorizontalIcon />
+        <IconDots />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-52'>
         <DropdownMenuItem>
-          <PencilIcon />
+          <IconPencil />
           Edit
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <CopyIcon />
+          <IconCopy />
           Duplicate
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem intent='destructive'>
-          <Trash2Icon />
+          <IconTrash />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>

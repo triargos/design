@@ -1,13 +1,13 @@
-import { BoldIcon, CopyIcon, ItalicIcon, LinkIcon } from 'lucide-react';
+import { IconBold, IconCopy, IconItalic, IconLink } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 
 const ACTIONS = [
-  { label: 'Bold', icon: <BoldIcon /> },
-  { label: 'Italic', icon: <ItalicIcon /> },
-  { label: 'Insert link', icon: <LinkIcon /> },
-  { label: 'Copy', icon: <CopyIcon /> },
+  { label: 'Bold', icon: <IconBold /> },
+  { label: 'Italic', icon: <IconItalic /> },
+  { label: 'Insert link', icon: <IconLink /> },
+  { label: 'Copy', icon: <IconCopy /> },
 ];
 
 /** Icon-only buttons in one `TooltipProvider`: the first tooltip opens after 200ms, its neighbours at once. */

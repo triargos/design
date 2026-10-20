@@ -1,4 +1,4 @@
-import { DownloadIcon, MailIcon, Trash2Icon, XIcon } from 'lucide-react';
+import { IconDownload, IconMail, IconTrash, IconX } from '@tabler/icons-react';
 import { useRef, useState } from 'react';
 
 import { ActionBar } from '~/components/ui/action-bar';
@@ -102,16 +102,16 @@ export function BulkSelectionDefault() {
       <ActionBar open={selected.size > 0} aria-label='Selection'>
         <span className='ps-2.5 whitespace-nowrap text-muted-foreground tabular-nums'>{count} selected</span>
         <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
-          <XIcon />
+          <IconX />
         </Button>
         <Separator orientation='vertical' className='my-1.5' />
         {/* No `data-icon`: its padding would outweigh the square icon-only size below 32rem. */}
         <Button className='@max-lg:w-9 @max-lg:px-0'>
-          <MailIcon />
+          <IconMail />
           <span className='@max-lg:sr-only'>Send reminder</span>
         </Button>
         <Button className='@max-lg:w-9 @max-lg:px-0'>
-          <DownloadIcon />
+          <IconDownload />
           <span className='@max-lg:sr-only'>Export</span>
         </Button>
         <Button
@@ -119,7 +119,7 @@ export function BulkSelectionDefault() {
           emphasis='subtle'
           className='@max-lg:w-9 @max-lg:px-0'
           onClick={() => setConfirming(true)}>
-          <Trash2Icon />
+          <IconTrash />
           <span className='@max-lg:sr-only'>Delete…</span>
         </Button>
       </ActionBar>

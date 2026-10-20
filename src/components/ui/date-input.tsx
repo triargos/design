@@ -1,5 +1,5 @@
 import { type CalendarDate, Time, parseDate, parseTime } from '@internationalized/date';
-import { CalendarIcon, ClockIcon } from 'lucide-react';
+import { IconCalendar, IconClock } from '@tabler/icons-react';
 import * as React from 'react';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {
@@ -246,7 +246,7 @@ function DateInput({
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger
                   render={<InputGroupButton size='icon-xs' disabled={disabled} aria-label={chooseDateLabel} />}>
-                  <CalendarIcon />
+                  <IconCalendar />
                 </PopoverTrigger>
                 <PopoverContent className='w-auto p-0' align='end' sideOffset={8}>
                   {/* Mounts with the popover, so it opens on the value's month. */}
@@ -324,7 +324,7 @@ function TimeInput({
         <span
           aria-hidden
           className='flex size-6 shrink-0 items-center justify-center text-muted-foreground in-data-disabled:text-disabled-foreground [&_svg]:size-4'>
-          <ClockIcon />
+          <IconClock />
         </span>
       </TimeField>
     </I18nProvider>

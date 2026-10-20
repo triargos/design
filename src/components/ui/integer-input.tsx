@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, type Transition, useAnimate, useReducedMotion } from 'framer-motion';
-import { MinusIcon, PlusIcon } from 'lucide-react';
+import { IconMinus, IconPlus } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -205,7 +205,7 @@ function IntegerInput({
         aria-disabled={(!disabled && atMin) || undefined}
         className='[-webkit-touch-callout:none] aria-disabled:text-disabled-foreground'
         {...decrement}>
-        <MinusIcon />
+        <IconMinus />
       </Button>
       <div
         data-slot='integer-input-field'
@@ -313,7 +313,7 @@ function IntegerInput({
         aria-disabled={(!disabled && atMax) || undefined}
         className='[-webkit-touch-callout:none] aria-disabled:text-disabled-foreground'
         {...increment}>
-        <PlusIcon />
+        <IconPlus />
       </Button>
     </div>
   );

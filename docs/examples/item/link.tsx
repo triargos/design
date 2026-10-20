@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from 'lucide-react';
+import { IconChevronRight } from '@tabler/icons-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
@@ -18,7 +18,7 @@ export function ItemLink() {
               <ItemDescription>3 open tasks</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <ChevronRightIcon className='size-4 text-faint-foreground' />
+              <IconChevronRight className='size-4 text-faint-foreground' />
             </ItemActions>
           </Item>
           <Item render={<a href='#mobile-app' />}>
@@ -27,7 +27,7 @@ export function ItemLink() {
               <ItemDescription>No open tasks</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <ChevronRightIcon className='size-4 text-faint-foreground' />
+              <IconChevronRight className='size-4 text-faint-foreground' />
             </ItemActions>
           </Item>
         </ItemList>

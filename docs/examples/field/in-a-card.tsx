@@ -1,4 +1,4 @@
-import { AtSignIcon } from 'lucide-react';
+import { IconAt } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -33,7 +33,7 @@ export function FieldInACard() {
             <FieldLabel htmlFor='profile-email'>Email</FieldLabel>
             <InputGroup>
               <InputGroupAddon>
-                <AtSignIcon />
+                <IconAt />
               </InputGroupAddon>
               <InputGroupInput
                 id='profile-email'

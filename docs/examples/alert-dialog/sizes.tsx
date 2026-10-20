@@ -1,4 +1,4 @@
-import { Trash2Icon } from 'lucide-react';
+import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import {
@@ -24,7 +24,7 @@ export function AlertDialogSizes() {
       <AlertDialogContent size='sm'>
         <AlertDialogHeader>
           <AlertDialogMedia>
-            <Trash2Icon />
+            <IconTrash />
           </AlertDialogMedia>
           <AlertDialogTitle>Delete file?</AlertDialogTitle>
           <AlertDialogDescription>Q1-report.pdf will be deleted permanently.</AlertDialogDescription>

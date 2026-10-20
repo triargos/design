@@ -1,4 +1,4 @@
-import { CheckSquareIcon, FolderIcon, HomeIcon, InboxIcon, SettingsIcon, UsersIcon } from 'lucide-react';
+import { IconFolder, IconHome, IconInbox, IconSettings, IconSquareCheck, IconUsers } from '@tabler/icons-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -24,12 +24,12 @@ const GROUPS = [
   {
     title: 'Workspace',
     links: [
-      { label: 'Overview', icon: <HomeIcon />, current: false },
-      { label: 'Inbox', icon: <InboxIcon />, current: false, count: 3 },
-      { label: 'Tasks', icon: <CheckSquareIcon />, current: true },
+      { label: 'Overview', icon: <IconHome />, current: false },
+      { label: 'Inbox', icon: <IconInbox />, current: false, count: 3 },
+      { label: 'Tasks', icon: <IconSquareCheck />, current: true },
       {
         label: 'Projects',
-        icon: <FolderIcon />,
+        icon: <IconFolder />,
         current: false,
         children: ['Website redesign', 'Mobile app'],
       },
@@ -38,8 +38,8 @@ const GROUPS = [
   {
     title: 'Admin',
     links: [
-      { label: 'Members', icon: <UsersIcon />, current: false },
-      { label: 'Settings', icon: <SettingsIcon />, current: false },
+      { label: 'Members', icon: <IconUsers />, current: false },
+      { label: 'Settings', icon: <IconSettings />, current: false },
     ],
   },
 ] as const;

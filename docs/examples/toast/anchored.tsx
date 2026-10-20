@@ -1,4 +1,4 @@
-import { SaveIcon } from 'lucide-react';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useRef } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -21,7 +21,7 @@ export function ToastAnchored() {
             onClick={() => toast.error('Couldn’t save draft', { anchor: saveRef.current })}
           />
         }>
-        <SaveIcon aria-hidden='true' />
+        <IconDeviceFloppy aria-hidden='true' />
       </TooltipTrigger>
       <TooltipContent>Save</TooltipContent>
     </Tooltip>

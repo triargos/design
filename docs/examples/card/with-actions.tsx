@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon, PlusIcon, UsersIcon } from 'lucide-react';
+import { IconDots, IconPlus, IconUsers } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -18,11 +18,11 @@ export function CardWithActions() {
         actions={
           <>
             <Button size='xs'>
-              <PlusIcon data-icon='inline-start' />
+              <IconPlus data-icon='inline-start' />
               Invite
             </Button>
             <Button size='icon-xs' aria-label='More'>
-              <MoreHorizontalIcon />
+              <IconDots />
             </Button>
           </>
         }>
@@ -33,7 +33,7 @@ export function CardWithActions() {
           {MEMBERS.map((member) => (
             <Item key={member.name}>
               <ItemMedia variant='icon'>
-                <UsersIcon />
+                <IconUsers />
               </ItemMedia>
               <ItemContent>
                 <ItemTitle>{member.name}</ItemTitle>
@@ -41,7 +41,7 @@ export function CardWithActions() {
               </ItemContent>
               <ItemActions>
                 <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`}>
-                  <MoreHorizontalIcon />
+                  <IconDots />
                 </Button>
               </ItemActions>
             </Item>

@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { IconDots, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 
 import { Avatar, AvatarFallback, getInitials } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
@@ -29,7 +29,7 @@ export function ListInCardDefault() {
       <CardHeader
         actions={
           <Button size='xs'>
-            <PlusIcon data-icon='inline-start' />
+            <IconPlus data-icon='inline-start' />
             Invite
           </Button>
         }>
@@ -55,16 +55,16 @@ export function ListInCardDefault() {
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     render={<Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`} />}>
-                    <MoreHorizontalIcon />
+                    <IconDots />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end'>
                     <DropdownMenuItem>
-                      <PencilIcon />
+                      <IconPencil />
                       Change role
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem intent='destructive'>
-                      <Trash2Icon />
+                      <IconTrash />
                       Remove
                     </DropdownMenuItem>
                   </DropdownMenuContent>

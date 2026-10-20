@@ -1,4 +1,4 @@
-import { CopyIcon, DownloadIcon, PencilIcon, ShareIcon } from 'lucide-react';
+import { IconCopy, IconDownload, IconPencil, IconShare2 } from '@tabler/icons-react';
 
 import {
   ContextMenu,
@@ -20,11 +20,11 @@ export function ContextMenuGrouped() {
         <ContextMenuGroup>
           <ContextMenuLabel>File</ContextMenuLabel>
           <ContextMenuItem>
-            <PencilIcon />
+            <IconPencil />
             Rename
           </ContextMenuItem>
           <ContextMenuItem>
-            <DownloadIcon />
+            <IconDownload />
             Download
           </ContextMenuItem>
         </ContextMenuGroup>
@@ -32,11 +32,11 @@ export function ContextMenuGrouped() {
         <ContextMenuGroup>
           <ContextMenuLabel>Share</ContextMenuLabel>
           <ContextMenuItem>
-            <CopyIcon />
+            <IconCopy />
             Copy link
           </ContextMenuItem>
           <ContextMenuItem>
-            <ShareIcon />
+            <IconShare2 />
             Share with the team
           </ContextMenuItem>
         </ContextMenuGroup>

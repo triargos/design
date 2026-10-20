@@ -1,5 +1,5 @@
 import { Command as CommandPrimitive } from 'cmdk';
-import { SearchIcon } from 'lucide-react';
+import { IconSearch } from '@tabler/icons-react';
 import * as React from 'react';
 
 import {
@@ -63,7 +63,7 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
           {...props}
         />
         <InputGroupAddon>
-          <SearchIcon className='size-4 shrink-0 text-faint-foreground' />
+          <IconSearch className='size-4 shrink-0 text-faint-foreground' />
         </InputGroupAddon>
       </InputGroup>
     </div>

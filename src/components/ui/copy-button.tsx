@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, type Transition, useReducedMotion } from 'framer-motion';
-import { CopyIcon } from 'lucide-react';
+import { IconCopy } from '@tabler/icons-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
@@ -48,7 +48,7 @@ function DrawnCheck({ className }: { className?: string }) {
       stroke='currentColor'
       strokeLinecap='round'
       strokeLinejoin='round'
-      className={cn('lucide', className)}
+      className={cn('tabler-icon', className)}
       {...useIconSwap()}>
       <motion.path
         d='M4 12l5 5L20 6'
@@ -73,7 +73,7 @@ function CopyIconSwap({ copied }: { copied: boolean }) {
           <DrawnCheck key='check' className='text-success' />
         ) : (
           <motion.span key='copy' className='grid' {...swap}>
-            <CopyIcon />
+            <IconCopy />
           </motion.span>
         )}
       </AnimatePresence>

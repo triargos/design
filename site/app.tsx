@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { Suspense, useEffect, useLayoutEffect, useRef } from 'react';
 import pages, { type DocsPage as DocsPageEntry } from 'virtual:docs-index';
 
@@ -19,7 +19,7 @@ import { Link, useRouter } from './router';
 const TITLE = 'Triargos Design';
 
 function PageLink({ page, rel }: { page: DocsPageEntry; rel: 'prev' | 'next' }) {
-  const Icon = rel === 'prev' ? ArrowLeftIcon : ArrowRightIcon;
+  const Icon = rel === 'prev' ? IconArrowLeft : IconArrowRight;
   return (
     <Item
       render={<Link href={pathOf(page)} rel={rel} prefetch={prefetchPage(page)} />}

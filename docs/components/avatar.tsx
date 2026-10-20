@@ -1,4 +1,4 @@
-import { CheckIcon } from 'lucide-react';
+import { IconCheck } from '@tabler/icons-react';
 
 import {
   Avatar,
@@ -100,7 +100,7 @@ export default defineDocs({
                 <AvatarImage src={PEOPLE[2].photo} alt={PEOPLE[2].name} />
                 <AvatarFallback>{getInitials(PEOPLE[2].name)}</AvatarFallback>
                 <AvatarBadge>
-                  <CheckIcon />
+                  <IconCheck />
                 </AvatarBadge>
               </Avatar>,
             ],

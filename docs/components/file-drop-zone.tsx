@@ -1,4 +1,4 @@
-import { PaperclipIcon, UploadIcon } from 'lucide-react';
+import { IconPaperclip, IconUpload } from '@tabler/icons-react';
 
 import { FileDropZone } from '~/components/ui/file-drop-zone';
 
@@ -14,7 +14,7 @@ type State = (typeof STATES)[number];
 const DefaultBody = () => (
   <>
     <span className='flex size-9 items-center justify-center rounded-full bg-card shadow-raised'>
-      <UploadIcon className='size-4 text-muted-foreground' />
+      <IconUpload className='size-4 text-muted-foreground' />
     </span>
     <div>
       <p className='text-body text-foreground'>Drop files here or choose them</p>
@@ -25,7 +25,7 @@ const DefaultBody = () => (
 
 const CompactBody = () => (
   <>
-    <PaperclipIcon className='size-4 shrink-0' />
+    <IconPaperclip className='size-4 shrink-0' />
     Attach a file
   </>
 );

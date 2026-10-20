@@ -1,4 +1,4 @@
-import { CopyIcon, PencilIcon } from 'lucide-react';
+import { IconCopy, IconPencil } from '@tabler/icons-react';
 
 import {
   ContextMenu,
@@ -17,12 +17,12 @@ export function ContextMenuDefault() {
       </ContextMenuTrigger>
       <ContextMenuContent className='w-52'>
         <ContextMenuItem>
-          <PencilIcon />
+          <IconPencil />
           Rename
           <ContextMenuShortcut>F2</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          <CopyIcon />
+          <IconCopy />
           Copy link
         </ContextMenuItem>
       </ContextMenuContent>

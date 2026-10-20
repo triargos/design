@@ -175,8 +175,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "framer-motion@13.4.4",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "framer-motion@13.4.4"
       ],
       "registryDependencies": [
         "@triargos/theme",
@@ -194,7 +194,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/theme",
@@ -251,8 +251,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@internationalized/date@^3.12.4",
+        "@tabler/icons-react@3.49.0",
         "class-variance-authority@^0.7.1",
-        "lucide-react@1.48.0",
         "react-aria-components@1.21.1"
       ],
       "registryDependencies": [
@@ -307,9 +307,9 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
+        "@tabler/icons-react@3.49.0",
         "class-variance-authority@^0.7.1",
-        "framer-motion@13.4.4",
-        "lucide-react@1.48.0"
+        "framer-motion@13.4.4"
       ],
       "registryDependencies": [
         "@triargos/theme",
@@ -349,8 +349,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "@tanstack/react-virtual@3.14.13",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "@tanstack/react-virtual@3.14.13"
       ],
       "registryDependencies": [
         "@triargos/input",
@@ -370,8 +370,8 @@
       "name": "command",
       "type": "registry:ui",
       "dependencies": [
-        "cmdk@^1.1.1",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "cmdk@^1.1.1"
       ],
       "registryDependencies": [
         "@triargos/dialog",
@@ -391,8 +391,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/theme",
@@ -409,8 +409,8 @@
       "name": "copy-button",
       "type": "registry:ui",
       "dependencies": [
-        "framer-motion@13.4.4",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "framer-motion@13.4.4"
       ],
       "registryDependencies": [
         "@triargos/button",
@@ -429,7 +429,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@internationalized/date@^3.12.4",
-        "lucide-react@1.48.0",
+        "@tabler/icons-react@3.49.0",
         "react-aria-components@1.21.1"
       ],
       "registryDependencies": [
@@ -452,7 +452,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/button",
@@ -471,8 +471,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/theme",
@@ -599,8 +599,8 @@
       "name": "integer-input",
       "type": "registry:ui",
       "dependencies": [
-        "framer-motion@13.4.4",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "framer-motion@13.4.4"
       ],
       "registryDependencies": [
         "@triargos/button",
@@ -720,7 +720,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/checkbox",
@@ -739,8 +739,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "framer-motion@13.4.4",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "framer-motion@13.4.4"
       ],
       "registryDependencies": [
         "@triargos/input",
@@ -776,7 +776,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/button",
@@ -795,8 +795,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/button",
@@ -850,7 +850,7 @@
         "@base-ui/react@1.8.0",
         "@dnd-kit/sortable@^10.0.0",
         "@dnd-kit/utilities@^3.2.2",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/theme",
@@ -902,7 +902,7 @@
       "name": "stepper",
       "type": "registry:ui",
       "dependencies": [
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/spinner",
@@ -1005,8 +1005,8 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1",
-        "lucide-react@1.48.0"
+        "@tabler/icons-react@3.49.0",
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/button",

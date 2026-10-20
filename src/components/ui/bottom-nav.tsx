@@ -1,7 +1,7 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { animate, motion, type Transition, useReducedMotion } from 'framer-motion';
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 
@@ -459,7 +459,7 @@ function BottomNavMore({
           if (event.detail === 0)
             requestAnimationFrame(() => panel?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true }));
         }}>
-        <MoreHorizontalIcon />
+        <IconDots />
         <span>{label}</span>
       </BottomNavButton>
       {panel !== null && createPortal(children, panel)}

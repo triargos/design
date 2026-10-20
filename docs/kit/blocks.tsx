@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from 'lucide-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import {
   createContext,
   Fragment,
@@ -193,7 +193,7 @@ export function ExampleCode({ section }: { section: string }) {
           aria-controls={codeId}
           onClick={() => setOpen((value) => !value)}
           className='text-muted-foreground'>
-          <ChevronRightIcon
+          <IconChevronRight
             data-icon='inline-start'
             aria-hidden
             className={cn('transition-transform duration-150', open && 'rotate-90')}

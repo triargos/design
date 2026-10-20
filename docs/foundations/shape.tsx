@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -68,7 +68,7 @@ export default defineDocs({
                 <CardHeader
                   actions={
                     <Button size='icon-xs' aria-label='More'>
-                      <MoreHorizontalIcon />
+                      <IconDots />
                     </Button>
                   }>
                   <CardTitle>Header action, aligned with row actions</CardTitle>

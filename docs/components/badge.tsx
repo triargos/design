@@ -1,4 +1,4 @@
-import { CheckIcon, ClockIcon } from 'lucide-react';
+import { IconCheck, IconClock } from '@tabler/icons-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -100,7 +100,7 @@ export default defineDocs({
                 12
               </Badge>,
               <Badge key='i' size={size} intent='warning'>
-                <ClockIcon />
+                <IconClock />
                 Blocked
               </Badge>,
             ],
@@ -121,7 +121,7 @@ export default defineDocs({
                   <ItemDescription>Website redesign · closed Mar 12</ItemDescription>
                 </ItemContent>
                 <Badge intent='success'>
-                  <CheckIcon />
+                  <IconCheck />
                   Done
                 </Badge>
               </Item>

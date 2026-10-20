@@ -379,11 +379,11 @@
 
   /* Icons draw a 1.5px stroke at every size, the optical weight of regular (400) text: the stroke is measured on screen,
      not in the 24-unit viewBox, so a 12px mark and a 20px icon carry the same line. */
-  svg.lucide {
+  svg.tabler-icon {
     stroke-width: 1.5px;
   }
 
-  svg.lucide :is(path, line, polyline, polygon, circle, rect, ellipse) {
+  svg.tabler-icon :is(path, line, polyline, polygon, circle, rect, ellipse) {
     vector-effect: non-scaling-stroke;
   }
 }

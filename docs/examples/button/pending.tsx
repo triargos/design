@@ -1,4 +1,4 @@
-import { Trash2Icon } from 'lucide-react';
+import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -16,7 +16,7 @@ export function ButtonPending() {
         Save
       </Button>
       <Button intent='destructive' size='icon' isLoading aria-label='Delete'>
-        <Trash2Icon />
+        <IconTrash />
       </Button>
       <Button
         isLoading={pending}

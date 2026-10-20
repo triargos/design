@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon } from 'lucide-react';
+import { IconDots } from '@tabler/icons-react';
 
 import { Button } from '~/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
@@ -8,7 +8,7 @@ export function TooltipDefault() {
   return (
     <Tooltip>
       <TooltipTrigger render={<Button emphasis='ghost' size='icon' aria-label='More actions' />}>
-        <MoreHorizontalIcon />
+        <IconDots />
       </TooltipTrigger>
       <TooltipContent>More actions</TooltipContent>
     </Tooltip>
