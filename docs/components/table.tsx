@@ -2,6 +2,7 @@ import { TableDefault } from '../examples/table/default';
 import { TableEmpty } from '../examples/table/empty';
 import { TableFlush } from '../examples/table/flush';
 import { TableInACard } from '../examples/table/in-a-card';
+import { TableSortable } from '../examples/table/sortable';
 import { TableWithHeader } from '../examples/table/with-header';
 import { TableWithSelection } from '../examples/table/with-selection';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
@@ -54,6 +55,17 @@ export default defineDocs({
         }
         bare>
         <TableWithSelection />
+      </ExampleSection>
+      <ExampleSection
+        title='Sortable columns'
+        description={
+          <>
+            <Code>TableHead sort onSort</Code>: a button in the header, <Code>aria-sort</Code> on the cell. The call
+            site sorts.
+          </>
+        }
+        bare>
+        <TableSortable />
       </ExampleSection>
       <ExampleSection title='Empty' description='One cell over every column holds an Empty.' bare>
         <TableEmpty />

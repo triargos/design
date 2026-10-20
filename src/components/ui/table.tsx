@@ -1,3 +1,4 @@
+import { IconArrowsSort, IconArrowUp } from '@tabler/icons-react';
 import { cva } from 'class-variance-authority';
 import { type ComponentProps, createContext, use } from 'react';
 
@@ -11,6 +12,8 @@ import { cn } from '~/lib/utils';
 // - `card`: the table is the content of an `Card`, in place of `CardContent`. Header and footer rows sit on
 //   the shell; the body is the card (`bg-card`, an `--edge` ring, `rounded-inner` corners). Put it straight in the
 //   shell: `<Card><Table variant='card'>…</Table></Card>`.
+// Beyond the markup:
+// - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
 
 type TableVariant = 'default' | 'flush' | 'card';
 type TableSection = 'head' | 'body' | 'foot';
@@ -115,18 +118,62 @@ const tableCellEdges = cva(
   },
 );
 
-function TableHead({ className, ...props }: ComponentProps<'th'>) {
+type TableSort = 'asc' | 'desc' | 'none';
+
+const ariaSortOf = { asc: 'ascending', desc: 'descending', none: 'none' } as const;
+
+function TableHead({
+  className,
+  children,
+  sort,
+  onSort,
+  ...props
+}: Omit<ComponentProps<'th'>, 'aria-sort'> & {
+  /** The column's direction; with `onSort` the header is a button. `none`: sortable, not the sort column. */
+  sort?: TableSort;
+  /** The call site sorts the rows. */
+  onSort?: () => void;
+}) {
   const variant = use(TableVariantContext);
   return (
     <th
       data-slot='table-head'
+      aria-sort={sort === undefined || onSort === undefined ? undefined : ariaSortOf[sort]}
       className={cn(
         tableCellEdges({ variant }),
         'h-10 text-left align-middle font-medium whitespace-nowrap text-muted-foreground',
         className,
       )}
-      {...props}
-    />
+      {...props}>
+      {onSort === undefined ? (
+        children
+      ) : (
+        <button
+          type='button'
+          onClick={onSort}
+          className={cn(
+            'group/sort relative -mx-2 inline-flex items-center gap-1 rounded-control-sm px-2 py-1 font-medium transition-colors duration-feedback outline-none hit-area hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24',
+            sort !== undefined && sort !== 'none' && 'text-foreground',
+          )}>
+          {children}
+          {sort === undefined || sort === 'none' ? (
+            <IconArrowsSort
+              aria-hidden
+              className='size-3.5 opacity-0 transition-opacity duration-feedback group-hover/sort:opacity-100 group-focus-visible/sort:opacity-100'
+            />
+          ) : (
+            // One arrow that turns, so flipping the direction reads as the same column turning over.
+            <IconArrowUp
+              aria-hidden
+              className={cn(
+                'size-3.5 transition-transform duration-move ease-move motion-reduce:transition-none',
+                sort === 'desc' && 'rotate-180',
+              )}
+            />
+          )}
+        </button>
+      )}
+    </th>
   );
 }
 
@@ -174,4 +221,14 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
   );
 }
 
-export { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow };
+export {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  type TableSort,
+  type TableVariant,
+};

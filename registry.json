@@ -974,6 +974,7 @@
       "name": "table",
       "type": "registry:ui",
       "dependencies": [
+        "@tabler/icons-react@3.49.0",
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
