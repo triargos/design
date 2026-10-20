@@ -35,6 +35,8 @@ The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib`
 
   Render `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`) into a `<style>` for the colors.
 
+- The registry owns `lib/utils.ts` (`utils`, imported as `~/lib/utils` by every component), `lib/theme/*` with its CSS (`theme`), `hooks/use-mobile.ts` and `components/ui/*`. `add` overwrites them. Keep the app's own helpers, hooks and styles in other files.
+
 ## Develop
 
 Requires Node 24 and pnpm.
