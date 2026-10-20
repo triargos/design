@@ -521,7 +521,7 @@ function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Pro
       data-slot='combobox-chip-input'
       // Text on the field's 14px line when empty (3px padding + 11px); 4px after a chip.
       className={cn(
-        'h-8 min-w-16 flex-1 pl-[11px] outline-none placeholder:text-muted-foreground [[data-slot=combobox-chip]+&]:pl-1',
+        'h-8 min-w-16 flex-1 pl-[11px] outline-none placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-1',
         className,
       )}
       {...props}

@@ -42,7 +42,7 @@ const FILL_SCALE = { rest: 1, hover: 0.92, press: 0.84, checked: 0.625, checkedP
 const fillSpring: Transition = { type: 'spring', visualDuration: 0.22, bounce: 0.35, restDelta: 0.001 };
 
 /** Mouse hover and press for the fill's spring; touch skips hover, so a tap does not leave it shrunk. */
-const useSwatchPointer = () => {
+function useSwatchPointer() {
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
   const release = () => setPressed(false);
@@ -60,9 +60,9 @@ const useSwatchPointer = () => {
       onPointerCancel: release,
     },
   };
-};
+}
 
-const SwatchFill = ({
+function SwatchFill({
   checked,
   hovered,
   pressed,
@@ -72,7 +72,7 @@ const SwatchFill = ({
   hovered: boolean;
   pressed: boolean;
   style: CSSProperties;
-}) => {
+}) {
   const reduceMotion = useReducedMotion();
   const scale = checked
     ? pressed
@@ -94,9 +94,9 @@ const SwatchFill = ({
       transition={reduceMotion ? { duration: 0 } : fillSpring}
     />
   );
-};
+}
 
-const PresetSwatch = ({ color, checked, label }: { color: string; checked: boolean; label: string }) => {
+function PresetSwatch({ color, checked, label }: { color: string; checked: boolean; label: string }) {
   const { hovered, pressed, handlers } = useSwatchPointer();
   return (
     <RadioPrimitive.Root
@@ -116,9 +116,9 @@ const PresetSwatch = ({ color, checked, label }: { color: string; checked: boole
       <SwatchFill checked={checked} hovered={hovered} pressed={pressed} style={{ background: 'var(--swatch)' }} />
     </RadioPrimitive.Root>
   );
-};
+}
 
-const CustomSwatch = ({ value, isCustom, label }: { value: string; isCustom: boolean; label: string }) => {
+function CustomSwatch({ value, isCustom, label }: { value: string; isCustom: boolean; label: string }) {
   const { hovered, pressed, handlers } = useSwatchPointer();
   return (
     <PopoverTrigger
@@ -146,7 +146,7 @@ const CustomSwatch = ({ value, isCustom, label }: { value: string; isCustom: boo
       />
     </PopoverTrigger>
   );
-};
+}
 
 interface ColorPickerProps {
   /** A lowercase hex. */
@@ -168,7 +168,7 @@ interface ColorPickerProps {
 }
 
 /** A color chosen from swatches, or any color with `custom`. The value is a lowercase hex. */
-export const ColorPicker = ({
+function ColorPicker({
   value,
   onValueChange,
   presets = DEFAULT_PRESETS,
@@ -177,7 +177,7 @@ export const ColorPicker = ({
   'aria-label': label = 'Color',
   customLabel = 'Custom color',
   hexLabel = 'Hex color',
-}: ColorPickerProps) => {
+}: ColorPickerProps) {
   const normalized = value.toLowerCase();
   const preset = presets.find((swatch) => swatch.value.toLowerCase() === normalized)?.value ?? null;
 
@@ -213,40 +213,44 @@ export const ColorPicker = ({
       <CustomColor value={value} onValueChange={onValueChange} hexLabel={hexLabel} />
     </div>
   );
-};
+}
 
 /** The free choice: a saturation/hue area and a hex field that takes typed or pasted values. */
-const CustomColor = ({
+function CustomColor({
   value,
   onValueChange,
   hexLabel,
-}: Pick<ColorPickerProps, 'value' | 'onValueChange'> & { hexLabel: string }) => (
-  <div className='flex flex-col gap-2.5'>
-    {/* react-colorful injects unlayered CSS, which beats layered utilities: overrides of its rules need `!`. */}
-    <HexColorPicker
-      color={value}
-      onChange={onValueChange}
-      className='[&>*:first-child]:rounded-inner! [&>*:first-child]:border-b-0! [&>*:last-child]:mt-3 [&>*:last-child]:h-3! [&>*:last-child]:rounded-full!'
-      style={{ width: '100%', height: 160 }}
-    />
-    <InputGroup>
-      <InputGroupAddon>
-        <span
-          aria-hidden
-          className='size-4 rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
-          style={{ background: value }}
-        />
-      </InputGroupAddon>
-      <span data-slot='input-group-input' className='flex h-full min-w-0 flex-1 items-center px-3.5 text-control'>
-        <HexColorInput
-          data-slot='input-group-control'
-          aria-label={hexLabel}
-          prefixed
-          color={value}
-          onChange={(next) => onValueChange(next.toLowerCase())}
-          className='input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 font-mono uppercase outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed'
-        />
-      </span>
-    </InputGroup>
-  </div>
-);
+}: Pick<ColorPickerProps, 'value' | 'onValueChange'> & { hexLabel: string }) {
+  return (
+    <div className='flex flex-col gap-2.5'>
+      {/* react-colorful injects unlayered CSS, which beats layered utilities: overrides of its rules need `!`. */}
+      <HexColorPicker
+        color={value}
+        onChange={onValueChange}
+        className='[&>*:first-child]:rounded-inner! [&>*:first-child]:border-b-0! [&>*:last-child]:mt-3 [&>*:last-child]:h-3! [&>*:last-child]:rounded-full!'
+        style={{ width: '100%', height: 160 }}
+      />
+      <InputGroup>
+        <InputGroupAddon>
+          <span
+            aria-hidden
+            className='size-4 rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
+            style={{ background: value }}
+          />
+        </InputGroupAddon>
+        <span data-slot='input-group-input' className='flex h-full min-w-0 flex-1 items-center px-3.5 text-control'>
+          <HexColorInput
+            data-slot='input-group-control'
+            aria-label={hexLabel}
+            prefixed
+            color={value}
+            onChange={(next) => onValueChange(next.toLowerCase())}
+            className='input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 font-mono uppercase outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed'
+          />
+        </span>
+      </InputGroup>
+    </div>
+  );
+}
+
+export { ColorPicker };

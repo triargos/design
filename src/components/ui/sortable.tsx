@@ -18,7 +18,7 @@ type SortableItemProps = useRender.ComponentProps<'div'> & { id: string };
  * A row that can be dragged. In an `ItemList`, render it as the row itself (`render={<Item />}`) so the list's padding
  * and hairlines reach it.
  */
-export const SortableItem = ({ id, render, ...props }: SortableItemProps) => {
+function SortableItem({ id, render, ...props }: SortableItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const element = useRender({
@@ -34,17 +34,17 @@ export const SortableItem = ({ id, render, ...props }: SortableItemProps) => {
   });
 
   return <SortableItemHandleContext value={{ attributes, listeners }}>{element}</SortableItemHandleContext>;
-};
+}
 
 /**
  * The grip; name the row in its `aria-label` (`Move Design review`). As an `ItemMedia`, it pulls in so the dots, not
  * the button, sit on the row's content edge, and lays out at 16px tall so it centres on the title's line.
  */
-export const SortableItemHandle = ({
+function SortableItemHandle({
   className,
   'aria-label': ariaLabel = 'Drag to reorder',
   ...props
-}: ComponentProps<'button'>) => {
+}: ComponentProps<'button'>) {
   const handle = use(SortableItemHandleContext);
 
   return (
@@ -61,4 +61,6 @@ export const SortableItemHandle = ({
       <GripVertical aria-hidden className='size-4' />
     </button>
   );
-};
+}
+
+export { SortableItem, SortableItemHandle };

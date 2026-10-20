@@ -84,7 +84,7 @@ function ChartTooltipContent({
             return (
               <div key={index} className='flex w-full items-center gap-2'>
                 <div
-                  className='size-2.5 shrink-0 rounded-[2px] bg-(--color-bg)'
+                  className='size-2 shrink-0 rounded-full bg-(--color-bg)'
                   style={{ '--color-bg': color } as React.CSSProperties}
                 />
                 <div className='flex flex-1 items-center justify-between gap-4 leading-none'>
@@ -124,7 +124,7 @@ function ChartLegendContent({
         .filter((item) => item.type !== 'none')
         .map((item, index) => (
           <div key={index} className='flex items-center gap-1.5'>
-            <div className='size-2 shrink-0 rounded-[2px]' style={{ backgroundColor: item.color }} />
+            <div className='size-2 shrink-0 rounded-full' style={{ backgroundColor: item.color }} />
             {
               seriesConfig(config, item, `${typeof item.dataKey === 'function' ? 'value' : (item.dataKey ?? 'value')}`)
                 ?.label

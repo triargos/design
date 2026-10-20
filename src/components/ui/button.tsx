@@ -9,25 +9,22 @@ import { Spinner } from '~/components/ui/spinner';
 import { cn } from '~/lib/utils';
 
 /**
- * A button is an `intent` (what the action means) at an `emphasis` (how much it weighs). Without props it is
- * `neutral`/`raised`, every ordinary action. `intent='primary'` is the one main action, `emphasis='ghost'` a header,
- * row or toolbar action, `intent='destructive'` an irreversible action inside its confirmation or a danger zone, and
- * `intent='destructive' emphasis='subtle'` a destructive action that opens its confirmation. `emphasis` defaults to
- * `raised` for `neutral` and to `solid` for every other intent. A text link is a link, not a button.
+ * An `intent` (what the action means) at an `emphasis` (how much it weighs); `emphasis` defaults to `raised` for
+ * `neutral` and to `solid` for every other intent. Which one to pick: DESIGN.md, Components › Button.
  */
 const buttonShape = cva(
   [
     'hit-area relative inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-control font-medium whitespace-nowrap outline-none select-none',
     'transition-[background-color,border-color,color,box-shadow,opacity,transform,scale,--tw-gradient-from]',
-    'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 active:not-aria-[haspopup]:scale-[0.96]',
+    'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24',
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     'disabled:pointer-events-none disabled:text-disabled-foreground',
   ],
   {
     variants: {
       emphasis: {
-        // Kumo's emphasis button: a top-down gradient from 15% lighter to the fill, a 1px inset highlight (30% lighter)
-        // along the top edge, a 10% darker edge; hover lifts the gradient's top to the highlight shade.
+        // A top-down gradient from 15% lighter to the fill, a 1px inset highlight (30% lighter) along the top edge, a
+        // 10% darker edge; hover lifts the gradient's top to the highlight shade.
         solid: [
           'border-[color-mix(in_oklch,var(--intent-solid),black_10%)] bg-linear-to-b from-[color-mix(in_oklch,var(--intent-solid),white_15%)] to-(--intent-solid) shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--intent-solid),white_30%)] hover:from-[color-mix(in_oklch,var(--intent-solid),white_30%)]',
           'disabled:border-transparent disabled:bg-disabled disabled:bg-none disabled:shadow-none',
@@ -35,11 +32,13 @@ const buttonShape = cva(
         subtle: 'disabled:bg-disabled',
         outline: 'disabled:inset-ring-border',
         ghost: '',
-        // `intentVariants` paints the fill and the inset edge; the transparent border only keeps the size of the others.
+        // `intentVariants` paints the fill and the inset edge; the transparent border only keeps the size of the
+        // others.
         raised: 'bg-clip-border disabled:bg-transparent disabled:shadow-[inset_0_0_0_1px_var(--border)]',
       },
-      // Heights 32 / 36 / 40 / 44, the same as fields. The radius follows the height (`rounded-control*`). Padding: 16px
-      // (12px at `xs`), 2px less on the icon side (an icon reads lighter than text). Focus: the fields' soft 24% ring.
+      // Heights 32 / 36 / 40 / 44, the same as fields. The radius follows the height (`rounded-control*`). Padding:
+      // 16px (12px at `xs`), 2px less on the icon side (an icon reads lighter than text). Focus: the fields' soft 24%
+      // ring.
       size: {
         default:
           'h-10 gap-1.5 rounded-control-lg px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
@@ -52,8 +51,10 @@ const buttonShape = cva(
         icon: 'size-10 rounded-control-lg',
         'icon-lg': 'size-11 rounded-control-lg',
       },
+      /** Scales to 96% on press, except a menu trigger. `static` keeps it still, where the motion would distract. */
+      static: { false: 'active:not-aria-[haspopup]:scale-[0.96]', true: '' },
     },
-    defaultVariants: { size: 'default' },
+    defaultVariants: { size: 'default', static: false },
   },
 );
 
@@ -63,15 +64,23 @@ interface ButtonStyleProps {
   intent?: Intent;
   emphasis?: Emphasis;
   size?: ButtonSize;
+  /** No scale on press. */
+  static?: boolean;
   className?: string;
 }
 
 /** The button classes, for an element that must stay itself (a toolbar part, a calendar day). */
-function buttonVariants({ intent = 'neutral', emphasis, size, className }: ButtonStyleProps = {}): string {
+function buttonVariants({
+  intent = 'neutral',
+  emphasis,
+  size,
+  static: isStatic,
+  className,
+}: ButtonStyleProps = {}): string {
   const resolvedEmphasis = emphasis ?? (intent === 'neutral' ? 'raised' : 'solid');
   return cn(
     intentVariants({ intent, emphasis: resolvedEmphasis, interactive: true }),
-    buttonShape({ emphasis: resolvedEmphasis, size }),
+    buttonShape({ emphasis: resolvedEmphasis, size, static: isStatic }),
     // A neutral ghost keeps its container's text color at rest: a muted toolbar sets `text-muted-foreground` once.
     intent === 'neutral' &&
       resolvedEmphasis === 'ghost' &&
@@ -121,14 +130,11 @@ function useMinimumPending(pending: boolean): boolean {
   return pending || shown;
 }
 
-/**
- * Emil Kowalski's roll, on one spring for both sides, so a quick toggle reverses from where it is. The roll arrives in
- * 180ms (`visualDuration`) and overshoots a little before it settles; the fade does not bounce.
- */
+/** One spring for both sides, so a quick toggle reverses from where it is. The roll arrives in 180ms, no overshoot. */
 const pendingSwap: Transition = {
   type: 'spring',
   visualDuration: 0.18,
-  bounce: 0.25,
+  bounce: 0,
   opacity: { type: 'spring', visualDuration: 0.12, bounce: 0 },
 };
 
@@ -178,7 +184,16 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
 type ButtonProps = ButtonPrimitive.Props & Omit<ButtonStyleProps, 'className'> & { isLoading?: boolean };
 
 /** A native `type='button'` unless the caller passes `type='submit'`. */
-function Button({ className, intent, emphasis, size = 'default', isLoading, children, ...props }: ButtonProps) {
+function Button({
+  className,
+  intent,
+  emphasis,
+  size = 'default',
+  static: isStatic,
+  isLoading,
+  children,
+  ...props
+}: ButtonProps) {
   const pending = useMinimumPending(isLoading === true);
   return (
     <ButtonPrimitive
@@ -191,6 +206,7 @@ function Button({ className, intent, emphasis, size = 'default', isLoading, chil
           intent,
           emphasis,
           size,
+          static: isStatic,
           className: typeof className === 'function' ? className(state) : className,
         })
       }

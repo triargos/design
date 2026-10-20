@@ -1,5 +1,6 @@
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useRender } from '@base-ui/react/use-render';
 import { cva } from 'class-variance-authority';
-import type * as React from 'react';
 
 import { type Emphasis, type Intent, intentVariants } from '~/components/ui/intent-variants';
 
@@ -7,7 +8,8 @@ import { cn } from '~/lib/utils';
 
 /**
  * A label for a state or a count: an `intent` at `subtle` (the default), `solid` (needs action) or `outline` (quiet,
- * dense lists). 24px, or 20px at `size='sm'`; `shape='pill'` for a count or a filter chip.
+ * dense lists). 24px, or 20px at `size='sm'`; `shape='pill'` for a count or a filter chip. A link badge:
+ * `render={<a href='…' />}`.
  */
 const badgeShape = cva('inline-flex shrink-0 items-center justify-center gap-1 font-medium whitespace-nowrap', {
   variants: {
@@ -22,7 +24,7 @@ const badgeShape = cva('inline-flex shrink-0 items-center justify-center gap-1 f
   },
 });
 
-type BadgeProps = React.ComponentProps<'div'> & {
+type BadgeProps = useRender.ComponentProps<'span'> & {
   intent?: Intent;
   emphasis?: Extract<Emphasis, 'solid' | 'subtle' | 'outline'>;
   size?: 'default' | 'sm';
@@ -35,15 +37,18 @@ function Badge({
   emphasis = 'subtle',
   size = 'default',
   shape = 'rounded',
+  render,
   ...props
 }: BadgeProps) {
-  return (
-    <div
-      data-slot='badge'
-      className={cn(intentVariants({ intent, emphasis }), badgeShape({ size, shape }), className)}
-      {...props}
-    />
-  );
+  return useRender({
+    defaultTagName: 'span',
+    render,
+    state: { slot: 'badge' },
+    props: mergeProps<'span'>(
+      { className: cn(intentVariants({ intent, emphasis }), badgeShape({ size, shape }), className) },
+      props,
+    ),
+  });
 }
 
 export { Badge };

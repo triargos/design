@@ -11,7 +11,7 @@ import { cn } from '~/lib/utils';
  *   focusing an addon button does not ring the whole group.
  * - `within`: any other wrapper whose descendants receive focus and carry `aria-invalid`.
  */
-export const inputSurfaceVariants = cva(
+const inputSurfaceVariants = cva(
   // Resting: the field ring (`shadow-field`) and a small lift; the border is transparent and only carries state. In dark
   // the field is a 3% white veil over its surface, one step lighter, never a hole. Focus: a `ring` border and a soft
   // 3px ring instead of the field ring. Invalid: the field ring turns `destructive`, no tint. Read-only (`readonly`, or
@@ -96,4 +96,4 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
   );
 }
 
-export { Input };
+export { Input, inputSurfaceVariants };

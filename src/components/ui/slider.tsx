@@ -36,7 +36,7 @@ function Slider<Value extends number | readonly number[]>({
             data-slot='slider-thumb'
             key={index}
             aria-label={ariaLabel}
-            className='relative block size-3 shrink-0 rounded-full border border-ring bg-white ring-ring/24 transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3'
+            className='relative block size-3 shrink-0 rounded-full border border-ring bg-thumb ring-ring/24 transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3'
           />
         ))}
       </SliderPrimitive.Control>

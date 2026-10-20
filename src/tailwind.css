@@ -26,6 +26,10 @@
   --popup-drop: oklch(0 0 0 / 0.05);
   --modal-drop-soft: oklch(0 0 0 / 0.05);
   --modal-drop-far: oklch(0 0 0 / 0.15);
+  /* The hairline on a photo: pure black at 10% (white in dark), never a tinted neutral, which reads as dirt on the edge. */
+  --image-edge: oklch(0 0 0 / 0.1);
+  /* The thumb of a switch or slider: white in both modes. */
+  --thumb: oklch(1 0 0);
 
   --chart-1: oklch(0.837 0.128 66.29);
   --chart-2: oklch(0.705 0.213 47.604);
@@ -60,6 +64,7 @@
   --popup-edge-bottom: transparent;
   --modal-drop-soft: transparent;
   --modal-drop-far: oklch(0 0 0 / 0.4);
+  --image-edge: oklch(1 0 0 / 0.1);
 }
 
 @theme inline {
@@ -119,8 +124,9 @@
   --color-border-subtle: var(--border-subtle);
   --color-border-strong: var(--border-strong);
   --color-border: var(--border);
-  --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-image-edge: var(--image-edge);
+  --color-thumb: var(--thumb);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
@@ -355,6 +361,16 @@
 
   body {
     @apply bg-sidebar text-foreground;
+  }
+
+  /* Icons draw a 1.5px stroke at every size, the optical weight of regular (400) text: the stroke is measured on screen,
+     not in the 24-unit viewBox, so a 12px mark and a 20px icon carry the same line. */
+  svg.lucide {
+    stroke-width: 1.5px;
+  }
+
+  svg.lucide :is(path, line, polyline, polygon, circle, rect, ellipse) {
+    vector-effect: non-scaling-stroke;
   }
 }
 

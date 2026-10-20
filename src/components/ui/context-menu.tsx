@@ -6,9 +6,9 @@ import * as React from 'react';
 import { cn } from '~/lib/utils';
 
 /**
- * A row in the menu, highlighted by pointer or keyboard, `rounded-inner` 4px in; icons muted unless they set a color (not
- * the check or dot). `indicator` leaves the left gutter for a check or dot. `destructive`: the row and its icon take the destructive hue;
- * highlighted, its subtle fill.
+ * A row in the menu, highlighted by pointer or keyboard, `rounded-inner` 4px in; icons muted unless they set a color
+ * (not the check or dot). `indicator` leaves the left gutter for a check or dot. `destructive`: the row and its icon
+ * take the destructive hue; highlighted, its subtle fill.
  */
 const contextMenuItemVariants = cva(
   "relative flex cursor-default items-center gap-2 rounded-inner py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -71,7 +71,7 @@ function ContextMenuLabel({ className, ...props }: React.ComponentProps<'div'>) 
   return (
     <div
       data-slot='context-menu-label'
-      className={cn('px-2.5 py-1.5 text-body font-medium text-foreground', className)}
+      className={cn('px-2.5 pt-2 pb-1 text-overline text-muted-foreground', className)}
       {...props}
     />
   );

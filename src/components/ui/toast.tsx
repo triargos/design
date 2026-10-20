@@ -1,9 +1,10 @@
 import { Toast } from '@base-ui/react/toast';
-import { CircleAlertIcon, CircleCheckIcon, InfoIcon, LoaderCircleIcon, TriangleAlertIcon } from 'lucide-react';
 import { cva } from 'class-variance-authority';
+import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { buttonVariants } from '~/components/ui/button';
+import { Spinner } from '~/components/ui/spinner';
 
 import { cn } from '~/lib/utils';
 
@@ -15,7 +16,7 @@ import { cn } from '~/lib/utils';
 const TOAST_ICONS = {
   error: CircleAlertIcon,
   info: InfoIcon,
-  loading: LoaderCircleIcon,
+  loading: Spinner,
   success: CircleCheckIcon,
   warning: TriangleAlertIcon,
 } as const;
@@ -95,7 +96,7 @@ function Toasts({ container }: Pick<ToastProviderProps, 'container'>) {
                   <div
                     className='self-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:h-lh [&>svg]:w-4'
                     data-slot='toast-icon'>
-                    <Icon className='in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=loading]:animate-spin in-data-[type=loading]:opacity-80 in-data-[type=success]:text-success in-data-[type=warning]:text-warning' />
+                    <Icon className='in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=loading]:text-muted-foreground in-data-[type=success]:text-success in-data-[type=warning]:text-warning' />
                   </div>
                 )}
                 <div className='flex min-w-0 flex-1 flex-col gap-tight wrap-break-word'>
@@ -131,12 +132,7 @@ interface ToastProviderProps {
 }
 
 /** Renders the stack. Once per app, next to or around the page. */
-export function ToastProvider({
-  children,
-  container,
-  toastManager: manager = toastManager,
-  timeout,
-}: ToastProviderProps) {
+function ToastProvider({ children, container, toastManager: manager = toastManager, timeout }: ToastProviderProps) {
   return (
     <Toast.Provider toastManager={manager} timeout={timeout}>
       {children}
@@ -172,7 +168,7 @@ const resolve = <A,>(message: ReactNode | ((value: A) => ReactNode), value: A): 
   typeof message === 'function' ? message(value) : message;
 
 /** `toast` on a given manager; a docs stage passes its own so it renders its own stack. */
-export function makeToast(manager: ReturnType<typeof Toast.createToastManager>) {
+function makeToast(manager: ReturnType<typeof Toast.createToastManager>) {
   const show = (type: ToastType | undefined, title: ReactNode, options: ToastOptions = {}): string => {
     const { action, description, timeout } = options;
     // Every key is set, so an upsert (loading → success) does not keep the previous description or action.
@@ -212,4 +208,6 @@ export function makeToast(manager: ReturnType<typeof Toast.createToastManager>) 
 /**
  * Shows a toast and returns its id. Pass the id back (`{ id }`) to update the toast in place, e.g. loading → success.
  */
-export const toast = makeToast(toastManager);
+const toast = makeToast(toastManager);
+
+export { ToastProvider, makeToast, toast };

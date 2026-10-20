@@ -1,9 +1,10 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, type Transition, useReducedMotion } from 'framer-motion';
 import { CopyIcon } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
-import { PopCheck, usePop } from '~/components/ui/pop-check';
+
+import { cn } from '~/lib/utils';
 
 /** How long the check stays after a copy. */
 const COPIED_MS = 2000;
@@ -21,20 +22,57 @@ interface CopyButtonProps extends Omit<ButtonProps, 'onClick' | 'children' | 'va
   onCopied?: () => void;
 }
 
+/** Icon swaps: in from 25% and blurred, out the same way, on one spring with no bounce. Reduced motion: a cross-fade. */
+const iconSwap: Transition = { type: 'spring', duration: 0.3, bounce: 0 };
+const iconFade: Transition = { duration: 0.1 };
+
+/** Motion props for an icon that enters and leaves inside `AnimatePresence`. */
+function useIconSwap() {
+  const reduced = useReducedMotion() ?? false;
+  const hidden = reduced ? { opacity: 0 } : { opacity: 0, scale: 0.25, filter: 'blur(4px)' };
+  return {
+    initial: hidden,
+    animate: reduced ? { opacity: 1 } : { opacity: 1, scale: 1, filter: 'blur(0px)' },
+    exit: hidden,
+    transition: reduced ? iconFade : iconSwap,
+  };
+}
+
+/** A check that swaps in like any icon and draws its stroke from the short arm to the long one, just behind the pop. */
+function DrawnCheck({ className }: { className?: string }) {
+  const reduced = useReducedMotion() ?? false;
+  return (
+    <motion.svg
+      viewBox='0 0 24 24'
+      fill='none'
+      stroke='currentColor'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      className={cn('lucide', className)}
+      {...useIconSwap()}>
+      <motion.path
+        d='M4 12l5 5L20 6'
+        initial={{ pathLength: reduced ? 1 : 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ type: 'spring', duration: 0.3, bounce: 0, delay: 0.06 }}
+      />
+    </motion.svg>
+  );
+}
+
 /**
- * The copy icon and the check share one grid cell. On copy the copy icon shrinks and blurs out while the check springs
- * in, tilted, and draws its stroke; after 2s the copy icon springs back. Reduced motion: a plain cross-fade.
+ * The copy icon and the check share one grid cell: on copy the copy icon leaves as the check comes in and draws; after
+ * 2s the copy icon comes back.
  */
 function CopyIconSwap({ copied }: { copied: boolean }) {
-  const pop = usePop();
-
+  const swap = useIconSwap();
   return (
     <span aria-hidden='true' className='grid *:col-start-1 *:row-start-1'>
       <AnimatePresence initial={false}>
         {copied ? (
-          <PopCheck key='check' className='text-success' />
+          <DrawnCheck key='check' className='text-success' />
         ) : (
-          <motion.span key='copy' className='grid' {...pop}>
+          <motion.span key='copy' className='grid' {...swap}>
             <CopyIcon />
           </motion.span>
         )}

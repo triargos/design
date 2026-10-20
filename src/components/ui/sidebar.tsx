@@ -129,10 +129,10 @@ function SidebarTrigger({
     <Button
       emphasis='ghost'
       data-slot='sidebar-trigger'
-      size='icon'
+      size='icon-xs'
       aria-label={ariaLabel}
       aria-expanded={isMobile ? openMobile : open}
-      className={cn('size-7', className)}
+      className={className}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
@@ -179,7 +179,7 @@ function SidebarGroupLabel({ className, render, ...props }: useRender.ComponentP
     props: mergeProps<'div'>(
       {
         className: cn(
-          'flex h-8 shrink-0 items-center rounded-md px-2 text-caption font-medium text-sidebar-foreground/70 outline-hidden transition-[margin,opacity] duration-move ease-move focus-visible:ring-3 focus-visible:ring-ring/24 [&>svg]:size-4 [&>svg]:shrink-0',
+          'flex h-8 shrink-0 items-center rounded-control px-2 text-caption font-medium text-sidebar-foreground/70 outline-hidden transition-[margin,opacity] duration-move ease-move focus-visible:ring-3 focus-visible:ring-ring/24 [&>svg]:size-4 [&>svg]:shrink-0',
           'group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0',
           className,
         ),
@@ -207,24 +207,24 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
  */
 const sidebarMenuButtonVariants = cva(
   [
-    'flex items-center gap-2 overflow-hidden rounded-xl px-3 text-body outline-hidden focus-visible:ring-3 focus-visible:ring-ring/24 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
-    'hover:bg-black/5 hover:text-sidebar-accent-foreground active:bg-black/10 active:text-sidebar-accent-foreground dark:hover:bg-white/5 dark:active:bg-white/10',
+    'flex items-center gap-2 overflow-hidden px-3 text-body outline-hidden focus-visible:ring-3 focus-visible:ring-ring/24 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+    'hover:bg-foreground/5 hover:text-sidebar-accent-foreground active:bg-foreground/10 active:text-sidebar-accent-foreground',
     'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
-    'aria-[current=page]:bg-background aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground aria-[current=page]:shadow-[0_0_0_1px_rgb(0_0_0/0.03),0_1px_2px_rgb(0_0_0/0.04),0_2px_4px_rgb(0_0_0/0.03)] aria-[current=page]:hover:bg-background dark:aria-[current=page]:bg-foreground/10 dark:aria-[current=page]:hover:bg-foreground/10',
+    // The current row is a raised chip, as `emphasis='raised'` paints one.
+    'aria-[current=page]:bg-card aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground aria-[current=page]:shadow-raised aria-[current=page]:hover:bg-card dark:aria-[current=page]:bg-foreground/10 dark:aria-[current=page]:hover:bg-foreground/10',
   ],
   {
     variants: {
       level: {
         item: [
-          'h-8 w-full py-2 text-left transition-[width,height,padding] group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
-          'data-popup-open:hover:bg-black/5 data-popup-open:hover:text-sidebar-accent-foreground dark:data-popup-open:hover:bg-white/5',
+          'h-8 w-full rounded-control py-2 text-left transition-[width,height,padding] group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
+          'data-popup-open:hover:bg-foreground/5 data-popup-open:hover:text-sidebar-accent-foreground',
         ],
-        sub: 'h-7 min-w-0 text-sidebar-foreground group-data-[collapsible=icon]:hidden',
+        sub: 'h-7 min-w-0 rounded-control-sm text-sidebar-foreground group-data-[collapsible=icon]:hidden',
       },
       emphasis: {
         ghost: '',
-        outline:
-          'bg-background shadow-[0_0_0_1px_var(--sidebar-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--sidebar-accent)]',
+        outline: 'bg-card shadow-border hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
       },
     },
     defaultVariants: { level: 'item', emphasis: 'ghost' },
@@ -262,7 +262,7 @@ function SidebarMenuSub({ className, ...props }: React.ComponentProps<'ul'>) {
   return (
     <ul
       data-slot='sidebar-menu-sub'
-      className={cn('flex min-w-0 flex-col gap-2 py-1.5 pl-[28px] group-data-[collapsible=icon]:hidden', className)}
+      className={cn('flex min-w-0 flex-col gap-2 py-1.5 pl-7 group-data-[collapsible=icon]:hidden', className)}
       {...props}
     />
   );
@@ -276,7 +276,7 @@ function SidebarMenuSubItem({ className, ...props }: React.ComponentProps<'li'>)
       className={cn(
         'relative',
         'before:absolute before:-top-2 before:bottom-0 before:left-[-8px] before:w-px before:bg-sidebar-border/60 first:before:-top-1.5 last:before:hidden',
-        'after:absolute after:-top-2 after:left-[-8px] after:h-[22px] after:w-2 after:rounded-bl-lg after:border-b after:border-l after:border-sidebar-border/60 first:after:-top-1.5 first:after:h-[20px]',
+        'after:absolute after:-top-2 after:left-[-8px] after:h-[22px] after:w-2 after:rounded-bl-control-sm after:border-b after:border-l after:border-sidebar-border/60 first:after:-top-1.5 first:after:h-[20px]',
         className,
       )}
       {...props}

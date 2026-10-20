@@ -29,33 +29,40 @@ function ItemListRow({ last, ...props }: React.ComponentProps<'div'> & { last: b
   );
 }
 
-type ItemListProps<T> = { readonly className?: string } & (
-  | {
-      readonly virtualized?: false;
-      /** The `Item`s. */
-      readonly children?: React.ReactNode;
-    }
-  | {
-      /**
-       * Only the rows in view render, measured as they mount. The list scrolls itself: give it a height (`h-80`, or
-       * `min-h-0 flex-1` in a full-height column).
-       */
-      readonly virtualized: true;
-      readonly items: ReadonlyArray<T>;
-      readonly itemKey: (item: T) => string;
-      /** A row: one `Item`. */
-      readonly children: (item: T, index: number) => React.ReactNode;
-      /** A row's height before it is measured. */
-      readonly estimatedItemSize?: number;
-      /** More items exist: near the end of the list, `onLoadMore` asks for them. */
-      readonly hasMore?: boolean;
-      /** Shows a spinner after the last row. */
-      readonly isLoadingMore?: boolean;
-      readonly onLoadMore?: () => void;
-      /** Announced while more rows load. */
-      readonly loadingLabel?: string;
-    }
-);
+/** The list's own element; `aria-label` and `aria-labelledby` name the list inside it. */
+type ItemListElementProps = Omit<
+  React.ComponentProps<'div'>,
+  'children' | 'role' | 'onAnimationStart' | 'onDrag' | 'onDragStart' | 'onDragEnd'
+>;
+
+type ItemListProps<T> = ItemListElementProps &
+  (
+    | {
+        readonly virtualized?: false;
+        /** The `Item`s. */
+        readonly children?: React.ReactNode;
+      }
+    | {
+        /**
+         * Only the rows in view render, measured as they mount. The list scrolls itself: give it a height (`h-80`, or
+         * `min-h-0 flex-1` in a full-height column).
+         */
+        readonly virtualized: true;
+        readonly items: ReadonlyArray<T>;
+        readonly itemKey: (item: T) => string;
+        /** A row: one `Item`. */
+        readonly children: (item: T, index: number) => React.ReactNode;
+        /** A row's height before it is measured. */
+        readonly estimatedItemSize?: number;
+        /** More items exist: near the end of the list, `onLoadMore` asks for them. */
+        readonly hasMore?: boolean;
+        /** Shows a spinner after the last row. */
+        readonly isLoadingMore?: boolean;
+        readonly onLoadMore?: () => void;
+        /** Announced while more rows load. */
+        readonly loadingLabel?: string;
+      }
+  );
 
 /**
  * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-hidden'`. It
@@ -63,10 +70,17 @@ type ItemListProps<T> = { readonly className?: string } & (
  */
 function ItemList<T>(props: ItemListProps<T>) {
   if (props.virtualized) return <VirtualizedItemList {...props} />;
-  return <StaticItemList className={props.className}>{props.children}</StaticItemList>;
+  const { virtualized: _, ...rest } = props;
+  return <StaticItemList {...rest} />;
 }
 
-function StaticItemList({ className, children }: { className?: string; children?: React.ReactNode }) {
+function StaticItemList({
+  className,
+  children,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  ...props
+}: ItemListElementProps & { children?: React.ReactNode }) {
   const [measureRef, bounds] = useMeasure();
   const rows = React.Children.toArray(children);
   return (
@@ -75,8 +89,9 @@ function StaticItemList({ className, children }: { className?: string; children?
       className={cn('overflow-hidden', className)}
       initial={false}
       animate={{ height: bounds.height > 0 ? bounds.height : 'auto' }}
-      transition={{ type: 'spring', stiffness: 800, damping: 55, mass: 0.4 }}>
-      <div ref={measureRef} role='list'>
+      transition={{ type: 'spring', stiffness: 800, damping: 55, mass: 0.4 }}
+      {...props}>
+      <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
         {rows.map((row, index) => (
           <ItemListRow key={React.isValidElement(row) ? row.key : index} last={index === rows.length - 1}>
             {row}
@@ -97,6 +112,10 @@ function VirtualizedItemList<T>({
   isLoadingMore = false,
   onLoadMore,
   loadingLabel = 'Loading more',
+  virtualized: _,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  ...props
 }: Extract<ItemListProps<T>, { virtualized: true }>) {
   const [scrollElement, setScrollElement] = React.useState<HTMLDivElement | null>(null);
   const virtualizer = useVirtualizer({
@@ -129,8 +148,17 @@ function VirtualizedItemList<T>({
   }, [nearEnd, hasMore, isLoadingMore, onLoadMore]);
 
   return (
-    <div ref={setScrollElement} data-slot='item-list' className={cn('overflow-y-auto overscroll-contain', className)}>
-      <div role='list' className='relative w-full' style={{ height: virtualizer.getTotalSize() }}>
+    <div
+      ref={setScrollElement}
+      data-slot='item-list'
+      className={cn('overflow-y-auto overscroll-contain', className)}
+      {...props}>
+      <div
+        role='list'
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        className='relative w-full'
+        style={{ height: virtualizer.getTotalSize() }}>
         {/* The rows in view flow in one block, moved down to the first one. */}
         <div className='absolute top-0 left-0 w-full' style={{ transform: `translateY(${rows[0]?.start ?? 0}px)` }}>
           {rows.map((row) => (

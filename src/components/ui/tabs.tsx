@@ -42,7 +42,7 @@ const tabsTriggerVariants = cva(
         segmented: 'rounded-control px-3 aria-[current=page]:text-foreground data-active:text-foreground',
         underline: 'h-9 rounded-control-xs px-0.5 data-active:text-foreground',
         // A resting fill, so each pill reads as a target; the indicator covers it when checked.
-        pill: 'rounded-full bg-neutral-subtle px-3.5 font-normal hover:bg-foreground/8 active:scale-[0.985] aria-checked:bg-transparent aria-checked:text-primary-solid-foreground aria-checked:hover:bg-transparent aria-checked:hover:text-primary-solid-foreground data-active:bg-transparent data-active:text-primary-solid-foreground data-active:hover:bg-transparent',
+        pill: 'rounded-full bg-neutral-subtle px-3.5 font-normal hover:bg-foreground/8 active:scale-[0.96] aria-checked:bg-transparent aria-checked:text-primary-solid-foreground aria-checked:hover:bg-transparent aria-checked:hover:text-primary-solid-foreground data-active:bg-transparent data-active:text-primary-solid-foreground data-active:hover:bg-transparent',
       },
     },
   },

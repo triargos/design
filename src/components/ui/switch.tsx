@@ -36,7 +36,7 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot='switch-thumb'
         className={cn(
-          'pointer-events-none block h-(--switch-thumb) w-[calc(var(--switch-thumb)+var(--switch-stretch))] rounded-full bg-white',
+          'pointer-events-none block h-(--switch-thumb) w-[calc(var(--switch-thumb)+var(--switch-stretch))] rounded-full bg-thumb',
           'transition-[width,translate,background-color] duration-move ease-move motion-reduce:transition-none',
           'data-checked:translate-x-[calc(var(--switch-thumb)-var(--switch-stretch))] data-checked:bg-primary-solid-foreground',
           'group-data-disabled/switch:bg-disabled-foreground group-data-disabled/switch:data-checked:bg-disabled-foreground',

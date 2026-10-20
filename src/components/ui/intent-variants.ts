@@ -9,13 +9,13 @@ import { cva } from 'class-variance-authority';
  * Only color lives here: size, shape and type stay with the component, and a component may restyle one emphasis on top
  * (Button's `solid` gradient, its `raised` field edge). Class strings stay literal so Tailwind finds them.
  */
-export const INTENTS = ['neutral', 'primary', 'info', 'success', 'warning', 'destructive'] as const;
-export type Intent = (typeof INTENTS)[number];
+const INTENTS = ['neutral', 'primary', 'info', 'success', 'warning', 'destructive'] as const;
+type Intent = (typeof INTENTS)[number];
 
-export const EMPHASES = ['solid', 'subtle', 'outline', 'ghost', 'raised'] as const;
-export type Emphasis = (typeof EMPHASES)[number];
+const EMPHASES = ['solid', 'subtle', 'outline', 'ghost', 'raised'] as const;
+type Emphasis = (typeof EMPHASES)[number];
 
-export const intentVariants = cva('', {
+const intentVariants = cva('', {
   variants: {
     intent: {
       neutral:
@@ -77,3 +77,5 @@ export const intentVariants = cva('', {
     interactive: false,
   },
 });
+
+export { EMPHASES, INTENTS, intentVariants, type Emphasis, type Intent };

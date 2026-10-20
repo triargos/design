@@ -32,12 +32,12 @@ const InputOTPContext = React.createContext<InputOTPContextValue>({
 
 const slotSelector = 'input[data-slot=input-otp-slot]';
 
-type InputOTPProps = Omit<OTPFieldPrimitive.Root.Props, 'className'> & {
+type InputOTPProps = Omit<OTPFieldPrimitive.Root.Props, 'className' | 'ref'> & {
   className?: string;
   /** Marks the slots invalid and shakes the row once as it turns invalid. Incomplete: only the empty slots. */
   'aria-invalid'?: boolean | 'true' | 'false';
   /** `focus()` moves to the first empty slot, or the last; pass react-hook-form's `field.ref`. */
-  inputRef?: React.Ref<{ focus: () => void }>;
+  ref?: React.Ref<{ focus: () => void }>;
   /** The accessible name of every slot but the first, which the field's label names. */
   slotLabel?: SlotLabel;
 };
@@ -51,7 +51,7 @@ type InputOTPProps = Omit<OTPFieldPrimitive.Root.Props, 'className'> & {
 function InputOTP({
   className,
   'aria-invalid': ariaInvalid,
-  inputRef,
+  ref,
   slotLabel = defaultSlotLabel,
   value,
   defaultValue,
@@ -69,7 +69,7 @@ function InputOTP({
   const slots = () => Array.from(rootRef.current?.querySelectorAll<HTMLInputElement>(slotSelector) ?? []);
 
   React.useImperativeHandle(
-    inputRef,
+    ref,
     () => ({
       // Next frame: a reset in the same handler (`setValue('')` before `setError`) has rendered by then.
       focus: () =>
@@ -112,7 +112,7 @@ function InputOTP({
   };
 
   return (
-    <InputOTPContext.Provider value={{ invalid, entry, rejected, slotLabel }}>
+    <InputOTPContext value={{ invalid, entry, rejected, slotLabel }}>
       <OTPFieldPrimitive.Root
         ref={rootRef}
         data-slot='input-otp'
@@ -128,7 +128,7 @@ function InputOTP({
         )}
         {...props}
       />
-    </InputOTPContext.Provider>
+    </InputOTPContext>
   );
 }
 
@@ -141,7 +141,7 @@ type InputOTPSlotProps = Omit<OTPFieldPrimitive.Input.Props, 'className' | 'rend
  * others take `slotLabel` ("Character 2 of 6").
  */
 function InputOTPSlot({ className, ...props }: InputOTPSlotProps) {
-  const { invalid, entry, rejected, slotLabel } = React.useContext(InputOTPContext);
+  const { invalid, entry, rejected, slotLabel } = React.use(InputOTPContext);
 
   return (
     <OTPFieldPrimitive.Input

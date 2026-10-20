@@ -15,7 +15,6 @@ const cardRevealTransition = {
   restDelta: 0.001,
   restSpeed: 0.01,
 } as const;
-/** Also for collapses elsewhere in a card (`FieldReveal`), so they run on the same spring as the footer. */
 const cardCollapseTransition = {
   type: 'spring',
   duration: 0.15,
@@ -25,7 +24,8 @@ const cardCollapseTransition = {
 } as const;
 
 // grid-template-rows (0fr ↔ 1fr), not height (0 ↔ auto): animating to/from "auto" makes Motion spring a px value, then
-// swap the inline style back to `height: auto`; that swap is a stutter on the last frame. fr values interpolate directly.
+// swap the inline style back to `height: auto`; that swap is a stutter on the last frame. fr values interpolate
+// directly.
 const gridCollapsed = { gridTemplateRows: '0fr', opacity: 0 } as const;
 const gridExpanded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 
@@ -141,9 +141,10 @@ function CardDescription({ className, ...props }: ComponentProps<'p'>) {
 
 /**
  * The card inside the shell. Its edge is an `--edge` border inside the box, as the `Table` card body draws it:
- * `bg-clip-padding` keeps the fill inside the border, so the translucent edge sits on the shell behind it. No drop:
- * the whole shell inset (4px) shows as rim, and the edge stays crisp. `data-surface='card'` scopes the surface tokens (`bg-field`, `bg-muted`, …) to it. The
- * bottom radius stays fixed whether a footer is mounted, so its reveal never changes the content's shape mid-animation.
+ * `bg-clip-padding` keeps the fill inside the border, so the translucent edge sits on the shell behind it. No drop: the
+ * whole shell inset (4px) shows as rim, and the edge stays crisp. `data-surface='card'` scopes the surface tokens
+ * (`bg-field`, `bg-muted`, …) to it. The bottom radius stays fixed whether a footer is mounted, so its reveal never
+ * changes the content's shape mid-animation.
  */
 function CardContent({ className, render, ...props }: useRender.ComponentProps<'div'>) {
   return useRender({
@@ -157,4 +158,4 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
   });
 }
 
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cardCollapseTransition };
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };

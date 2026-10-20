@@ -1,9 +1,9 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import * as React from 'react';
 
-import { FieldReveal } from '~/components/ui/field-reveal';
 import { Input, inputSurfaceVariants } from '~/components/ui/input';
 
 import { cn } from '~/lib/utils';
@@ -178,7 +178,7 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
 const selectTriggerVariants = cva(
   [
     inputSurfaceVariants({ scope: 'self' }),
-    "flex w-full items-center justify-between gap-2 px-3.5 py-1 text-control whitespace-nowrap data-placeholder:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+    "flex w-full items-center justify-between gap-2 px-3.5 py-1 text-control whitespace-nowrap data-placeholder:text-faint-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
   ],
   {
     variants: {
@@ -240,7 +240,7 @@ function SelectLabel({ className, ...props }: SelectPrimitive.GroupLabel.Props) 
   return (
     <SelectPrimitive.GroupLabel
       data-slot='select-label'
-      className={cn('px-2 py-1.5 text-caption text-muted-foreground', className)}
+      className={cn('px-2.5 pt-2 pb-1 text-overline text-muted-foreground', className)}
       {...props}
     />
   );
@@ -287,27 +287,57 @@ function SelectCustomItem({ className, children }: { className?: string; childre
 }
 
 /**
- * The text field of a `Select allowCustom`: folds open below the trigger, hung off it by a line, while the custom row
- * is chosen. Put the trigger and it in one element, so the gap folds with it.
+ * The fold of `SelectCustomInput`: grid rows 0fr ↔ 1fr, not height 0 ↔ auto, which ends on a swap back to `auto` that
+ * stutters. A short critically damped spring, interruptible when the choice flips mid-fold, settled finely
+ * (`restDelta`) because the value only spans 0–1fr.
+ */
+const customFold = { type: 'spring', duration: 0.15, bounce: 0, restDelta: 0.001, restSpeed: 0.01 } as const;
+const folded = { gridTemplateRows: '0fr', opacity: 0 } as const;
+const unfolded = { gridTemplateRows: '1fr', opacity: 1 } as const;
+
+/**
+ * The text field of a `Select allowCustom`: folds open below the trigger while the custom row is chosen, the 8px gap
+ * with it. A line hangs it off the trigger: from under the trigger's text (1px border + `px-3.5`) to the middle of the
+ * field, which is indented to make room. Put the trigger and it in one element.
  */
 function SelectCustomInput({
   className,
   ...props
 }: Omit<React.ComponentProps<typeof Input>, 'value' | 'onChange' | 'ref' | 'disabled'>) {
   const custom = useSelectCustom('SelectCustomInput');
+  const reduceMotion = useReducedMotion();
   return (
-    <FieldReveal show={custom.chosen} elbow className={className}>
-      <Input
-        data-slot='select-custom-input'
-        ref={custom.inputRef}
-        aria-label={custom.label}
-        aria-invalid={(custom.invalid && custom.chosen) || undefined}
-        disabled={custom.disabled}
-        {...props}
-        value={custom.value}
-        onChange={(event) => custom.onType(event.target.value)}
-      />
-    </FieldReveal>
+    <AnimatePresence initial={false}>
+      {custom.chosen && (
+        <motion.div
+          data-slot='select-custom-reveal'
+          initial={reduceMotion ? false : folded}
+          animate={{ ...unfolded, transition: customFold }}
+          exit={reduceMotion ? { opacity: 0 } : { ...folded, transition: customFold }}
+          // -mx-1/-mb-1 + px-1/pb-1: room for the focus ring inside the clip.
+          className='-mx-1 -mb-1 grid overflow-hidden'>
+          {/* min-h-0: a grid item refuses to shrink below its content as the row folds to 0fr. */}
+          <div className='min-h-0 overflow-hidden px-1 pb-1'>
+            <div className={cn('relative pt-2 pl-7', className)}>
+              <span
+                aria-hidden
+                className='absolute top-0 left-[calc(--spacing(3.5)+1px)] h-7 w-2.5 rounded-bl-control-sm border-b border-l border-border'
+              />
+              <Input
+                data-slot='select-custom-input'
+                ref={custom.inputRef}
+                aria-label={custom.label}
+                aria-invalid={(custom.invalid && custom.chosen) || undefined}
+                disabled={custom.disabled}
+                {...props}
+                value={custom.value}
+                onChange={(event) => custom.onType(event.target.value)}
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

@@ -4,24 +4,17 @@ import { type Intent, intentVariants } from '~/components/ui/intent-variants';
 
 import { cn } from '~/lib/utils';
 
-/**
- * A notice inside a page: an `intent` at `subtle` emphasis, always. The parts set `data-slot`, so the root adjusts its
- * insets with `has-data-[slot=…]` instead of props.
- *
- * Text only: no icon. The intent says what kind of notice it is; the first line says the rest. Text starts 20px in
- * (`px-5`), the edge of `Card` header text and section titles. Title and body lines sit flush: the line height is
- * the gap.
- *
- * Shape: the card radius (`rounded-card`). The action sits 6px in on every side (`py-1.5`, `pr-1.5`) and takes
- * `rounded-inner`, so it stays concentric with the alert.
- */
-
 type AlertProps = React.ComponentProps<'div'> & {
   /** What kind of notice: `info` (the default; a plain notice reads as information, not as a gray block), `success`,
    * `warning`, `destructive`, or `neutral` for an aside that is not news. */
   intent?: Exclude<Intent, 'primary'>;
 };
 
+/**
+ * A notice inside a page, always `subtle`. Text only: the intent says what kind of notice it is, the first line says
+ * the rest. Its text shares the edge of `Card` header text, and an `AlertAction` stays concentric with its corner. The
+ * root reads its parts (`has-data-[slot=…]`), so the layout needs no props.
+ */
 function Alert({ className, intent = 'info', ...props }: AlertProps) {
   return (
     <div

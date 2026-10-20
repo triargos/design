@@ -47,7 +47,7 @@ export function InputOTPVerify() {
           autoSubmit
           readOnly={status !== 'idle'}
           aria-invalid={error !== null}
-          inputRef={slots}
+          ref={slots}
           value={code}
           onValueChange={(value) => {
             setCode(value);

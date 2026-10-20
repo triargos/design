@@ -1,5 +1,7 @@
-import { CheckIcon, LoaderCircleIcon } from 'lucide-react';
+import { CheckIcon } from 'lucide-react';
 import * as React from 'react';
+
+import { Spinner } from '~/components/ui/spinner';
 
 import { cn } from '~/lib/utils';
 
@@ -8,22 +10,22 @@ type StepState = 'active' | 'completed' | 'inactive';
 interface StepperContextValue {
   /** The active step; steps before it are done. */
   readonly value: number;
-  readonly loading: boolean;
+  readonly isLoading: boolean;
 }
 
-const StepperContext = React.createContext<StepperContextValue>({ value: 0, loading: false });
+const StepperContext = React.createContext<StepperContextValue>({ value: 0, isLoading: false });
 
 interface StepperProps extends React.ComponentProps<'div'> {
   /** The active step, 1-based; past the last step every step is done. */
   value: number;
   /** The active step is working: its indicator spins. */
-  loading?: boolean;
+  isLoading?: boolean;
   orientation?: 'horizontal' | 'vertical';
 }
 
-function Stepper({ value, loading = false, orientation = 'horizontal', className, ...props }: StepperProps) {
+function Stepper({ value, isLoading = false, orientation = 'horizontal', className, ...props }: StepperProps) {
   return (
-    <StepperContext value={{ value, loading }}>
+    <StepperContext value={{ value, isLoading }}>
       <div
         role='list'
         className={cn(
@@ -48,9 +50,9 @@ interface StepperItemProps extends React.ComponentProps<'div'> {
  * fill it. Vertical: the indicator column on the left, the children beside it.
  */
 function StepperItem({ step, className, children, ...props }: StepperItemProps) {
-  const { value, loading } = React.use(StepperContext);
+  const { value, isLoading: stepperLoading } = React.use(StepperContext);
   const state: StepState = step < value ? 'completed' : step === value ? 'active' : 'inactive';
-  const isLoading = loading && state === 'active';
+  const isLoading = stepperLoading && state === 'active';
 
   return (
     <div
@@ -97,10 +99,9 @@ function StepperIndicator({ step, loading }: { step: number; loading: boolean })
       </span>
       <CheckIcon
         aria-hidden='true'
-        strokeWidth={3}
         className='absolute size-3 scale-0 opacity-0 transition-[opacity,scale] duration-feedback group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100'
       />
-      {loading && <LoaderCircleIcon aria-hidden='true' className='absolute size-3 animate-spin' />}
+      {loading && <Spinner size={12} className='absolute' />}
     </span>
   );
 }

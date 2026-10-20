@@ -1,7 +1,5 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 
-// `suppressHydrationWarning`: the server formats in its own zone and at its own time, so the text may differ.
-
 /** BCP 47 locale (default `en-US`) and IANA time zone (default: the runtime's) of every formatter here. */
 interface FormatProps {
   locale?: string;
@@ -57,7 +55,10 @@ type IntlDateProps = FormatProps &
       }
   );
 
-/** A date for reading, from an ISO string: a day, a moment, a range, or relative to now. */
+/**
+ * A date for reading, from an ISO string: a day, a moment, a range, or relative to now. `suppressHydrationWarning`: the
+ * server formats in its own zone and at its own time, so the text may differ.
+ */
 function IntlDate(props: IntlDateProps) {
   const { date, locale = 'en-US', timeZone } = props;
   if (props.relative) {

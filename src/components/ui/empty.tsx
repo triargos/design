@@ -4,12 +4,13 @@ import type * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-// Entry only: no bounce, short enough that the action is usable almost at once (last item settles at ~0.45s).
+// Entry only: no bounce. Four parts 100ms apart, so the last (the action) settles at ~0.6s and is usable almost at
+// once.
 const spring = { type: 'spring', bounce: 0, duration: 0.3 } as const;
 
 const containerMotion: Variants = {
   initial: {},
-  animate: { transition: { staggerChildren: 0.05 } },
+  animate: { transition: { staggerChildren: 0.1 } },
 };
 
 const itemMotion: Variants = {
@@ -95,17 +96,17 @@ function SkeletonStack() {
     <div className='relative h-18 w-40'>
       <motion.div
         variants={layerMotion(-16)}
-        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.84] rounded-xl bg-[color-mix(in_oklch,var(--card),var(--foreground)_9%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-2 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_4%)]'
+        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.84] rounded-control-lg bg-[color-mix(in_oklch,var(--card),var(--foreground)_9%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-2 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_4%)]'
       />
       <motion.div
         variants={layerMotion(-8)}
-        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.92] rounded-xl bg-[color-mix(in_oklch,var(--card),var(--foreground)_4.5%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-1 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_7%)]'
+        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.92] rounded-control-lg bg-[color-mix(in_oklch,var(--card),var(--foreground)_4.5%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-1 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_7%)]'
       />
-      <div className='absolute inset-x-0 bottom-0 flex h-14 items-center gap-2.5 rounded-xl bg-card px-3 shadow-field dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]'>
+      <div className='absolute inset-x-0 bottom-0 flex h-14 items-center gap-2.5 rounded-control-lg bg-card px-3 shadow-field dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]'>
         <div className='size-7 shrink-0 rounded-full bg-foreground/12 dark:bg-foreground/15' />
         <div className='flex flex-1 flex-col gap-1.5'>
-          <div className='h-2.5 w-3/4 rounded-md bg-foreground/8 dark:bg-foreground/10' />
-          <div className='h-2.5 w-1/2 rounded-md bg-foreground/8 dark:bg-foreground/10' />
+          <div className='h-2.5 w-3/4 rounded-full bg-foreground/8 dark:bg-foreground/10' />
+          <div className='h-2.5 w-1/2 rounded-full bg-foreground/8 dark:bg-foreground/10' />
         </div>
       </div>
     </div>

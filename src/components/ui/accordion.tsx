@@ -16,7 +16,10 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   );
 }
 
-/** Plus that folds into a minus: the vertical stroke collapses while the trigger's panel is open. */
+/**
+ * Plus that folds into a minus: the vertical stroke collapses while the trigger's panel is open. 2 units of a 16-unit
+ * box drawn at 12px: the icons' 1.5px stroke.
+ */
 function AccordionIndicator({ className }: { className?: string }) {
   return (
     <svg
@@ -24,7 +27,7 @@ function AccordionIndicator({ className }: { className?: string }) {
       viewBox='0 0 16 16'
       fill='none'
       stroke='currentColor'
-      strokeWidth={1.5}
+      strokeWidth={2}
       strokeLinecap='round'
       className={className}>
       <line x1='3' x2='13' y1='8' y2='8' />

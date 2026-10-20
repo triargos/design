@@ -30,10 +30,10 @@ const inputGroupAddonVariants = cva(
   {
     variants: {
       align: {
-        // Text and icons sit on the field's 14px padding line. Buttons and keys sit as far from the side as from the top
-        // and bottom (padding + the 1px border), inside the field's corner (`rounded-control-lg`): 24px button 8px in,
-        // 32px (`action`, `icon-sm`) 4px in, both `rounded-inner`; 20px `Kbd` 10px in, 4px: concentric would be 2px, 4px is
-        // the floor.
+        // Text and icons sit on the field's 14px padding line. Buttons and keys sit as far from the side as from the
+        // top and bottom (padding + the 1px border), inside the field's corner (`rounded-control-lg`): 24px button 8px
+        // in, 32px (`action`, `icon-sm`) 4px in, both `rounded-inner`; 20px `Kbd` 10px in, 4px: concentric would be
+        // 2px, 4px is the floor.
         'inline-start':
           'order-first pl-3.5 has-[>[data-size=action]]:pl-[3px] has-[>[data-size=icon-sm]]:pl-[3px] has-[>button]:pl-[7px] has-[>kbd]:pl-[9px]',
         'inline-end':
@@ -48,9 +48,11 @@ const inputGroupAddonVariants = cva(
   },
 );
 
+/** A click on the addon, outside its buttons, focuses the group's input; `preventDefault()` in `onClick` stops it. */
 function InputGroupAddon({
   className,
   align = 'inline-start',
+  onClick,
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
@@ -59,11 +61,12 @@ function InputGroupAddon({
       data-slot='input-group-addon'
       data-align={align}
       className={cn(inputGroupAddonVariants({ align }), className)}
+      {...props}
       onClick={(event) => {
-        if ((event.target as Element).closest('button')) return;
+        onClick?.(event);
+        if (event.defaultPrevented || (event.target as Element).closest('button')) return;
         event.currentTarget.parentElement?.querySelector<HTMLElement>('[data-slot=input-group-control]')?.focus();
       }}
-      {...props}
     />
   );
 }
@@ -123,8 +126,8 @@ function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
 
 /**
  * The text control of an `InputGroup`: a box that takes the space between the addons and carries the padding and text
- * style (`className` goes here), around the native input (every other prop and the ref; it renders 16px on touch, scaled to the control size). The
- * group owns the surface, focus ring, invalid state and disabled fill.
+ * style (`className` goes here), around the native input (every other prop and the ref; it renders 16px on touch,
+ * scaled to the control size). The group owns the surface, focus ring, invalid state and disabled fill.
  */
 function InputGroupInput({ className, style, ...props }: React.ComponentProps<'input'>) {
   return (

@@ -20,7 +20,7 @@ type AvatarShape = 'circle' | 'square';
 const avatarVariants = cva(
   [
     'relative flex shrink-0 items-center justify-center bg-muted font-medium text-muted-foreground select-none',
-    'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:inset-ring after:inset-ring-foreground/10',
+    'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:inset-ring after:inset-ring-image-edge',
   ],
   {
     variants: {
@@ -152,14 +152,17 @@ function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props)
   );
 }
 
-/** A status dot on the bottom-end edge, 30% of the avatar; its icon shows from `lg` (28px) up. */
+/**
+ * A status dot on the bottom-end edge, 30% of the avatar; its icon shows from `lg` (28px) up. Its ring takes the
+ * surface color (`--surface`), so it separates the dot on a page, a card or a popup.
+ */
 function AvatarBadge({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
       data-slot='avatar-badge'
       className={cn(
-        'absolute end-0 bottom-0 z-10 inline-flex size-[30%] min-w-1.5 items-center justify-center rounded-full bg-primary-solid text-primary-solid-foreground ring-2 ring-background select-none',
-        '[&>svg]:size-[70%] [&>svg]:stroke-3',
+        'absolute end-0 bottom-0 z-10 inline-flex size-[30%] min-w-1.5 items-center justify-center rounded-full bg-primary-solid text-primary-solid-foreground ring-2 ring-surface select-none',
+        '[&>svg]:size-[70%]',
         'group-data-[size=md]/avatar:[&>svg]:hidden group-data-[size=sm]/avatar:[&>svg]:hidden group-data-[size=xs]/avatar:[&>svg]:hidden group-data-[size=xxs]/avatar:[&>svg]:hidden',
         className,
       )}

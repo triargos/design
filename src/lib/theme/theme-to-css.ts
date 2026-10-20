@@ -79,7 +79,6 @@ function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
     '--border-subtle': color.bgBorderFaint,
     '--border': color.bgBorder,
     '--border-strong': color.bgBorderStrong,
-    '--input': color.bgBorderSolid,
     '--surface': color.bgBase,
     '--shell': step(SHELL_STEP[mode], tint),
     '--field': step(FIELD_STEP[mode], fieldTint),

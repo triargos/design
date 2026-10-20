@@ -2,7 +2,7 @@ import { useReducedMotion } from 'framer-motion';
 
 import { cn } from '~/lib/utils';
 
-interface LoaderProps {
+interface SpinnerProps {
   /** Width and height in px. */
   size?: number;
   /** Colour comes from `currentColor`: inside a button it takes the label colour; alone, set a text level. */
@@ -13,10 +13,10 @@ interface LoaderProps {
 const ring = { cx: '12', cy: '12', r: '9.5', fill: 'none', strokeWidth: '2', strokeLinecap: 'round' } as const;
 
 /**
- * A growing arc on a faint track, in `currentColor`. From Cloudflare's Kumo `Spinner` (MIT, github.com/cloudflare/kumo). Decorative:
- * the busy element announces itself (`Button` sets `aria-busy`). With reduced motion it is a still arc.
+ * A growing arc on a faint track, in `currentColor`. From Cloudflare's Kumo `Loader` (MIT, github.com/cloudflare/kumo).
+ * Decorative: the busy element announces itself (`Button` sets `aria-busy`). With reduced motion it is a still arc.
  */
-function Spinner({ size = 20, className }: LoaderProps) {
+function Spinner({ size = 20, className }: SpinnerProps) {
   const reduceMotion = useReducedMotion();
   return (
     <svg
