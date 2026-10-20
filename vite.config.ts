@@ -14,10 +14,14 @@ const rootDir = fileURLToPath(new URL('.', import.meta.url));
 const docsDir = fileURLToPath(new URL('./docs', import.meta.url));
 const alias = { '~': fileURLToPath(new URL('./src', import.meta.url)) };
 
-// Runs `shadcn build` so registry JSON lands in public/r before Vite copies public/ into the build output. In dev,
-// rebuilds when registry sources change.
+// Writes `registry.json` from the sources (`scripts/registry.mjs`) and runs `shadcn build`, so registry JSON lands in
+// public/r before Vite copies public/ into the build output. In dev, rebuilds when a registry source changes.
 const shadcnRegistry = (): Plugin => {
-  const build = () => exec('pnpm', ['exec', 'shadcn', 'build', '--output', 'public/r']);
+  const build = async () => {
+    await exec('node', ['scripts/registry.mjs']);
+    await exec('pnpm', ['exec', 'shadcn', 'build', '--output', 'public/r']);
+  };
+  const isSource = (file: string) => /\/src\/(components\/ui|lib|hooks)\/|\/src\/tailwind\.css$/.test(file);
   return {
     name: 'shadcn-registry',
     async buildStart() {
@@ -26,7 +30,7 @@ const shadcnRegistry = (): Plugin => {
     },
     configureServer(server) {
       server.watcher.on('change', (file) => {
-        if (file.endsWith('registry.json') && !file.includes('/public/r/')) {
+        if (isSource(file)) {
           build().catch((error) => server.config.logger.error(String(error)));
         }
       });

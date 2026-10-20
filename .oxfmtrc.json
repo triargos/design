@@ -9,5 +9,5 @@
   "bracketSpacing": true,
   "trailingComma": "all",
   "arrowParens": "always",
-  "ignorePatterns": ["public/r", "dist", ".alchemy", "pnpm-lock.yaml"]
+  "ignorePatterns": ["public/r", "registry.json", "dist", ".alchemy", "pnpm-lock.yaml"]
 }

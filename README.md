@@ -34,13 +34,13 @@ pnpm deploy       # personal cloud stage live_$USER
 
 ### Add a component
 
-1. `src/components/ui/<c>.tsx`, and an item in `registry.json`.
+1. `src/components/ui/<c>.tsx`. Its `registry.json` item is generated from its imports (`scripts/registry.mjs`).
 2. `docs/components/<c>.tsx`: `defineDocs` with a `Page` of `ExampleSection`s, one per example; add `playground` (`component`, `args`, `argTypes`) for a live props editor.
 3. `docs/examples/<c>/<section>.tsx`: one named export `<C><Section>`, real usage; it imports app code and packages only, never `docs/kit`, so a registry can ship it as a block.
 
 Pages are found by directory: no index to update.
 
-Registry items live in `registry.json` (use `include` to split). `vite.config.ts` runs `shadcn build` into `public/r` before every build, so deploys always ship fresh JSON.
+`registry.json` is generated: `scripts/registry.mjs` writes one item per component, plus `utils`, the hooks and `theme`, with dependencies read from the imports. `vite.config.ts` regenerates it and runs `shadcn build` into `public/r` before every build, so deploys always ship fresh JSON.
 
 ## Deploy
 
