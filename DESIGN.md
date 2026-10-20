@@ -116,7 +116,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | `rounded-control`    | 10  | Controls 32–36px (`Button` `xs`, default, tabs), fields |
 | `rounded-control-lg` | 12  | Controls 40px (`Button` `lg`)                           |
 | `rounded-popup`      | 16  | Menus, popovers, selects                                |
-| `rounded-card`       | 16  | `Card` shell, `Alert`                                   |
+| `rounded-card`       | 20  | `Card` shell, `Alert`                                   |
 | `rounded-dialog`     | 20  | Dialogs, sheets                                         |
 | `rounded-panel`      | 20  | The page panel                                          |
 
