@@ -99,7 +99,7 @@ export function BulkSelectionDefault() {
           </TableBody>
         </Table>
       </Card>
-      <ActionBar open={selected.size > 0} aria-label='Selection' className='@max-lg:gap-1'>
+      <ActionBar open={selected.size > 0} aria-label='Selection'>
         <span className='ps-2.5 whitespace-nowrap text-muted-foreground tabular-nums'>{count} selected</span>
         <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
           <XIcon />

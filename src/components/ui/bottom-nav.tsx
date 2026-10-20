@@ -55,8 +55,9 @@ function useBar(part: string) {
 }
 
 // The morph, after Danny Williams's morphing menu: the shell squeezes for 100ms, then springs to the size of what it
-// shows next. The old content shrinks to 80% and blurs out as it squeezes; the new content cascades in, rising and
-// sharpening, as the shell opens. Springs, so a quick open-close turns around from where it is.
+// shows next (the dock, close in size to the tabs, skips the squeeze). The old content shrinks to 80% and blurs out as
+// it squeezes; the new content cascades in, rising and sharpening, as the shell opens. The shell springs, so a quick
+// open-close turns around from where it is.
 const squeeze = { duration: 0.1, ease: [0.4, 0, 0.2, 1] } as const;
 const opening = { type: 'spring', duration: 0.4, bounce: 0.24 } as const;
 const closing = { type: 'spring', duration: 0.4, bounce: 0.15 } as const;
@@ -65,8 +66,17 @@ const leave = { opacity: 0, scale: 0.8, filter: 'blur(8px)' } as const;
 const rest = { opacity: 1, scale: 1, filter: 'blur(0px)' } as const;
 const leaveTransition: Transition = { duration: 0.15 };
 const returnTransition: Transition = { duration: 0.22, delay: 0.08, ease: 'easeOut' };
-/** How far each layer's items rise as they cascade in, and when the first starts. */
-const cascade = { panel: { y: 48, delay: 0.2, step: 0.02 }, dock: { y: 12, delay: 0.15, step: 0.025 } } as const;
+/**
+ * How each layer's items cascade in (ms). The panel's rows wait for the squeeze and rise far, with a little overshoot,
+ * into a shell growing several rows tall. The dock swaps with the tabs at the same height and about the same width: no
+ * squeeze, and its buttons start with the shell, rising a little on `ease-enter`.
+ */
+const cascade = {
+  panel: { y: 48, blur: 4, delay: 200, step: 20, duration: 400, easing: 'cubic-bezier(0.34, 1.3, 0.64, 1)' },
+  dock: { y: 8, blur: 2, delay: 0, step: 15, duration: 250, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' },
+} as const;
+/** The tabs coming back from the dock: at once, as the shell springs. */
+const dockReturnTransition: Transition = { duration: 0.2, ease: 'easeOut' };
 
 /**
  * The app navigation on a phone, floating over the page on the inverted surface: a bar of icon tabs (`BottomNavList`)
@@ -200,7 +210,6 @@ function BottomNavList({
       const fade = { duration: from === view ? 0 : 0.15 };
       for (const layer of hidden) animate(layer, { opacity: 0 }, fade);
       animate(shown, { opacity: 1 }, fade);
-      for (const item of items) Object.assign(item.style, { opacity: '', transform: '', filter: '' });
       return;
     }
 
@@ -215,11 +224,8 @@ function BottomNavList({
 
     // Explicit keyframes throughout: Motion remembers the values it last animated on an element, and the inline styles
     // set here (and the shell sizing itself on the tabs) happen behind its back.
-    const squeezed = { width: Math.min(start.width * 0.75, 200), height: 32 };
-    void track(
-      animate(shell, { width: [start.width, squeezed.width], height: [start.height, squeezed.height] }, squeeze),
-    ).then(() => {
-      if (cancelled) return;
+    const docking = from === 'dock' || view === 'dock';
+    const spring = () => {
       const target = {
         width: [shell.offsetWidth, shown.offsetWidth],
         height: [shell.offsetHeight, shown.offsetHeight],
@@ -231,24 +237,36 @@ function BottomNavList({
         // Back on the tabs, the shell sizes itself again.
         if (view === 'tabs') Object.assign(shell.style, { width: '', height: '' });
       });
-    });
+    };
+    if (docking) spring();
+    else {
+      const squeezed = { width: Math.min(start.width * 0.75, 200), height: 32 };
+      void track(
+        animate(shell, { width: [start.width, squeezed.width], height: [start.height, squeezed.height] }, squeeze),
+      ).then(() => {
+        if (!cancelled) spring();
+      });
+    }
 
     for (const layer of hidden) track(animate(layer, leave, leaveTransition));
     if (view === 'tabs') {
-      track(animate(shown, rest, returnTransition));
+      track(animate(shown, rest, docking ? dockReturnTransition : returnTransition));
     } else {
-      // The layer shows at once; its items rise in one after another, blurred, as the shell opens.
-      const { y, delay, step } = cascade[view];
+      // The layer shows at once; its items rise in one after another, blurred, as the shell opens. Plain Web
+      // Animations, not Motion: `fill: 'backwards'` holds the start through the stagger, and when one ends the item is
+      // simply its own style again. Motion swaps its finished animation for inline styles a frame apart, which flickers
+      // as the buttons settle; and inline styles would set off a `Button`'s own transitions.
+      const { y, blur, delay, step, duration, easing } = cascade[view];
       track(animate(shown, rest, { duration: 0 }));
       for (const [index, item] of items.entries()) {
-        Object.assign(item.style, { opacity: '0', transform: `translateY(${y}px)`, filter: 'blur(4px)' });
-        track(
-          animate(
-            item,
-            { opacity: [0, 1], y: [y, 0], filter: ['blur(4px)', 'blur(0px)'] },
-            { type: 'spring', duration: 0.4, bounce: 0.3, delay: delay + index * step },
-          ),
+        const rise = item.animate(
+          [
+            { opacity: 0, transform: `translateY(${y}px)`, filter: `blur(${blur}px)` },
+            { opacity: 1, transform: 'none', filter: 'none' },
+          ],
+          { duration, delay: delay + index * step, easing, fill: 'backwards' },
         );
+        running.push({ stop: () => rise.cancel() });
       }
     }
 
@@ -276,7 +294,7 @@ function BottomNavList({
         data-slot='bottom-nav-list'
         aria-label={ariaLabel}
         inert={view !== 'tabs'}
-        className={cn('relative flex w-max shrink-0 origin-bottom items-center gap-1 p-1', className)}
+        className={cn('relative flex w-max shrink-0 origin-bottom items-center gap-related p-1', className)}
         {...props}>
         <CurrentIndicator />
         {children}
@@ -512,7 +530,8 @@ function BottomNavAction({ className, render, ...props }: useRender.ComponentPro
       className='pointer-events-auto col-start-1 row-start-1 origin-bottom justify-self-end'
       initial={false}
       animate={away ? (reduced ? { opacity: 0 } : leave) : rest}
-      transition={away ? leaveTransition : returnTransition}
+      // Back at once, with the shell, rather than after the tabs.
+      transition={away ? leaveTransition : dockReturnTransition}
       inert={away}>
       {button}
     </motion.div>
