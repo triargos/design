@@ -1,9 +1,7 @@
-import { IconChevronRight } from '@tabler/icons-react';
-
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
+import { Item, ItemChevron, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
-/** `render={<a />}`, or a router link: the row highlights on hover. */
+/** `render={<a />}`, or a router link: the row highlights on hover and ends in an `ItemChevron`. */
 export function ItemLink() {
   return (
     <Card className='w-full max-w-xl'>
@@ -17,18 +15,14 @@ export function ItemLink() {
               <ItemTitle>Website redesign</ItemTitle>
               <ItemDescription>3 open tasks</ItemDescription>
             </ItemContent>
-            <ItemActions>
-              <IconChevronRight className='size-4 text-faint-foreground' />
-            </ItemActions>
+            <ItemChevron />
           </Item>
           <Item render={<a href='#mobile-app' />}>
             <ItemContent>
               <ItemTitle>Mobile app</ItemTitle>
               <ItemDescription>No open tasks</ItemDescription>
             </ItemContent>
-            <ItemActions>
-              <IconChevronRight className='size-4 text-faint-foreground' />
-            </ItemActions>
+            <ItemChevron />
           </Item>
         </ItemList>
       </CardContent>

@@ -67,7 +67,8 @@ export default defineDocs({
         title='Link'
         description={
           <>
-            <Code>{'render={<a />}'}</Code>, or a router link: the row highlights on hover.
+            <Code>{'render={<a />}'}</Code>, or a router link: the row highlights on hover and ends in an{' '}
+            <Code>ItemChevron</Code>, which nudges right.
           </>
         }
         bare>

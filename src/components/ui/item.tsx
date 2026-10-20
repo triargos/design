@@ -1,5 +1,6 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
+import { IconChevronRight } from '@tabler/icons-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { motion, type Transition, useReducedMotion } from 'framer-motion';
@@ -193,7 +194,7 @@ function VirtualizedItemList<T>({
 
 /**
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
- * under the pointer; a `selected` row fills with `muted`.
+ * under the pointer and ends in an `ItemChevron`; a `selected` row fills with `muted`.
  */
 function Item({
   className,
@@ -294,6 +295,23 @@ function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot='item-actions' className={cn('flex items-center gap-related', className)} {...props} />;
 }
 
+/** The trailing arrow of a link row: it nudges right while the row is hovered or focused (reduced motion: it stays). */
+function ItemChevron({ className, ...props }: React.ComponentProps<typeof IconChevronRight>) {
+  return (
+    <IconChevronRight
+      data-slot='item-chevron'
+      aria-hidden
+      className={cn(
+        'size-4 shrink-0 text-faint-foreground transition-[color,translate] duration-feedback',
+        'group-hover/item:text-muted-foreground group-focus-visible/item:text-muted-foreground',
+        'motion-safe:group-hover/item:translate-x-0.5 motion-safe:group-focus-visible/item:translate-x-0.5',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 /** A full-width line above the row's media and content (the row wraps). */
 function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -316,4 +334,15 @@ function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-export { Item, ItemList, ItemMedia, ItemContent, ItemActions, ItemTitle, ItemDescription, ItemHeader, ItemFooter };
+export {
+  Item,
+  ItemList,
+  ItemMedia,
+  ItemContent,
+  ItemActions,
+  ItemChevron,
+  ItemTitle,
+  ItemDescription,
+  ItemHeader,
+  ItemFooter,
+};

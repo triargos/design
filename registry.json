@@ -663,6 +663,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
+        "@tabler/icons-react@3.49.0",
         "@tanstack/react-virtual@3.14.13",
         "class-variance-authority@^0.7.1",
         "framer-motion@13.4.4",
