@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
 import type { LegendPayload, TooltipPayload, TooltipPayloadEntry } from 'recharts';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /** Per series key: its label for tooltip and legend, and its color, exposed as `--color-<key>`. */
@@ -55,7 +56,7 @@ function ChartTooltipContent({
   active,
   payload,
   label,
-  locale = 'en-US',
+  locale: localeProp,
   className,
 }: {
   active?: boolean;
@@ -64,6 +65,7 @@ function ChartTooltipContent({
   locale?: string;
   className?: string;
 }) {
+  const locale = localeProp ?? useLocale().locale;
   const config = useChartConfig();
   if (!active || !payload?.length) return null;
 

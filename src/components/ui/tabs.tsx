@@ -4,6 +4,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /**
@@ -117,16 +118,17 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
 function TabsNav({
   className,
   variant = 'segmented',
-  'aria-label': ariaLabel = 'Page tabs',
+  'aria-label': ariaLabel,
   children,
   ...props
 }: React.ComponentProps<'nav'> & VariantProp) {
+  const { labels } = useLocale();
   return (
     <TabsVariantContext value={variant}>
       <nav
         data-slot='tabs-list'
         data-variant={variant}
-        aria-label={ariaLabel}
+        aria-label={ariaLabel ?? labels.pageTabs}
         className={cn(tabsListVariants({ variant }), className)}
         {...props}>
         <SlidingIndicator activeSelector='[aria-current=page]' variant={variant} />

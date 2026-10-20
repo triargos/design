@@ -5,6 +5,7 @@ import { IconDots } from '@tabler/icons-react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 type BottomNavContextValue = {
@@ -117,12 +118,8 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
  * dock. The shell takes the size of the layer that shows and morphs between them. A fill slides to the current tab.
  * Escape, a tap outside or focus leaving closes the panel. The panel scrolls past `100dvh - 6rem` with no scrollbar.
  */
-function BottomNavList({
-  className,
-  children,
-  'aria-label': ariaLabel = 'Main',
-  ...props
-}: React.ComponentProps<'nav'>) {
+function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...props }: React.ComponentProps<'nav'>) {
+  const ariaLabel = ariaLabelProp ?? useLocale().labels.mainNavigation;
   const { view, panelOpen, setPanelOpen, setPanel, panelId } = useBar('BottomNavList');
   const setDock = useBottomNavDock()?.setDock;
   const reduced = useReducedMotion() ?? false;
@@ -426,7 +423,7 @@ function BottomNavButton({
  * Escape returns it here.
  */
 function BottomNavMore({
-  label = 'More',
+  label: labelProp,
   children,
   className,
 }: {
@@ -434,6 +431,7 @@ function BottomNavMore({
   children: React.ReactNode;
   className?: string;
 }) {
+  const label = labelProp ?? useLocale().labels.more;
   const { panelOpen, setPanelOpen, panel, panelId } = useBar('BottomNavMore');
   const [holdsCurrent, setHoldsCurrent] = React.useState(false);
 

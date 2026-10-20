@@ -39,8 +39,8 @@ How does it move?             → motion      enter · feedback · move · sheet
 - **Classes inline.** A part writes its classes in its own `className`. No class-string constants, shared or local, and no files of shared classes: repeat the classes in each component, as shadcn does. A style with variants is a `cva` (`buttonVariants`, `inputSurfaceVariants`), exported only when another component composes it.
 - **Library, not app.** No page layout, app frame, routing or app copy in `src/components/ui`; compositions of parts are docs examples and patterns (blocks), which an app copies.
 - **Value controls** take `value` + `onValueChange`. Dates are `YYYY-MM-DD` strings, times are `HH:mm`, options are `SelectOption { value, label, description? }`.
-- **Copy belongs to the caller.** Empty text, status text and placeholders come from `children` or a prop. Labels of a component's own controls are props with English defaults: `clearLabel`, `openLabel`, `closeLabel`, `removeLabel`, `decrementLabel` / `incrementLabel`, `chooseDateLabel`, `slotLabel`, `customLabel`. There is no locale provider and no string dictionary.
-- **Formatting** (`IntlDate`, `Calendar`, `DateInput`, `TimeInput`, `Progress`, `ChartTooltipContent`) takes `locale` (BCP 47, default `'en-US'`, deterministic for prerendering). Components that show a moment also take `timeZone`.
+- **Copy belongs to the caller.** Empty text, status text and placeholders come from `children` or a prop. Labels of a component's own controls (`closeLabel`, `clearLabel`, `chooseDateLabel`, `slotLabel`, a landmark's `aria-label`, …) come from the prop, else from `LocaleProvider` `labels`, else English. A new built-in label goes in `Labels` (`components/ui/locale.tsx`) with its English default; never a literal in a component.
+- **Formatting** (`IntlDate`, `Calendar`, `DateInput`, `TimeInput`, `Progress`, `ChartTooltipContent`) takes `locale` (BCP 47) and, for a moment, `timeZone`; unset, they come from `LocaleProvider`, else `en-US` and the runtime's zone (deterministic for prerendering). One `LocaleProvider` sits at the app's root; it also sets React Aria's locale.
 - **One way to do each thing.** Delete an old API in the same change that migrates its callers. No deprecated aliases.
 
 ## Color
@@ -237,5 +237,6 @@ block         Card > CardHeader > CardContent [> ItemList [virtualized]]
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
 motion        duration-enter 100 · feedback 150 · move 200 · modal 150 · ease-enter · ease-move
 values        value + onValueChange · dates YYYY-MM-DD · options SelectOption
+locale        LocaleProvider locale timeZone labels (root) · a prop wins · else en-US, English
 new color     themeToCssVars + @theme inline, never a literal
 ```

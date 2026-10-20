@@ -1,9 +1,11 @@
 import { Progress as ProgressPrimitive } from '@base-ui/react/progress';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /** Label and value go in as children, above the track. `locale` formats `ProgressValue` (BCP 47, default `en-US`). */
-function Progress({ className, children, locale = 'en-US', ...props }: ProgressPrimitive.Root.Props) {
+function Progress({ className, children, locale: localeProp, ...props }: ProgressPrimitive.Root.Props) {
+  const locale = localeProp ?? useLocale().locale;
   return (
     <ProgressPrimitive.Root
       data-slot='progress'

@@ -8,6 +8,7 @@ import { Button } from '~/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '~/components/ui/sheet';
 
 import { useIsMobile } from '~/hooks/use-mobile';
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 type SidebarContextValue = {
@@ -72,11 +73,12 @@ function SidebarProvider({
  */
 function Sidebar({
   collapsible = 'offcanvas',
-  label = 'Sidebar',
+  label: labelProp,
   className,
   children,
   ...props
 }: React.ComponentProps<'div'> & { collapsible?: 'offcanvas' | 'icon'; label?: string }) {
+  const label = labelProp ?? useLocale().labels.sidebar;
   const { isMobile, open, openMobile, setOpenMobile } = useSidebar();
 
   if (isMobile) {
@@ -120,9 +122,10 @@ function Sidebar({
 function SidebarTrigger({
   className,
   onClick,
-  'aria-label': ariaLabel = 'Toggle sidebar',
+  'aria-label': ariaLabelProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
+  const ariaLabel = ariaLabelProp ?? useLocale().labels.toggleSidebar;
   const { toggleSidebar, open, openMobile, isMobile } = useSidebar();
 
   return (

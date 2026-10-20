@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 function Dialog(props: DialogPrimitive.Root.Props) {
@@ -38,11 +39,12 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
-  closeLabel = 'Close',
+  closeLabel,
   container,
   size = 'default',
   ...props
 }: DialogContentProps) {
+  const { labels } = useLocale();
   return (
     <DialogPrimitive.Portal data-slot='dialog-portal' container={container}>
       <DialogPrimitive.Backdrop
@@ -67,7 +69,7 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <DialogClose
-            aria-label={closeLabel}
+            aria-label={closeLabel ?? labels.close}
             render={
               // Centered on the title's first line: 18px in, half the button (36px) less than the title's line (24px)
               // 24px in.

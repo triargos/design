@@ -8,6 +8,7 @@ import useMeasure from 'react-use-measure';
 
 import { Spinner } from '~/components/ui/spinner';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /**
@@ -111,12 +112,13 @@ function VirtualizedItemList<T>({
   hasMore = false,
   isLoadingMore = false,
   onLoadMore,
-  loadingLabel = 'Loading more',
+  loadingLabel,
   virtualized: _,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...props
 }: Extract<ItemListProps<T>, { virtualized: true }>) {
+  const { labels } = useLocale();
   const [scrollElement, setScrollElement] = React.useState<HTMLDivElement | null>(null);
   const virtualizer = useVirtualizer({
     count: items.length,
@@ -178,7 +180,7 @@ function VirtualizedItemList<T>({
       {isLoadingMore && (
         <div role='status' className='flex justify-center py-4'>
           <Spinner className='text-muted-foreground' size={20} />
-          <span className='sr-only'>{loadingLabel}</span>
+          <span className='sr-only'>{loadingLabel ?? labels.loadingMore}</span>
         </div>
       )}
     </div>

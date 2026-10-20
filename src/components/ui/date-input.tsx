@@ -23,6 +23,7 @@ import { inputSurfaceVariants } from '~/components/ui/input';
 import { InputGroupButton } from '~/components/ui/input-group';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 // DateInput and TimeInput share one segmented field (react-aria's DateField/TimeField): the parts below are internal.
@@ -166,8 +167,8 @@ function DateInput({
   onValueChange,
   min,
   max,
-  locale = 'en-US',
-  chooseDateLabel = 'Choose date',
+  locale: localeProp,
+  chooseDateLabel: chooseDateLabelProp,
   placeholder,
   disabled,
   className,
@@ -179,6 +180,9 @@ function DateInput({
   'aria-invalid': ariaInvalid,
   'aria-describedby': ariaDescribedBy,
 }: DateInputProps) {
+  const { locale: contextLocale, labels } = useLocale();
+  const locale = localeProp ?? contextLocale;
+  const chooseDateLabel = chooseDateLabelProp ?? labels.chooseDate;
   const fieldRef = React.useRef<HTMLDivElement>(null);
   const labelId = useFieldLabel(id, fieldRef);
   const [open, setOpen] = React.useState(false);
@@ -293,7 +297,7 @@ const toTimeValue = (value: string): Time | null => (/^\d{2}:\d{2}$/.test(value)
 function TimeInput({
   value,
   onValueChange,
-  locale = 'en-US',
+  locale: localeProp,
   disabled,
   className,
   id,
@@ -301,6 +305,7 @@ function TimeInput({
   'aria-label': ariaLabel,
   'aria-invalid': ariaInvalid,
 }: TimeInputProps) {
+  const locale = localeProp ?? useLocale().locale;
   const fieldRef = React.useRef<HTMLDivElement>(null);
   const labelId = useFieldLabel(id, fieldRef);
 

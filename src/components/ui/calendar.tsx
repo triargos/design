@@ -16,6 +16,7 @@ import { RangeCalendar as AriaRangeCalendar } from 'react-aria-components/RangeC
 
 import { buttonVariants } from '~/components/ui/button';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /** A day as `YYYY-MM-DD`, or `''` for none. */
@@ -124,7 +125,8 @@ function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
 }
 
 /** A month to pick a day or a range in; it opens on the value's month. */
-function Calendar({ min, max, autoFocus, locale = 'en-US', className, ...props }: CalendarProps) {
+function Calendar({ min, max, autoFocus, locale: localeProp, className, ...props }: CalendarProps) {
+  const locale = localeProp ?? useLocale().locale;
   const shared = {
     'data-slot': 'calendar',
     minValue: toDate(min),

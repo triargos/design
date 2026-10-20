@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 function Sheet(props: SheetPrimitive.Root.Props) {
@@ -28,7 +29,7 @@ function SheetContent({
   children,
   side = 'right',
   showCloseButton = true,
-  closeLabel = 'Close',
+  closeLabel,
   container,
   size = 'default',
   ...props
@@ -42,6 +43,7 @@ function SheetContent({
     /** Width from `sm` up: `default` 24rem · `lg` 28rem. Below `sm`, three quarters of the screen. */
     size?: 'default' | 'lg';
   }) {
+  const { labels } = useLocale();
   return (
     <SheetPrimitive.Portal data-slot='sheet-portal' container={container}>
       <SheetPrimitive.Backdrop
@@ -65,7 +67,7 @@ function SheetContent({
         {children}
         {showCloseButton && (
           <SheetClose
-            aria-label={closeLabel}
+            aria-label={closeLabel ?? labels.close}
             render={
               // Centered on the title's first line: 18px in, half the button (36px) less than the title's line (24px)
               // 24px in.

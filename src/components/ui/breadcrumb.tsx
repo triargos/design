@@ -3,10 +3,12 @@ import { useRender } from '@base-ui/react/use-render';
 import { IconChevronRight, IconDots } from '@tabler/icons-react';
 import * as React from 'react';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
-function Breadcrumb({ 'aria-label': ariaLabel = 'Breadcrumb', ...props }: React.ComponentProps<'nav'>) {
-  return <nav aria-label={ariaLabel} data-slot='breadcrumb' {...props} />;
+function Breadcrumb({ 'aria-label': ariaLabel, ...props }: React.ComponentProps<'nav'>) {
+  const { labels } = useLocale();
+  return <nav aria-label={ariaLabel ?? labels.breadcrumb} data-slot='breadcrumb' {...props} />;
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {

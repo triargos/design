@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
-import { I18nProvider } from 'react-aria-components/I18nProvider';
 
+import { LocaleProvider } from '~/components/ui/locale';
 import { ToastProvider } from '~/components/ui/toast';
 
 import { App } from './app';
@@ -10,13 +10,12 @@ import { RouterProvider } from './router';
 export function Root({ pathname }: { pathname: string }) {
   return (
     <StrictMode>
-      {/* react-aria's date and time segments follow this locale. */}
-      <I18nProvider locale='en-US'>
+      <LocaleProvider locale='en-US'>
         <RouterProvider initialPathname={pathname}>
           <App />
         </RouterProvider>
         <ToastProvider />
-      </I18nProvider>
+      </LocaleProvider>
     </StrictMode>
   );
 }

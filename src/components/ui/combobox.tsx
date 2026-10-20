@@ -7,6 +7,7 @@ import { inputSurfaceVariants } from '~/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
 import type { SelectOption } from '~/components/ui/select';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 type Virtualizer = ReturnType<typeof useVirtualizer<HTMLDivElement, Element>>;
@@ -103,6 +104,7 @@ function Combobox(props: ComboboxProps) {
   const [query, setQuery] = React.useState('');
   const virtualizerRef = React.useRef<Virtualizer | null>(null);
   const noteId = React.useId();
+  const copy = useLocale().labels;
 
   const optionsByValue = React.useMemo(() => new Map(items.map((option) => [option.value, option])), [items]);
   const labels = React.useMemo(() => new Set(items.map((option) => option.label.toLowerCase())), [items]);
@@ -178,8 +180,8 @@ function Combobox(props: ComboboxProps) {
             ? {
                 active: customActive,
                 value: single,
-                label: props.customLabel ?? 'Custom',
-                optionLabel: props.customOptionLabel ?? ((text) => <>Use “{text}”</>),
+                label: props.customLabel ?? copy.custom,
+                optionLabel: props.customOptionLabel ?? copy.useCustom,
                 noteId,
               }
             : null,
@@ -229,10 +231,13 @@ interface ComboboxInputProps extends ComboboxPrimitive.Input.Props {
 function ComboboxInput({
   className,
   disabled = false,
-  clearLabel = 'Clear',
-  openLabel = 'Open list',
+  clearLabel: clearLabelProp,
+  openLabel: openLabelProp,
   ...props
 }: ComboboxInputProps) {
+  const { labels } = useLocale();
+  const clearLabel = clearLabelProp ?? labels.clear;
+  const openLabel = openLabelProp ?? labels.openList;
   const { custom } = useComboboxContext();
   return (
     <ComboboxPrimitive.InputGroup render={<InputGroup className={cn('w-auto', className)} />}>
@@ -497,7 +502,8 @@ interface ComboboxChipProps extends ComboboxPrimitive.Chip.Props {
   readonly removeLabel?: string;
 }
 
-function ComboboxChip({ className, children, removeLabel = 'Remove', ...props }: ComboboxChipProps) {
+function ComboboxChip({ className, children, removeLabel: removeLabelProp, ...props }: ComboboxChipProps) {
+  const removeLabel = removeLabelProp ?? useLocale().labels.remove;
   return (
     <ComboboxPrimitive.Chip
       data-slot='combobox-chip'

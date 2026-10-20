@@ -179,6 +179,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -197,6 +198,7 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -257,6 +259,7 @@
       ],
       "registryDependencies": [
         "@triargos/button",
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -292,6 +295,7 @@
         "recharts@^3.10.1"
       ],
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -332,6 +336,7 @@
       ],
       "registryDependencies": [
         "@triargos/input-group",
+        "@triargos/locale",
         "@triargos/popover",
         "@triargos/radio-group",
         "@triargos/theme",
@@ -355,6 +360,7 @@
       "registryDependencies": [
         "@triargos/input",
         "@triargos/input-group",
+        "@triargos/locale",
         "@triargos/select",
         "@triargos/theme",
         "@triargos/utils"
@@ -414,6 +420,7 @@
       ],
       "registryDependencies": [
         "@triargos/button",
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -436,6 +443,7 @@
         "@triargos/calendar",
         "@triargos/input",
         "@triargos/input-group",
+        "@triargos/locale",
         "@triargos/popover",
         "@triargos/theme",
         "@triargos/utils"
@@ -456,6 +464,7 @@
       ],
       "registryDependencies": [
         "@triargos/button",
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -567,6 +576,7 @@
       ],
       "registryDependencies": [
         "@triargos/input",
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -605,6 +615,7 @@
       "registryDependencies": [
         "@triargos/button",
         "@triargos/input",
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -635,6 +646,7 @@
       "name": "intl-date",
       "type": "registry:ui",
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/tooltip"
       ],
@@ -656,6 +668,7 @@
         "react-use-measure@^2.1.7"
       ],
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/spinner",
         "@triargos/theme",
         "@triargos/utils"
@@ -677,6 +690,22 @@
       "files": [
         {
           "path": "src/components/ui/kbd.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "locale",
+      "type": "registry:ui",
+      "dependencies": [
+        "react-aria-components@1.21.1"
+      ],
+      "registryDependencies": [
+        "@triargos/theme"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/locale.tsx",
           "type": "registry:ui"
         }
       ]
@@ -705,6 +734,7 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -744,6 +774,7 @@
       ],
       "registryDependencies": [
         "@triargos/input",
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -780,6 +811,7 @@
       ],
       "registryDependencies": [
         "@triargos/button",
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -800,6 +832,7 @@
       ],
       "registryDependencies": [
         "@triargos/button",
+        "@triargos/locale",
         "@triargos/sheet",
         "@triargos/theme",
         "@triargos/use-mobile",
@@ -853,6 +886,7 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -958,6 +992,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "@triargos/locale",
         "@triargos/theme",
         "@triargos/utils"
       ],

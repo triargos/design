@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /** Odd and even run the same keyframes, so each new entry restarts the animation (as the toast upsert does). */
@@ -21,13 +22,11 @@ interface InputOTPContextValue {
 
 type SlotLabel = (slot: { readonly position: number; readonly length: number }) => string;
 
-const defaultSlotLabel: SlotLabel = ({ position, length }) => `Character ${position} of ${length}`;
-
 const InputOTPContext = React.createContext<InputOTPContextValue>({
   invalid: false,
   entry: null,
   rejected: null,
-  slotLabel: defaultSlotLabel,
+  slotLabel: ({ position, length }) => `Character ${position} of ${length}`,
 });
 
 const slotSelector = 'input[data-slot=input-otp-slot]';
@@ -52,13 +51,14 @@ function InputOTP({
   className,
   'aria-invalid': ariaInvalid,
   ref,
-  slotLabel = defaultSlotLabel,
+  slotLabel: slotLabelProp,
   value,
   defaultValue,
   onValueChange,
   onValueInvalid,
   ...props
 }: InputOTPProps) {
+  const slotLabel = slotLabelProp ?? useLocale().labels.slot;
   const invalid = ariaInvalid === true || ariaInvalid === 'true';
   const rootRef = React.useRef<HTMLDivElement>(null);
   /** The uncontrolled value; controlled, `value` is the baseline the next entry is diffed against. */

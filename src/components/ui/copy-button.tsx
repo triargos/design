@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /** How long the check stays after a copy. */
@@ -84,14 +85,17 @@ function CopyIconSwap({ copied }: { copied: boolean }) {
 /** Copies `value`; the icon springs into a check for 2s. Icon-only and ghost by default. */
 function CopyButton({
   value,
-  label = 'Copy',
-  copiedLabel = 'Copied',
+  label: labelProp,
+  copiedLabel: copiedLabelProp,
   children,
   onCopied,
   size = children === undefined ? 'icon' : 'default',
   emphasis = 'ghost',
   ...props
 }: CopyButtonProps) {
+  const { labels } = useLocale();
+  const label = labelProp ?? labels.copy;
+  const copiedLabel = copiedLabelProp ?? labels.copied;
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);

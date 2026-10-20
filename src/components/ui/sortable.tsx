@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconGripVertical } from '@tabler/icons-react';
 import { type ComponentProps, createContext, use } from 'react';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 const SortableItemHandleContext = createContext<Pick<
@@ -40,17 +41,14 @@ function SortableItem({ id, render, ...props }: SortableItemProps) {
  * The grip; name the row in its `aria-label` (`Move Design review`). As an `ItemMedia`, it pulls in so the dots, not
  * the button, sit on the row's content edge, and lays out at 16px tall so it centres on the title's line.
  */
-function SortableItemHandle({
-  className,
-  'aria-label': ariaLabel = 'Drag to reorder',
-  ...props
-}: ComponentProps<'button'>) {
+function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: ComponentProps<'button'>) {
+  const { labels } = useLocale();
   const handle = use(SortableItemHandleContext);
 
   return (
     <button
       type='button'
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? labels.dragToReorder}
       className={cn(
         'hit-area relative flex size-6 shrink-0 cursor-grab items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-1 in-data-[slot=item-media]:-mr-1 in-data-[slot=item-media]:-ml-2',
         className,

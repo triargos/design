@@ -1,4 +1,5 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
+import { useLocale } from '~/components/ui/locale';
 
 /** BCP 47 locale (default `en-US`) and IANA time zone (default: the runtime's) of every formatter here. */
 interface FormatProps {
@@ -60,7 +61,8 @@ type IntlDateProps = FormatProps &
  * server formats in its own zone and at its own time, so the text may differ.
  */
 function IntlDate(props: IntlDateProps) {
-  const { date, locale = 'en-US', timeZone } = props;
+  const context = useLocale();
+  const { date, locale = context.locale, timeZone = context.timeZone } = props;
   if (props.relative) {
     const [value, unit] = relativeParts(new Date(date).getTime() - Date.now());
     return (

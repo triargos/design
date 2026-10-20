@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Button } from '~/components/ui/button';
 import { inputSurfaceVariants } from '~/components/ui/input';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 interface IntegerInputProps extends Omit<
@@ -138,8 +139,8 @@ function IntegerInput({
   onValueChange,
   unit,
   max,
-  decrementLabel = 'Decrease',
-  incrementLabel = 'Increase',
+  decrementLabel: decrementLabelProp,
+  incrementLabel: incrementLabelProp,
   disabled,
   onFocus,
   onBlur,
@@ -147,6 +148,9 @@ function IntegerInput({
   className,
   ...props
 }: IntegerInputProps) {
+  const { labels } = useLocale();
+  const decrementLabel = decrementLabelProp ?? labels.decrease;
+  const incrementLabel = incrementLabelProp ?? labels.increase;
   const reduced = useReducedMotion() ?? false;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [shakeScope, animate] = useAnimate<HTMLSpanElement>();

@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import { Input, inputSurfaceVariants } from '~/components/ui/input';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /** An option of `Select` and `Combobox`: `value` is what `onValueChange` reports, `label` what the field shows. */
@@ -98,13 +99,14 @@ function SelectWithCustom({
   items,
   value,
   onValueChange,
-  customLabel = 'Other',
+  customLabel: customLabelProp,
   'aria-invalid': invalid = false,
   onOpenChangeComplete,
   disabled = false,
   children,
   ...props
 }: Extract<SelectProps, { allowCustom: true }>) {
+  const customLabel = customLabelProp ?? useLocale().labels.custom;
   // The text last typed: a typed text that equals an item's value stays custom while typed.
   const [typed, setTyped] = React.useState<string | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);

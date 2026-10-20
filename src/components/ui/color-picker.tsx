@@ -7,6 +7,7 @@ import { InputGroup, InputGroupAddon } from '~/components/ui/input-group';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { RadioGroup } from '~/components/ui/radio-group';
 
+import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
 /** A swatch: a CSS color and its name. */
@@ -174,10 +175,14 @@ function ColorPicker({
   presets = DEFAULT_PRESETS,
   custom = 'popover',
   'aria-labelledby': labelledBy,
-  'aria-label': label = 'Color',
-  customLabel = 'Custom color',
-  hexLabel = 'Hex color',
+  'aria-label': labelProp,
+  customLabel: customLabelProp,
+  hexLabel: hexLabelProp,
 }: ColorPickerProps) {
+  const { labels } = useLocale();
+  const label = labelProp ?? labels.color;
+  const customLabel = customLabelProp ?? labels.customColor;
+  const hexLabel = hexLabelProp ?? labels.hexColor;
   const normalized = value.toLowerCase();
   const preset = presets.find((swatch) => swatch.value.toLowerCase() === normalized)?.value ?? null;
 
