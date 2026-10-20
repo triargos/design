@@ -3,7 +3,7 @@ import { ClockIcon } from 'lucide-react';
 import * as React from 'react';
 
 import {
-  DateInput,
+  SegmentsInput,
   TimeField,
   focusFirstSegment,
   segmentedFieldClassName,
@@ -29,7 +29,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
 const toTimeValue = (value: string): Time | null => (/^\d{2}:\d{2}$/.test(value) ? parseTime(value) : null);
 
 /** A segmented `HH:mm` field at `Input` height; the clock sits where `DateInput` has its calendar button. */
-export const TimeInput = ({
+function TimeInput({
   value,
   onChange,
   disabled,
@@ -38,7 +38,7 @@ export const TimeInput = ({
   name,
   'aria-label': ariaLabel,
   'aria-invalid': ariaInvalid,
-}: TimeInputProps) => {
+}: TimeInputProps) {
   const fieldRef = React.useRef<HTMLDivElement>(null);
   const labelId = useFieldLabel(id, fieldRef);
 
@@ -58,7 +58,7 @@ export const TimeInput = ({
       aria-labelledby={labelId}
       onMouseDown={focusFirstSegment}
       className={cn(segmentedFieldClassName, className)}>
-      <DateInput />
+      <SegmentsInput />
       <span
         aria-hidden
         className='flex size-6 shrink-0 items-center justify-center text-muted-foreground in-data-disabled:text-disabled-foreground [&_svg]:size-4'>
@@ -66,4 +66,6 @@ export const TimeInput = ({
       </span>
     </TimeField>
   );
-};
+}
+
+export { TimeInput };

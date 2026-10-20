@@ -1,16 +1,13 @@
-import { IsoDate, IsoDateRange } from '~/lib/iso-date';
-
 import { CalendarDate, parseDate } from '@internationalized/date';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale/de';
 import { CalendarIcon } from 'lucide-react';
 import * as React from 'react';
-import { useUiStrings } from '~/lib/ui-config';
 
 import { Calendar } from '~/components/ui/calendar';
 import {
   DateField,
-  DateInput as SegmentsInput,
+  SegmentsInput,
   focusFirstSegment,
   segmentedFieldClassName,
   useFieldLabel,
@@ -19,9 +16,9 @@ import { InputGroupButton } from '~/components/ui/input-group';
 import { PickerTrigger } from '~/components/ui/picker-trigger';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
+import { IsoDate, IsoDateRange } from '~/lib/iso-date';
+import { useUiStrings } from '~/lib/ui-config';
 import { cn } from '~/lib/utils';
-
-const CARD_DATE_FORMAT = 'EEE, d. MMM';
 
 interface DateValueProps {
   value: IsoDate | null;
@@ -66,12 +63,34 @@ const rangeOf = (min: IsoDate | undefined, max: IsoDate | undefined): IsoDateRan
   return { min: min ?? sanity.min, max: max ?? sanity.max };
 };
 
-const formatIso = (value: IsoDate, pattern: string) => format(IsoDate.toDate(value), pattern, { locale: de });
-
 const toCalendarDate = (value: IsoDate | null): CalendarDate | null => (value ? parseDate(value) : null);
 
 export function DateInput(props: DateInputProps) {
   return props.variant === 'card' ? <DateInputCard {...props} /> : <DateInputTypeable {...props} />;
+}
+
+/**
+ * The popup calendar of both variants. It mounts with the popover, so it opens on the value's month; days outside
+ * `min`/`max` are disabled.
+ */
+function DateCalendar({
+  value,
+  min,
+  max,
+  onSelect,
+}: Omit<DateValueProps, 'onChange'> & { onSelect: (value: IsoDate | null) => void }) {
+  const inRange = IsoDateRange.contains(rangeOf(min, max));
+  const selected = value ? IsoDate.toDate(value) : undefined;
+  return (
+    <Calendar
+      mode='single'
+      selected={selected}
+      defaultMonth={selected}
+      onSelect={(date) => onSelect(date ? IsoDate.fromDate(date) : null)}
+      disabled={(date) => !inRange(IsoDate.fromDate(date))}
+      autoFocus
+    />
+  );
 }
 
 function DateInputCard({
@@ -89,7 +108,6 @@ function DateInputCard({
 }: CardProps) {
   const strings = useUiStrings();
   const [open, setOpen] = React.useState(false);
-  const bounds = rangeOf(min, max);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -106,21 +124,19 @@ function DateInputCard({
         <span className='flex flex-col items-start gap-0.5 text-left'>
           {label && <span className='text-caption text-muted-foreground'>{label}</span>}
           <span className={cn('text-control font-medium', !value && 'font-normal text-muted-foreground')}>
-            {value ? formatIso(value, CARD_DATE_FORMAT) : (placeholder ?? strings.emptyValue)}
+            {value ? format(IsoDate.toDate(value), 'EEE, d. MMM', { locale: de }) : (placeholder ?? strings.emptyValue)}
           </span>
         </span>
       </PopoverTrigger>
       <PopoverContent className='w-auto p-0' align='start'>
-        <Calendar
-          mode='single'
-          selected={value ? IsoDate.toDate(value) : undefined}
-          defaultMonth={value ? IsoDate.toDate(value) : undefined}
+        <DateCalendar
+          value={value}
+          min={min}
+          max={max}
           onSelect={(date) => {
-            onChange(date ? IsoDate.fromDate(date) : null);
+            onChange(date);
             setOpen(false);
           }}
-          disabled={(date) => !IsoDateRange.contains(bounds)(IsoDate.fromDate(date))}
-          autoFocus
         />
       </PopoverContent>
     </Popover>
@@ -144,30 +160,23 @@ function DateInputTypeable({
   'aria-describedby': ariaDescribedBy,
 }: TypeableProps) {
   const strings = useUiStrings();
-  const bounds = rangeOf(min, max);
   const fieldRef = React.useRef<HTMLDivElement>(null);
   const labelId = useFieldLabel(id, fieldRef);
   const [open, setOpen] = React.useState(false);
   // The segments hold what is typed; the form only sees it once the year has four digits, since typing `2026`
-  // passes through the years 2, 20 and 202.
+  // passes through the years 2, 20 and 202. A new `value` from outside replaces the draft.
   const [draft, setDraft] = React.useState<CalendarDate | null>(() => toCalendarDate(value));
-  const [month, setMonth] = React.useState<Date | undefined>(value ? IsoDate.toDate(value) : undefined);
-
-  React.useEffect(() => {
-    setDraft((current) => (current?.toString() === value ? current : toCalendarDate(value)));
-    if (value) setMonth(IsoDate.toDate(value));
-  }, [value]);
+  const [draftOf, setDraftOf] = React.useState(value);
+  if (value !== draftOf) {
+    setDraftOf(value);
+    if (draft?.toString() !== value) setDraft(toCalendarDate(value));
+  }
 
   React.useImperativeHandle(
     ref,
     () => ({ focus: () => fieldRef.current?.querySelector<HTMLElement>('[role=spinbutton]')?.focus() }),
     [],
   );
-
-  const select = (date: IsoDate | null) => {
-    onChange(date);
-    if (date) setMonth(IsoDate.toDate(date));
-  };
 
   return (
     <DateField
@@ -179,8 +188,8 @@ function DateInputTypeable({
         setDraft(next);
         // Every complete date is emitted, in range or not: the form schema has to see an out-of-range date to
         // report it.
-        if (next === null) select(null);
-        else if (next.year >= 1000) select(IsoDate.make(next.toString()));
+        if (next === null) onChange(null);
+        else if (next.year >= 1000) onChange(IsoDate.make(next.toString()));
       }}
       onBlur={() => {
         setDraft(toCalendarDate(value));
@@ -202,7 +211,6 @@ function DateInputTypeable({
       onMouseDown={focusFirstSegment}
       className={cn(segmentedFieldClassName, className)}>
       {({ state }) => {
-        // A caller placeholder (`unbegrenzt`) stands in for the empty segments until the field takes focus.
         const showPlaceholder =
           placeholder !== undefined && state.segments.every((segment) => !segment.isEditable || segment.isPlaceholder);
         return (
@@ -217,29 +225,18 @@ function DateInputTypeable({
             </span>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger
-                render={
-                  <InputGroupButton
-                    type='button'
-                    variant='ghost'
-                    size='icon-xs'
-                    disabled={disabled}
-                    aria-label={strings.chooseDate}
-                  />
-                }>
+                render={<InputGroupButton size='icon-xs' disabled={disabled} aria-label={strings.chooseDate} />}>
                 <CalendarIcon />
               </PopoverTrigger>
               <PopoverContent className='w-auto p-0' align='end' sideOffset={8}>
-                <Calendar
-                  mode='single'
-                  selected={value ? IsoDate.toDate(value) : undefined}
-                  month={month}
-                  onMonthChange={setMonth}
+                <DateCalendar
+                  value={value}
+                  min={min}
+                  max={max}
                   onSelect={(date) => {
-                    select(date ? IsoDate.fromDate(date) : null);
+                    onChange(date);
                     setOpen(false);
                   }}
-                  disabled={(date) => !IsoDateRange.contains(bounds)(IsoDate.fromDate(date))}
-                  autoFocus
                 />
               </PopoverContent>
             </Popover>

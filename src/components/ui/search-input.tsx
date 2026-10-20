@@ -19,13 +19,7 @@ interface SearchInputProps {
  * A search field: a leading icon, a clear button while it holds text. ⌘F focuses it, Escape clears and leaves it.
  * Controlled; a search kept in the URL is `SearchParamInput` (`components/search`).
  */
-export const SearchInput = ({
-  value,
-  onValueChange,
-  placeholder,
-  className,
-  'aria-label': ariaLabel,
-}: SearchInputProps) => {
+function SearchInput({ value, onValueChange, placeholder, className, 'aria-label': ariaLabel }: SearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const strings = useUiStrings();
   const label = placeholder ?? strings.search;
@@ -43,7 +37,7 @@ export const SearchInput = ({
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             onValueChange('');
-            inputRef.current?.blur();
+            event.currentTarget.blur();
           }
         }}
       />
@@ -59,4 +53,6 @@ export const SearchInput = ({
       )}
     </InputGroup>
   );
-};
+}
+
+export { SearchInput };

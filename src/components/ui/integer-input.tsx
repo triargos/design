@@ -23,11 +23,10 @@ function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, classNa
 
   return (
     <InputGroup className={className}>
-      {/* Concentric: 4px gap, button radius = field radius − gap. */}
-      <InputGroupAddon align='inline-start' className='has-[>button]:pl-1'>
+      <InputGroupAddon align='inline-start'>
         <InputGroupButton
           size='icon-sm'
-          variant='secondary'
+          emphasis='raised'
           aria-label={strings.decrease}
           disabled={disabled || value <= 0}
           onClick={() => onChange(value - 1)}>
@@ -58,10 +57,10 @@ function IntegerStepper({ value, onChange, unit, max, disabled, onFocus, classNa
         />
         {unit && <span className='text-body text-muted-foreground'>{unit}</span>}
       </div>
-      <InputGroupAddon align='inline-end' className='has-[>button]:pr-1'>
+      <InputGroupAddon align='inline-end'>
         <InputGroupButton
           size='icon-sm'
-          variant='secondary'
+          emphasis='raised'
           aria-label={strings.increase}
           disabled={disabled || (max !== undefined && value >= max)}
           onClick={() => onChange(value + 1)}>

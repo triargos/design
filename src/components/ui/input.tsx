@@ -25,13 +25,11 @@ const withinFocusAndInvalidSurface = [
  *   descendant (an unavailable Undo) does not dim the surface.
  */
 export const inputSurfaceVariants = cva(
-  // After coss ui `Input`. Resting: the field ring (`shadow-field`), a translucent edge outside the fill like every
-  // depth edge, heavier at the bottom in light and lit at the top in dark, plus a small lift. The border is transparent
-  // and only carries state. In dark the field is a 3% white veil over whatever surface it sits on (coss:
-  // `bg-input/32`), one step lighter, never a hole. Focus: a `ring` border and a soft 3px ring, no field ring. Invalid:
-  // the field ring turns `destructive`, no tint; focused, a `destructive` border and ring. Read-only (`readonly`, or
-  // Base UI's `data-readonly`) and disabled: the ring without the lift (`shadow-field-flat`); read-only has greyed text
-  // and no focus state: it stays focusable (to select and copy) but never rings. No hover style.
+  // Resting: the field ring (`shadow-field`) and a small lift; the border is transparent and only carries state. In dark
+  // the field is a 3% white veil over its surface, one step lighter, never a hole. Focus: a `ring` border and a soft
+  // 3px ring instead of the field ring. Invalid: the field ring turns `destructive`, no tint. Read-only (`readonly`, or
+  // Base UI's `data-readonly`) and disabled: `shadow-field-flat`; read-only stays focusable (to select and copy) but
+  // never rings. No hover style.
   [
     // `--outer-radius`: buttons and chips inside the field take `rounded-inner` with their own `--outer-inset`.
     'rounded-control-lg border border-transparent bg-surface bg-clip-border shadow-field [--outer-radius:var(--radius-control-lg)] dark:bg-foreground/3',
@@ -77,10 +75,10 @@ export const inputSurfaceVariants = cva(
  * so iOS does not zoom on focus and the field looks the same on every device. The surface owns size, padding and
  * text style; the input inherits them.
  */
-export const inputControlClassName = [
+export const inputControlClassName = cn(
   'input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
   'file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-control file:font-medium file:text-foreground',
-];
+);
 
 /**
  * `className` and `style` go to the field surface (size, layout, padding, font); every other prop, the ref included,
@@ -101,7 +99,7 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         event.preventDefault();
         event.currentTarget.querySelector('input')?.focus();
       }}>
-      <InputPrimitive data-slot='input-control' className={cn(inputControlClassName)} {...props} />
+      <InputPrimitive data-slot='input-control' className={inputControlClassName} {...props} />
     </span>
   );
 }

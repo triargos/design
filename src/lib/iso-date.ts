@@ -24,10 +24,8 @@ const IsoDateSchema = Schema.String.pipe(
 /** Viewed in the environment's timezone — the zone a calendar picker and "today" mean. */
 const inLocalZone = (dt: DateTime.DateTime) => DateTime.setZone(dt, DateTime.zoneMakeLocal());
 
-type IsoDateBrand = typeof IsoDateSchema.Type;
-
-/** Lexicographic — `YYYY-MM-DD` sorts as a string, so the string order is the day order. */
-const isoDateOrder: Order.Order<IsoDateBrand> = Order.String;
+/** Lexicographic: `YYYY-MM-DD` sorts as a string, so the string order is the day order. */
+const isoDateOrder: Order.Order<IsoDate> = Order.String;
 
 export const IsoDate = Object.assign(IsoDateSchema, {
   /** Calendar date of `date` as the user sees it locally — what a calendar picker means. */

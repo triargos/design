@@ -19,7 +19,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
   return (
     <RadioPrimitive.Root
       data-slot='radio-group-item'
-      className={cn(selectionControlSurface, 'group/radio-group-item rounded-full inset-ring-foreground/24', className)}
+      className={cn(selectionControlSurface, 'rounded-full inset-ring-foreground/24', className)}
       {...props}>
       <RadioPrimitive.Indicator
         data-slot='radio-group-indicator'

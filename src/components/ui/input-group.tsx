@@ -26,7 +26,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 const inputGroupAddonVariants = cva(
-  "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-body font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:text-disabled-foreground [&>kbd]:rounded-[4px] [&>svg:not([class*='size-'])]:size-4",
+  "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-body font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:text-disabled-foreground [&>kbd]:rounded-control-xs [&>svg:not([class*='size-'])]:size-4",
   {
     variants: {
       align: {
@@ -38,10 +38,8 @@ const inputGroupAddonVariants = cva(
           'order-first pl-3.5 has-[>[data-size=action]]:pl-[3px] has-[>[data-size=icon-sm]]:pl-[3px] has-[>button]:pl-[7px] has-[>kbd]:pl-[9px]',
         'inline-end':
           'order-last pr-3.5 has-[>[data-size=action]]:pr-[3px] has-[>[data-size=icon-sm]]:pr-[3px] has-[>button]:pr-[7px] has-[>kbd]:pr-[9px]',
-        'block-start':
-          'order-first w-full justify-start px-3.5 pt-2 group-has-[>[data-slot=input-group-input]]/input-group:pt-2 [.border-b]:pb-2',
-        'block-end':
-          'order-last w-full justify-start px-3.5 pb-2 group-has-[>[data-slot=input-group-input]]/input-group:pb-2 [.border-t]:pt-2',
+        'block-start': 'order-first w-full justify-start px-3.5 pt-2 [.border-b]:pb-2',
+        'block-end': 'order-last w-full justify-start px-3.5 pb-2 [.border-t]:pt-2',
       },
     },
     defaultVariants: {
@@ -61,11 +59,9 @@ function InputGroupAddon({
       data-slot='input-group-addon'
       data-align={align}
       className={cn(inputGroupAddonVariants({ align }), className)}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest('button')) {
-          return;
-        }
-        e.currentTarget.parentElement?.querySelector('input')?.focus();
+      onClick={(event) => {
+        if ((event.target as Element).closest('button')) return;
+        event.currentTarget.parentElement?.querySelector('input')?.focus();
       }}
       {...props}
     />
@@ -73,10 +69,9 @@ function InputGroupAddon({
 }
 
 // Ghost's translucent hover reads on the field fill; an open popup leaves the button unfilled, since the group shows
-// the open state.
-// Radii are concentric with the field's corner (`rounded-inner`, the field sets `--outer-radius`): a 24px button 8px in
-// on every side, a 32px button 4px in; the addon sets the side inset. `action` is the field's own action (test email,
-// invite): a raised 32px button 4px in, in the field text size; defaults to `secondary` and `type='submit'`.
+// the open state. Radii are concentric with the field's corner (`rounded-inner`): a 24px button 8px in on every side, a
+// 32px button 4px in; the addon sets the side inset. `action` is the field's own action (test email, invite): a raised
+// 32px button 4px in, in the field text size; defaults to `type='submit'`.
 const inputGroupButtonVariants = cva(
   'flex items-center gap-2 text-body text-muted-foreground shadow-none aria-expanded:bg-transparent aria-expanded:text-foreground',
   {
@@ -99,17 +94,19 @@ function InputGroupButton({
   className,
   size = 'xs',
   type = size === 'action' ? 'submit' : 'button',
-  variant = size === 'action' ? 'secondary' : 'ghost',
+  variant,
+  // Defaults only without the deprecated `variant`: `intent` and `emphasis` would override it.
+  intent = variant ? undefined : 'neutral',
+  emphasis = variant ? undefined : size === 'action' ? 'raised' : 'ghost',
   ...props
-}: Omit<React.ComponentProps<typeof Button>, 'size' | 'type'> &
-  VariantProps<typeof inputGroupButtonVariants> & {
-    type?: 'button' | 'submit' | 'reset';
-  }) {
+}: Omit<React.ComponentProps<typeof Button>, 'size'> & VariantProps<typeof inputGroupButtonVariants>) {
   return (
     <Button
       type={type}
       data-size={size}
       variant={variant}
+      intent={intent}
+      emphasis={emphasis}
       className={cn(inputGroupButtonVariants({ size }), className)}
       {...props}
     />
@@ -119,6 +116,7 @@ function InputGroupButton({
 function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
+      data-slot='input-group-text'
       className={cn(
         "flex items-center gap-2 text-body text-muted-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         className,
@@ -139,7 +137,7 @@ function InputGroupInput({ className, style, ...props }: React.ComponentProps<'i
       data-slot='input-group-input'
       style={style}
       className={cn('flex h-full min-w-0 flex-1 cursor-text items-center px-3.5 text-control', className)}>
-      <InputPrimitive data-slot='input-group-control' className={cn(inputControlClassName)} {...props} />
+      <InputPrimitive data-slot='input-group-control' className={inputControlClassName} {...props} />
     </span>
   );
 }

@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import { useMemo } from 'react';
+import type * as React from 'react';
 
 import { Label } from '~/components/ui/label';
 import { Separator } from '~/components/ui/separator';
@@ -11,11 +11,7 @@ function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   return (
     <fieldset
       data-slot='field-set'
-      className={cn(
-        'flex flex-col gap-group',
-        'has-[>[data-slot=checkbox-group]]:gap-related has-[>[data-slot=radio-group]]:gap-related',
-        className,
-      )}
+      className={cn('flex flex-col gap-group has-[>[data-slot=radio-group]]:gap-related', className)}
       {...props}
     />
   );
@@ -41,19 +37,16 @@ function FieldLegend({
   );
 }
 
-const fieldGroupVariants = cva(
-  'group/field-group @container/field-group flex w-full flex-col gap-group data-[slot=checkbox-group]:gap-related [&>[data-slot=field-group]]:gap-group',
-  {
-    variants: {
-      columns: {
-        1: '',
-        // Same gap as one column, both axes: the fields are peers whichever way they wrap.
-        2: 'grid md:grid-cols-2',
-      },
+const fieldGroupVariants = cva('group/field-group @container/field-group flex w-full flex-col gap-group', {
+  variants: {
+    columns: {
+      1: '',
+      // Same gap as one column, both axes: the fields are peers whichever way they wrap.
+      2: 'grid md:grid-cols-2',
     },
-    defaultVariants: { columns: 1 },
   },
-);
+  defaultVariants: { columns: 1 },
+});
 
 function FieldGroup({
   className,
@@ -66,8 +59,7 @@ function FieldGroup({
 const fieldVariants = cva('group/field flex w-full gap-3 data-[invalid=true]:text-destructive', {
   variants: {
     orientation: {
-      // gap-2 (upstream: gap-3): our inputs have no solid border, so the eye adds the
-      // input's internal top space to the label gap — 8px measured ≈ upstream's perceived 12px.
+      // `related`, not 12px: a field has no solid border, so the eye adds its inner top space to the label gap.
       vertical: ['flex-col gap-related [&>*]:w-full [&>.sr-only]:w-auto'],
       horizontal: [
         'flex-row items-center',
@@ -76,27 +68,16 @@ const fieldVariants = cva('group/field flex w-full gap-3 data-[invalid=true]:tex
         // A checkbox or radio sits on the label's first line; a switch centers on label + description.
         '[&>[data-slot=switch]]:self-center',
       ],
-      responsive: [
-        'flex-col @md/field-group:flex-row @md/field-group:items-center [&>*]:w-full @md/field-group:[&>*]:w-auto [&>.sr-only]:w-auto',
-        '@md/field-group:[&>[data-slot=field-label]]:flex-auto',
-        '@md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px',
-      ],
-    },
-    centerLabel: {
-      true: '[&>[data-slot=field-content]]:self-center',
-      false: '',
     },
   },
   defaultVariants: {
     orientation: 'vertical',
-    centerLabel: false,
   },
 });
 
 function Field({
   className,
   orientation = 'vertical',
-  centerLabel = false,
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof fieldVariants>) {
   return (
@@ -104,7 +85,7 @@ function Field({
       role='group'
       data-slot='field'
       data-orientation={orientation}
-      className={cn(fieldVariants({ orientation, centerLabel }), className)}
+      className={cn(fieldVariants({ orientation }), className)}
       {...props}
     />
   );
@@ -125,8 +106,7 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
     <Label
       data-slot='field-label'
       className={cn(
-        // Upstream shadcn adds leading-snug here; that overrides Label's leading-none and
-        // inflates the label→input gap. Our labels are single-line — keep the tight line box.
+        // No `leading-snug`: Label's `leading-none` keeps the label→control gap tight.
         'group/field-label peer/field-label flex w-fit gap-2 group-data-[disabled=true]/field:text-disabled-foreground',
         className,
       )}
@@ -135,6 +115,7 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
   );
 }
 
+/** A `FieldLabel` for a control that is not an input: name it with `id` and the control's `aria-labelledby`. */
 function FieldTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -164,18 +145,12 @@ function FieldDescription({ className, ...props }: React.ComponentProps<'p'>) {
   );
 }
 
-function FieldSeparator({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<'div'> & {
-  children?: React.ReactNode;
-}) {
+function FieldSeparator({ children, className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='field-separator'
       data-content={!!children}
-      className={cn('relative -my-2 h-5 text-body group-data-[variant=outline]/field-group:-mb-2', className)}
+      className={cn('relative -my-2 h-5 text-body', className)}
       {...props}>
       <Separator className='absolute inset-0 top-1/2' />
       {children && (
@@ -199,36 +174,10 @@ function FieldError({
   errors?: Array<{ message?: string } | undefined>;
 }) {
   const t = useUiConfig().message;
-
-  const content = useMemo(() => {
-    if (children) {
-      return children;
-    }
-
-    if (!errors?.length) {
-      return null;
-    }
-
-    const uniqueErrors = [...new Map(errors.map((error) => [error?.message, error])).values()];
-
-    if (uniqueErrors?.length == 1) {
-      const message = uniqueErrors[0]?.message;
-      return message ? t(message) : null;
-    }
-
-    return (
-      <ul className='ml-4 flex list-disc flex-col gap-tight'>
-        {uniqueErrors.map((error, index) => {
-          const message = error?.message;
-          return message ? <li key={index}>{t(message)}</li> : null;
-        })}
-      </ul>
-    );
-  }, [children, errors, t]);
-
-  if (!content) {
-    return null;
-  }
+  const messages = [
+    ...new Set(errors?.map((error) => error?.message).filter((message): message is string => !!message)),
+  ];
+  if (!children && messages.length === 0) return null;
 
   return (
     <div
@@ -236,7 +185,16 @@ function FieldError({
       data-slot='field-error'
       className={cn('text-body font-normal text-destructive', className)}
       {...props}>
-      {content}
+      {children ||
+        (messages.length === 1 ? (
+          t(messages[0])
+        ) : (
+          <ul className='ml-4 flex list-disc flex-col gap-tight'>
+            {messages.map((message) => (
+              <li key={message}>{t(message)}</li>
+            ))}
+          </ul>
+        ))}
     </div>
   );
 }

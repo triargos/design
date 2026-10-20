@@ -1,12 +1,12 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import { type ReactNode, useCallback, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 
 import { cn } from '~/lib/utils';
 
-// A field surface you drop files on. Disabled and invalid come from the hidden input (`within` scope).
-// The compact row trades the fill for a dashed outline: filled, it would read as a text field.
+// A field surface you drop files on. Disabled and invalid come from the hidden input (`within` scope). The compact row
+// trades the fill for a dashed outline: filled, it would read as a text field.
 const fileDropZoneVariants = cva(
   [
     inputSurfaceVariants({ scope: 'within' }),
@@ -18,7 +18,7 @@ const fileDropZoneVariants = cva(
       size: {
         default: 'flex-col justify-center gap-3 px-6 py-7 text-center',
         compact:
-          'min-h-10 justify-center gap-2 border border-dashed border-border bg-transparent px-3.5 py-2 text-body font-medium text-primary shadow-none hover:bg-field has-disabled:border-transparent has-disabled:hover:bg-disabled has-aria-invalid:border-destructive-border',
+          'min-h-10 justify-center gap-2 border-dashed border-border bg-transparent px-3.5 py-2 text-body font-medium text-primary shadow-none hover:bg-field has-disabled:border-transparent has-disabled:hover:bg-disabled has-aria-invalid:border-destructive-border',
       },
     },
     defaultVariants: { size: 'default' },
@@ -50,17 +50,14 @@ function FileDropZone({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const emit = useCallback(
-    (fileList: FileList | null) => {
-      const files = Array.from(fileList ?? []);
-      if (files.length > 0) onFiles(files);
-    },
-    [onFiles],
-  );
+  const emit = (fileList: FileList | null) => {
+    const files = Array.from(fileList ?? []);
+    if (files.length > 0) onFiles(files);
+  };
 
+  // No `role='button'`: the hidden file input is the control (focus, keyboard, name); a click anywhere opens it.
   return (
     <div
-      role='button'
       data-slot='file-drop-zone'
       onClick={() => !disabled && inputRef.current?.click()}
       onDragEnter={(e) => {
@@ -94,7 +91,8 @@ function FileDropZone({
         aria-invalid={ariaInvalid || undefined}
         onChange={(e) => {
           emit(e.target.files);
-          e.target.value = ''; // allow re-selecting the same file
+          // Lets the same file be picked again.
+          e.target.value = '';
         }}
         className='sr-only'
         aria-label={ariaLabel}
@@ -104,4 +102,4 @@ function FileDropZone({
   );
 }
 
-export { FileDropZone, fileDropZoneVariants };
+export { FileDropZone };

@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {
-  DateFieldProps,
+  type DateFieldProps,
   DateField as DateFieldRac,
-  DateInputProps as DateInputPropsRac,
+  type DateInputProps,
   DateInput as DateInputRac,
-  DateSegmentProps,
+  type DateSegmentProps,
   DateSegment as DateSegmentRac,
-  DateValue as DateValueRac,
+  type DateValue as DateValueRac,
 } from 'react-aria-components/DateField';
-import { TimeFieldProps, TimeField as TimeFieldRac, TimeValue as TimeValueRac } from 'react-aria-components/TimeField';
+import {
+  type TimeFieldProps,
+  TimeField as TimeFieldRac,
+  type TimeValue as TimeValueRac,
+} from 'react-aria-components/TimeField';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 
@@ -53,34 +57,12 @@ function useFieldLabel(id: string | undefined, fieldRef: React.RefObject<HTMLEle
   return labelId;
 }
 
-function DateField<T extends DateValueRac>({
-  className,
-  children,
-  ...props
-}: DateFieldProps<T> & { ref?: React.Ref<HTMLDivElement> }) {
-  return (
-    <DateFieldRac
-      data-slot='date-field'
-      className={composeRenderProps(className, (className) => cn(className))}
-      {...props}>
-      {children}
-    </DateFieldRac>
-  );
+function DateField<T extends DateValueRac>(props: DateFieldProps<T> & { ref?: React.Ref<HTMLDivElement> }) {
+  return <DateFieldRac data-slot='date-field' {...props} />;
 }
 
-function TimeField<T extends TimeValueRac>({
-  className,
-  children,
-  ...props
-}: TimeFieldProps<T> & { ref?: React.Ref<HTMLDivElement> }) {
-  return (
-    <TimeFieldRac
-      data-slot='time-field'
-      className={composeRenderProps(className, (className) => cn(className))}
-      {...props}>
-      {children}
-    </TimeFieldRac>
-  );
+function TimeField<T extends TimeValueRac>(props: TimeFieldProps<T> & { ref?: React.Ref<HTMLDivElement> }) {
+  return <TimeFieldRac data-slot='time-field' {...props} />;
 }
 
 // The focused segment takes the brand fill, like the selected day in the calendar; literals (`.`, `:`) stay muted.
@@ -104,12 +86,8 @@ function DateSegment({ className, ...props }: DateSegmentProps) {
   );
 }
 
-interface DateInputProps extends DateInputPropsRac {
-  className?: string;
-}
-
-/** Segments render 16px on coarse pointers, so iOS does not zoom on focus. */
-function DateInput({ className, ...props }: Omit<DateInputProps, 'children'>) {
+/** The segments of a `DateField` or `TimeField`. They render 16px on coarse pointers, so iOS does not zoom on focus. */
+function SegmentsInput({ className, ...props }: Omit<DateInputProps, 'children'>) {
   return (
     <DateInputRac
       className={composeRenderProps(className, (className) =>
@@ -121,5 +99,4 @@ function DateInput({ className, ...props }: Omit<DateInputProps, 'children'>) {
   );
 }
 
-export { DateField, DateInput, DateSegment, TimeField, focusFirstSegment, segmentedFieldClassName, useFieldLabel };
-export type { DateInputProps };
+export { DateField, SegmentsInput, TimeField, focusFirstSegment, segmentedFieldClassName, useFieldLabel };
