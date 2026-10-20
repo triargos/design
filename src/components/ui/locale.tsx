@@ -23,6 +23,8 @@ interface Labels {
   /** CopyButton, before and after a copy. */
   readonly copy: string;
   readonly copied: string;
+  /** ShortcutTooltip: between the keys of a chord, “G then P”. */
+  readonly shortcutThen: string;
   /** ItemList (virtualized) while the next page loads. */
   readonly loadingMore: string;
   /** InputOTP slot. */
@@ -54,6 +56,7 @@ const englishLabels: Labels = {
   increase: 'Increase',
   copy: 'Copy',
   copied: 'Copied',
+  shortcutThen: 'then',
   loadingMore: 'Loading more',
   slot: ({ position, length }) => `Character ${position} of ${length}`,
   color: 'Color',

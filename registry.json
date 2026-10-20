@@ -42,6 +42,16 @@
       ]
     },
     {
+      "name": "shortcut",
+      "type": "registry:lib",
+      "files": [
+        {
+          "path": "src/lib/shortcut.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "utils",
       "type": "registry:lib",
       "dependencies": [
@@ -855,6 +865,24 @@
       "files": [
         {
           "path": "src/components/ui/sheet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "shortcut-tooltip",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@triargos/kbd",
+        "@triargos/locale",
+        "@triargos/shortcut",
+        "@triargos/theme",
+        "@triargos/tooltip",
+        "@triargos/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/shortcut-tooltip.tsx",
           "type": "registry:ui"
         }
       ]

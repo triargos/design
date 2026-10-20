@@ -35,8 +35,8 @@ const packageName = (specifier) =>
 const localItem = (specifier) => {
   if (specifier.startsWith('~/components/ui/')) return basename(specifier);
   if (specifier.startsWith('~/hooks/')) return basename(specifier);
-  if (specifier === '~/lib/utils') return 'utils';
   if (specifier.startsWith('~/lib/theme/')) return 'theme';
+  if (specifier.startsWith('~/lib/')) return basename(specifier);
   throw new Error(`No registry item for ${specifier}`);
 };
 
@@ -65,7 +65,10 @@ const items = [
     ...sourceFiles('src/lib/theme').map((path) => ({ path, type: 'registry:lib' })),
     { path: 'src/tailwind.css', type: 'registry:file', target: 'src/styles/triargos.css' },
   ]),
-  item('utils', 'registry:lib', [{ path: 'src/lib/utils.ts', type: 'registry:lib' }]),
+  // `utils` and each other helper in `src/lib`, one item per file.
+  ...sourceFiles('src/lib').map((path) =>
+    item(basename(path, extname(path)), 'registry:lib', [{ path, type: 'registry:lib' }]),
+  ),
   ...sourceFiles('src/hooks').map((path) =>
     item(basename(path, extname(path)), 'registry:hook', [{ path, type: 'registry:hook' }]),
   ),
