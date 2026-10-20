@@ -7,6 +7,7 @@ import { motion, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import useMeasure from 'react-use-measure';
 
+import { Skeleton } from '~/components/ui/skeleton';
 import { Spinner } from '~/components/ui/spinner';
 
 import { useLocale } from '~/components/ui/locale';
@@ -68,7 +69,8 @@ type ItemListProps<T> = ItemListElementProps &
 
 /**
  * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-hidden'`. It
- * springs its height when rows come and go (reduced motion: it jumps); `virtualized` for a long list.
+ * springs its height when rows come and go (reduced motion: it jumps); `virtualized` for a long list. While the rows
+ * load, `ItemListSkeleton` stands in for it.
  */
 function ItemList<T>(props: ItemListProps<T>) {
   if (props.virtualized) return <VirtualizedItemList {...props} />;
@@ -188,6 +190,64 @@ function VirtualizedItemList<T>({
           <span className='sr-only'>{loadingLabel ?? labels.loadingMore}</span>
         </div>
       )}
+    </div>
+  );
+}
+
+const SKELETON_TITLE_WIDTHS = ['w-40', 'w-32', 'w-48'];
+const SKELETON_DESCRIPTION_WIDTHS = ['w-64', 'w-56', 'w-72'];
+
+type ItemListSkeletonProps = Omit<React.ComponentProps<'div'>, 'children'> & {
+  /** How many rows. */
+  readonly rows?: number;
+  /** The media the real rows carry: an `ItemMedia variant='icon'` tile, or a 40px `Avatar`. None by default. */
+  readonly media?: 'icon' | 'avatar';
+  /** A description line under each title (default), or the title alone. */
+  readonly description?: boolean;
+};
+
+/**
+ * The rows of an `ItemList` while they load, in its place. It is the real `Item` structure (row padding, media, title
+ * and description at their line height), so the card keeps its height when the data arrives. Hidden from assistive
+ * tech; title widths vary per row.
+ */
+function ItemListSkeleton({ rows = 3, media, description = true, className, ...props }: ItemListSkeletonProps) {
+  return (
+    <div data-slot='item-list' aria-hidden className={cn('overflow-hidden', className)} {...props}>
+      {Array.from({ length: rows }, (_, index) => (
+        <ItemListRow key={index} role={undefined} last={index === rows - 1}>
+          <Item className='flex-nowrap'>
+            {media === 'icon' && (
+              <ItemMedia variant='icon' className='bg-transparent'>
+                <Skeleton className='size-full rounded-[inherit]' />
+              </ItemMedia>
+            )}
+            {media === 'avatar' && (
+              <ItemMedia>
+                <Skeleton className='size-10 rounded-full' />
+              </ItemMedia>
+            )}
+            <ItemContent>
+              <ItemTitle className='h-lh'>
+                <Skeleton
+                  className={cn('h-3.5 max-w-full', SKELETON_TITLE_WIDTHS[index % SKELETON_TITLE_WIDTHS.length])}
+                />
+              </ItemTitle>
+              {description && (
+                // Not an `ItemDescription`: a `p` cannot hold the skeleton's `div`. The slot keeps the media aligned.
+                <div data-slot='item-description' className='flex h-lh items-center'>
+                  <Skeleton
+                    className={cn(
+                      'h-3 max-w-full',
+                      SKELETON_DESCRIPTION_WIDTHS[index % SKELETON_DESCRIPTION_WIDTHS.length],
+                    )}
+                  />
+                </div>
+              )}
+            </ItemContent>
+          </Item>
+        </ItemListRow>
+      ))}
     </div>
   );
 }
@@ -337,6 +397,7 @@ function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
 export {
   Item,
   ItemList,
+  ItemListSkeleton,
   ItemMedia,
   ItemContent,
   ItemActions,

@@ -671,6 +671,7 @@
       ],
       "registryDependencies": [
         "@triargos/locale",
+        "@triargos/skeleton",
         "@triargos/spinner",
         "@triargos/theme",
         "@triargos/utils"

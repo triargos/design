@@ -1,9 +1,11 @@
 import { ItemDefault } from '../examples/item/default';
 import { ItemHeaderAndFooter } from '../examples/item/header-and-footer';
 import { ItemLink } from '../examples/item/link';
+import { ItemLoading } from '../examples/item/loading';
 import { ItemLoadingMore } from '../examples/item/loading-more';
 import { ItemLongTitles } from '../examples/item/long-titles';
 import { ItemSelected } from '../examples/item/selected';
+import { ItemSkeletonShapes } from '../examples/item/skeleton-shapes';
 import { ItemVirtualized } from '../examples/item/virtualized';
 import { ItemWithActions } from '../examples/item/with-actions';
 import { ItemWithDescription } from '../examples/item/with-description';
@@ -83,6 +85,28 @@ export default defineDocs({
         }
         bare>
         <ItemSelected />
+      </ExampleSection>
+      <ExampleSection
+        title='Loading'
+        description={
+          <>
+            <Code>ItemListSkeleton</Code> stands in for the <Code>ItemList</Code>: the same rows, so the card keeps its
+            height. Reload to see it.
+          </>
+        }
+        bare>
+        <ItemLoading />
+      </ExampleSection>
+      <ExampleSection
+        title='Skeleton rows'
+        description={
+          <>
+            <Code>description={'{false}'}</Code> for a title alone; <Code>media</Code> <Code>icon</Code> ·{' '}
+            <Code>avatar</Code> as the real rows carry.
+          </>
+        }
+        bare>
+        <ItemSkeletonShapes />
       </ExampleSection>
       <ExampleSection
         title='Virtualized'
