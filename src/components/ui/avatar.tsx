@@ -73,7 +73,8 @@ const avatarVariants = cva(
 
 /**
  * Each avatar slides under the previous one (`--avatar-overlap`) and is cut out around the next (`--avatar-gap`): a
- * radial mask for circles, a linear one for squares.
+ * radial mask for circles, a linear one for squares. The circle's radius is a pure length (half of `--avatar-size`
+ * plus the gap): Chromium drops a `radial-gradient` whose size mixes `%` and `px` in `calc()`.
  */
 const avatarGroupVariants = cva(
   [
@@ -85,19 +86,19 @@ const avatarGroupVariants = cva(
   {
     variants: {
       size: {
-        xxs: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-        xs: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1.5)]',
-        sm: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-        md: '[--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
-        lg: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
-        xl: '[--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
-        '2xl': '[--avatar-gap:2px] [--avatar-overlap:--spacing(1.5)]',
-        '3xl': '[--avatar-gap:3px] [--avatar-overlap:--spacing(1.5)]',
-        '4xl': '[--avatar-gap:4px] [--avatar-overlap:--spacing(2)]',
+        xxs: '[--avatar-size:--spacing(3)] [--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+        xs: '[--avatar-size:--spacing(4)] [--avatar-gap:1px] [--avatar-overlap:--spacing(1.5)]',
+        sm: '[--avatar-size:--spacing(5)] [--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+        md: '[--avatar-size:--spacing(6)] [--avatar-gap:1px] [--avatar-overlap:--spacing(1)]',
+        lg: '[--avatar-size:--spacing(7)] [--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
+        xl: '[--avatar-size:--spacing(8)] [--avatar-gap:2px] [--avatar-overlap:--spacing(1)]',
+        '2xl': '[--avatar-size:--spacing(10)] [--avatar-gap:2px] [--avatar-overlap:--spacing(1.5)]',
+        '3xl': '[--avatar-size:--spacing(12)] [--avatar-gap:3px] [--avatar-overlap:--spacing(1.5)]',
+        '4xl': '[--avatar-size:--spacing(20)] [--avatar-gap:4px] [--avatar-overlap:--spacing(2)]',
       },
       shape: {
         circle:
-          '*:not-last:[mask-image:radial-gradient(ellipse_calc(50%_+_var(--avatar-gap))_calc(50%_+_var(--avatar-gap))_at_var(--avatar-cutout-x)_50%,transparent_calc(100%_-_0.5px),#000_100%)]',
+          '*:not-last:[mask-image:radial-gradient(circle_calc(var(--avatar-size)/2_+_var(--avatar-gap))_at_var(--avatar-cutout-x)_50%,transparent_calc(100%_-_0.5px),#000_100%)]',
         square:
           '*:not-last:[mask-image:linear-gradient(var(--avatar-cutout-direction),#000_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)_-_0.5px),transparent_calc(100%_-_var(--avatar-overlap)_-_var(--avatar-gap)))]',
       },
