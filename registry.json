@@ -935,6 +935,20 @@
       ]
     },
     {
+      "name": "stat",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@triargos/theme",
+        "@triargos/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/stat.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "status-dot",
       "type": "registry:ui",
       "dependencies": [
