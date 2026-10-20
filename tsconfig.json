@@ -17,5 +17,5 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src", "site", "storybook", ".storybook", "tooling", "stacks", "alchemy.run.ts", "vite.config.ts"]
+  "include": ["src", "site", "docs", "stacks", "alchemy.run.ts", "vite.config.ts"]
 }

@@ -57,7 +57,7 @@ function ThemePicker() {
   );
 }
 
-/** The docs sidebar: the wordmark and search, one group per story group, the theme picker at the foot. */
+/** The docs sidebar: the wordmark and search, one group per docs group, the theme picker at the foot. */
 export function DocsSidebar() {
   const { pathname } = useRouter();
   return (

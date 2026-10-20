@@ -7,11 +7,11 @@ import { promisify } from 'node:util';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { createServer, defineConfig, type Plugin } from 'vite';
+import { createServer, defineConfig, parseAst, type Plugin } from 'vite';
 
 const exec = promisify(execFile);
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
-const storybookDir = fileURLToPath(new URL('./storybook', import.meta.url));
+const docsDir = fileURLToPath(new URL('./docs', import.meta.url));
 const alias = { '~': fileURLToPath(new URL('./src', import.meta.url)) };
 
 // Runs `shadcn build` so registry JSON lands in public/r before Vite copies public/ into the build output. In dev,
@@ -34,12 +34,33 @@ const shadcnRegistry = (): Plugin => {
   };
 };
 
-// Storybook's sidebar order: Foundations in reading order, then Components and Patterns A–Z
-// (`.storybook/preview.tsx`, `storySort`; Storybook evals that one as plain JS, so it cannot import this).
+// Nav order: Foundations in reading order, then Components and Patterns A–Z.
 const GROUPS = ['foundations', 'components', 'patterns'] as const;
 const FOUNDATIONS = ['Color', 'Typography', 'Spacing', 'Surfaces', 'Shape', 'Loading', 'Interaction', 'Motion'];
 
-// `virtual:docs-index`: one page per story file, titled by its `meta.title`, so the docs nav matches Storybook's.
+interface ObjectNode {
+  readonly properties?: ReadonlyArray<{
+    readonly key?: { readonly name?: string };
+    readonly value?: { readonly value?: unknown };
+  }>;
+}
+
+/** `title` and `group` of the module's `export default defineDocs({ … })`. */
+const docsHeader = (path: string) => {
+  const exported = parseAst(readFileSync(path, 'utf8'), { lang: 'tsx' }).body.find(
+    (node) => node.type === 'ExportDefaultDeclaration',
+  );
+  const options = (exported as { declaration?: { arguments?: ReadonlyArray<ObjectNode> } } | undefined)?.declaration
+    ?.arguments?.[0];
+  const field = (name: string) => options?.properties?.find((property) => property.key?.name === name)?.value?.value;
+  const [title, group] = [field('title'), field('group')];
+  if (typeof title !== 'string' || typeof group !== 'string') {
+    throw new Error(`${path}: expected \`export default defineDocs({ title, group, … })\``);
+  }
+  return { title, group };
+};
+
+// `virtual:docs-index`: one page per docs module (`docs/{foundations,components,patterns}/<slug>.tsx`).
 const docsIndex = (): Plugin => {
   const id = 'virtual:docs-index';
   return {
@@ -47,23 +68,17 @@ const docsIndex = (): Plugin => {
     resolveId: (source) => (source === id ? '\0' + id : undefined),
     load(resolved) {
       if (resolved !== '\0' + id) return;
-      const pages = GROUPS.flatMap((group) =>
-        readdirSync(`${storybookDir}/${group}`)
-          .filter((file) => file.endsWith('.stories.tsx'))
+      const pages = GROUPS.flatMap((folder) =>
+        readdirSync(`${docsDir}/${folder}`)
+          .filter((file) => file.endsWith('.tsx'))
           .map((file) => {
-            const path = `${storybookDir}/${group}/${file}`;
+            const path = `${docsDir}/${folder}/${file}`;
             this.addWatchFile(path);
-            const title = /title:\s*'([^']+)'/.exec(readFileSync(path, 'utf8'))?.[1] ?? file;
-            const [groupName = '', name = title] = title.split('/');
-            return {
-              group: groupName,
-              name,
-              slug: file.replace('.stories.tsx', ''),
-              module: `../storybook/${group}/${file}`,
-            };
+            const { title, group } = docsHeader(path);
+            return { group, name: title, slug: file.replace('.tsx', ''), module: `../docs/${folder}/${file}` };
           })
           .sort((a, b) =>
-            group === 'foundations'
+            folder === 'foundations'
               ? FOUNDATIONS.indexOf(a.name) - FOUNDATIONS.indexOf(b.name)
               : a.name.localeCompare(b.name, 'en'),
           ),

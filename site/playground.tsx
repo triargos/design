@@ -1,26 +1,15 @@
-import { type ComponentType, useId, useState } from 'react';
+import { useId, useState } from 'react';
 
 import { Field, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 
-import { ExampleCode, ExampleSourceContext, Preview, Section } from '../storybook/kit/blocks';
+import { ExampleCode, ExampleSourceContext, Preview, Section } from '../docs/kit/blocks';
+import type { ArgType, DocsModule } from '../docs/kit/docs';
 
 type Args = Record<string, unknown>;
-
-interface ArgType {
-  readonly control?: string | { readonly type?: string };
-  readonly options?: ReadonlyArray<string>;
-  readonly table?: { readonly disable?: boolean };
-}
-
-/** What a story file's meta gives the Playground. */
-export interface PlaygroundMeta {
-  readonly component?: { readonly displayName?: string; readonly name?: string };
-  readonly args?: Args;
-  readonly argTypes?: Record<string, ArgType>;
-}
+type PlaygroundSpec = NonNullable<DocsModule['playground']>;
 
 type Control =
   | { readonly kind: 'select'; readonly name: string; readonly options: ReadonlyArray<string> }
@@ -34,11 +23,13 @@ const controlType = (argType: ArgType | undefined) =>
   typeof argType?.control === 'string' ? argType.control : argType?.control?.type;
 
 /** Controls from \`argTypes\` (selects with \`options\`, booleans), then from plain string and boolean \`args\`. */
-export function controlsOf(meta: PlaygroundMeta): ReadonlyArray<Control> {
-  const names = new Set([...Object.keys(meta.argTypes ?? {}), ...Object.keys(meta.args ?? {})]);
+export function controlsOf(playground: PlaygroundSpec): ReadonlyArray<Control> {
+  const args: Args = playground.args ?? {};
+  const argTypes: Readonly<Record<string, ArgType>> = playground.argTypes ?? {};
+  const names = new Set([...Object.keys(argTypes), ...Object.keys(args)]);
   return [...names].flatMap((name): ReadonlyArray<Control> => {
-    const argType = meta.argTypes?.[name];
-    const value = meta.args?.[name];
+    const argType = argTypes[name];
+    const value = args[name];
     if (argType?.table?.disable || FIXED.has(name) || name.startsWith('aria-')) return [];
     const type = controlType(argType);
     if ((type === 'select' || type === 'radio' || type === 'inline-radio') && argType?.options) {
@@ -108,19 +99,22 @@ function ControlField({
   );
 }
 
-/** The story's \`Playground\`, live, with a control per prop and the JSX the controls describe. */
+/**
+ * The module's \`playground\`, live, with a control per prop and the JSX the controls describe. \`name\` is the component's
+ * name in that code (a built component's own \`name\` is minified).
+ */
 export function Playground({
-  Story,
-  meta,
+  name,
+  playground,
   controls,
 }: {
-  Story: ComponentType<Args>;
-  meta: PlaygroundMeta;
+  name: string;
+  playground: PlaygroundSpec;
   controls: ReadonlyArray<Control>;
 }) {
-  const [args, setArgs] = useState<Args>(() => ({ ...meta.args }));
-  const component = meta.component?.displayName ?? meta.component?.name ?? 'Component';
-  const code = jsxOf(component, args);
+  const [args, setArgs] = useState<Args>(() => ({ ...playground.args }));
+  const { component: Component, render } = playground;
+  const code = jsxOf(name, args);
   return (
     <Section title='Playground'>
       <ExampleSourceContext value={() => code}>
@@ -141,7 +135,7 @@ export function Playground({
               <ExampleCode section='Playground' />
             </>
           }>
-          <Story {...args} />
+          {render ? render(args) : <Component {...args} />}
         </Preview>
       </ExampleSourceContext>
     </Section>

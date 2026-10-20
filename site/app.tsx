@@ -9,7 +9,7 @@ import { Skeleton } from '~/components/ui/skeleton';
 
 import { cn } from '~/lib/utils';
 
-import { FoundationPage } from '../storybook/kit/blocks';
+import { FoundationPage } from '../docs/kit/blocks';
 import { CustomizationStyles, CustomizeSheet } from './customize';
 import { Home } from './home';
 import { DocsSidebar, Wordmark } from './nav';

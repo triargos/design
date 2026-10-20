@@ -1,7 +1,7 @@
 @import '../src/tailwind.css';
 
-/* Classes used by the stories, examples and kit render here too. */
-@source '../storybook';
+/* Classes used by the docs pages, examples and kit render here too. */
+@source '../docs';
 @source './';
 
 /* Code blocks ("Show code", the Playground) in Geist Mono instead of the system mono. Docs only: the design system's

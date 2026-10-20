@@ -28,7 +28,7 @@ import { brandingThemeCss } from '~/lib/theme/branding-theme';
 import { toCss } from '~/lib/theme/color';
 import { cn } from '~/lib/utils';
 
-import { type DocsSurface } from '../storybook/kit/blocks';
+import { type DocsSurface } from '../docs/kit/blocks';
 import {
   DEFAULT_TOKEN_GLOBALS,
   formatToken,
@@ -36,13 +36,13 @@ import {
   type TunableToken,
   tokenCss,
   tokenValue,
-} from '../storybook/kit/tokens';
+} from '../docs/kit/tokens';
 
-/** The brand and the token scales every page renders with; what Storybook's toolbar and Tokens panel tune. */
+/** The brand and the token scales every page renders with; what the Customize sheet tunes. */
 interface Customization {
   readonly branding: BrandingTheme;
   readonly tokens: Readonly<Record<string, number>>;
-  /** The surface the examples sit on: Storybook's surface toolbar. */
+  /** The surface the examples sit on: chosen in the Customize sheet. */
   readonly surface: DocsSurface;
 }
 

@@ -160,7 +160,7 @@
 }
 
 /* The named radius, spacing, motion and type roles are registered in `cn` (`lib/utils.ts`); a new name goes there too,
-   or `twMerge` misreads it. Storybook's Tokens panel tunes radius, spacing and type. */
+   or `twMerge` misreads it. The docs Customize sheet tunes radius, spacing and type. */
 @theme {
   --font-sans: 'Inter Variable', sans-serif;
 

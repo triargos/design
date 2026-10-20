@@ -3,7 +3,7 @@ import type { ComponentProps } from 'react';
 import { cn } from '~/lib/utils';
 
 /**
- * The Triargos mark (`elternportal/apps/dashboard/public/assets/triargos-logo.svg`), inline so its three greys can follow
+ * The Triargos mark, inline so its three greys can follow
  * the mode: the front and back shades swap in dark, so the front stroke stays the strongest.
  */
 export function TriargosLogo({ className, ...props }: ComponentProps<'svg'>) {

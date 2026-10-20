@@ -6,16 +6,16 @@ import { Item, ItemContent, ItemMedia, ItemTitle } from '~/components/ui/item';
 
 import { cn } from '~/lib/utils';
 
-import { AvatarGroupExample } from '../storybook/examples/avatar/group';
-import { BadgeStatus } from '../storybook/examples/badge/status';
-import { ButtonVariants } from '../storybook/examples/button/variants';
-import { CalendarDefault } from '../storybook/examples/calendar/default';
-import { OTPFieldFourDigits } from '../storybook/examples/otp-field/four-digits';
-import { OptionSelectAllowCustom } from '../storybook/examples/option-select/allow-custom';
-import { SearchSelectCustomValue } from '../storybook/examples/search-select/custom-value';
-import { SliderWithLabelAndValue } from '../storybook/examples/slider/with-label-and-value';
-import { SwitchWithLabel } from '../storybook/examples/switch/with-label';
-import { TabsDefault } from '../storybook/examples/tabs/default';
+import { AvatarGroupExample } from '../docs/examples/avatar/group';
+import { BadgeStatus } from '../docs/examples/badge/status';
+import { ButtonVariants } from '../docs/examples/button/intent-and-emphasis';
+import { CalendarDefault } from '../docs/examples/calendar/default';
+import { OTPFieldFourDigits } from '../docs/examples/otp-field/four-digits';
+import { OptionSelectAllowCustom } from '../docs/examples/option-select/allow-custom';
+import { SearchSelectCustomValue } from '../docs/examples/search-select/custom-value';
+import { SliderWithLabelAndValue } from '../docs/examples/slider/with-label-and-value';
+import { SwitchWithLabel } from '../docs/examples/switch/with-label';
+import { TabsDefault } from '../docs/examples/tabs/default';
 import { TriargosLogo } from './logo';
 import { pathOf, prefetchPage } from './page';
 import { Link } from './router';
