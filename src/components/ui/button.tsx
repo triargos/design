@@ -32,9 +32,9 @@ const buttonShape = cva(
         subtle: 'disabled:bg-disabled',
         outline: 'disabled:inset-ring-border',
         ghost: '',
-        // `intentVariants` paints the fill and the inset edge; the transparent border only keeps the size of the
-        // others.
-        raised: 'bg-clip-border disabled:bg-transparent disabled:shadow-[inset_0_0_0_1px_var(--border)]',
+        // `intentVariants` paints the fill and the edge; the transparent border only keeps the size of the others.
+        // Disabled keeps the edge outside the box, where the raised ring sits, so the button does not shrink by 2px.
+        raised: 'bg-clip-border disabled:bg-transparent disabled:shadow-[0_0_0_1px_var(--border)]',
       },
       // Heights 32 / 36 / 40; the default is a field's height (36). The radius follows the height (`rounded-control*`).
       // Padding: 16px (12px at `xs`), 2px less on the icon side (an icon reads lighter than text). On touch, `hit-area`
