@@ -599,11 +599,14 @@
       "name": "integer-input",
       "type": "registry:ui",
       "dependencies": [
+        "framer-motion@13.4.4",
         "lucide-react@1.48.0"
       ],
       "registryDependencies": [
-        "@triargos/input-group",
-        "@triargos/theme"
+        "@triargos/button",
+        "@triargos/input",
+        "@triargos/theme",
+        "@triargos/utils"
       ],
       "files": [
         {

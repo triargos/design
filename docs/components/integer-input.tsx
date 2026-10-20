@@ -10,14 +10,17 @@ export default defineDocs({
   group: 'Components',
   Page: () => (
     <FoundationPage title='Integer Input' description='A whole number between a minus and a plus, with a unit.'>
-      <ExampleSection title='Default'>
+      <ExampleSection
+        title='Default'
+        description='Steps roll the digits; hold a stepper to repeat. Focus selects the number, so the first key replaces it.'>
         <IntegerInputDefault />
       </ExampleSection>
       <ExampleSection
         title='With max'
         description={
           <>
-            <Code>max</Code> stops the stepper and clamps typed values; the minimum is always 0.
+            <Code>max</Code> stops the stepper and clamps typed values; the minimum is always 0. A press past a limit
+            shakes the number.
           </>
         }>
         <IntegerInputWithMax />
