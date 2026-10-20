@@ -101,7 +101,7 @@ export function Install({ name, title }: { name: string; title: string }) {
           </TabsRadioGroup>
           <div className='flex items-center gap-related py-related pr-related pl-group'>
             <Command command={add} label={`Add ${title}`} />
-            <CopyButton value={add} label='Copy command' size='icon-sm' />
+            <CopyButton value={add} label='Copy command' size='icon' />
           </div>
         </div>
         <div className='border-t border-border bg-shell px-1 pb-1'>

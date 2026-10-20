@@ -57,7 +57,7 @@ export default defineDocs({
         <div className='grid gap-group md:grid-cols-3'>
           <Stage label={<Code>DropdownMenu</Code>}>
             <DropdownMenu defaultOpen modal={false}>
-              <DropdownMenuTrigger render={<Button size='icon-sm' aria-label='Actions' />}>
+              <DropdownMenuTrigger render={<Button size='icon' aria-label='Actions' />}>
                 <MoreHorizontalIcon />
               </DropdownMenuTrigger>
               <DropdownMenuContent align='start' className='w-56'>
@@ -103,13 +103,13 @@ export default defineDocs({
           </Stage>
           <Stage label={<Code>Popover</Code>} height='h-80'>
             <Popover defaultOpen modal={false}>
-              <PopoverTrigger render={<Button size='sm' />}>Deadline</PopoverTrigger>
+              <PopoverTrigger render={<Button />}>Deadline</PopoverTrigger>
               <PopoverContent align='start'>
                 <PopoverHeader>
                   <PopoverTitle>Extend the deadline</PopoverTitle>
                   <PopoverDescription>Members can submit their tasks until the new date.</PopoverDescription>
                 </PopoverHeader>
-                <Button intent='primary' size='sm' className='self-end'>
+                <Button intent='primary' className='self-end'>
                   Extend
                 </Button>
               </PopoverContent>

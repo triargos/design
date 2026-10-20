@@ -57,7 +57,7 @@ function useFieldLabel(id: string | undefined, fieldRef: React.RefObject<HTMLEle
 
 /**
  * The field surface of a segmented date or time field: `Input` height and padding, the end addon (calendar button or
- * clock) 8px in like an `InputGroupButton` `icon-xs`, so both icons sit on the same spot.
+ * clock) 6px in like an `InputGroupButton` `icon-xs`, so both icons sit on the same spot.
  */
 function DateField<T extends AriaDateValue>({
   className,
@@ -68,8 +68,8 @@ function DateField<T extends AriaDateValue>({
       data-slot='date-field'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-10 w-full min-w-0 cursor-text items-center pr-[7px] pl-3.5 text-control',
-        'data-disabled:cursor-not-allowed data-disabled:bg-disabled data-disabled:text-disabled-foreground data-disabled:shadow-field-flat',
+        'flex h-9 w-full min-w-0 cursor-text items-center pr-[5px] pl-[calc(--spacing(3)-1px)] text-control',
+        'data-disabled:cursor-not-allowed data-disabled:opacity-64 data-disabled:shadow-field-flat data-disabled:before:shadow-none',
         className,
       )}
       {...props}
@@ -87,8 +87,8 @@ function TimeField<T extends AriaTimeValue>({
       data-slot='time-field'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-10 w-full min-w-0 cursor-text items-center pr-[7px] pl-3.5 text-control',
-        'data-disabled:cursor-not-allowed data-disabled:bg-disabled data-disabled:text-disabled-foreground data-disabled:shadow-field-flat',
+        'flex h-9 w-full min-w-0 cursor-text items-center pr-[5px] pl-[calc(--spacing(3)-1px)] text-control',
+        'data-disabled:cursor-not-allowed data-disabled:opacity-64 data-disabled:shadow-field-flat data-disabled:before:shadow-none',
         className,
       )}
       {...props}
@@ -119,12 +119,12 @@ function DateSegment({ className, ...props }: DateSegmentProps) {
   );
 }
 
-/** The segments of a `DateField` or `TimeField`. They render 16px on coarse pointers, so iOS does not zoom on focus. */
+/** The segments of a `DateField` or `TimeField`. They render 16px below `sm`, so iOS does not zoom on focus. */
 function SegmentsInput({ className, ...props }: Omit<AriaDateInputProps, 'children'>) {
   return (
     <AriaDateInput
       className={composeRenderProps(className, (className) =>
-        cn('flex min-w-0 flex-1 items-center pointer-coarse:text-[1rem]', className),
+        cn('flex min-w-0 flex-1 items-center max-sm:text-[1rem]', className),
       )}
       {...props}>
       {(segment) => <DateSegment segment={segment} />}
@@ -238,7 +238,7 @@ function DateInput({
               <span className='relative flex min-w-0 flex-1 items-center'>
                 <SegmentsInput className={cn('peer', showPlaceholder && 'opacity-0 focus-within:opacity-100')} />
                 {showPlaceholder && (
-                  <span className='pointer-events-none absolute inset-y-0 left-0 flex items-center truncate text-faint-foreground peer-focus-within:hidden pointer-coarse:text-[1rem]'>
+                  <span className='pointer-events-none absolute inset-y-0 left-0 flex items-center truncate text-faint-foreground peer-focus-within:hidden max-sm:text-[1rem]'>
                     {placeholder}
                   </span>
                 )}

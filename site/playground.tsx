@@ -75,7 +75,7 @@ function ControlField({
           items={control.options.map((option) => ({ value: option, label: option }))}
           value={typeof value === 'string' ? value : null}
           onValueChange={(next) => onChange(next ?? undefined)}>
-          <SelectTrigger id={id} size='sm' className='w-full'>
+          <SelectTrigger id={id} className='w-full'>
             <SelectValue placeholder='Default' />
           </SelectTrigger>
           <SelectContent>

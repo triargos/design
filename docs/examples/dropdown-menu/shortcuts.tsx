@@ -13,7 +13,7 @@ import {
 export function DropdownMenuShortcuts() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size='icon-sm' aria-label='Actions' />}>
+      <DropdownMenuTrigger render={<Button size='icon' aria-label='Actions' />}>
         <MoreHorizontalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='w-56'>

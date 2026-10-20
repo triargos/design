@@ -42,17 +42,13 @@ export default defineDocs({
           columns={STATES}
           rows={[
             row('Primary', <Code>primary/solid</Code>, (state) => (
-              <Button intent='primary' size='sm' disabled={off(state)}>
+              <Button intent='primary' disabled={off(state)}>
                 Save
               </Button>
             )),
-            row('Raised', <Code>neutral/raised</Code>, (state) => (
-              <Button size='sm' disabled={off(state)}>
-                Edit
-              </Button>
-            )),
+            row('Raised', <Code>neutral/raised</Code>, (state) => <Button disabled={off(state)}>Edit</Button>),
             row('Ghost', <Code>neutral/ghost</Code>, (state) => (
-              <Button emphasis='ghost' size='icon-sm' aria-label='More' disabled={off(state)}>
+              <Button emphasis='ghost' size='icon' aria-label='More' disabled={off(state)}>
                 <MoreHorizontalIcon />
               </Button>
             )),

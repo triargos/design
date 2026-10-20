@@ -14,7 +14,7 @@ export function TooltipPositions() {
     <div className='flex flex-wrap items-center gap-2'>
       {SIDES.map(({ side, label }) => (
         <Tooltip key={side}>
-          <TooltipTrigger render={<Button size='sm' />}>{label}</TooltipTrigger>
+          <TooltipTrigger render={<Button />}>{label}</TooltipTrigger>
           <TooltipContent side={side}>Opens on the {side}</TooltipContent>
         </Tooltip>
       ))}

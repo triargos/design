@@ -11,7 +11,7 @@ export function CopyButtonInAField() {
         <CopyButton
           value={INVITE_LINK}
           label='Copy invite link'
-          className={inputGroupButtonVariants({ size: 'icon-sm' })}
+          className={inputGroupButtonVariants({ size: 'icon-xs' })}
         />
       </InputGroupAddon>
     </InputGroup>

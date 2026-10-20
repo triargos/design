@@ -17,7 +17,7 @@ export function FieldInACard() {
         <CardTitle>Profile</CardTitle>
         <CardDescription>What other members of the workspace see.</CardDescription>
       </CardHeader>
-      <CardContent className='p-group'>
+      <CardContent className='p-card'>
         <FieldGroup>
           <FieldGroup columns={2}>
             <Field>
@@ -52,7 +52,7 @@ export function FieldInACard() {
       </CardContent>
       <CardFooter show={dirty} className='flex items-center justify-end gap-related'>
         <span className='text-body text-muted-foreground'>Unsaved changes</span>
-        <Button intent='primary' size='sm' onClick={() => setDirty(false)}>
+        <Button intent='primary' onClick={() => setDirty(false)}>
           Save
         </Button>
       </CardFooter>

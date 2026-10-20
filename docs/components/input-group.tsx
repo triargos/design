@@ -16,7 +16,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Input Group'
-      description='A field with text, icons, keys or buttons inside it. The group owns the surface, focus and invalid; addons sit on the field’s 14px padding line.'>
+      description='A field with text, icons, keys or buttons inside it. The group owns the surface, focus and invalid; addons sit on the field’s 12px padding line.'>
       <ExampleSection title='With icon'>
         <InputGroupWithIcon />
       </ExampleSection>

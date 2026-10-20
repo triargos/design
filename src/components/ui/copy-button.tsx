@@ -88,7 +88,7 @@ function CopyButton({
   copiedLabel = 'Copied',
   children,
   onCopied,
-  size = children === undefined ? 'icon-sm' : 'sm',
+  size = children === undefined ? 'icon' : 'default',
   emphasis = 'ghost',
   ...props
 }: CopyButtonProps) {

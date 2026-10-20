@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip
 export function TooltipDefault() {
   return (
     <Tooltip>
-      <TooltipTrigger render={<Button emphasis='ghost' size='icon-sm' aria-label='More actions' />}>
+      <TooltipTrigger render={<Button emphasis='ghost' size='icon' aria-label='More actions' />}>
         <MoreHorizontalIcon />
       </TooltipTrigger>
       <TooltipContent>More actions</TooltipContent>

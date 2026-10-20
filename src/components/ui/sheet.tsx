@@ -63,7 +63,7 @@ function SheetContent({
             render={
               <Button
                 emphasis='ghost'
-                size='icon-sm'
+                size='icon'
                 className='absolute top-3 right-3 rounded-inner [--outer-inset:--spacing(3)]'
               />
             }>

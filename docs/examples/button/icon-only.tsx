@@ -9,9 +9,6 @@ export function ButtonIconOnly() {
       <Button size='icon-xs' aria-label='More'>
         <MoreHorizontalIcon />
       </Button>
-      <Button size='icon-sm' aria-label='More'>
-        <MoreHorizontalIcon />
-      </Button>
       <Button size='icon' aria-label='More'>
         <MoreHorizontalIcon />
       </Button>

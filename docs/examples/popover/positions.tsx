@@ -14,7 +14,7 @@ export function PopoverPositions() {
     <div className='flex flex-wrap items-center gap-2'>
       {SIDES.map(({ side, label }) => (
         <Popover key={side}>
-          <PopoverTrigger render={<Button size='sm' />}>{label}</PopoverTrigger>
+          <PopoverTrigger render={<Button />}>{label}</PopoverTrigger>
           <PopoverContent side={side} className='w-48'>
             <PopoverDescription>Opens on the {side}.</PopoverDescription>
           </PopoverContent>

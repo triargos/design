@@ -7,6 +7,7 @@ export const SPACING_STEPS = [
   { name: 'tight', px: 4 },
   { name: 'related', px: 8 },
   { name: 'group', px: 16 },
+  { name: 'card', px: 20 },
   { name: 'page', px: 32 },
   { name: 'section', px: 48 },
 ] as const;
@@ -79,8 +80,8 @@ export const RADIUS_ROLES = [
   { name: 'control', px: 10, use: 'Controls 32–36px' },
   { name: 'control-lg', px: 12, use: 'Controls and fields 40–44px' },
   { name: 'popup', px: 16, use: 'Menus, popovers, selects, tooltips' },
-  { name: 'card', px: 24, use: 'Card shell, Alert' },
-  { name: 'dialog', px: 24, use: 'Dialogs, sheets' },
+  { name: 'card', px: 16, use: 'Card shell, Alert' },
+  { name: 'dialog', px: 20, use: 'Dialogs, sheets' },
   { name: 'panel', px: 20, use: 'The page panel' },
 ] as const;
 

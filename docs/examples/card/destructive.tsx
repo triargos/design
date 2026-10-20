@@ -12,10 +12,10 @@ export function CardDestructive() {
         <CardTitle>Delete workspace</CardTitle>
       </CardHeader>
       <CardContent className='flex items-center justify-between gap-group p-1 max-sm:flex-col max-sm:items-stretch max-sm:gap-2.5 max-sm:pt-2.5'>
-        <p className='min-w-0 px-3 text-body text-muted-foreground'>
+        <p className='min-w-0 px-[calc(var(--spacing-card)-var(--spacing-tight))] text-body text-muted-foreground'>
           Removes every project, task and document for good.
         </p>
-        <Button intent='destructive' size='sm' className='rounded-inner [--outer-inset:--spacing(2)]'>
+        <Button intent='destructive' className='rounded-inner [--outer-inset:--spacing(2)]'>
           Delete workspace
         </Button>
       </CardContent>

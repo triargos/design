@@ -12,14 +12,18 @@ import { cn } from '~/lib/utils';
  * - `within`: any other wrapper whose descendants receive focus and carry `aria-invalid`.
  */
 const inputSurfaceVariants = cva(
-  // Resting: the field ring (`shadow-field`) and a small lift; the border is transparent and only carries state. In dark
-  // the field is a 3% white veil over its surface, one step lighter, never a hole. Focus: a `ring` border and a soft
-  // 3px ring instead of the field ring. Invalid: the field ring turns `destructive`, no tint. Read-only (`readonly`, or
-  // Base UI's `data-readonly`) and disabled: `shadow-field-flat`; read-only stays focusable (to select and copy) but
-  // never rings. No hover style.
+  // Resting: a real 1px `--edge-field` border inside the box (a 36px field measures 36px; `hit-area` grows it
+  // to 44px on touch), the light-side accent laid on
+  // the border row by a full-size `::before` (`shadow-field-edge`), and a small lift (`shadow-field`). The fill stops
+  // at the border (`bg-clip-padding`), so the translucent edge mixes with the surface behind. In dark the field fills
+  // with a third of its edge color (white ~2.5%), one step lighter, never a hole. Focus: a `ring` border and a soft 3px
+  // ring instead of the lift. Invalid: the edge turns `destructive`, no tint. Disabled: the whole field at 64% opacity,
+  // no lift, no accent. Read-only (`readonly`, or Base UI's `data-readonly`): `shadow-field-flat`; it stays focusable
+  // (to select and copy) but never rings. No hover style.
   [
     // `--outer-radius`: buttons and chips inside the field take `rounded-inner` with their own `--outer-inset`.
-    'rounded-control-lg border border-transparent bg-surface bg-clip-border shadow-field [--outer-radius:var(--radius-control-lg)] dark:bg-foreground/3',
+    'hit-area relative rounded-control border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--outer-radius:var(--radius-control)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
+    'before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-control)-1px)] before:shadow-field-edge',
     'transition-[background-color,border-color,box-shadow] duration-feedback outline-none',
   ],
   {
@@ -30,9 +34,9 @@ const inputSurfaceVariants = cva(
           'aria-expanded:border-ring aria-expanded:shadow-none aria-expanded:ring-3 aria-expanded:ring-ring/24',
           'aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
           'focus-visible:aria-invalid:border-destructive/64 focus-visible:aria-invalid:ring-destructive/16 dark:focus-visible:aria-invalid:ring-destructive/24',
-          'disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-disabled disabled:text-disabled-foreground disabled:shadow-field-flat',
+          'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-64 disabled:shadow-field-flat disabled:before:shadow-none',
           '[&:is([readonly],[data-readonly])]:text-muted-foreground [&:is([readonly],[data-readonly])]:shadow-field-flat',
-          '[&:is([readonly],[data-readonly])]:focus-visible:border-transparent [&:is([readonly],[data-readonly])]:focus-visible:shadow-field-flat [&:is([readonly],[data-readonly])]:focus-visible:ring-0',
+          '[&:is([readonly],[data-readonly])]:focus-visible:border-(--edge-field) [&:is([readonly],[data-readonly])]:focus-visible:shadow-field-flat [&:is([readonly],[data-readonly])]:focus-visible:ring-0',
         ],
         group: [
           'has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:shadow-none has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring/24',
@@ -40,9 +44,9 @@ const inputSurfaceVariants = cva(
           'has-[[data-slot][aria-invalid=true]]:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
           'has-[[data-slot][aria-invalid=true]:focus-visible]:border-destructive/64 has-[[data-slot][aria-invalid=true]:focus-visible]:ring-destructive/16 dark:has-[[data-slot][aria-invalid=true]:focus-visible]:ring-destructive/24',
           // Only the control dims the group: a busy submit button (disabled while sending) leaves the field as is.
-          'has-[[data-slot=input-group-control]:disabled]:bg-disabled has-[[data-slot=input-group-control]:disabled]:text-disabled-foreground has-[[data-slot=input-group-control]:disabled]:shadow-field-flat',
+          'has-[[data-slot=input-group-control]:disabled]:opacity-64 has-[[data-slot=input-group-control]:disabled]:shadow-field-flat has-[[data-slot=input-group-control]:disabled]:before:shadow-none',
           'has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:text-muted-foreground has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:shadow-field-flat',
-          'has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:border-transparent has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:shadow-field-flat has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:ring-0',
+          'has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:border-(--edge-field) has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:shadow-field-flat has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:ring-0',
         ],
         within: [
           'focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/24 focus-within:shadow-none',
@@ -52,8 +56,8 @@ const inputSurfaceVariants = cva(
           'aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
           'focus-within:aria-invalid:border-destructive/64 focus-within:aria-invalid:ring-destructive/16 dark:focus-within:aria-invalid:ring-destructive/24',
           'has-[[readonly],[data-readonly]]:text-muted-foreground has-[[readonly],[data-readonly]]:shadow-field-flat',
-          'has-[[readonly],[data-readonly]]:focus-within:border-transparent has-[[readonly],[data-readonly]]:focus-within:shadow-field-flat has-[[readonly],[data-readonly]]:focus-within:ring-0',
-          'has-disabled:bg-disabled has-disabled:text-disabled-foreground has-disabled:shadow-field-flat',
+          'has-[[readonly],[data-readonly]]:focus-within:border-(--edge-field) has-[[readonly],[data-readonly]]:focus-within:shadow-field-flat has-[[readonly],[data-readonly]]:focus-within:ring-0',
+          'has-disabled:opacity-64 has-disabled:shadow-field-flat has-disabled:before:shadow-none',
         ],
       },
     },
@@ -65,7 +69,8 @@ const inputSurfaceVariants = cva(
 
 /**
  * `className` and `style` go to the field surface (size, layout, padding, font); every other prop, the ref included,
- * goes to the native input. A click on the surface's padding focuses the input.
+ * goes to the native input. A click on the surface's padding focuses the input. `type='file'`: the picker button is a
+ * raised 24px chip 6px in (`rounded-inner`), like an `InputGroupButton`; the file name, or the empty note, is muted.
  */
 function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
   return (
@@ -74,7 +79,8 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
       style={style}
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-10 w-full min-w-0 cursor-text items-center px-3.5 text-control',
+        'flex h-9 w-full min-w-0 cursor-text items-center px-[calc(--spacing(3)-1px)] text-control max-sm:text-[1rem]',
+        'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-1',
         className,
       )}
       onPointerDown={(event) => {
@@ -82,13 +88,13 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         event.preventDefault();
         event.currentTarget.querySelector('input')?.focus();
       }}>
-      {/* On touch the native input renders 16px and is scaled to the control size (`input-scale`), so iOS does not zoom on
-          focus. The surface owns size, padding and text style; the input inherits them. */}
+      {/* Below `sm` the field renders 16px (`max-sm:text-[1rem]`), so iOS does not zoom on focus; the input inherits it. */}
       <InputPrimitive
         data-slot='input-control'
         className={cn(
-          'input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
-          'file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-control file:font-medium file:text-foreground',
+          'h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
+          '[&[type=file]]:h-auto [&[type=file]]:p-px [&[type=file]]:cursor-pointer [&[type=file]]:text-muted-foreground [&[type=file]]:[--outer-inset:--spacing(1.5)]',
+          'file:me-2 file:h-6 file:cursor-pointer file:rounded-inner file:border-0 file:bg-card file:px-2 file:text-caption file:font-medium file:text-foreground file:shadow-raised file:transition-shadow file:duration-feedback hover:file:shadow-raised-hover dark:file:bg-foreground/10',
         )}
         {...props}
       />

@@ -14,7 +14,7 @@ import { Code, ExampleSection, FoundationPage, FoundationSection, Matrix } from 
 import { defineDocs } from '../kit/docs';
 
 const INVITE_LINK = 'https://acme.example/invite/k3f9';
-const SIZES = ['icon-xs', 'icon-sm', 'icon'] as const;
+const SIZES = ['icon-xs', 'icon', 'icon-lg'] as const;
 
 /** Keeps its button in the copied state: clicks it now and again before the 2s reset. */
 function Copied({ children }: { children: ReactNode }) {

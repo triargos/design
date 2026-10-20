@@ -41,7 +41,7 @@ export function DangerZoneDefault() {
               <ItemDescription>Guests lose access; members keep it.</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button size='sm'>Unpublish</Button>
+              <Button>Unpublish</Button>
             </ItemActions>
           </Item>
           <Item>
@@ -50,7 +50,7 @@ export function DangerZoneDefault() {
               <ItemDescription>Removes it from the list. You can restore it.</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button size='sm'>Archive</Button>
+              <Button>Archive</Button>
             </ItemActions>
           </Item>
           <Item>
@@ -60,7 +60,7 @@ export function DangerZoneDefault() {
             </ItemContent>
             <ItemActions>
               <AlertDialog onOpenChange={() => setValue('')}>
-                <AlertDialogTrigger render={<Button intent='destructive' size='sm' />}>Delete…</AlertDialogTrigger>
+                <AlertDialogTrigger render={<Button intent='destructive' />}>Delete…</AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete project?</AlertDialogTitle>

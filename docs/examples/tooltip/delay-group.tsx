@@ -17,9 +17,7 @@ export function TooltipDelayGroup() {
       <div className='flex items-center gap-0.5 text-muted-foreground'>
         {ACTIONS.map(({ label, icon }) => (
           <Tooltip key={label}>
-            <TooltipTrigger render={<Button emphasis='ghost' size='icon-sm' aria-label={label} />}>
-              {icon}
-            </TooltipTrigger>
+            <TooltipTrigger render={<Button emphasis='ghost' size='icon' aria-label={label} />}>{icon}</TooltipTrigger>
             <TooltipContent>{label}</TooltipContent>
           </Tooltip>
         ))}

@@ -40,7 +40,7 @@ export default defineDocs({
       <FoundationSection title='Open' description='Switch the mode and surface in the toolbar.'>
         <Preview title='TooltipContent' className='h-28 items-end justify-center'>
           <Tooltip open>
-            <TooltipTrigger render={<Button emphasis='ghost' size='icon-sm' aria-label='More actions' />}>
+            <TooltipTrigger render={<Button emphasis='ghost' size='icon' aria-label='More actions' />}>
               <MoreHorizontalIcon />
             </TooltipTrigger>
             <TooltipContent>More actions</TooltipContent>

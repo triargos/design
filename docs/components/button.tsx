@@ -35,12 +35,11 @@ type Size = NonNullable<ButtonProps['size']>;
 
 const TEXT_SIZES: ReadonlyArray<{ size: Size; height: number; radius: string }> = [
   { size: 'xs', height: 32, radius: 'control' },
-  { size: 'sm', height: 36, radius: 'control' },
-  { size: 'default', height: 40, radius: 'control-lg' },
-  { size: 'lg', height: 44, radius: 'control-lg' },
+  { size: 'default', height: 36, radius: 'control' },
+  { size: 'lg', height: 40, radius: 'control-lg' },
 ];
 
-const ICON_SIZES: ReadonlyArray<Size> = ['icon-xs', 'icon-sm', 'icon', 'icon-lg'];
+const ICON_SIZES: ReadonlyArray<Size> = ['icon-xs', 'icon', 'icon-lg'];
 
 /** The pairs to reach for, with the props that select each one. */
 const PAIRS: ReadonlyArray<{
@@ -101,7 +100,7 @@ function SurfaceColumn() {
   return (
     <Stack gap='related' align='start'>
       {PAIRS.map(({ intent, emphasis }) => (
-        <Button key={`${intent}-${emphasis}`} intent={intent} emphasis={emphasis} size='sm'>
+        <Button key={`${intent}-${emphasis}`} intent={intent} emphasis={emphasis}>
           {intent}/{emphasis}
         </Button>
       ))}
@@ -132,7 +131,7 @@ export default defineDocs({
       <ExampleSection title='Intent and emphasis' description='The five pairs. Pairs, below, says when each one fits.'>
         <ButtonVariants />
       </ExampleSection>
-      <ExampleSection title='Sizes' description='32 / 36 / 40 / 44px, the field heights.'>
+      <ExampleSection title='Sizes' description='32 / 36 / 40px; the default is the field height.'>
         <ButtonSizes />
       </ExampleSection>
       <ExampleSection
@@ -239,7 +238,7 @@ export default defineDocs({
           rows={INTENTS.map((intent) => ({
             name: intent,
             cells: EMPHASES.map((emphasis) => (
-              <Button key={emphasis} intent={intent} emphasis={emphasis} size='sm'>
+              <Button key={emphasis} intent={intent} emphasis={emphasis}>
                 Action
               </Button>
             )),
@@ -249,7 +248,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Size × emphasis'
-        description='32 / 36 / 40 / 44px, the field heights. The radius follows the height; icon-only sizes match, so a row of both lines up. On touch, buttons under 44px get a 44px hit area.'>
+        description='32 / 36 / 40px; the default is the field height. The radius follows the height; icon-only sizes match, so a row of both lines up. On touch, buttons under 44px get a 44px hit area.'>
         <Matrix
           columns={['primary/solid', 'neutral/raised', 'neutral/ghost', 'icon']}
           columnWidth='7rem'
@@ -333,9 +332,7 @@ export default defineDocs({
           </Card>
           <Preview title='Danger zone' className='justify-between'>
             <span className='text-body text-muted-foreground'>Delete the workspace and all its data</span>
-            <Button intent='destructive' size='sm'>
-              Delete…
-            </Button>
+            <Button intent='destructive'>Delete…</Button>
           </Preview>
         </div>
       </FoundationSection>

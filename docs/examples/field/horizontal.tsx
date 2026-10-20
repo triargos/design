@@ -19,7 +19,7 @@ export function FieldHorizontal() {
         <CardTitle>Notifications</CardTitle>
         <CardDescription>How you hear about changes to your tasks.</CardDescription>
       </CardHeader>
-      <CardContent className='p-group'>
+      <CardContent className='p-card'>
         <FieldGroup>
           <Field orientation='horizontal'>
             <FieldContent>

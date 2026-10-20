@@ -36,7 +36,11 @@ function Layer({ name, owner, children }: { name: string; owner: ReactNode; chil
 const elevations = [
   { className: 'shadow-none', name: 'flat', use: 'Page content, shells' },
   { className: 'shadow-border', name: 'shadow-border', use: 'The ring alone, no lift' },
-  { className: 'shadow-field', name: 'shadow-field', use: 'Fields: a firmer ring, heavier at the bottom' },
+  {
+    className: 'border border-(--edge-field) shadow-field',
+    name: 'shadow-field',
+    use: 'Fields: the lift under their --edge-field border',
+  },
   { className: 'shadow-card', name: 'shadow-card', use: 'Card content: a small drop under its border' },
   { className: 'shadow-raised', name: 'shadow-raised', use: 'Raised buttons, tab chips' },
   { className: 'shadow-popup', name: 'shadow-popup', use: 'Menus, popovers, selects, tooltips' },

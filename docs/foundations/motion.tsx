@@ -83,7 +83,7 @@ function Run({ className, label }: { className: string; label: string }) {
           )}
         />
       </div>
-      <Button emphasis='ghost' size='icon-sm' aria-label={`Play ${label}`} onClick={() => setEnd((value) => !value)}>
+      <Button emphasis='ghost' size='icon' aria-label={`Play ${label}`} onClick={() => setEnd((value) => !value)}>
         <PlayIcon />
       </Button>
     </div>

@@ -27,10 +27,10 @@ export function AccordionFullBleedRows() {
         <Accordion defaultValue={['documents']}>
           {QUESTIONS.map((item) => (
             <AccordionItem key={item.value} value={item.value} className='pb-0'>
-              <AccordionTrigger className='items-center rounded-none px-4 py-2.5 transition-colors duration-feedback hover:bg-row-hover'>
+              <AccordionTrigger className='items-center rounded-none px-card py-2.5 transition-colors duration-feedback hover:bg-row-hover'>
                 {item.question}
               </AccordionTrigger>
-              <AccordionContent className='border-t border-border-subtle bg-muted/20 px-4 py-2.5'>
+              <AccordionContent className='border-t border-border-subtle bg-muted/20 px-card py-2.5'>
                 {item.answer}
               </AccordionContent>
             </AccordionItem>

@@ -238,14 +238,16 @@ function CustomColor({
             style={{ background: value }}
           />
         </InputGroupAddon>
-        <span data-slot='input-group-input' className='flex h-full min-w-0 flex-1 items-center px-3.5 text-control'>
+        <span
+          data-slot='input-group-input'
+          className='flex h-full min-w-0 flex-1 items-center px-[calc(--spacing(3)-1px)] text-control max-sm:text-[1rem]'>
           <HexColorInput
             data-slot='input-group-control'
             aria-label={hexLabel}
             prefixed
             color={value}
             onChange={(next) => onValueChange(next.toLowerCase())}
-            className='input-scale h-full w-full min-w-0 flex-1 bg-transparent p-0 font-mono uppercase outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed'
+            className='h-full w-full min-w-0 flex-1 bg-transparent p-0 font-mono uppercase outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed'
           />
         </span>
       </InputGroup>

@@ -1,5 +1,4 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select';
-import { cva, type VariantProps } from 'class-variance-authority';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import * as React from 'react';
@@ -175,33 +174,19 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   );
 }
 
-const selectTriggerVariants = cva(
-  [
-    inputSurfaceVariants({ scope: 'self' }),
-    "flex w-full items-center justify-between gap-2 px-3.5 py-1 text-control whitespace-nowrap data-placeholder:text-faint-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
-  ],
-  {
-    variants: {
-      /** `sm` (36px) in toolbars and filters, next to `sm` buttons. */
-      size: { default: 'h-10', sm: 'h-9' },
-    },
-    defaultVariants: { size: 'default' },
-  },
-);
-
-function SelectTrigger({
-  className,
-  size,
-  children,
-  ...props
-}: SelectPrimitive.Trigger.Props & VariantProps<typeof selectTriggerVariants>) {
+/** The field surface at the field height (36px), like `Input`. */
+function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigger.Props) {
   const custom = React.use(SelectCustomContext);
   return (
     <SelectPrimitive.Trigger
       data-slot='select-trigger'
       // With the custom row chosen, the text field carries the error.
       aria-invalid={(custom ? custom.invalid && !custom.chosen : undefined) || undefined}
-      className={cn(selectTriggerVariants({ size }), className)}
+      className={cn(
+        inputSurfaceVariants({ scope: 'self' }),
+        "flex h-9 w-full items-center justify-between gap-2 px-[calc(--spacing(3)-1px)] py-1 text-control whitespace-nowrap max-sm:text-[1rem] data-placeholder:text-faint-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        className,
+      )}
       {...props}>
       {children}
       <SelectPrimitive.Icon render={<ChevronDownIcon className='pointer-events-none size-4 text-faint-foreground' />} />
@@ -297,7 +282,7 @@ const unfolded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 
 /**
  * The text field of a `Select allowCustom`: folds open below the trigger while the custom row is chosen, the 8px gap
- * with it. A line hangs it off the trigger: from under the trigger's text (1px border + `px-3.5`) to the middle of the
+ * with it. A line hangs it off the trigger: from under the trigger's text (1px border + 11px) to the middle of the
  * field, which is indented to make room. Put the trigger and it in one element.
  */
 function SelectCustomInput({

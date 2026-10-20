@@ -34,7 +34,7 @@ function IntegerInput({
     <InputGroup className={className}>
       <InputGroupAddon align='inline-start'>
         <InputGroupButton
-          size='icon-sm'
+          size='icon-xs'
           emphasis='raised'
           aria-label={decrementLabel}
           disabled={disabled || value <= 0}
@@ -71,7 +71,7 @@ function IntegerInput({
       </div>
       <InputGroupAddon align='inline-end'>
         <InputGroupButton
-          size='icon-sm'
+          size='icon-xs'
           emphasis='raised'
           aria-label={incrementLabel}
           disabled={disabled || (max !== undefined && value >= max)}

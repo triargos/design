@@ -37,7 +37,7 @@ export function ChartLine() {
       <CardHeader>
         <CardTitle>Tasks closed</CardTitle>
       </CardHeader>
-      <CardContent className='p-group'>
+      <CardContent className='p-card'>
         <ChartContainer config={config} className='aspect-auto h-56 w-full'>
           <LineChart data={DATA} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />

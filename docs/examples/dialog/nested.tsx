@@ -23,7 +23,7 @@ export function DialogNested() {
         </DialogHeader>
         <DialogBody>
           <Dialog>
-            <DialogTrigger render={<Button size='sm' />}>Manage members</DialogTrigger>
+            <DialogTrigger render={<Button />}>Manage members</DialogTrigger>
             <DialogContent className='sm:max-w-sm'>
               <DialogHeader>
                 <DialogTitle>Members</DialogTitle>

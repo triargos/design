@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip
 export function TooltipWithShortcut() {
   return (
     <Tooltip>
-      <TooltipTrigger render={<Button emphasis='ghost' size='icon-sm' aria-label='Projects' />}>
+      <TooltipTrigger render={<Button emphasis='ghost' size='icon' aria-label='Projects' />}>
         <FolderIcon />
       </TooltipTrigger>
       <TooltipContent className='flex items-center gap-1.5 px-2.5'>

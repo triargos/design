@@ -477,8 +477,8 @@ function ComboboxChips({ className, ...props }: ComboboxPrimitive.Chips.Props) {
       data-slot='combobox-chips'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        // 32px chips 4px in (3px padding + the border), so 40px with one row; rows wrap 4px apart.
-        'flex min-h-10 flex-wrap items-center gap-1 p-[3px] text-body',
+        // 24px chips 6px in (5px padding + the border), so 36px with one row; rows wrap 4px apart.
+        'flex min-h-9 flex-wrap items-center gap-1 p-[5px] text-body',
         // Base UI marks the input `disabled` and chips `aria-disabled`; block the whole surface.
         'has-disabled:pointer-events-none has-disabled:cursor-not-allowed',
         className,
@@ -498,8 +498,8 @@ function ComboboxChip({ className, children, removeLabel = 'Remove', ...props }:
     <ComboboxPrimitive.Chip
       data-slot='combobox-chip'
       className={cn(
-        // A flat 4% fill, no lift. 32px, 4px inside the 40px field: `rounded-inner` follows the field's curve.
-        'flex h-8 w-fit items-center rounded-inner bg-foreground/4 pl-2.5 text-caption font-medium whitespace-nowrap text-foreground [--outer-inset:--spacing(1)] aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed dark:bg-foreground/8',
+        // A flat 4% fill, no lift. 24px, 6px inside the 36px field: `rounded-inner` follows the field's curve.
+        'flex h-6 w-fit items-center rounded-inner bg-foreground/4 pl-2 text-caption font-medium whitespace-nowrap text-foreground [--outer-inset:--spacing(1.5)] aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed dark:bg-foreground/8',
         className,
       )}
       {...props}>
@@ -519,9 +519,9 @@ function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Pro
   return (
     <ComboboxPrimitive.Input
       data-slot='combobox-chip-input'
-      // Text on the field's 14px line when empty (3px padding + 11px); 4px after a chip.
+      // Text on the field's 12px line when empty (5px padding + 6px); 4px after a chip.
       className={cn(
-        'h-8 min-w-16 flex-1 pl-[11px] outline-none placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-1',
+        'h-6 min-w-16 flex-1 pl-1.5 outline-none max-sm:text-[1rem] placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-1',
         className,
       )}
       {...props}

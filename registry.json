@@ -699,7 +699,6 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1",
         "framer-motion@13.4.4",
         "lucide-react@1.48.0"
       ],

@@ -16,7 +16,7 @@ export function DropdownMenuCheckbox() {
   const [columns, setColumns] = useState({ assignee: true, status: true, due: false });
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size='sm' />}>
+      <DropdownMenuTrigger render={<Button />}>
         <SlidersHorizontalIcon data-icon='inline-start' />
         Columns
       </DropdownMenuTrigger>

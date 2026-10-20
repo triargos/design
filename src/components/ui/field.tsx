@@ -47,7 +47,7 @@ const fieldVariants = cva('group/field flex w-full gap-3 data-[invalid=true]:tex
       horizontal: [
         'flex-row items-center',
         '[&>[data-slot=field-label]]:flex-auto',
-        'has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px',
+        'has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-0.5',
         // A checkbox or radio sits on the label's first line; a switch centers on label + description.
         '[&>[data-slot=switch]]:self-center',
       ],
@@ -104,8 +104,9 @@ function FieldLabel({
     <label
       data-slot='field-label'
       className={cn(
-        // `leading-none` keeps the label→control gap tight.
-        'group/field-label peer/field-label flex w-fit items-center gap-2 text-body leading-none font-medium select-none',
+        // A 16px line box: 1px of air above and below the 14px text, on top of the field's `related` gap. Below `sm`,
+        // 16 / 18, next to the 16px field text.
+        'group/field-label peer/field-label flex w-fit items-center gap-2 text-body leading-4 font-medium select-none max-sm:text-[1rem] max-sm:leading-[1.125rem]',
         'group-data-[disabled=true]/field:text-disabled-foreground peer-disabled:cursor-not-allowed peer-disabled:text-disabled-foreground',
         className,
       )}

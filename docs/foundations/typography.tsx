@@ -39,7 +39,7 @@ const roles = [
   {
     className: 'text-control',
     role: 'control',
-    use: 'Buttons, fields, menus, tabs, tables. 16px on touch fields, scaled to 14',
+    use: 'Buttons, fields, menus, tabs, tables. Fields render 16px below sm',
     owner: 'Button, Input, Select, MenuItem, TabsTrigger',
   },
   { className: 'text-caption', role: 'caption', use: 'Meta, timestamps, badges, tooltips', owner: 'Badge, Tooltip' },

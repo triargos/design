@@ -164,7 +164,7 @@ export function Preview({
           <CardTitle className='text-caption text-muted-foreground'>{title}</CardTitle>
         </CardHeader>
       )}
-      <CardContent className={cn('flex flex-wrap items-center gap-related p-group', className)}>{children}</CardContent>
+      <CardContent className={cn('flex flex-wrap items-center gap-related p-card', className)}>{children}</CardContent>
       {footer}
     </Card>
   );

@@ -11,7 +11,7 @@ import { Spinner } from '~/components/ui/spinner';
 import { cn } from '~/lib/utils';
 
 /**
- * A row of an `ItemList`: a list item around one `Item`. The row padding is `group`, and the hairline below it stops
+ * A row of an `ItemList`: a list item around one `Item`. The row padding is `card`, and the hairline below it stops
  * there, so it lines up with the row content instead of running into the card's rounded edge.
  */
 function ItemListRow({ last, ...props }: React.ComponentProps<'div'> & { last: boolean }) {
@@ -20,9 +20,9 @@ function ItemListRow({ last, ...props }: React.ComponentProps<'div'> & { last: b
       role='listitem'
       data-slot='item-list-row'
       className={cn(
-        '*:data-[slot=item]:px-group',
+        '*:data-[slot=item]:px-card',
         !last &&
-          'relative after:absolute after:right-group after:bottom-0 after:left-group after:h-px after:bg-border-subtle',
+          'relative after:absolute after:right-card after:bottom-0 after:left-card after:h-px after:bg-border-subtle',
       )}
       {...props}
     />

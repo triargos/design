@@ -26,7 +26,7 @@ export function AccordionControlled() {
   const allOpen = open.length === QUESTIONS.length;
   return (
     <div className='flex max-w-md flex-col items-start gap-2'>
-      <Button size='sm' onClick={() => setOpen(allOpen ? [] : QUESTIONS.map((item) => item.value))}>
+      <Button onClick={() => setOpen(allOpen ? [] : QUESTIONS.map((item) => item.value))}>
         {allOpen ? 'Close all' : 'Open all'}
       </Button>
       <Accordion

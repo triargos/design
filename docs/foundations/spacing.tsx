@@ -23,9 +23,13 @@ const usage: Record<SpacingStepName, { relation: string; owners: string }> = {
     owners: 'Field (label → control), page header actions, ItemActions',
   },
   group: {
-    relation: 'Peer blocks; a heading → its content; padding inside a surface',
+    relation: 'Peer blocks; a heading → its content; padding inside a dialog or sheet',
     owners:
-      'Page header (back link → title), sections, FieldGroup, FieldSet, FieldLegend, CardContent, CardHeader (inline), DialogBody, SheetBody',
+      'Page header (back link → title), sections, FieldGroup, FieldSet, FieldLegend, CardHeader (top and bottom), DialogBody, SheetBody',
+  },
+  card: {
+    relation: 'Padding inside a card; its header, footer and flush rows on the same edge',
+    owners: 'CardContent, CardHeader, CardFooter, ItemList rows, Table card and flush edges',
   },
   page: { relation: 'Page title → content', owners: 'Page pattern' },
   section: { relation: 'Section ↔ section', owners: 'Page pattern (between sections)' },

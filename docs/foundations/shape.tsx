@@ -73,7 +73,7 @@ export default defineDocs({
                   }>
                   <CardTitle>Header action, aligned with row actions</CardTitle>
                 </CardHeader>
-                <CardContent className='p-group text-body text-muted-foreground'>Content, 4px in</CardContent>
+                <CardContent className='p-card text-body text-muted-foreground'>Content, 4px in</CardContent>
               </Card>
             </SpecimenRow>
             <SpecimenRow name='Alert' meta={<Code>rounded-card · action 6px in</Code>}>
@@ -99,7 +99,7 @@ export default defineDocs({
             </SpecimenRow>
             <SpecimenRow name='32 · 36px' meta={<Code>rounded-control · Button sm, xs</Code>}>
               <div className='flex items-center gap-2'>
-                <Button size='sm'>Edit</Button>
+                <Button>Edit</Button>
                 <Button size='xs'>Filter</Button>
               </div>
             </SpecimenRow>

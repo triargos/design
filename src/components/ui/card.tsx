@@ -32,9 +32,12 @@ const gridExpanded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 // Geometry: the shell is `rounded-card` and sets `--outer-radius` / `--outer-inset` (4px, `p-1`); the content takes
 // `rounded-inner`, so it stays concentric at any tuned card radius.
 //
-// Text edge: content starts inside the card's 1px edge, so what sits on the shell (header, footer) pads `group` + 1px
-// (`px-[calc(var(--spacing-group)+1px)]`). Content padded `group` and header text then share one edge, as do header and
+// Text edge: content starts inside the card's 1px edge, so what sits on the shell (header, footer) pads `card` + 1px
+// (`px-[calc(var(--spacing-card)+1px)]`). Content padded `p-card` and header text then share one edge, as do header and
 // row actions. Text outside the card that shares the edge (a section title) pads the shell's 4px on top.
+//
+// Fields (10px corners) sit 21px into a 12px content corner: too far in to be concentric, and the corners differ
+// enough to read as two layers.
 
 /**
  * The shell (`--card-shell`, default `--shell`) wraps the content on every side, so the content's corners sit on
@@ -66,7 +69,7 @@ function Card({
 function CardHeader({ className, actions, children, ...props }: ComponentProps<'div'> & { actions?: ReactNode }) {
   if (actions === undefined) {
     return (
-      <div data-slot='card-header' className={cn('px-[calc(var(--spacing-group)+1px)] py-group', className)} {...props}>
+      <div data-slot='card-header' className={cn('px-[calc(var(--spacing-card)+1px)] py-group', className)} {...props}>
         {children}
       </div>
     );
@@ -75,14 +78,14 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
     <div
       data-slot='card-header'
       className={cn(
-        'flex items-center justify-between gap-group px-[calc(var(--spacing-group)+1px)] py-group',
+        'flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-group',
         className,
       )}
       {...props}>
       <div className='min-w-0'>{children}</div>
       {/* `-my-2`: 32px actions overhang the text line instead of growing the strip, so a header is as tall with
           actions as without. They end on the same line as the actions of flush rows below (shell 4 + edge 1 +
-          `group`), so header and row actions form one column. */}
+          `card`), so header and row actions form one column. */}
       <div className='-my-2 flex shrink-0 items-center gap-related'>{actions}</div>
     </div>
   );
@@ -90,7 +93,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
 
 /**
  * Springs open and closed with `show`. The header mirrored: `group` from the content, `group` + the shell's 4px from the
- * edge, so a trailing button sits as far from the bottom (20px) as from the side (21px).
+ * edge; the sides on the content's text edge.
  */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
   const shouldReduceMotion = useReducedMotion();
@@ -108,7 +111,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
           <div className='min-h-0 overflow-hidden'>
             {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
                 stalls before unmount. */}
-            <div className={cn('mb-4 px-[calc(var(--spacing-group)+1px)] pt-4', className)} {...props}>
+            <div className={cn('mb-4 px-[calc(var(--spacing-card)+1px)] pt-4', className)} {...props}>
               {children}
             </div>
           </div>
@@ -123,7 +126,8 @@ function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
     <h2
       data-slot='card-title'
       className={cn(
-        'text-body font-medium text-balance group-data-[intent=destructive]/card:text-destructive',
+        // 14 / 20 semibold, the description 14 / 20 below it: a compact label for the strip, heavier than row titles.
+        'text-body leading-5 font-semibold text-balance group-data-[intent=destructive]/card:text-destructive',
         className,
       )}
       {...props}
@@ -137,7 +141,7 @@ function CardDescription({ className, ...props }: ComponentProps<'p'>) {
   return (
     <p
       data-slot='card-description'
-      className={cn('max-w-prose overflow-hidden text-body text-pretty text-muted-foreground', className)}
+      className={cn('max-w-prose overflow-hidden text-body leading-5 text-pretty text-muted-foreground', className)}
       {...props}
     />
   );

@@ -20,7 +20,7 @@ export function AlertInASection() {
           <CardTitle>Payment method</CardTitle>
           <CardDescription>Invoices are charged to this card.</CardDescription>
         </CardHeader>
-        <CardContent className='p-group'>
+        <CardContent className='p-card'>
           <p className='text-body text-muted-foreground'>No card on file.</p>
         </CardContent>
       </Card>

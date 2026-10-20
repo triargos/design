@@ -2,7 +2,6 @@ import { SelectAllowCustom } from '../examples/select/allow-custom';
 import { SelectDefault } from '../examples/select/default';
 import { SelectGrouped } from '../examples/select/grouped';
 import { SelectInAField } from '../examples/select/in-a-field';
-import { SelectSizes } from '../examples/select/sizes';
 import { SelectStates } from '../examples/select/states';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -24,15 +23,6 @@ export default defineDocs({
           </>
         }>
         <SelectDefault />
-      </ExampleSection>
-      <ExampleSection
-        title='Sizes'
-        description={
-          <>
-            <Code>size='sm'</Code> (36px) in toolbars and filters.
-          </>
-        }>
-        <SelectSizes />
       </ExampleSection>
       <ExampleSection
         title='Grouped'

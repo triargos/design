@@ -14,7 +14,7 @@ export function CardWithFooter() {
         <CardTitle>Profile</CardTitle>
         <CardDescription>How your teammates see you.</CardDescription>
       </CardHeader>
-      <CardContent className='p-group'>
+      <CardContent className='p-card'>
         <Field>
           <FieldLabel htmlFor='card-name'>Name</FieldLabel>
           <Input id='card-name' defaultValue='Jordan Lee' onChange={() => setDirty(true)} />
@@ -22,7 +22,7 @@ export function CardWithFooter() {
       </CardContent>
       <CardFooter show={dirty} className='flex items-center justify-end gap-related'>
         <span className='text-body text-muted-foreground'>Unsaved changes</span>
-        <Button intent='primary' size='sm' onClick={() => setDirty(false)}>
+        <Button intent='primary' onClick={() => setDirty(false)}>
           Save
         </Button>
       </CardFooter>

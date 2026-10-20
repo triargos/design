@@ -14,7 +14,7 @@
   /* Fields: a firmer ring, heavier at the bottom (light from above); dark lights the top edge instead. */
   --edge-field: oklch(0 0 0 / 0.1);
   --edge-field-top: transparent;
-  --edge-field-bottom: oklch(0 0 0 / 0.045);
+  --edge-field-bottom: oklch(0 0 0 / 0.04);
   --field-lift: oklch(0 0 0 / 0.05);
   --raised-lift: oklch(0 0 0 / 0.08);
   --raised-ambient: oklch(0 0 0 / 0.04);
@@ -57,7 +57,7 @@
   --edge: oklch(1 0 0 / 0.08);
   --edge-hover: oklch(1 0 0 / 0.13);
   --edge-field: oklch(1 0 0 / 0.08);
-  --edge-field-top: oklch(1 0 0 / 0.055);
+  --edge-field-top: oklch(1 0 0 / 0.06);
   --edge-field-bottom: transparent;
   --field-lift: transparent;
   --raised-lift: transparent;
@@ -143,11 +143,12 @@
   /* Elevation (DESIGN.md, Elevation): one ring (`--edge`) at every level, more drop the higher it sits. Inline, so the
      colors resolve on the element and `.dark` reaches them. */
   --shadow-border: 0 0 0 1px var(--edge);
-  --shadow-field:
-    0 0 0 1px var(--edge-field), 0 -1px 0 0 var(--edge-field-top), 0 1px 0 0 var(--edge-field-bottom),
-    0 1px 2px 0 var(--field-lift);
-  --shadow-field-flat:
-    0 0 0 1px var(--edge-field), 0 -1px 0 0 var(--edge-field-top), 0 1px 0 0 var(--edge-field-bottom);
+  /* Fields draw their edge as a real border (`--edge-field`), inside the box, so a 32px field is 32px. `shadow-field` is
+     the lift under it; `shadow-field-edge` goes on a full-size `::before` and lays the light-side accent on the border
+     row (heavier at the bottom in light, lit at the top in dark); `shadow-field-flat` drops the lift. */
+  --shadow-field: 0 1px 2px 0 var(--field-lift);
+  --shadow-field-edge: 0 -1px 0 0 var(--edge-field-top), 0 1px 0 0 var(--edge-field-bottom);
+  --shadow-field-flat: 0 0 #0000;
   --shadow-raised: 0 0 0 1px var(--edge), 0 1px 2px -1px var(--raised-lift), 0 2px 4px 0 var(--raised-ambient);
   --shadow-raised-hover:
     0 0 0 1px var(--edge-hover), 0 1px 2px -1px var(--raised-lift-hover), 0 2px 4px 0 var(--raised-ambient-hover);
@@ -193,14 +194,16 @@
   --radius-control: 10px;
   --radius-control-lg: 12px;
   --radius-popup: 16px;
-  --radius-card: 24px;
-  --radius-dialog: 24px;
+  --radius-card: 16px;
+  --radius-dialog: 20px;
   --radius-panel: 20px;
 
   /* Spacing (DESIGN.md, Spacing): `gap-group`, `p-group`, `space-y-tight`. */
   --spacing-tight: 0.25rem;
   --spacing-related: 0.5rem;
   --spacing-group: 1rem;
+  /* Inside a card: the content's padding, and the header, footer and flush rows on the same edge. */
+  --spacing-card: 1.25rem;
   --spacing-page: 2rem;
   --spacing-section: 3rem;
 
@@ -226,7 +229,7 @@
   --text-heading--font-weight: 500;
   --text-body: 0.875rem;
   --text-body--line-height: 1.3125rem;
-  /* Buttons, fields, menus, tables. Touch fields render 16px and scale down to this (`input-scale`). */
+  /* Buttons, fields, menus, tables. Below `sm` fields render 16px instead, so iOS does not zoom on focus. */
   --text-control: 0.875rem;
   --text-control--line-height: 1.25rem;
   --text-caption: 0.75rem;
@@ -395,20 +398,6 @@
       height: max(100%, 44px);
       translate: -50% -50%;
     }
-  }
-}
-
-/* The touch input scale: a field's text renders 16px on coarse pointers and is scaled down to the control size, so
-   iOS does not zoom on focus and fields look the same everywhere. On the native input inside a field surface.
-   Important: it overrides the input's own size and flex utilities, which would otherwise win by order. */
-@utility input-scale {
-  --input-scale: calc(14 / 16);
-  @media (pointer: coarse) {
-    flex: none !important;
-    width: calc(100% / var(--input-scale)) !important;
-    transform-origin: left center;
-    scale: var(--input-scale);
-    font-size: 1rem !important;
   }
 }
 

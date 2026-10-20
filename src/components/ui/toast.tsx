@@ -105,7 +105,7 @@ function Toasts({ container }: Pick<ToastProviderProps, 'container'>) {
                 </div>
                 {item.actionProps && (
                   <Toast.Action
-                    className={buttonVariants({ size: 'sm', intent: 'neutral', emphasis: 'solid', className: 'ms-2' })}
+                    className={buttonVariants({ intent: 'neutral', emphasis: 'solid', className: 'ms-2' })}
                     data-slot='toast-action'>
                     {item.actionProps.children}
                   </Toast.Action>

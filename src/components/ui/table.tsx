@@ -6,7 +6,7 @@ import { cn } from '~/lib/utils';
 // Markup for a TanStack Table (`useTable`, `table.FlexRender`) or a static table. Three variants:
 // - `default`: a plain table; rows separated by hairlines.
 // - `flush`: `default` filling a card edge to edge, as an `ItemList` does:
-//   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `group` in,
+//   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `card` in,
 //   on the card header's text.
 // - `card`: the table is the content of an `Card`, in place of `CardContent`. Header and footer rows sit on
 //   the shell; the body is the card (`bg-card`, an `--edge` ring, `rounded-inner` corners). Put it straight in the
@@ -99,7 +99,7 @@ function TableRow({ className, selected = false, ...props }: ComponentProps<'tr'
   );
 }
 
-// Flush and card: the first and last cell line up with `CardHeader` text (`group` + the card's 1px edge in). Flush
+// Flush and card: the first and last cell line up with `CardHeader` text (`card` + the card's 1px edge in). Flush
 // cells sit inside the edge already; card head and foot cells sit on the shell, so they add the 1px. A checkbox column
 // shrinks to the box.
 const tableCellEdges = cva(
@@ -108,8 +108,8 @@ const tableCellEdges = cva(
     variants: {
       variant: {
         default: 'px-3',
-        flush: 'px-3 first:ps-group last:pe-group',
-        card: 'px-3 first:ps-[calc(var(--spacing-group)+1px)] last:pe-[calc(var(--spacing-group)+1px)]',
+        flush: 'px-3 first:ps-card last:pe-card',
+        card: 'px-3 first:ps-[calc(var(--spacing-card)+1px)] last:pe-[calc(var(--spacing-card)+1px)]',
       },
     },
   },
@@ -133,8 +133,8 @@ function TableHead({ className, ...props }: ComponentProps<'th'>) {
 // Card body: the cells are the card, not the `tbody` (a `tbody` is no containing block in Safari, so a surface hung on
 // it lands on the table). Each cell fills with `bg-card`; the outer cells carry the `--edge` ring as a border, and
 // `bg-clip-padding` keeps the fill inside it, so the ring sits on the shell, as `CardContent` does. Separators are
-// `border-subtle` (opaque, so the shell behind the clipped border does not show). The first and last cell pad `group`
-// inside the edge, on the head and foot cells' `group` + 1px. WebKit antialiases each cell's fill at fractional column
+// `border-subtle` (opaque, so the shell behind the clipped border does not show). The first and last cell pad `card`
+// inside the edge, on the head and foot cells' `card` + 1px. WebKit antialiases each cell's fill at fractional column
 // edges and the shell shows through as a seam; a 1px shadow in the fill color reaches under the next cell and closes it.
 // The fill is one variable, so hover and selection move fill and patch together.
 const tableCellVariants = cva('py-2.5 align-middle', {
@@ -153,7 +153,7 @@ const tableCellVariants = cva('py-2.5 align-middle', {
         'in-[tr[data-selected]]:[--table-cell-fill:var(--muted)]',
         'border-b border-b-border-subtle in-[tr:last-child]:border-b-(--edge)',
         'in-[tr:first-child]:border-t in-[tr:first-child]:border-t-(--edge)',
-        'first:border-s first:border-s-(--edge) first:ps-group last:border-e last:border-e-(--edge) last:pe-group',
+        'first:border-s first:border-s-(--edge) first:ps-card last:border-e last:border-e-(--edge) last:pe-card',
         'in-[tr:first-child]:first:rounded-ss-inner in-[tr:first-child]:last:rounded-se-inner',
         'in-[tr:last-child]:first:rounded-es-inner in-[tr:last-child]:last:rounded-ee-inner',
       ],

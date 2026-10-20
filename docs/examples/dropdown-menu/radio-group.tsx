@@ -17,7 +17,7 @@ export function DropdownMenuRadioGroupExample() {
   const [sort, setSort] = useState('newest');
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size='sm' />}>
+      <DropdownMenuTrigger render={<Button />}>
         <ArrowUpDownIcon data-icon='inline-start' />
         Sort
       </DropdownMenuTrigger>

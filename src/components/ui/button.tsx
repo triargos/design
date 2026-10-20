@@ -36,20 +36,18 @@ const buttonShape = cva(
         // others.
         raised: 'bg-clip-border disabled:bg-transparent disabled:shadow-[inset_0_0_0_1px_var(--border)]',
       },
-      // Heights 32 / 36 / 40 / 44, the same as fields. The radius follows the height (`rounded-control*`). Padding:
-      // 16px (12px at `xs`), 2px less on the icon side (an icon reads lighter than text). Focus: the fields' soft 24%
-      // ring.
+      // Heights 32 / 36 / 40; the default is a field's height (36). The radius follows the height (`rounded-control*`).
+      // Padding: 16px (12px at `xs`), 2px less on the icon side (an icon reads lighter than text). On touch, `hit-area`
+      // grows the target to 44px. Focus: the fields' soft 24% ring.
       size: {
         default:
-          'h-10 gap-1.5 rounded-control-lg px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
+          'h-9 gap-1.5 rounded-control px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
         xs: "h-8 gap-1 rounded-control px-3 text-caption has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-3.5",
-        sm: 'h-9 gap-1 rounded-control px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
-        lg: 'h-11 gap-1.5 rounded-control-lg px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
+        lg: 'h-10 gap-1.5 rounded-control-lg px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
         // Icon-only sizes match the text sizes, so a row of both lines up.
         'icon-xs': 'size-8 rounded-control',
-        'icon-sm': 'size-9 rounded-control',
-        icon: 'size-10 rounded-control-lg',
-        'icon-lg': 'size-11 rounded-control-lg',
+        icon: 'size-9 rounded-control',
+        'icon-lg': 'size-10 rounded-control-lg',
       },
       /** Scales to 96% on press, except a menu trigger. `static` keeps it still, where the motion would distract. */
       static: { false: 'active:not-aria-[haspopup]:scale-[0.96]', true: '' },
@@ -89,15 +87,13 @@ function buttonVariants({
   );
 }
 
-/** The spinner follows the icon size: 16px in the 32 and 36px buttons, 20px from 40px up. */
+/** The spinner follows the icon size: 16px in the 32 and 36px buttons, 20px at 40px. */
 const LOADER_SIZE: Record<ButtonSize, number> = {
   xs: 16,
-  sm: 16,
   'icon-xs': 16,
-  'icon-sm': 16,
-  default: 20,
+  default: 16,
   lg: 20,
-  icon: 20,
+  icon: 16,
   'icon-lg': 20,
 };
 

@@ -96,13 +96,13 @@ function SkeletonStack() {
     <div className='relative h-18 w-40'>
       <motion.div
         variants={layerMotion(-16)}
-        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.84] rounded-control-lg bg-[color-mix(in_oklch,var(--card),var(--foreground)_9%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-2 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_4%)]'
+        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.84] rounded-control-lg border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_9%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-2 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_4%)]'
       />
       <motion.div
         variants={layerMotion(-8)}
-        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.92] rounded-control-lg bg-[color-mix(in_oklch,var(--card),var(--foreground)_4.5%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-1 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_7%)]'
+        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.92] rounded-control-lg border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_4.5%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-1 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_7%)]'
       />
-      <div className='absolute inset-x-0 bottom-0 flex h-14 items-center gap-2.5 rounded-control-lg bg-card px-3 shadow-field dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]'>
+      <div className='absolute inset-x-0 bottom-0 flex h-14 items-center gap-2.5 rounded-control-lg border border-(--edge-field) bg-card bg-clip-padding px-3 shadow-field dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]'>
         <div className='size-7 shrink-0 rounded-full bg-foreground/12 dark:bg-foreground/15' />
         <div className='flex flex-1 flex-col gap-1.5'>
           <div className='h-2.5 w-3/4 rounded-full bg-foreground/8 dark:bg-foreground/10' />

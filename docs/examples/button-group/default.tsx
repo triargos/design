@@ -7,9 +7,9 @@ import { ButtonGroup } from '~/components/ui/button-group';
 export function ButtonGroupDefault() {
   return (
     <ButtonGroup>
-      <Button size='sm'>Preview</Button>
-      <Button size='sm'>Download</Button>
-      <Button size='icon-sm' aria-label='More'>
+      <Button>Preview</Button>
+      <Button>Download</Button>
+      <Button size='icon' aria-label='More'>
         <ChevronDownIcon />
       </Button>
     </ButtonGroup>
