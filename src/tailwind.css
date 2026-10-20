@@ -454,33 +454,3 @@
     display: none;
   }
 }
-
-/* Skeleton loading: a highlight sweeps across the fill; still under reduced motion. */
-@utility animate-shimmer {
-  --shimmer-base: color-mix(in oklch, var(--card), var(--foreground) 8%);
-  --shimmer-highlight: color-mix(in oklch, var(--card), var(--foreground) 18%);
-  background-color: var(--shimmer-base);
-  background-image: linear-gradient(
-    90deg,
-    var(--shimmer-base) 40%,
-    var(--shimmer-highlight) 50%,
-    var(--shimmer-base) 60%
-  );
-  background-size: 200% 100%;
-  background-repeat: no-repeat;
-  animation: shimmer 2s linear infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    background-image: none;
-  }
-}
-
-@keyframes shimmer {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
-}

@@ -913,6 +913,9 @@
     {
       "name": "skeleton",
       "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react@1.8.0"
+      ],
       "registryDependencies": [
         "@triargos/theme",
         "@triargos/utils"
