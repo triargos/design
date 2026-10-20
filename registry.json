@@ -37,7 +37,7 @@
         {
           "path": "src/tailwind.css",
           "type": "registry:file",
-          "target": "src/styles/triargos.css"
+          "target": "@lib/theme/triargos.css"
         }
       ]
     },

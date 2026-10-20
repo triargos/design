@@ -42,7 +42,12 @@ const localItem = (specifier) => {
 
 const item = (name, type, files, extra = {}) => {
   const imports = files.flatMap((file) => specifiers(file.path));
-  const packages = [...new Set(imports.filter((s) => !s.startsWith('~/') && !s.startsWith('.')).map(packageName))]
+  const packages = [
+    ...new Set([
+      ...imports.filter((s) => !s.startsWith('~/') && !s.startsWith('.')).map(packageName),
+      ...(extra.dependencies ?? []),
+    ]),
+  ]
     .filter((name) => !PEERS.has(name))
     .sort();
   for (const name of packages) if (!versions[name]) throw new Error(`${name} is not in package.json`);
@@ -61,10 +66,18 @@ const item = (name, type, files, extra = {}) => {
 };
 
 const items = [
-  item('theme', 'registry:lib', [
-    ...sourceFiles('src/lib/theme').map((path) => ({ path, type: 'registry:lib' })),
-    { path: 'src/tailwind.css', type: 'registry:file', target: 'src/styles/triargos.css' },
-  ]),
+  // The tokens land next to the generator, in the app's `lib` alias (`@lib/…` resolves through components.json), so
+  // `src/` and `app/` layouts both get `<lib>/theme/triargos.css`. The app's own entry imports it after Tailwind and
+  // tw-animate-css (README, Use the registry); the components' `animate-in` classes need the latter.
+  item(
+    'theme',
+    'registry:lib',
+    [
+      ...sourceFiles('src/lib/theme').map((path) => ({ path, type: 'registry:lib' })),
+      { path: 'src/tailwind.css', type: 'registry:file', target: '@lib/theme/triargos.css' },
+    ],
+    { dependencies: ['tw-animate-css'] },
+  ),
   // `utils` and each other helper in `src/lib`, one item per file.
   ...sourceFiles('src/lib').map((path) =>
     item(basename(path, extname(path)), 'registry:lib', [{ path, type: 'registry:lib' }]),

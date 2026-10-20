@@ -23,6 +23,18 @@ The code is copied into your project; you own it. Each component page on the sit
 - Catalog: [`/r/registry.json`](https://design.a-np.de/r/registry.json)
 - Item: `/r/{name}.json`, with `meta.commit`: the commit it was built from
 
+The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib` or `app/lib`).
+
+- `theme` writes the generator to `lib/theme/*.ts` and the tokens to `lib/theme/triargos.css`. The tokens hold no Tailwind: import them in the app's own stylesheet, after Tailwind and tw-animate-css:
+
+  ```css
+  @import 'tailwindcss';
+  @import 'tw-animate-css';
+  @import './lib/theme/triargos.css'; /* from app/tailwind.css or src/index.css */
+  ```
+
+  Render `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`) into a `<style>` for the colors.
+
 ## Develop
 
 Requires Node 24 and pnpm.

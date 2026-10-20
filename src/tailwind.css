@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+/* The design system's tokens, roles and utilities, without Tailwind itself: an app's stylesheet imports this after
+   `@import 'tailwindcss'` and `@import 'tw-animate-css'` (README, Use the registry; the docs site: `site/styles.css`). */
 
 @custom-variant dark (&:is(.dark *));
 
