@@ -104,10 +104,10 @@ function Sidebar({
       data-state={open ? 'expanded' : 'collapsed'}
       data-collapsible={open ? '' : collapsible}>
       {/* Holds the column's width in the layout; the panel below is absolute so it can slide out. */}
-      <div className='w-64 transition-[width] duration-move ease-move group-data-[collapsible=icon]:w-12 group-data-[collapsible=offcanvas]:w-0' />
+      <div className='w-64 transition-[width] duration-move ease-move motion-reduce:transition-none group-data-[collapsible=icon]:w-12 group-data-[collapsible=offcanvas]:w-0' />
       <div
         className={cn(
-          'absolute inset-y-0 left-0 z-10 flex w-64 transition-[left,width] duration-move ease-move group-data-[collapsible=icon]:w-12 group-data-[collapsible=offcanvas]:-left-64',
+          'absolute inset-y-0 left-0 z-10 flex w-64 transition-[left,width] duration-move ease-move motion-reduce:transition-none group-data-[collapsible=icon]:w-12 group-data-[collapsible=offcanvas]:-left-64',
           className,
         )}
         {...props}>
@@ -182,7 +182,7 @@ function SidebarGroupLabel({ className, render, ...props }: useRender.ComponentP
     props: mergeProps<'div'>(
       {
         className: cn(
-          'flex h-8 shrink-0 items-center rounded-control px-2 text-caption font-medium text-sidebar-foreground/70 outline-hidden transition-[margin,opacity] duration-move ease-move focus-visible:ring-3 focus-visible:ring-ring/24 [&>svg]:size-4 [&>svg]:shrink-0',
+          'flex h-8 shrink-0 items-center rounded-control px-2 text-caption font-medium text-sidebar-foreground/70 outline-hidden transition-[margin,opacity] duration-move ease-move motion-reduce:transition-opacity focus-visible:ring-3 focus-visible:ring-ring/24 [&>svg]:size-4 [&>svg]:shrink-0',
           'group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0',
           className,
         ),
@@ -220,7 +220,7 @@ const sidebarMenuButtonVariants = cva(
     variants: {
       level: {
         item: [
-          'h-8 w-full rounded-control py-2 text-left transition-[width,height,padding] group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
+          'h-8 w-full rounded-control py-2 text-left transition-[width,height,padding] motion-reduce:transition-none group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
           'data-popup-open:hover:bg-foreground/5 data-popup-open:hover:text-sidebar-accent-foreground',
         ],
         sub: 'h-7 min-w-0 rounded-control-sm text-sidebar-foreground group-data-[collapsible=icon]:hidden',
