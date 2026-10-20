@@ -88,7 +88,10 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
   );
 }
 
-/** Springs open and closed with `show`. */
+/**
+ * Springs open and closed with `show`. The header mirrored: `group` from the content, `group` + the shell's 4px from the
+ * edge, so a trailing button sits as far from the bottom (20px) as from the side (21px).
+ */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -105,7 +108,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
           <div className='min-h-0 overflow-hidden'>
             {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
                 stalls before unmount. */}
-            <div className={cn('mb-3 px-[calc(var(--spacing-group)+1px)] pt-3', className)} {...props}>
+            <div className={cn('mb-4 px-[calc(var(--spacing-group)+1px)] pt-4', className)} {...props}>
               {children}
             </div>
           </div>

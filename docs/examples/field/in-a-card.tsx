@@ -50,7 +50,7 @@ export function FieldInACard() {
           </Field>
         </FieldGroup>
       </CardContent>
-      <CardFooter show={dirty} className='flex items-center justify-end gap-3'>
+      <CardFooter show={dirty} className='flex items-center justify-end gap-related'>
         <span className='text-body text-muted-foreground'>Unsaved changes</span>
         <Button intent='primary' size='sm' onClick={() => setDirty(false)}>
           Save

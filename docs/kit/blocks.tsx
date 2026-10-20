@@ -202,7 +202,7 @@ export function ExampleCode({ section }: { section: string }) {
         </Button>
         <CopyButton value={source} label='Copy code' size='icon-xs' />
       </div>
-      <CardFooter show={open} className='px-0 pt-1'>
+      <CardFooter show={open} className='mb-1 px-0 pt-1'>
         <pre
           id={codeId}
           tabIndex={0}
