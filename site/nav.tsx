@@ -14,7 +14,6 @@ import {
   SidebarMenuItem,
 } from '~/components/ui/sidebar';
 
-import { CustomizeTrigger } from './customize';
 import { TriargosLogo } from './logo';
 import { pathOf, prefetchPage } from './page';
 import { Link, useRouter } from './router';
@@ -105,11 +104,6 @@ export function DocsSidebar() {
       </SidebarContent>
       <SidebarFooter className='px-3 pb-group'>
         <footer className='flex flex-col gap-related'>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <CustomizeTrigger />
-            </SidebarMenuItem>
-          </SidebarMenu>
           <ThemePicker />
         </footer>
       </SidebarFooter>

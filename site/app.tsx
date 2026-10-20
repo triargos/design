@@ -10,7 +10,7 @@ import { Skeleton } from '~/components/ui/skeleton';
 import { cn } from '~/lib/utils';
 
 import { FoundationPage } from '../docs/kit/blocks';
-import { CustomizationStyles, CustomizeSheet } from './customize';
+import { CustomizationStyles, CustomizeMenu } from './customize';
 import { Home } from './home';
 import { DocsSidebar, Wordmark } from './nav';
 import { DocsPage, pageAt, pathOf, prefetchPage } from './page';
@@ -130,7 +130,7 @@ export function App() {
           </div>
         </div>
       </SidebarProvider>
-      <CustomizeSheet />
+      <CustomizeMenu />
     </>
   );
 }

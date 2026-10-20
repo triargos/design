@@ -1,18 +1,17 @@
+import { animate, motion, type PanInfo, useMotionValue, useReducedMotion } from 'framer-motion';
 import { RotateCcwIcon, SlidersHorizontalIcon } from 'lucide-react';
-import { useSyncExternalStore } from 'react';
+import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion';
 import { Button } from '~/components/ui/button';
 import {
-  Sheet,
-  SheetBody,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '~/components/ui/sheet';
-import { SidebarMenuButton } from '~/components/ui/sidebar';
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from '~/components/ui/popover';
 import { Slider } from '~/components/ui/slider';
 import { TabsRadio, TabsRadioGroup } from '~/components/ui/tabs';
 
@@ -38,11 +37,11 @@ import {
   tokenValue,
 } from '../docs/kit/tokens';
 
-/** The brand and the token scales every page renders with; what the Customize sheet tunes. */
+/** The brand and the token scales every page renders with; what the Customize menu tunes. */
 interface Customization {
   readonly branding: BrandingTheme;
   readonly tokens: Readonly<Record<string, number>>;
-  /** The surface the examples sit on: chosen in the Customize sheet. */
+  /** The surface the examples sit on: chosen in the Customize menu. */
   readonly surface: DocsSurface;
 }
 
@@ -197,44 +196,38 @@ function TokenSlider({
   );
 }
 
+type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+const CORNERS: ReadonlyArray<Corner> = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+const CORNER_KEY = 'customize-corner';
+
+/** Where the button rests: inset from the viewport edge, clear of the page panel's rounded corner. */
+const CORNER_CLASSES: Record<Corner, string> = {
+  'top-left': 'top-5 left-5',
+  'top-right': 'top-5 right-5',
+  'bottom-left': 'bottom-5 left-5',
+  'bottom-right': 'bottom-5 right-5',
+};
+
+/** How far a flick carries the release point (s): a fast throw toward a corner lands there. */
+const PROJECTION = 0.2;
+const snapTransition = { type: 'spring', duration: 0.4, bounce: 0.2 } as const;
+
+/** The corner nearest to where the button would come to rest: its centre plus the projected flick. */
+const cornerAt = (rect: DOMRect, velocity: PanInfo['velocity']): Corner => {
+  const x = rect.left + rect.width / 2 + velocity.x * PROJECTION;
+  const y = rect.top + rect.height / 2 + velocity.y * PROJECTION;
+  return `${y < window.innerHeight / 2 ? 'top' : 'bottom'}-${x < window.innerWidth / 2 ? 'left' : 'right'}`;
+};
+
 /**
- * Whether the Customize sheet is open. Shared, not local to the trigger: on mobile the sidebar is a sheet that closes
- * (and unmounts its content) when a menu button is tapped, so the sheet lives at the app root (`CustomizeSheet`) and
- * the sidebar row only opens it.
+ * Customize as a floating button, like the Next.js dev indicator: drag it to any corner (a flick carries it), click it
+ * to open the surface, brand colors and token scales in a popover beside it. Choices and corner are saved in this
+ * browser. At the app root.
+ *
+ * The button rests at its corner through CSS, so it prerenders in place. A drag moves it by `x`/`y`; on release it takes
+ * the new corner and springs from where it was let go (FLIP), keeping the flick's velocity.
  */
-let sheetOpen = false;
-const OPEN_CHANGE = 'customizeopenchange';
-const setSheetOpen = (open: boolean) => {
-  sheetOpen = open;
-  window.dispatchEvent(new Event(OPEN_CHANGE));
-};
-const subscribeOpen = (onChange: () => void) => {
-  window.addEventListener(OPEN_CHANGE, onChange);
-  return () => window.removeEventListener(OPEN_CHANGE, onChange);
-};
-const useSheetOpen = () =>
-  useSyncExternalStore(
-    subscribeOpen,
-    () => sheetOpen,
-    () => false,
-  );
-
-/** "Customize" in the sidebar: opens the sheet; a dot marks a customized site. */
-export function CustomizeTrigger() {
-  const customization = useCustomization();
-  const customized = JSON.stringify(customization) !== JSON.stringify(DEFAULT);
-  return (
-    <SidebarMenuButton onClick={() => setSheetOpen(true)} aria-haspopup='dialog'>
-      <SlidersHorizontalIcon aria-hidden />
-      Customize
-      {customized && <span aria-label='(changed)' className='ms-auto size-1.5 rounded-full bg-primary-solid' />}
-    </SidebarMenuButton>
-  );
-}
-
-/** The sheet with the surface, the brand colors and the token scales, saved in this browser. At the app root. */
-export function CustomizeSheet() {
-  const open = useSheetOpen();
+export function CustomizeMenu() {
   const customization = useCustomization();
   const { branding, tokens } = customization;
   const setBranding = (next: Partial<BrandingTheme>) => write({ ...customization, branding: { ...branding, ...next } });
@@ -242,16 +235,106 @@ export function CustomizeSheet() {
     write({ ...customization, tokens: { ...tokens, [token.global]: value } });
   const customized = JSON.stringify(customization) !== JSON.stringify(DEFAULT);
 
+  const [open, setOpen] = useState(false);
+  const [corner, setCorner] = useState<Corner>('bottom-right');
+  const reduceMotion = useReducedMotion();
+  const button = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  /** Set from drag start until the next press: the click that ends a drag must not open the menu. */
+  const dragged = useRef(false);
+  /** Where the button was let go, kept across the render that moves it to its new corner. */
+  const release = useRef<{ left: number; top: number; velocity: PanInfo['velocity'] } | null>(null);
+
+  useLayoutEffect(() => {
+    const stored = window.localStorage.getItem(CORNER_KEY);
+    setCorner(CORNERS.find((c) => c === stored) ?? 'bottom-right');
+  }, []);
+
+  const settle = () => {
+    const from = release.current;
+    const el = button.current;
+    release.current = null;
+    if (!from || !el) return;
+    x.set(0);
+    y.set(0);
+    const rest = el.getBoundingClientRect();
+    x.set(from.left - rest.left);
+    y.set(from.top - rest.top);
+    if (reduceMotion) {
+      x.set(0);
+      y.set(0);
+      return;
+    }
+    animate(x, 0, { ...snapTransition, velocity: from.velocity.x });
+    animate(y, 0, { ...snapTransition, velocity: from.velocity.y });
+  };
+
+  // After the corner changes, the button sits at the new corner with the drag offset still applied; settle it.
+  useLayoutEffect(settle, [corner]);
+
+  const onDragEnd = (_: PointerEvent, info: PanInfo) => {
+    const el = button.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    release.current = { left: rect.left, top: rect.top, velocity: info.velocity };
+    const next = cornerAt(rect, info.velocity);
+    if (next === corner) settle();
+    else {
+      window.localStorage.setItem(CORNER_KEY, next);
+      setCorner(next);
+    }
+  };
+
+  const [vertical, horizontal] = corner.split('-') as ['top' | 'bottom', 'left' | 'right'];
+
   return (
-    <Sheet open={open} onOpenChange={setSheetOpen}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Customize</SheetTitle>
-          <SheetDescription>
-            The surface, brand colors and token scales for every page. Saved in this browser.
-          </SheetDescription>
-        </SheetHeader>
-        <SheetBody className='flex flex-col gap-page'>
+    <Popover
+      open={open}
+      onOpenChange={(next, details) => {
+        if (next && details.reason === 'trigger-press' && dragged.current) return;
+        setOpen(next);
+      }}>
+      <motion.div
+        ref={button}
+        drag
+        dragMomentum={false}
+        onPointerDownCapture={() => (dragged.current = false)}
+        onDragStart={() => {
+          dragged.current = true;
+          setOpen(false);
+        }}
+        onDragEnd={onDragEnd}
+        style={{ x, y }}
+        className={cn('fixed z-40 touch-none', CORNER_CLASSES[corner])}>
+        <PopoverTrigger
+          aria-label='Customize'
+          className={cn(
+            'relative flex size-10 cursor-grab items-center justify-center rounded-full bg-neutral-solid text-neutral-solid-foreground shadow-popup outline-none active:cursor-grabbing',
+            'transition-transform duration-feedback ease-out focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-96 motion-reduce:transition-none',
+            'data-popup-open:scale-96',
+          )}>
+          <SlidersHorizontalIcon aria-hidden className='size-4' />
+          {customized && (
+            <span
+              aria-label='(changed)'
+              className='absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-primary-solid ring-2 ring-background'
+            />
+          )}
+        </PopoverTrigger>
+      </motion.div>
+      <PopoverContent
+        side={vertical === 'top' ? 'bottom' : 'top'}
+        align={horizontal === 'left' ? 'start' : 'end'}
+        sideOffset={10}
+        className='max-h-[min(var(--available-height),40rem)] w-[min(20rem,calc(100vw-2.5rem))] gap-0 p-0'>
+        <PopoverHeader className='px-group pt-group pb-related'>
+          <PopoverTitle>Customize</PopoverTitle>
+          <PopoverDescription>
+            Surface, brand colors and token scales for every page. Saved in this browser.
+          </PopoverDescription>
+        </PopoverHeader>
+        <div className='flex min-h-0 flex-1 flex-col gap-group overflow-y-auto px-group py-related'>
           <div role='group' aria-labelledby='examples-on' className='flex flex-col gap-related'>
             <span id='examples-on' className='text-body font-medium'>
               Examples on
@@ -307,14 +390,14 @@ export function CustomizeSheet() {
               </AccordionItem>
             ))}
           </Accordion>
-        </SheetBody>
-        <SheetFooter>
-          <Button disabled={!customized} onClick={() => write(null)}>
+        </div>
+        <div className='border-t border-border-subtle p-related'>
+          <Button className='w-full' disabled={!customized} onClick={() => write(null)}>
             <RotateCcwIcon data-icon='inline-start' aria-hidden />
             Reset to defaults
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
