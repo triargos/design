@@ -23,17 +23,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerIndent,
-  DrawerIndentBackground,
-  DrawerProvider,
-  DrawerTitle,
-} from '~/components/ui/drawer';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
 import {
@@ -107,7 +96,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Dialog'
-      description='One modal shape: a shell with the header and footer on it, the content in a card. Dialog, alert dialog and side panel share it; the touch drawer has its own.'>
+      description='One modal shape: a shell with the header and footer on it, the content in a card. Dialog, alert dialog and side panel share it.'>
       <ExampleSection
         title='Default'
         description='Header and footer on the shell, DialogBody is the card. A form wraps DialogBody and DialogFooter (className="contents"); submit sits in the footer.'>
@@ -241,64 +230,6 @@ export default defineDocs({
                 </SheetFooter>
               </SheetContent>
             </Sheet>
-          )}
-        </Stage>
-      </FoundationSection>
-
-      <FoundationSection
-        title='Touch drawer'
-        description='Drawer: a bottom sheet for touch menus, swiped down to close. Under DrawerProvider the page scales back; a drawer opened from a drawer stacks on it.'>
-        <Stage label={<Code>Drawer</Code>}>
-          {(container) => (
-            <Drawer defaultOpen modal={false}>
-              <DrawerContent container={container}>
-                <DrawerHeader>
-                  <DrawerTitle>Invite member</DrawerTitle>
-                  <DrawerDescription>We’ll email them a link to join the workspace.</DrawerDescription>
-                </DrawerHeader>
-                <div className='px-group'>
-                  <InviteFields />
-                </div>
-                <DrawerFooter>
-                  <Button intent='primary'>Send invite</Button>
-                </DrawerFooter>
-              </DrawerContent>
-            </Drawer>
-          )}
-        </Stage>
-        <Stage label={<Code>DrawerProvider · DrawerIndent · nested Drawer</Code>} className='h-[560px]'>
-          {(container) => (
-            <DrawerProvider>
-              <DrawerIndentBackground />
-              <DrawerIndent className='h-full'>
-                <div className='flex h-full flex-col gap-related bg-background p-group'>
-                  <span className='text-heading'>Tasks</span>
-                  <span className='text-body text-muted-foreground'>
-                    Everything due this week, across your projects.
-                  </span>
-                </div>
-              </DrawerIndent>
-              <Drawer defaultOpen modal={false}>
-                <DrawerContent container={container}>
-                  <DrawerHeader>
-                    <DrawerTitle>Update homepage copy</DrawerTitle>
-                    <DrawerDescription>Website redesign · due today</DrawerDescription>
-                  </DrawerHeader>
-                  <div className='h-40' />
-                  <Drawer defaultOpen modal={false}>
-                    <DrawerContent container={container}>
-                      <DrawerHeader>
-                        <DrawerTitle>Change status</DrawerTitle>
-                        <DrawerDescription>To do, in progress or done.</DrawerDescription>
-                      </DrawerHeader>
-                      <DrawerFooter>
-                        <Button intent='primary'>Save</Button>
-                      </DrawerFooter>
-                    </DrawerContent>
-                  </Drawer>
-                </DrawerContent>
-              </Drawer>
-            </DrawerProvider>
           )}
         </Stage>
       </FoundationSection>

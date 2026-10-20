@@ -34,12 +34,6 @@ const durations = [
     use: 'Dialogs and their backdrop: enter and exit. Larger than a popup, so slower',
     owner: 'Dialog, AlertDialog, Sheet',
   },
-  {
-    className: 'duration-sheet',
-    ms: 500,
-    use: 'The touch drawer opening, closing and settling after a swipe; with ease-sheet',
-    owner: 'Drawer',
-  },
 ] as const;
 
 const easings = [
@@ -52,11 +46,6 @@ const easings = [
     className: 'ease-move',
     curve: [0.645, 0.045, 0.355, 1],
     use: 'Moving what is already on screen: accelerate, then brake.',
-  },
-  {
-    className: 'ease-sheet',
-    curve: [0.32, 0.72, 0, 1],
-    use: 'The touch drawer, after a swipe. Follows the finger’s speed.',
   },
 ] as const;
 
@@ -109,9 +98,7 @@ export default defineDocs({
     <FoundationPage
       title='Motion'
       description='Motion says what changed and where it went. It is short, it starts fast, and frequent actions barely move. Durations and curves are roles, named by what moves.'>
-      <FoundationSection
-        title='Durations'
-        description='Larger and rarer moves take longer. The touch drawer is the exception: it follows a swipe.'>
+      <FoundationSection title='Durations' description='Larger and rarer moves take longer.'>
         <SpecimenList>
           {durations.map((duration) => (
             <SpecimenRow key={duration.className} name={duration.className} meta={`${duration.ms}ms · ${duration.use}`}>

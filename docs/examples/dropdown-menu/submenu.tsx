@@ -13,7 +13,7 @@ import {
 
 const STATUSES = ['To do', 'In progress', 'Done'];
 
-/** A row with a chevron opens a second list beside the first; one level only. On touch it opens a stacked drawer. */
+/** A row with a chevron opens a second list beside the first; one level only. */
 export function DropdownMenuSubmenu() {
   return (
     <DropdownMenu>
@@ -30,7 +30,7 @@ export function DropdownMenuSubmenu() {
             <CircleDotIcon />
             Change status
           </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent label='Change status' className='w-40'>
+          <DropdownMenuSubContent className='w-40'>
             {STATUSES.map((status) => (
               <DropdownMenuItem key={status}>{status}</DropdownMenuItem>
             ))}

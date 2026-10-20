@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 
-/** `DropdownMenuShortcut` at the end of a row; hidden in the touch drawer. */
+/** `DropdownMenuShortcut` at the end of a row. */
 export function DropdownMenuShortcuts() {
   return (
     <DropdownMenu>

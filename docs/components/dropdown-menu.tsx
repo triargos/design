@@ -14,7 +14,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Dropdown Menu'
-      description='A list of actions opened from a button: an icon, a label, a shortcut. A destructive item takes intent="destructive" and sits last. Below 768px the same parts open as a bottom drawer of large rows; a submenu stacks a second drawer. To open a dialog from an item, see Dialog › Opened from a menu.'>
+      description='A list of actions opened from a button: an icon, a label, a shortcut. A destructive item takes intent="destructive" and sits last. To open a dialog from an item, see Dialog › Opened from a menu.'>
       <ExampleSection title='Default'>
         <DropdownMenuDefault />
       </ExampleSection>
@@ -35,7 +35,7 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='Submenu'
-        description='A row with a chevron opens a second list beside the first; one level only. On touch it stacks a second drawer.'>
+        description='A row with a chevron opens a second list beside the first; one level only.'>
         <DropdownMenuSubmenu />
       </ExampleSection>
       <ExampleSection
