@@ -514,6 +514,23 @@
       ]
     },
     {
+      "name": "fade-in",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react@1.8.0"
+      ],
+      "registryDependencies": [
+        "@triargos/theme",
+        "@triargos/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/fade-in.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "field",
       "type": "registry:ui",
       "dependencies": [
