@@ -187,10 +187,15 @@ function Button({
   size = 'default',
   static: isStatic,
   isLoading,
+  disabled,
+  focusableWhenDisabled,
   children,
   ...props
 }: ButtonProps) {
   const pending = useMinimumPending(isLoading === true);
+  // A router `<Link to>` or an `<a href>` stays a link for assistive tech; Base UI would announce it as a button.
+  const renderProps = React.isValidElement(props.render) ? (props.render.props as Record<string, unknown>) : undefined;
+  const isLink = renderProps !== undefined && ('to' in renderProps || 'href' in renderProps);
   return (
     <ButtonPrimitive
       data-slot='button'
@@ -206,7 +211,13 @@ function Button({
           className: typeof className === 'function' ? className(state) : className,
         })
       }
+      // A pending button takes no second click and keeps focus: Base UI sets `aria-disabled` instead of the `disabled`
+      // attribute, so the `disabled:` styles do not replace the spinner.
+      disabled={disabled || pending}
+      focusableWhenDisabled={pending || focusableWhenDisabled}
       aria-busy={pending || undefined}
+      // Spread, not `role={undefined}`: Base UI's `mergeProps` copies `undefined` over its own `role='button'`.
+      {...(isLink && { role: 'link' })}
       {...props}>
       {/* Only a button that can go pending wraps its label, so every other button keeps its children as they are. */}
       {isLoading === undefined ? (

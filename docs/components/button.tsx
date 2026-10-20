@@ -184,7 +184,7 @@ export default defineDocs({
         description={
           <>
             <Code>isLoading</Code>: the label keeps the width; the spinner shows at least 800ms. The last one resolves
-            after 150ms and still never flashes.
+            after 150ms and still never flashes; while pending it takes no second click.
           </>
         }>
         <ButtonPending />
