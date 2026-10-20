@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 
 import { ToastProvider, makeToast } from '~/components/ui/toast';
 
+import { ToastAnchored } from '../examples/toast/anchored';
 import { ToastDedupe } from '../examples/toast/dedupe';
 import { ToastDefault } from '../examples/toast/default';
 import { ToastError } from '../examples/toast/error';
@@ -25,14 +26,22 @@ type StageToast = ReturnType<typeof makeToast>;
 function Stage({ show, height = 'h-28' }: { show: (stageToast: StageToast) => void; height?: string }) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [manager] = useState(() => Toast.createToastManager());
+  const [anchoredManager] = useState(() => Toast.createToastManager());
   useEffect(() => {
-    if (container) show(makeToast(manager));
-  }, [container, manager, show]);
+    if (container) show(makeToast(manager, anchoredManager));
+  }, [container, manager, anchoredManager, show]);
   return (
     <div
       ref={setContainer}
       className={`relative ${height} w-full max-w-104 transform-gpu overflow-hidden rounded-card bg-background`}>
-      {container && <ToastProvider toastManager={manager} timeout={0} container={container} />}
+      {container && (
+        <ToastProvider
+          toastManager={manager}
+          anchoredToastManager={anchoredManager}
+          timeout={0}
+          container={container}
+        />
+      )}
     </div>
   );
 }
@@ -147,6 +156,16 @@ export default defineDocs({
         title='Dedupe'
         description='The same toast again updates the open one and replays a pulse (a shake for errors). Click twice.'>
         <ToastDedupe />
+      </ExampleSection>
+      <ExampleSection
+        title='Anchored'
+        description={
+          <>
+            <Code>{'{ anchor }'}</Code>: next to the control that was used, styled like a tooltip, title only. Closes
+            after 2 seconds. A <Code>null</Code> anchor falls back to the stack.
+          </>
+        }>
+        <ToastAnchored />
       </ExampleSection>
 
       <FoundationSection
