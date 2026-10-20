@@ -3,7 +3,7 @@
 shadcn registry for Triargos, plus a preview site. Deployed to Cloudflare with [Alchemy](https://alchemy.run).
 
 - Catalog: `/r/registry.json`
-- Items: `/r/{name}.json`
+- Items: `/r/{name}.json`, each with `meta.commit`: the commit it was deployed from
 
 ## Use the registry
 

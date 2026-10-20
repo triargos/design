@@ -8,6 +8,9 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 const versions = { ...pkg.devDependencies, ...pkg.dependencies };
 const PEERS = new Set(['react', 'react-dom']);
+// The deploy build stamps each item with the commit it was built from, so an app can tell which version it carries.
+// Unset locally, so the checked-in `registry.json` does not change with every commit.
+const commit = process.env.GITHUB_SHA;
 
 const sourceFiles = (dir) =>
   readdirSync(join(root, dir))
@@ -53,6 +56,7 @@ const item = (name, type, files, extra = {}) => {
     ...(packages.length > 0 && { dependencies: packages.map((name) => `${name}@${versions[name]}`) }),
     ...(registryDependencies.length > 0 && { registryDependencies }),
     files,
+    ...(commit && { meta: { commit } }),
   };
 };
 
@@ -82,7 +86,7 @@ for (const file of readdirSync(join(root, 'docs/components'))) {
 const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
   name: 'triargos',
-  homepage: 'https://design.triargos.de',
+  homepage: 'https://design.a-np.de',
   items,
 };
 
