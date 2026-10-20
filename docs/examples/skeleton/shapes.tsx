@@ -1,6 +1,6 @@
 import { Skeleton } from '~/components/ui/skeleton';
 
-/** `animate-shimmer` in the shape of the content: an avatar, a title, a line. */
+/** `Skeleton` in the shape of the content: an avatar, a title, a line. */
 export function SkeletonShapes() {
   return (
     <div className='flex w-80 flex-col gap-4'>

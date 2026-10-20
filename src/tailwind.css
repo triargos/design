@@ -195,6 +195,8 @@
   /* A row under the pointer in a list, table or accordion: half a `muted` step, so it stays one step below the selected
      row (`bg-muted`). Relative to the surface it sits on, like `muted`. */
   --color-row-hover: color-mix(in oklab, var(--muted) 50%, transparent);
+  /* `Skeleton`: the text color, thinned, so it reads on any surface (page, card, popup, inverse) without a seam. */
+  --color-skeleton: color-mix(in oklab, var(--foreground) 7%, transparent);
 
   /* Concentric corners: the outer surface sets `--outer-radius` and `--outer-inset` (the gap to its content); the content
      takes `rounded-inner`, or one corner of it (`rounded-ss-inner`, a table body's corner cells). Inline, so it
@@ -282,6 +284,14 @@
   --animate-otp-reject-odd: otp-reject var(--transition-duration-move) var(--ease-enter);
   --animate-otp-reject-even: otp-reject-again var(--transition-duration-move) var(--ease-enter);
   --animate-otp-shake: otp-shake 320ms var(--ease-enter);
+  /* `Skeleton`: opacity only, so the compositor runs it without a repaint. A fade, so it stays under reduced motion. */
+  --animate-skeleton: skeleton 2s ease-in-out infinite;
+
+  @keyframes skeleton {
+    50% {
+      opacity: 0.6;
+    }
+  }
 
   @keyframes toast-pulse {
     0%,

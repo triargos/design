@@ -10,7 +10,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Skeleton'
-      description='A loading region shows its shape in shimmer (animate-shimmer), so the page does not jump when the content arrives.'>
+      description='A loading region shows its shape in the skeleton fill, pulsing, so the page does not jump when the content arrives. Every skeleton pulses in step, whenever it mounts.'>
       <ExampleSection title='Shapes' description='An avatar, a title, a line.'>
         <SkeletonShapes />
       </ExampleSection>

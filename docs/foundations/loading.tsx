@@ -12,12 +12,12 @@ const pairs = [
 
 export default defineDocs({
   title: 'Loading',
-  description: 'A pending action keeps its button and its width; a loading region shows its shape in shimmer.',
+  description: 'A pending action keeps its button and its width; a loading region shows its shape, pulsing.',
   group: 'Foundations',
   Page: () => (
     <FoundationPage
       title='Loading'
-      description='A pending action keeps its button and its width; a loading region shows its shape in shimmer. The apply flow shows nothing, then fades in.'>
+      description='A pending action keeps its button and its width; a loading region shows its shape, pulsing. The apply flow shows nothing, then fades in.'>
       <FoundationSection
         title='Pending action'
         description='Button isLoading: the label stays in the layout, invisible; the spinner shows at least 800ms, so a fast request does not flash.'>
@@ -48,7 +48,7 @@ export default defineDocs({
           </SpecimenRow>
           <SpecimenRow name='Skeleton' meta={<Code>Components › Skeleton</Code>}>
             <p className='text-body text-pretty text-muted-foreground'>
-              A loading region in the shape of its content, in shimmer.
+              A loading region in the shape of its content, pulsing.
             </p>
           </SpecimenRow>
           <SpecimenRow name='Arriving content' meta={<Code>animate-in fade-in-0 duration-feedback</Code>}>

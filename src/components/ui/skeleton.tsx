@@ -12,8 +12,8 @@ function syncPulse(node: HTMLElement | null) {
 }
 
 /**
- * A loading region in the shape of its content: the `muted` fill, the one `Avatar` and `ItemMedia` tiles show before
- * their content, pulsing in opacity. A fade, so it keeps pulsing under reduced motion. Inside a `p`, `render={<span />}`.
+ * A loading region in the shape of its content: the `skeleton` fill (thinned `foreground`, so it reads on any surface),
+ * pulsing in opacity. A fade, so it keeps pulsing under reduced motion. Inside a `p`, `render={<span />}`.
  */
 function Skeleton({ className, render, ref, ...props }: useRender.ComponentProps<'div'>) {
   return useRender({
@@ -21,7 +21,10 @@ function Skeleton({ className, render, ref, ...props }: useRender.ComponentProps
     render,
     ref: ref ? [ref, syncPulse] : syncPulse,
     state: { slot: 'skeleton' },
-    props: mergeProps<'div'>({ className: cn('block animate-pulse rounded-control-xs bg-muted', className) }, props),
+    props: mergeProps<'div'>(
+      { className: cn('block animate-skeleton rounded-control-xs bg-skeleton', className) },
+      props,
+    ),
   });
 }
 
