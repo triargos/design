@@ -50,7 +50,10 @@ const buttonShape = cva(
         'icon-lg': 'size-10 rounded-control-lg',
       },
       /** Scales to 96% on press, except a menu trigger. `static` keeps it still, where the motion would distract. */
-      static: { false: 'active:not-aria-[haspopup]:scale-[0.96]', true: '' },
+      static: {
+        false: 'active:not-aria-[haspopup]:scale-[0.96] motion-reduce:active:not-aria-[haspopup]:scale-100',
+        true: '',
+      },
     },
     defaultVariants: { size: 'default', static: false },
   },
