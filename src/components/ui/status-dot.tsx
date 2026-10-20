@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 import type * as React from 'react';
 
-import type { Intent } from '~/components/ui/intent-variants';
+import { dataColorStyle, type Intent } from '~/components/ui/intent-variants';
 
 import { cn } from '~/lib/utils';
 
@@ -20,15 +20,24 @@ const statusDotVariants = cva('inline-flex size-2 shrink-0 rounded-full', {
   defaultVariants: { intent: 'neutral' },
 });
 
-type StatusDotProps = React.ComponentProps<'span'> & { intent?: Intent };
+type StatusDotProps = Omit<React.ComponentProps<'span'>, 'color'> &
+  ({ intent?: Intent; color?: undefined } | { color: string; intent?: never });
 
-/** A state in one dot, next to a label that names it; the dot alone is decorative. */
-function StatusDot({ className, intent, ...props }: StatusDotProps) {
+/**
+ * A state in one dot, next to a label that names it; the dot alone is decorative. `color` is a color from data (an
+ * organization's category color: any CSS color or `var(--category-N)`), exclusive with `intent`; the dot is that color.
+ */
+function StatusDot({ className, style, intent, color, ...props }: StatusDotProps) {
   return (
     <span
       aria-hidden='true'
       data-slot='status-dot'
-      className={cn(statusDotVariants({ intent }), className)}
+      className={cn(
+        statusDotVariants({ intent: color === undefined ? intent : null }),
+        color !== undefined && 'bg-(--data-color)',
+        className,
+      )}
+      style={color === undefined ? style : { ...dataColorStyle(color), ...style }}
       {...props}
     />
   );

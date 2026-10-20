@@ -55,6 +55,22 @@
   --neutral-border: color-mix(in oklch, var(--foreground) 16%, transparent);
 }
 
+/* Data colors (`intent-data`): how much of the color the subtle fill, its text and the border take. Dark needs a
+   stronger tint and a lighter text. The inverted surface takes the other mode's. */
+:root,
+.dark [data-surface='inverse'] {
+  --data-subtle-mix: 16%;
+  --data-foreground-mix: 42%;
+  --data-border-mix: 36%;
+}
+
+.dark,
+[data-surface='inverse'] {
+  --data-subtle-mix: 26%;
+  --data-foreground-mix: 62%;
+  --data-border-mix: 40%;
+}
+
 .dark {
   --edge: oklch(1 0 0 / 0.08);
   --edge-hover: oklch(1 0 0 / 0.13);
@@ -122,6 +138,16 @@
   --color-neutral-subtle: var(--neutral-subtle);
   --color-neutral-subtle-foreground: var(--neutral-subtle-foreground);
   --color-neutral-border: var(--neutral-border);
+  /* Categorical set (`categoryVars` in `lib/theme/theme-to-css.ts`): `bg-category-3`, or `var(--category-3)` as a data
+     color (`Badge color`, `StatusDot color`). */
+  --color-category-1: var(--category-1);
+  --color-category-2: var(--category-2);
+  --color-category-3: var(--category-3);
+  --color-category-4: var(--category-4);
+  --color-category-5: var(--category-5);
+  --color-category-6: var(--category-6);
+  --color-category-7: var(--category-7);
+  --color-category-8: var(--category-8);
 
   /* Text levels and disabled. */
   --color-faint-foreground: var(--faint-foreground);
@@ -386,6 +412,19 @@
   svg.tabler-icon :is(path, line, polyline, polygon, circle, rect, ellipse) {
     vector-effect: non-scaling-stroke;
   }
+}
+
+/* A color from data as an intent (`intent: 'data'` in `intentVariants`, `color` on `Badge`). The component sets
+   `--data-color` from `style`; this derives the `--intent-*` set from it, so every emphasis keeps one rule. Solid is the
+   color itself with black or white on it by lightness; subtle a translucent tint with its text a deeper step of the color
+   toward `--foreground`. */
+@utility intent-data {
+  --intent-solid: var(--data-color);
+  --intent-solid-foreground: oklch(from var(--data-color) clamp(0, (0.62 - l) * 1000, 1) 0 0);
+  --intent-subtle: color-mix(in oklab, var(--data-color) var(--data-subtle-mix), transparent);
+  --intent-subtle-foreground: color-mix(in oklab, var(--data-color) var(--data-foreground-mix), var(--foreground));
+  --intent-border: color-mix(in oklab, var(--data-color) var(--data-border-mix), transparent);
+  --intent: var(--intent-subtle-foreground);
 }
 
 /* Touch hit area: a control under 44px grows an invisible 44px target on coarse pointers. Needs a positioned element. */

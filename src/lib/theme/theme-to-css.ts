@@ -110,6 +110,7 @@ export function themeToCssVars(theme: Theme, tint: FillTint, destructive: Color)
     ...intentVars('destructive', destructive[2], theme.isDark),
     '--destructive-solid': toCss('LCH', destructive),
     ...primaryVars(theme),
+    ...categoryVars(theme.isDark),
     ...textLevelVars(theme),
     '--ring': color.focusColor,
     '--sidebar': sidebar.bgBase,
@@ -166,6 +167,41 @@ function intentVars(
     [`--${intent}-subtle-foreground`]: lch(step.subtleText.l, step.subtleText.c, hue),
     [`--${intent}-border`]: lch(step.border.l, step.border.c, hue, step.border.a),
   };
+}
+
+/**
+ * The categorical set, `--category-1` … `--category-8`: eight hues for things told apart, not ranked (labels, file types,
+ * an organization's categories). Static like the charts, not branded. Neighbours sit far apart on the hue wheel, so the
+ * first picks already differ; lightness and chroma per hue, so each reads at the same weight (yellow and green sit
+ * lighter than blue and violet). Text on one takes `Badge color`, which derives it; the bare token is a dot or swatch.
+ */
+const CATEGORY = {
+  light: [
+    { h: 270, l: 58, c: 62 },
+    { h: 60, l: 68, c: 80 },
+    { h: 190, l: 62, c: 44 },
+    { h: 350, l: 60, c: 66 },
+    { h: 135, l: 64, c: 58 },
+    { h: 305, l: 56, c: 62 },
+    { h: 95, l: 76, c: 72 },
+    { h: 35, l: 58, c: 74 },
+  ],
+  dark: [
+    { h: 270, l: 68, c: 62 },
+    { h: 60, l: 74, c: 78 },
+    { h: 190, l: 70, c: 44 },
+    { h: 350, l: 68, c: 62 },
+    { h: 135, l: 72, c: 56 },
+    { h: 305, l: 66, c: 60 },
+    { h: 95, l: 80, c: 70 },
+    { h: 35, l: 66, c: 70 },
+  ],
+} as const;
+
+function categoryVars(isDark: boolean): Record<string, string> {
+  return Object.fromEntries(
+    CATEGORY[isDark ? 'dark' : 'light'].map(({ h, l, c }, index) => [`--category-${index + 1}`, lch(l, c, h)]),
+  );
 }
 
 /** The brand intent: the shared set on the brand's hue. `--primary` (text and icons) and the solid are the brand color. */

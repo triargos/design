@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority';
+import type { CSSProperties } from 'react';
 
 /**
  * Intent × emphasis, the two color axes every colored primitive shares (DESIGN.md, Color).
@@ -15,6 +16,13 @@ type Intent = (typeof INTENTS)[number];
 const EMPHASES = ['solid', 'subtle', 'outline', 'ghost', 'raised'] as const;
 type Emphasis = (typeof EMPHASES)[number];
 
+/**
+ * The style that carries a color from data (a category or status color an organization chose) to `intent: 'data'`. Any
+ * CSS color: a hex, `var(--category-3)`. A data color is not an intent (DESIGN.md, Color); `Badge` and `StatusDot` take it
+ * as `color`.
+ */
+const dataColorStyle = (color: string): CSSProperties => ({ ['--data-color' as string]: color });
+
 const intentVariants = cva('', {
   variants: {
     intent: {
@@ -29,6 +37,8 @@ const intentVariants = cva('', {
         '[--intent-border:var(--warning-border)] [--intent-solid-foreground:var(--warning-solid-foreground)] [--intent-solid:var(--warning-solid)] [--intent-subtle-foreground:var(--warning-subtle-foreground)] [--intent-subtle:var(--warning-subtle)] [--intent:var(--warning)]',
       destructive:
         '[--intent-border:var(--destructive-border)] [--intent-solid-foreground:var(--destructive-solid-foreground)] [--intent-solid:var(--destructive-solid)] [--intent-subtle-foreground:var(--destructive-subtle-foreground)] [--intent-subtle:var(--destructive-subtle)] [--intent:var(--destructive)]',
+      /** A color from data, set with `dataColorStyle`: the `--intent-*` set derives from it (`intent-data`, `tailwind.css`). */
+      data: 'intent-data',
     },
     emphasis: {
       solid: 'bg-(--intent-solid) text-(--intent-solid-foreground)',
@@ -78,4 +88,4 @@ const intentVariants = cva('', {
   },
 });
 
-export { EMPHASES, INTENTS, intentVariants, type Emphasis, type Intent };
+export { dataColorStyle, EMPHASES, INTENTS, intentVariants, type Emphasis, type Intent };

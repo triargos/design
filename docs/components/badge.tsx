@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { INTENTS } from '~/components/ui/intent-variants';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
+import { BadgeCategories } from '../examples/badge/categories';
+import { BadgeDataColor } from '../examples/badge/data-color';
 import { BadgeDefault } from '../examples/badge/default';
 import { BadgeShapes } from '../examples/badge/shapes';
 import { BadgeSizes } from '../examples/badge/sizes';
@@ -19,6 +21,13 @@ const EMPHASES = ['subtle', 'solid', 'outline'] as const;
 const SIZES = [
   { size: 'default', height: 24 },
   { size: 'sm', height: 20 },
+] as const;
+
+const DATA_COLORS = [
+  { name: 'category-1', color: 'var(--category-1)', label: 'Design' },
+  { name: 'category-2', color: 'var(--category-2)', label: 'Events' },
+  { name: 'category-5', color: 'var(--category-5)', label: 'Hiring' },
+  { name: '#0ea5e9', color: '#0ea5e9', label: 'Backend' },
 ] as const;
 
 const LABEL = {
@@ -47,7 +56,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Badge'
-      description='A state or a count, named in words. An intent at subtle (the default), solid when it needs action, outline in dense lists. Pill for counts and chips.'>
+      description='A state or a count, named in words. An intent at subtle (the default), solid when it needs action, outline in dense lists. Pill for counts and chips. A color from data takes color instead of intent.'>
       <ExampleSection title='Default'>
         <BadgeDefault />
       </ExampleSection>
@@ -58,6 +67,14 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection title='Status' description='One intent per state.'>
         <BadgeStatus />
+      </ExampleSection>
+      <ExampleSection
+        title='Data color'
+        description='A color the workspace picked (a label, a category) is data, not an intent: pass it as color instead of intent. Every emphasis paints from it, in both modes.'>
+        <BadgeDataColor />
+      </ExampleSection>
+      <ExampleSection title='Categories' description='Without a picked color, take the categories in order.'>
+        <BadgeCategories />
       </ExampleSection>
       <ExampleSection title='Sizes' description='24px; sm (20px) for a count in a dense row.'>
         <BadgeSizes />
@@ -80,6 +97,22 @@ export default defineDocs({
             cells: EMPHASES.map((emphasis) => (
               <Badge key={emphasis} intent={intent} emphasis={emphasis}>
                 {LABEL[intent]}
+              </Badge>
+            )),
+          }))}
+        />
+      </FoundationSection>
+
+      <FoundationSection
+        title='Data color × emphasis'
+        description='Solid is the color with black or white text by its lightness; subtle and outline mix it toward the text color.'>
+        <Matrix
+          columns={EMPHASES}
+          rows={DATA_COLORS.map(({ name, color, label }) => ({
+            name,
+            cells: EMPHASES.map((emphasis) => (
+              <Badge key={emphasis} color={color} emphasis={emphasis}>
+                {label}
               </Badge>
             )),
           }))}

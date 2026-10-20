@@ -1,5 +1,6 @@
 import { Badge } from '~/components/ui/badge';
 import { type Intent, INTENTS } from '~/components/ui/intent-variants';
+import { StatusDot } from '~/components/ui/status-dot';
 
 import {
   Code,
@@ -111,6 +112,11 @@ const charts: ReadonlyArray<SwatchToken> = [1, 2, 3, 4, 5].map((step) => ({
   role: `Series ${step}; static, not branded`,
 }));
 
+const categories: ReadonlyArray<SwatchToken> = [1, 2, 3, 4, 5, 6, 7, 8].map((step) => ({
+  token: `category-${step}`,
+  role: `Category ${step}; static, per mode`,
+}));
+
 export default defineDocs({
   title: 'Color',
   description: 'Every value is generated from three brand names.',
@@ -163,6 +169,42 @@ export default defineDocs({
             </div>
           </SpecimenRow>
         </SpecimenList>
+      </FoundationSection>
+
+      <FoundationSection
+        title='Data colors'
+        description='A color the workspace picked (a label, a category) is data, not an intent. Badge and StatusDot take it as color, exclusive with intent; Badge derives its solid, subtle and outline from it.'>
+        <SpecimenList>
+          <SpecimenRow name='Badge' meta={<Code>color · emphasis</Code>}>
+            <div className='flex flex-wrap gap-related'>
+              <Badge color='#8b5cf6'>Design</Badge>
+              <Badge color='#0ea5e9' emphasis='solid'>
+                Backend
+              </Badge>
+              <Badge color='var(--category-2)' emphasis='outline'>
+                Events
+              </Badge>
+            </div>
+          </SpecimenRow>
+          <SpecimenRow name='StatusDot' meta={<Code>color</Code>}>
+            <div className='flex flex-wrap gap-group text-body'>
+              <span className='flex items-center gap-1.5'>
+                <StatusDot color='#8b5cf6' />
+                Design
+              </span>
+              <span className='flex items-center gap-1.5'>
+                <StatusDot color='var(--category-5)' />
+                Hiring
+              </span>
+            </div>
+          </SpecimenRow>
+        </SpecimenList>
+      </FoundationSection>
+
+      <FoundationSection
+        title='Categories'
+        description='Eight hues for things told apart, not ranked, when no one picked a color: take them in order. Static, not branded; each mode has its own step. bg-category-N for a swatch, var(--category-N) as a data color.'>
+        <SwatchGrid tokens={categories} />
       </FoundationSection>
 
       <FoundationSection title='Text' description='Four levels, from titles to disabled.'>
