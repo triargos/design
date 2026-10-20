@@ -42,6 +42,8 @@ function TooltipContent({
           data-slot='tooltip-content'
           className={cn(
             'w-fit max-w-xs origin-(--transform-origin) rounded-control-sm bg-popover px-2 py-1 text-caption text-balance text-popover-foreground shadow-popup duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-instant:duration-0 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1',
+            // Reduced motion: fade only, no zoom and no slide.
+            'motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100 motion-reduce:data-open:slide-in-from-top-0 motion-reduce:data-open:slide-in-from-left-0',
             className,
           )}
           {...props}
