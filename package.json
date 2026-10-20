@@ -1,6 +1,10 @@
 {
   "name": "@triargos/design",
   "private": true,
+  "description": "The Triargos design system: React components, tokens and patterns, shipped as a shadcn registry.",
+  "homepage": "https://design.a-np.de",
+  "license": "MIT",
+  "repository": "github:triargos/design",
   "type": "module",
   "scripts": {
     "dev": "alchemy dev",

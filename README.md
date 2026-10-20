@@ -1,52 +1,73 @@
 # Triargos Design
 
-shadcn registry for Triargos, plus a preview site. Deployed to Cloudflare with [Alchemy](https://alchemy.run).
+The design system behind Triargos products: React components, tokens and patterns, shipped as a [shadcn](https://ui.shadcn.com) registry.
 
-- Catalog: `/r/registry.json`
-- Items: `/r/{name}.json`, each with `meta.commit`: the commit it was deployed from
+**[design.a-np.de](https://design.a-np.de)**: every component live, with its code.
 
-## Use the registry
+- 50+ components on [Base UI](https://base-ui.com) and [React Aria](https://react-spectrum.adobe.com/react-aria/), styled with Tailwind CSS v4.
+- One vocabulary for every prop: `intent` × `emphasis`, `size`, surfaces, type roles, spacing, radius, elevation and motion. See [DESIGN.md](DESIGN.md).
+- A theme generator: pick a primary, base and destructive color, get the full light and dark palette.
+- Foundations (color, typography, spacing, surfaces, shape, motion) and patterns (bulk selection, confirmation, danger zone, …).
+
+## Install a component
+
+Add the registry once per project, then add components by name:
 
 ```sh
-pnpm dlx shadcn@latest registry add @triargos=https://<host>/r/{name}.json
-pnpm dlx shadcn@latest add @triargos/<item>
+pnpm dlx shadcn@latest registry add @triargos=https://design.a-np.de/r/{name}.json
+pnpm dlx shadcn@latest add @triargos/button
 ```
+
+The code is copied into your project; you own it. Each component page on the site shows its install command.
+
+- Catalog: [`/r/registry.json`](https://design.a-np.de/r/registry.json)
+- Item: `/r/{name}.json`, with `meta.commit`: the commit it was built from
 
 ## Develop
 
+Requires Node 24 and pnpm.
+
 ```sh
 pnpm install
-pnpm dev          # alchemy dev, stage dev_$USER: the docs site with hot reload
+pnpm dev          # the docs site with hot reload
 pnpm typecheck
 pnpm format       # oxfmt; `pnpm format:check` to verify
-pnpm deploy       # personal cloud stage live_$USER
 ```
 
-`.env` sets `ALCHEMY_PROFILE=triargos` (Cloudflare account `5df6eb…`).
+`pnpm dev` and `pnpm deploy` run through [Alchemy](https://alchemy.run) and need Cloudflare credentials.
 
 ### Layout
 
-- `src/components/ui/` the components, `src/lib/` and `src/hooks/` their helpers, `src/tailwind.css` the tokens.
-- `docs/` the docs site's content; `site/` the site itself (router, nav, Playground, Customize, Install).
-  - `docs/{foundations,components,patterns}/<slug>.tsx` one page each: a default export of `defineDocs({ title, description, group, playground?, Page })` (`docs/kit/docs.ts`).
-  - `docs/examples/<slug>/<section>.tsx` the examples a page shows, with their source under "Show code"; a pattern's in `docs/examples/patterns/<slug>/`.
-  - `docs/kit/` the page blocks (`FoundationPage`, `ExampleSection`, `Matrix`, …).
+| Path                                      | Holds                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| `src/components/ui/`                      | The components, one per file                                              |
+| `src/lib/`, `src/hooks/`                  | Their helpers; `src/lib/theme/` is the theme generator                    |
+| `src/tailwind.css`                        | The tokens                                                                |
+| `docs/{foundations,components,patterns}/` | One docs page per file: `defineDocs({ title, description, group, Page })` |
+| `docs/examples/<slug>/<section>.tsx`      | The examples a page shows, with their source under "Show code"            |
+| `docs/kit/`                               | Page blocks (`FoundationPage`, `ExampleSection`, `Matrix`, …)             |
+| `site/`                                   | The docs site: router, nav, Playground, Customize, Install                |
+| `scripts/registry.mjs`                    | Generates `registry.json` from the components' imports                    |
 
 ### Add a component
 
-1. `src/components/ui/<c>.tsx`. Its `registry.json` item is generated from its imports (`scripts/registry.mjs`).
-2. `docs/components/<c>.tsx`: `defineDocs` with a `Page` of `ExampleSection`s, one per example; add `playground` (`component`, `args`, `argTypes`) for a live props editor.
-3. `docs/examples/<c>/<section>.tsx`: one named export `<C><Section>`, real usage; it imports app code and packages only, never `docs/kit`, so a registry can ship it as a block.
+1. `src/components/ui/<c>.tsx`. Its registry item is generated from its imports.
+2. `docs/components/<c>.tsx`: `defineDocs` with a `Page` of `ExampleSection`s; add `playground` (`component`, `args`, `argTypes`) for a live props editor.
+3. `docs/examples/<c>/<section>.tsx`: one named export `<C><Section>`, real usage. It imports app code and packages only, never `docs/kit`, so a registry can ship it as a block.
 
-Pages are found by directory: no index to update. A component page shows its install commands (`site/install.tsx`), so `<c>` must also be the registry item's name; `scripts/registry.mjs` fails otherwise.
+Pages are found by directory: no index to update. `<c>` must match the registry item's name; `scripts/registry.mjs` fails otherwise.
 
-`registry.json` is generated: `scripts/registry.mjs` writes one item per component, plus `utils`, the hooks and `theme`, with dependencies read from the imports. `vite.config.ts` regenerates it and runs `shadcn build` into `public/r` before every build, so deploys always ship fresh JSON.
+[DESIGN.md](DESIGN.md) has the API rules and the tokens.
 
 ## Deploy
 
-GitHub Actions (`.github/workflows/deploy.yml`):
+Cloudflare, as one assets-only Worker (`alchemy.run.ts`). GitHub Actions (`.github/workflows/deploy.yml`):
 
-- push to `main` → stage `prod`
+- push to `main` → stage `prod` at design.a-np.de
 - pull request → stage `pr-<n>`, URL posted as a PR comment, destroyed on close
 
-CI secrets (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) are managed by `stacks/github.ts`.
+`vite.config.ts` regenerates `registry.json` and runs `shadcn build` into `public/r` before every build, so deploys always ship fresh JSON. `stacks/github.ts` mints the CI's Cloudflare token.
+
+## License
+
+[MIT](LICENSE)
