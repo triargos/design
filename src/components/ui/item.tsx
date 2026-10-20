@@ -248,17 +248,26 @@ function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='item-content'
-      className={cn('flex flex-1 flex-col gap-tight [&+[data-slot=item-content]]:flex-none', className)}
+      className={cn('flex min-w-0 flex-1 flex-col gap-tight [&+[data-slot=item-content]]:flex-none', className)}
       {...props}
     />
   );
 }
 
+/**
+ * One line. Plain text truncates with an ellipsis. With an element beside the text (a badge, an icon, a dot) the title
+ * is a flex row: wrap the text in a plain `span`, which truncates while the others keep their size (a bare text node
+ * cannot shrink in a flex row).
+ */
 function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='item-title'
-      className={cn('line-clamp-1 flex w-fit items-center gap-2 text-body font-medium underline-offset-4', className)}
+      className={cn(
+        'block w-fit max-w-full min-w-0 truncate text-body font-medium underline-offset-4',
+        'has-[>*]:flex has-[>*]:items-center has-[>*]:gap-2 has-[>*]:*:shrink-0 has-[>*]:[&>span:not([data-slot])]:shrink has-[>*]:[&>span:not([data-slot])]:truncate',
+        className,
+      )}
       {...props}
     />
   );

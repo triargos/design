@@ -2,6 +2,7 @@ import { ItemDefault } from '../examples/item/default';
 import { ItemHeaderAndFooter } from '../examples/item/header-and-footer';
 import { ItemLink } from '../examples/item/link';
 import { ItemLoadingMore } from '../examples/item/loading-more';
+import { ItemLongTitles } from '../examples/item/long-titles';
 import { ItemSelected } from '../examples/item/selected';
 import { ItemVirtualized } from '../examples/item/virtualized';
 import { ItemWithActions } from '../examples/item/with-actions';
@@ -41,6 +42,16 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection title='With actions' description='A status and a ghost menu button on the right.' bare>
         <ItemWithActions />
+      </ExampleSection>
+      <ExampleSection
+        title='Long titles'
+        description={
+          <>
+            One line, then an ellipsis. Beside a badge or an icon, the text goes in a <Code>span</Code>.
+          </>
+        }
+        bare>
+        <ItemLongTitles />
       </ExampleSection>
       <ExampleSection
         title='Header and footer'
