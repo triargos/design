@@ -6,6 +6,7 @@ import { ItemLoadingMore } from '../examples/item/loading-more';
 import { ItemLongTitles } from '../examples/item/long-titles';
 import { ItemSelected } from '../examples/item/selected';
 import { ItemSkeletonShapes } from '../examples/item/skeleton-shapes';
+import { ItemScrollElement } from '../examples/item/scroll-element';
 import { ItemVirtualized } from '../examples/item/virtualized';
 import { ItemWithActions } from '../examples/item/with-actions';
 import { ItemWithDescription } from '../examples/item/with-description';
@@ -117,6 +118,17 @@ export default defineDocs({
         }
         bare>
         <ItemVirtualized />
+      </ExampleSection>
+      <ExampleSection
+        title='Scrolls with the page'
+        description={
+          <>
+            <Code>scrollElement</Code>: the rows virtualize against what holds the list (the page's scroll panel, a
+            dialog body), so the page keeps one scrollbar.
+          </>
+        }
+        bare>
+        <ItemScrollElement />
       </ExampleSection>
       <ExampleSection
         title='Loading more'

@@ -64,6 +64,11 @@ type ItemListProps<T> = ItemListElementProps &
         readonly onLoadMore?: () => void;
         /** Announced while more rows load. */
         readonly loadingLabel?: string;
+        /**
+         * The element that scrolls the rows, when it holds more than the list (the page's scroll panel, a dialog
+         * body). `null` until it mounts. Unset, the list scrolls itself.
+         */
+        readonly scrollElement?: HTMLElement | null;
       }
   );
 
@@ -110,6 +115,27 @@ function StaticItemList({
   );
 }
 
+/** Distance from the top of the scroll content of `scrollElement` to the top of `element`. */
+function useOffsetInScrollElement(scrollElement: HTMLElement | null, element: HTMLElement | null) {
+  const [offset, setOffset] = React.useState(0);
+  React.useLayoutEffect(() => {
+    if (!scrollElement || !element) return;
+    const measure = () =>
+      setOffset(
+        element.getBoundingClientRect().top -
+          scrollElement.getBoundingClientRect().top -
+          scrollElement.clientTop +
+          scrollElement.scrollTop,
+      );
+    measure();
+    // Content above the list can change height after it loads.
+    const observer = new ResizeObserver(measure);
+    for (const child of scrollElement.children) observer.observe(child);
+    return () => observer.disconnect();
+  }, [scrollElement, element]);
+  return offset;
+}
+
 function VirtualizedItemList<T>({
   className,
   items,
@@ -120,19 +146,25 @@ function VirtualizedItemList<T>({
   isLoadingMore = false,
   onLoadMore,
   loadingLabel,
+  scrollElement,
   virtualized: _,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...props
 }: Extract<ItemListProps<T>, { virtualized: true }>) {
   const { labels } = useLocale();
-  const [scrollElement, setScrollElement] = React.useState<HTMLDivElement | null>(null);
+  const ownScroll = scrollElement === undefined;
+  const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
+  const scroller = ownScroll ? container : scrollElement;
+  const [list, setList] = React.useState<HTMLDivElement | null>(null);
+  const scrollMargin = useOffsetInScrollElement(scroller, list);
   const virtualizer = useVirtualizer({
     count: items.length,
-    getScrollElement: () => scrollElement,
+    getScrollElement: () => scroller,
     estimateSize: () => estimatedItemSize,
     getItemKey: (index) => itemKey(items[index]!),
     overscan: 5,
+    scrollMargin,
   });
   const rows = virtualizer.getVirtualItems();
 
@@ -141,35 +173,44 @@ function VirtualizedItemList<T>({
   // Re-observe when `hasMore` mounts the sentinel and after each page, so a sentinel still in view reports again.
   React.useEffect(() => {
     const sentinel = sentinelRef.current;
-    if (!sentinel || !scrollElement) {
+    if (!sentinel || !scroller) {
       setNearEnd(false);
       return;
     }
     const observer = new IntersectionObserver(([entry]) => setNearEnd(entry!.isIntersecting), {
-      root: scrollElement,
+      root: scroller,
       rootMargin: '500px',
     });
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [scrollElement, items.length, hasMore]);
+  }, [scroller, items.length, hasMore]);
   React.useEffect(() => {
     if (nearEnd && hasMore && !isLoadingMore) onLoadMore?.();
   }, [nearEnd, hasMore, isLoadingMore, onLoadMore]);
 
   return (
     <div
-      ref={setScrollElement}
+      ref={setContainer}
       data-slot='item-list'
-      className={cn('overflow-y-auto overscroll-contain', className)}
+      // Its own scroll box is a tab stop, so the keyboard can scroll a list whose rows hold nothing focusable.
+      tabIndex={ownScroll ? 0 : undefined}
+      className={cn(
+        ownScroll &&
+          'overflow-y-auto overscroll-contain outline-none focus-visible:ring-3 focus-visible:ring-ring/24 focus-visible:ring-inset',
+        className,
+      )}
       {...props}>
       <div
+        ref={setList}
         role='list'
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         className='relative w-full'
         style={{ height: virtualizer.getTotalSize() }}>
         {/* The rows in view flow in one block, moved down to the first one. */}
-        <div className='absolute top-0 left-0 w-full' style={{ transform: `translateY(${rows[0]?.start ?? 0}px)` }}>
+        <div
+          className='absolute top-0 left-0 w-full'
+          style={{ transform: `translateY(${(rows[0]?.start ?? 0) - scrollMargin}px)` }}>
           {rows.map((row) => (
             <ItemListRow
               key={row.key}
