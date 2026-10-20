@@ -73,6 +73,12 @@ const items = [
   ),
 ];
 
+// Each component docs page shows `shadcn add @triargos/<slug>` (`site/install.tsx`), so its slug must name an item.
+for (const file of readdirSync(join(root, 'docs/components'))) {
+  const slug = basename(file, extname(file));
+  if (!items.some((entry) => entry.name === slug)) throw new Error(`docs/components/${file}: no registry item ${slug}`);
+}
+
 const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
   name: 'triargos',

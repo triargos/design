@@ -27,7 +27,7 @@ pnpm deploy       # personal cloud stage live_$USER
 ### Layout
 
 - `src/components/ui/` the components, `src/lib/` and `src/hooks/` their helpers, `src/tailwind.css` the tokens.
-- `docs/` the docs site's content; `site/` the site itself (router, nav, Playground, Customize).
+- `docs/` the docs site's content; `site/` the site itself (router, nav, Playground, Customize, Install).
   - `docs/{foundations,components,patterns}/<slug>.tsx` one page each: a default export of `defineDocs({ title, description, group, playground?, Page })` (`docs/kit/docs.ts`).
   - `docs/examples/<slug>/<section>.tsx` the examples a page shows, with their source under "Show code"; a pattern's in `docs/examples/patterns/<slug>/`.
   - `docs/kit/` the page blocks (`FoundationPage`, `ExampleSection`, `Matrix`, …).
@@ -38,7 +38,7 @@ pnpm deploy       # personal cloud stage live_$USER
 2. `docs/components/<c>.tsx`: `defineDocs` with a `Page` of `ExampleSection`s, one per example; add `playground` (`component`, `args`, `argTypes`) for a live props editor.
 3. `docs/examples/<c>/<section>.tsx`: one named export `<C><Section>`, real usage; it imports app code and packages only, never `docs/kit`, so a registry can ship it as a block.
 
-Pages are found by directory: no index to update.
+Pages are found by directory: no index to update. A component page shows its install commands (`site/install.tsx`), so `<c>` must also be the registry item's name; `scripts/registry.mjs` fails otherwise.
 
 `registry.json` is generated: `scripts/registry.mjs` writes one item per component, plus `utils`, the hooks and `theme`, with dependencies read from the imports. `vite.config.ts` regenerates it and runs `shadcn build` into `public/r` before every build, so deploys always ship fresh JSON.
 

@@ -4,6 +4,7 @@ import pages, { type DocsPage as DocsPageEntry } from 'virtual:docs-index';
 import { DocsModeContext, ExampleSourceContext } from '../docs/kit/blocks';
 import { type DocsModule, TokensContext } from '../docs/kit/docs';
 import { useCustomization } from './customize';
+import { Install } from './install';
 import { controlsOf, Playground } from './playground';
 
 const docsModules = import.meta.glob<DocsModule>('../docs/{foundations,components,patterns}/*.tsx', {
@@ -73,7 +74,8 @@ const stayOnPage = (event: MouseEvent<HTMLDivElement>) => {
 
 /**
  * A page. Foundations render their `Page` whole. Components and patterns render it in docs mode: the header, a live
- * Playground where the module has one, then the examples with their code; the page's spec sections stay out.
+ * Playground where the module has one, a component's install commands, then the examples with their code; the page's
+ * spec sections stay out.
  */
 export function DocsPage({ page }: { page: DocsPageEntry }) {
   const { docs, sources } = use(loadPage(page));
@@ -93,10 +95,15 @@ export function DocsPage({ page }: { page: DocsPageEntry }) {
     page.group === 'Foundations'
       ? { surface }
       : {
-          afterHeader:
-            playground !== undefined && controls.length > 0 ? (
-              <Playground name={docs.title.replace(/\s/g, '')} playground={playground} controls={controls} />
-            ) : undefined,
+          afterHeader: (
+            <>
+              {playground !== undefined && controls.length > 0 && (
+                <Playground name={docs.title.replace(/\s/g, '')} playground={playground} controls={controls} />
+              )}
+              {/* Every component page is a registry item of the same name (`scripts/registry.mjs`). */}
+              {page.group === 'Components' && <Install name={page.slug} title={docs.title} />}
+            </>
+          ),
           hideSpecs: true,
           surface,
         };
