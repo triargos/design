@@ -267,10 +267,14 @@ function ComboboxInput({
 }
 
 /** Anchored to the field, or to `ComboboxChips` when there are chips. */
-function ComboboxContent({ className, ...props }: ComboboxPrimitive.Popup.Props) {
+function ComboboxContent({
+  className,
+  container,
+  ...props
+}: ComboboxPrimitive.Popup.Props & Pick<ComboboxPrimitive.Portal.Props, 'container'>) {
   const { chips } = useComboboxContext();
   return (
-    <ComboboxPrimitive.Portal>
+    <ComboboxPrimitive.Portal container={container}>
       <ComboboxPrimitive.Positioner sideOffset={4} align='start' anchor={chips ?? undefined} className='isolate z-50'>
         <ComboboxPrimitive.Popup
           data-slot='combobox-content'

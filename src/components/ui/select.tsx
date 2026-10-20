@@ -195,9 +195,14 @@ function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigge
 }
 
 /** Below the trigger, at least as wide; scroll arrows at the ends of a list taller than the window. */
-function SelectContent({ className, children, ...props }: SelectPrimitive.Popup.Props) {
+function SelectContent({
+  className,
+  children,
+  container,
+  ...props
+}: SelectPrimitive.Popup.Props & Pick<SelectPrimitive.Portal.Props, 'container'>) {
   return (
-    <SelectPrimitive.Portal>
+    <SelectPrimitive.Portal container={container}>
       <SelectPrimitive.Positioner sideOffset={4} alignItemWithTrigger={false} className='isolate z-50'>
         <SelectPrimitive.Popup
           data-slot='select-content'

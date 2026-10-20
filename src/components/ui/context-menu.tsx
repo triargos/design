@@ -37,9 +37,13 @@ function ContextMenuTrigger(props: ContextMenuPrimitive.Trigger.Props) {
 }
 
 /** Opens at the pointer; a submenu (`ContextMenuSubContent`) opens beside its trigger. */
-function ContextMenuContent({ className, ...props }: ContextMenuPrimitive.Popup.Props) {
+function ContextMenuContent({
+  className,
+  container,
+  ...props
+}: ContextMenuPrimitive.Popup.Props & Pick<ContextMenuPrimitive.Portal.Props, 'container'>) {
   return (
-    <ContextMenuPrimitive.Portal>
+    <ContextMenuPrimitive.Portal container={container}>
       {/* Explicit: without `side`, Base UI shifts a context menu by its own offsets. */}
       <ContextMenuPrimitive.Positioner
         className='isolate z-50 outline-none'
