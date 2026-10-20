@@ -2,7 +2,7 @@ import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { motion } from 'framer-motion';
+import { motion, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import useMeasure from 'react-use-measure';
 
@@ -67,13 +67,16 @@ type ItemListProps<T> = ItemListElementProps &
 
 /**
  * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-hidden'`. It
- * springs its height when rows come and go; `virtualized` for a long list.
+ * springs its height when rows come and go (reduced motion: it jumps); `virtualized` for a long list.
  */
 function ItemList<T>(props: ItemListProps<T>) {
   if (props.virtualized) return <VirtualizedItemList {...props} />;
   const { virtualized: _, ...rest } = props;
   return <StaticItemList {...rest} />;
 }
+
+/** Firm and quick, no visible overshoot: a row arriving or leaving pushes the card edge. */
+const heightSpring: Transition = { type: 'spring', stiffness: 800, damping: 55, mass: 0.4 };
 
 function StaticItemList({
   className,
@@ -83,6 +86,7 @@ function StaticItemList({
   ...props
 }: ItemListElementProps & { children?: React.ReactNode }) {
   const [measureRef, bounds] = useMeasure();
+  const reduced = useReducedMotion() ?? false;
   const rows = React.Children.toArray(children);
   return (
     <motion.div
@@ -90,7 +94,7 @@ function StaticItemList({
       className={cn('overflow-hidden', className)}
       initial={false}
       animate={{ height: bounds.height > 0 ? bounds.height : 'auto' }}
-      transition={{ type: 'spring', stiffness: 800, damping: 55, mass: 0.4 }}
+      transition={reduced ? { duration: 0 } : heightSpring}
       {...props}>
       <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
         {rows.map((row, index) => (
