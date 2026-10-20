@@ -18,7 +18,7 @@ pnpm dlx shadcn@latest registry add @triargos=https://design.a-np.de/r/{name}.js
 pnpm dlx shadcn@latest add @triargos/button
 ```
 
-The code is copied into your project; you own it. Each component page on the site shows its install command.
+The code is copied into your project; `add` again to update it. Each component page on the site shows its install command.
 
 - Catalog: [`/r/registry.json`](https://design.a-np.de/r/registry.json)
 - Item: `/r/{name}.json`, with `meta.commit`: the commit it was built from

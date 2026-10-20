@@ -25,7 +25,7 @@ interface Labels {
   readonly copied: string;
   /** ShortcutTooltip: between the keys of a chord, “G then P”. */
   readonly shortcutThen: string;
-  /** ItemList (virtualized) while the next page loads. */
+  /** ItemList and Table (virtualized) while the next page loads. */
   readonly loadingMore: string;
   /** InputOTP slot. */
   readonly slot: (slot: { readonly position: number; readonly length: number }) => string;
