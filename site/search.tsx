@@ -1,4 +1,5 @@
 import { IconSearch } from '@tabler/icons-react';
+import { useCommandState } from 'cmdk';
 import { useEffect, useState } from 'react';
 import pages from 'virtual:docs-index';
 
@@ -6,6 +7,7 @@ import {
   Command,
   CommandDialog,
   CommandEmpty,
+  CommandFooter,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -29,6 +31,12 @@ const byName = (value: string, search: string) => {
   if (name.split(' ').some((word) => word.startsWith(query))) return 0.8;
   return name.includes(query) ? 0.5 : 0;
 };
+
+/** Inside `Command`: the pages the search leaves. */
+function ResultCount() {
+  const count = useCommandState((state) => state.filtered.count);
+  return <span className='tabular-nums'>{count === 1 ? '1 page' : `${count} pages`}</span>;
+}
 
 /** The sidebar's search row and the ⌘K palette it opens: every docs page, by name. */
 export function Search() {
@@ -85,6 +93,24 @@ export function Search() {
               </CommandGroup>
             ))}
           </CommandList>
+          <CommandFooter>
+            <ResultCount />
+            <span className='flex items-center gap-4 pointer-coarse:hidden'>
+              <span className='flex items-center gap-1.5'>
+                <Kbd>↑</Kbd>
+                <Kbd>↓</Kbd>
+                Navigate
+              </span>
+              <span className='flex items-center gap-1.5'>
+                <Kbd>↵</Kbd>
+                Open
+              </span>
+              <span className='flex items-center gap-1.5'>
+                <Kbd>esc</Kbd>
+                Close
+              </span>
+            </span>
+          </CommandFooter>
         </Command>
       </CommandDialog>
     </>

@@ -1,4 +1,5 @@
 import { CommandDefault } from '../examples/command/default';
+import { CommandWithFooter } from '../examples/command/footer';
 import { CommandGrouped } from '../examples/command/grouped';
 import { CommandStandalone } from '../examples/command/standalone';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
@@ -29,6 +30,15 @@ export default defineDocs({
           </>
         }>
         <CommandGrouped />
+      </ExampleSection>
+      <ExampleSection
+        title='Footer'
+        description={
+          <>
+            <Code>CommandFooter</Code> under the list: a result count (<Code>useCommandState</Code>) and the keys.
+          </>
+        }>
+        <CommandWithFooter />
       </ExampleSection>
       <ExampleSection title='Standalone' description='Inline in a card: a filterable list without a popup.' bare>
         <CommandStandalone />

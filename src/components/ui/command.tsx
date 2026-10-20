@@ -143,10 +143,29 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) 
   );
 }
 
+/**
+ * A muted band under the list, aligned with the search row: a result count (`useCommandState` from `cmdk`) and key
+ * hints. `Kbd`s on it are raised, so they read on the fill. Copy is the caller's.
+ */
+function CommandFooter({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot='command-footer'
+      className={cn(
+        'flex h-11 shrink-0 items-center justify-between gap-4 border-t bg-muted px-5 text-caption text-muted-foreground',
+        '**:data-[slot=kbd]:bg-card **:data-[slot=kbd]:shadow-raised dark:**:data-[slot=kbd]:bg-foreground/10',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   Command,
   CommandDialog,
   CommandEmpty,
+  CommandFooter,
   CommandGroup,
   CommandInput,
   CommandItem,
