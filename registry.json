@@ -153,6 +153,24 @@
       ]
     },
     {
+      "name": "bottom-nav",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react@1.8.0"
+      ],
+      "registryDependencies": [
+        "@triargos/button",
+        "@triargos/theme",
+        "@triargos/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/bottom-nav.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "breadcrumb",
       "type": "registry:ui",
       "dependencies": [
