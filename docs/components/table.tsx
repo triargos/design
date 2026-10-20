@@ -1,6 +1,7 @@
 import { TableDefault } from '../examples/table/default';
 import { TableEmpty } from '../examples/table/empty';
 import { TableFlush } from '../examples/table/flush';
+import { TableGroupedRows } from '../examples/table/grouped-rows';
 import { TableInACard } from '../examples/table/in-a-card';
 import { TableSortable } from '../examples/table/sortable';
 import { TableWithHeader } from '../examples/table/with-header';
@@ -66,6 +67,17 @@ export default defineDocs({
         }
         bare>
         <TableSortable />
+      </ExampleSection>
+      <ExampleSection
+        title='Grouped rows'
+        description={
+          <>
+            <Code>TableGroupRow colSpan</Code> names the rows after it; <Code>open</Code> + <Code>onOpenChange</Code>{' '}
+            fold them.
+          </>
+        }
+        bare>
+        <TableGroupedRows />
       </ExampleSection>
       <ExampleSection title='Empty' description='One cell over every column holds an Empty.' bare>
         <TableEmpty />

@@ -1,6 +1,6 @@
-import { IconArrowsSort, IconArrowUp } from '@tabler/icons-react';
+import { IconArrowsSort, IconArrowUp, IconChevronDown } from '@tabler/icons-react';
 import { cva } from 'class-variance-authority';
-import { type ComponentProps, createContext, use } from 'react';
+import { type ComponentProps, createContext, type ReactNode, use } from 'react';
 
 import { cn } from '~/lib/utils';
 
@@ -14,6 +14,7 @@ import { cn } from '~/lib/utils';
 //   shell: `<Card><Table variant='card'>…</Table></Card>`.
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
+// - groups: `TableGroupRow`, one full-width band over every column; with `onOpenChange` it folds its rows.
 
 type TableVariant = 'default' | 'flush' | 'card';
 type TableSection = 'head' | 'body' | 'foot';
@@ -221,11 +222,74 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
   );
 }
 
+// A fold button fills its cell, so it pads the cell's own edge: `card` on a card body or flush, `px-3` otherwise.
+const groupRowEdge = { default: 'px-3', flush: 'px-card', card: 'px-card' } as const satisfies Record<
+  TableVariant,
+  string
+>;
+
+/**
+ * A full-width band over every column that names the rows after it. Static, or with `onOpenChange` a fold button
+ * (`aria-expanded`, a chevron at the end); the call site leaves out the rows of a closed group.
+ */
+function TableGroupRow({
+  colSpan,
+  open = true,
+  onOpenChange,
+  className,
+  children,
+  ...props
+}: Omit<ComponentProps<'tr'>, 'children'> & {
+  /** Columns of the table: the band spans them all. */
+  colSpan: number;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children: ReactNode;
+}) {
+  const variant = use(TableVariantContext);
+  return (
+    <TableRow
+      data-slot='table-group-row'
+      className={cn(variant !== 'card' && 'bg-muted hover:bg-muted', className)}
+      {...props}>
+      <TableCell
+        colSpan={colSpan}
+        className={cn(
+          'py-0 [--table-cell-fill:var(--muted)] in-[tr:hover]:[--table-cell-fill:var(--muted)]',
+          onOpenChange !== undefined && 'p-0 first:ps-0 last:pe-0',
+        )}>
+        {onOpenChange === undefined ? (
+          <div className='flex min-h-9 items-center gap-2 font-medium text-foreground'>{children}</div>
+        ) : (
+          <button
+            type='button'
+            aria-expanded={open}
+            onClick={() => onOpenChange(!open)}
+            className={cn(
+              'group/fold flex min-h-9 w-full items-center gap-2 text-left font-medium text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/24 focus-visible:ring-inset',
+              groupRowEdge[variant],
+            )}>
+            {children}
+            <IconChevronDown
+              aria-hidden
+              className={cn(
+                'ms-auto size-4 shrink-0 text-muted-foreground transition-[rotate,color] duration-move ease-move group-hover/fold:text-foreground motion-reduce:transition-none',
+                !open && '-rotate-90',
+              )}
+            />
+          </button>
+        )}
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export {
   Table,
   TableBody,
   TableCell,
   TableFooter,
+  TableGroupRow,
   TableHead,
   TableHeader,
   TableRow,
