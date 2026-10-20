@@ -16,8 +16,26 @@ function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   );
 }
 
-function FieldLegend({ className, ...props }: React.ComponentProps<'legend'>) {
-  return <legend data-slot='field-legend' className={cn('mb-group text-body font-medium', className)} {...props} />;
+/**
+ * The name of a `FieldSet`. `label` (default): one question, set like a `FieldLabel` (a checkbox or radio list).
+ * `legend`: a heading over a section of fields.
+ */
+function FieldLegend({
+  className,
+  variant = 'label',
+  ...props
+}: React.ComponentProps<'legend'> & { variant?: 'label' | 'legend' }) {
+  return (
+    <legend
+      data-slot='field-legend'
+      data-variant={variant}
+      className={cn(
+        'mb-group data-[variant=label]:text-body data-[variant=label]:font-medium data-[variant=legend]:text-heading',
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 const fieldGroupVariants = cva('group/field-group @container/field-group flex w-full flex-col gap-group', {
@@ -48,8 +66,11 @@ const fieldVariants = cva('group/field flex w-full gap-3 data-[invalid=true]:tex
         'flex-row items-center',
         '[&>[data-slot=field-label]]:flex-auto',
         'has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-0.5',
-        // A checkbox or radio sits on the label's first line; a switch centers on label + description.
+        // A checkbox or radio sits on the label's first line; a switch centers on label + description. Beside any
+        // other control (an input, a select), label + description center on it, so a label alone sits on the field's
+        // middle; taller, they set the row and the control sits on top. A textarea keeps the label on top.
         '[&>[data-slot=switch]]:self-center',
+        '[&:not(:has(>[role=checkbox],>[role=radio],>[data-slot=textarea]))>[data-slot=field-content]]:self-center',
       ],
     },
   },

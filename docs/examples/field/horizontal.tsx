@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '~/components/ui/field';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 
@@ -10,7 +11,10 @@ const DIGESTS = [
   { value: 'daily', label: 'Daily' },
 ];
 
-/** Settings: `orientation='horizontal'` puts the label and description beside the control. */
+/**
+ * Settings: `orientation='horizontal'` puts the label and description beside the control. Beside an input or a select,
+ * a label alone centers on the field.
+ */
 export function FieldHorizontal() {
   const [digest, setDigest] = useState('instant');
   return (
@@ -21,6 +25,13 @@ export function FieldHorizontal() {
       </CardHeader>
       <CardContent className='p-card'>
         <FieldGroup>
+          <Field orientation='horizontal'>
+            <FieldContent>
+              <FieldLabel htmlFor='field-reply-to'>Reply-to address</FieldLabel>
+            </FieldContent>
+            <Input id='field-reply-to' type='email' defaultValue='team@acme.com' className='w-full max-w-48' />
+          </Field>
+          <FieldSeparator />
           <Field orientation='horizontal'>
             <FieldContent>
               <FieldLabel htmlFor='field-digest'>Email</FieldLabel>

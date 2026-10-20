@@ -4,6 +4,7 @@ import { FieldDisabled } from '../examples/field/disabled';
 import { FieldHorizontal } from '../examples/field/horizontal';
 import { FieldInACard } from '../examples/field/in-a-card';
 import { FieldInAForm } from '../examples/field/in-a-form';
+import { FieldLegendVariants } from '../examples/field/legend';
 import { FieldPills } from '../examples/field/pills';
 import { FieldSeveralErrors } from '../examples/field/several-errors';
 import { FieldWithDescription } from '../examples/field/with-description';
@@ -75,11 +76,22 @@ export default defineDocs({
         title='Horizontal'
         description={
           <>
-            Settings: <Code>orientation='horizontal'</Code> puts the label and description beside the control.
+            Settings: <Code>orientation='horizontal'</Code> puts the label and description beside the control. Beside an
+            input or a select they center on it; beside a checkbox or radio they start on its line.
           </>
         }
         bare>
         <FieldHorizontal />
+      </ExampleSection>
+      <ExampleSection
+        title='Legend'
+        description={
+          <>
+            <Code>FieldSet · FieldLegend</Code>: <Code>variant='legend'</Code> heads a section of fields; the default{' '}
+            <Code>label</Code> names one question.
+          </>
+        }>
+        <FieldLegendVariants />
       </ExampleSection>
       <ExampleSection
         title='In a card'
