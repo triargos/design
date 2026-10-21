@@ -46,7 +46,8 @@ export default defineDocs({
           <>
             While you type, the exact label leads, then labels that start with the query, then a word that does, then
             the rest; within each, the order of <Code>items</Code>. Typing <Code>design</Code> lists Design first,
-            though Design system comes earlier in <Code>items</Code>; Enter picks it.
+            though Design system comes earlier in <Code>items</Code>; Enter picks it. With <Code>multiple</Code>, what
+            is already selected goes last, so Enter adds.
           </>
         }>
         <ComboboxMatching />
@@ -59,8 +60,8 @@ export default defineDocs({
         description={
           <>
             <Code>allowCustom</Code>: the value is an option's value or the typed text. While the query names no option,
-            the last row takes it; Enter picks it once nothing else matches. <Code>customLabel</Code> and{' '}
-            <Code>customOptionLabel</Code> word those rows.
+            a row takes it, after the options whose label or a word in it starts with the query: Enter picks it unless
+            one does. <Code>customLabel</Code> and <Code>customOptionLabel</Code> word those rows.
           </>
         }>
         <ComboboxAllowCustom />

@@ -72,22 +72,35 @@ function matchOf({ label, query, filter }: { label: string; query: string; filte
 }
 
 /**
- * Better matches first: exact, prefix, word start, contains. Ties keep the list's order, so a caller's order holds within
- * each. An empty query keeps the list as it is. Only orders: Base UI still filters.
+ * The list while typing: the matches you can add, best first (exact, prefix, word start); then the proposal, so Enter
+ * takes the typed text unless a label or a word in one starts with it; then the matches that only contain the query;
+ * then what is already selected (multiple), so Enter adds rather than removes. Ties keep the list's order, so a
+ * caller's order holds within each. Only orders: Base UI still filters.
  */
-function rankedByMatch<T extends Entry>({
+function rankedForQuery({
   entries,
   query,
+  proposal,
+  selected,
   filter,
 }: {
-  entries: ReadonlyArray<T>;
+  entries: ReadonlyArray<Entry>;
   query: string;
+  proposal: CustomProposal | null;
+  selected: ReadonlySet<Entry>;
   filter: TextFilter;
-}): ReadonlyArray<T> {
-  if (query === '') return entries;
+}): ReadonlyArray<Entry> {
   const matches = new Map(entries.map((entry) => [entry, matchOf({ label: entry.label, query, filter })]));
+  const match = (entry: Entry) => matches.get(entry)!;
   // `sort` is stable.
-  return [...entries].sort((a, b) => matches.get(a)! - matches.get(b)!);
+  const best = (list: ReadonlyArray<Entry>) => [...list].sort((a, b) => match(a) - match(b));
+  const addable = entries.filter((entry) => !selected.has(entry));
+  return [
+    ...best(addable.filter((entry) => match(entry) < MATCH.contains)),
+    ...(proposal ? [proposal] : []),
+    ...best(addable.filter((entry) => match(entry) >= MATCH.contains)),
+    ...best(entries.filter((entry) => selected.has(entry))),
+  ];
 }
 
 /** The query becomes a proposal unless it is empty, names an item's label (as Base UI matches), or is a value. */
@@ -154,8 +167,8 @@ interface ComboboxBaseProps extends Pick<
 
 interface ComboboxCustomProps {
   /**
-   * A value is an item's value or the typed text. While the query matches no item's label, the list ends in a row that
-   * takes it; Enter picks it once nothing else matches.
+   * A value is an item's value or the typed text. While the query names no item, a row takes it: after the items whose
+   * label or a word in it starts with the query, so Enter picks it unless one does.
    */
   readonly allowCustom?: boolean;
   /** Marks a typed value: in its row, and (single) as the field's description. */
@@ -230,21 +243,20 @@ function Combobox(props: ComboboxProps) {
     [allowCustom, listQuery, items, values, filter],
   );
 
-  // Items, then the custom values, then the proposal. While typing, ranked by the query. Otherwise as given; single:
-  // the selected entry first. A single input that shows the selected label is not typing (Base UI then lists every
-  // item).
+  // Items, then the custom values. While typing, ranked by the query (`rankedForQuery`). Otherwise as given, the
+  // proposal last; single: the selected entry first. A single input that shows the selected label is not typing (Base
+  // UI then lists every item).
   const entries = React.useMemo((): ReadonlyArray<Entry> => {
     const all: ReadonlyArray<Entry> = [...items, ...customValues];
     const showsSelected =
       !props.multiple && selected !== null && isSameText({ a: selected.label, b: listQuery, filter });
-    const ordered =
-      listQuery !== '' && !showsSelected
-        ? rankedByMatch({ entries: all, query: listQuery, filter })
-        : props.multiple
-          ? all
-          : selectedFirst(all, selected);
-    return [...ordered, ...(proposal ? [proposal] : [])];
-  }, [props.multiple, items, customValues, selected, listQuery, filter, proposal]);
+    if (listQuery !== '' && !showsSelected) {
+      // Single: a pick replaces the value, so the selected entry ranks like any other.
+      const sinks = new Set<Entry>(props.multiple ? selectedEntries : []);
+      return rankedForQuery({ entries: all, query: listQuery, proposal, selected: sinks, filter });
+    }
+    return [...(props.multiple ? all : selectedFirst(all, selected)), ...(proposal ? [proposal] : [])];
+  }, [props.multiple, items, customValues, selected, selectedEntries, listQuery, filter, proposal]);
   const customNoteShown = !props.multiple && selected !== null && isCustomValue(selected);
 
   const scrollToHighlight = ({ reason, index }: ComboboxPrimitive.Root.HighlightEventDetails) => {
