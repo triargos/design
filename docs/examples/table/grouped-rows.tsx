@@ -1,3 +1,4 @@
+import { IconFolder } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
@@ -36,7 +37,10 @@ const PROJECTS = [
 
 const COLUMNS = 3;
 
-/** `TableGroupRow` names the rows after it; with `onOpenChange` it folds them, and the call site leaves them out. */
+/**
+ * `TableGroupRow` names the rows after it: an icon, the name, a count pill. With `onOpenChange` it folds them, and the
+ * call site leaves them out.
+ */
 export function TableGroupedRows() {
   const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
   const setOpen = (id: string, open: boolean) =>
@@ -63,6 +67,7 @@ export function TableGroupedRows() {
             return (
               <Fragment key={project.id}>
                 <TableGroupRow colSpan={COLUMNS} open={open} onOpenChange={(next) => setOpen(project.id, next)}>
+                  <IconFolder aria-hidden className='size-4 shrink-0 text-muted-foreground' />
                   {project.name}
                   <Badge size='sm' shape='pill' className='tabular-nums'>
                     {project.tasks.length}
