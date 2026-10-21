@@ -170,7 +170,11 @@ function Combobox(props: ComboboxProps) {
     return values.flatMap((text) => itemsByValue.get(text) ?? customByValue.get(text) ?? []);
   }, [values, itemsByValue, customValues]);
   const selected = selectedEntries[0] ?? null;
-  const proposal = allowCustom ? proposalFor({ query, labels, values }) : null;
+  // Memoized: a new proposal would give `entries` a new identity, and Base UI would re-filter the list on every render.
+  const proposal = React.useMemo(
+    () => (allowCustom ? proposalFor({ query, labels, values }) : null),
+    [allowCustom, query, labels, values],
+  );
 
   // Items, then the custom values, then the proposal. Single: the selected entry first.
   const entries = React.useMemo((): ReadonlyArray<Entry> => {
