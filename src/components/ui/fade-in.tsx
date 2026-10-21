@@ -10,9 +10,9 @@ type FadeInProps = useRender.ComponentProps<'div'> & {
 };
 
 /**
- * Content that arrives after a load: it fades in and rises 4px over `duration-move` when it mounts, or when `animate`
- * turns on. Reduced motion keeps the fade and drops the rise. No layout of its own: pass the gap through `className`,
- * or `render` an element that has one.
+ * Content that arrives after a load: it fades in over `duration-feedback` when it mounts, or when `animate` turns on.
+ * Opacity only: the content lands where it stays, so nothing on the page shifts as it arrives, and reduced motion
+ * needs no exception. No layout of its own: pass the gap through `className`, or `render` an element that has one.
  */
 function FadeIn({ animate = true, className, render, ...props }: FadeInProps) {
   return useRender({
@@ -21,11 +21,7 @@ function FadeIn({ animate = true, className, render, ...props }: FadeInProps) {
     state: { slot: 'fade-in' },
     props: mergeProps<'div'>(
       {
-        className: cn(
-          animate &&
-            'animate-in duration-move ease-enter fade-in-0 slide-in-from-bottom-1 motion-reduce:slide-in-from-bottom-0',
-          className,
-        ),
+        className: cn(animate && 'animate-in duration-feedback ease-enter fade-in-0', className),
       },
       props,
     ),
