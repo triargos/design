@@ -12,24 +12,63 @@ import { cn } from '~/lib/utils';
 
 type Virtualizer = ReturnType<typeof useVirtualizer<HTMLDivElement, Element>>;
 
-/**
- * A typed value of a `Combobox allowCustom`: not an item, its text is the value and the label. A `SelectOption`, so
- * `ComboboxValue` renders its chip like any other.
- */
-class CustomEntry implements SelectOption {
-  readonly label: string;
-  constructor(readonly value: string) {
-    this.label = value;
-  }
+// A list entry is one of three: an item (the caller's `SelectOption`), a custom value, or the proposal. The last two
+// carry `KIND`; a registered symbol, so the mark survives a spread and a second copy of this file.
+const KIND: unique symbol = Symbol.for('@triargos/design/combobox-entry');
+
+/** A value of a `Combobox allowCustom` that names no item: its text is the value and the label. */
+interface CustomValue extends SelectOption {
+  readonly [KIND]: 'custom';
 }
 
-type Entry = SelectOption | CustomEntry;
+/** The row that takes the query as a new value: “Use “…””. Picked, its text becomes a `CustomValue`. */
+interface CustomProposal extends SelectOption {
+  readonly [KIND]: 'proposal';
+}
+
+type Entry = SelectOption | CustomValue | CustomProposal;
+
+const customValue = (text: string): CustomValue => ({ [KIND]: 'custom', value: text, label: text });
+const customProposal = (text: string): CustomProposal => ({ [KIND]: 'proposal', value: text, label: text });
+
+/** A selected value that is typed text, not an item's: mark its chip with it. */
+const isCustomValue = (item: SelectOption): item is CustomValue => KIND in item && item[KIND] === 'custom';
+const isCustomProposal = (item: SelectOption): item is CustomProposal => KIND in item && item[KIND] === 'proposal';
+const kindOf = (entry: Entry) => (KIND in entry ? entry[KIND] : 'item');
 
 const entryLabel = (entry: Entry) => entry.label;
 const entryValue = (entry: Entry) => entry.value;
-const entryKey = (entry: Entry) => (entry instanceof CustomEntry ? `custom:${entry.value}` : entry.value);
-const isSameEntry = (a: Entry, b: Entry) =>
-  a instanceof CustomEntry === b instanceof CustomEntry && a.value === b.value;
+const entryKey = (entry: Entry) => (KIND in entry ? `${entry[KIND]}:${entry.value}` : entry.value);
+const isSameEntry = (a: Entry, b: Entry) => kindOf(a) === kindOf(b) && a.value === b.value;
+
+/** A value is custom when it names no item. */
+const isCustomText = ({ text, itemsByValue }: { text: string; itemsByValue: ReadonlyMap<string, SelectOption> }) =>
+  text !== '' && !itemsByValue.has(text);
+
+/** The query becomes a proposal unless it is empty, names an item's label (any case), or is already a value. */
+function proposalFor({
+  query,
+  labels,
+  values,
+}: {
+  query: string;
+  labels: ReadonlySet<string>;
+  values: ReadonlyArray<string>;
+}): CustomProposal | null {
+  const text = query.trim();
+  if (text === '' || labels.has(text.toLowerCase()) || values.includes(text)) return null;
+  return customProposal(text);
+}
+
+/**
+ * One `CustomValue` per text, kept while the texts stay the same. Base UI resets the input to the selected label when
+ * the value changes identity or drops out of `items`; either would undo every keystroke. Keyed by the texts, not by
+ * `items`, so a caller's new `items` array on every render keeps them too.
+ */
+function useCustomValues(texts: ReadonlyArray<string>): ReadonlyArray<CustomValue> {
+  const key = JSON.stringify(texts);
+  return React.useMemo(() => (JSON.parse(key) as string[]).map(customValue), [key]);
+}
 
 /** What the root shares with its parts. */
 interface ComboboxContextValue {
@@ -39,15 +78,13 @@ interface ComboboxContextValue {
   readonly open: boolean;
   readonly virtualized: boolean;
   readonly virtualizerRef: React.RefObject<Virtualizer | null>;
+  /** The wording of the custom rows; `null` without `allowCustom`. */
   readonly custom: {
-    /** A single value that is typed text, not an item's. */
-    readonly active: boolean;
-    /** The selected values that are typed text. */
-    readonly selected: ReadonlySet<string>;
     readonly label: string;
     readonly optionLabel: (text: React.ReactNode) => React.ReactNode;
-    readonly noteId: string;
   } | null;
+  /** The note that marks a single custom value, while there is one: the input's description. */
+  readonly customNoteId: string | undefined;
 }
 
 const ComboboxContext = React.createContext<ComboboxContextValue | null>(null);
@@ -115,42 +152,32 @@ function Combobox(props: ComboboxProps) {
   const copy = useLocale().labels;
   const customLabel = props.customLabel ?? copy.custom;
 
-  const optionsByValue = React.useMemo(() => new Map(items.map((option) => [option.value, option])), [items]);
-  const labels = React.useMemo(() => new Set(items.map((option) => option.label.toLowerCase())), [items]);
+  const itemsByValue = React.useMemo(() => new Map(items.map((item) => [item.value, item])), [items]);
+  const labels = React.useMemo(() => new Set(items.map((item) => item.label.toLowerCase())), [items]);
 
+  // Single and multiple meet here: from now on, a list of values.
   const allowCustom = props.allowCustom === true;
-  const single = props.multiple ? null : props.value;
   const value = props.value;
   const values = React.useMemo(
     (): ReadonlyArray<string> => (value === null ? [] : typeof value === 'string' ? [value] : value),
     [value],
   );
-  const customTexts = allowCustom ? values.filter((text) => text !== '' && !optionsByValue.has(text)) : [];
-  // Base UI resets the input to the selected label when the value changes identity or drops out of `items`; either
-  // would undo every keystroke. So: one `CustomEntry` per custom text, kept while the texts stay the same (not on a new
-  // `items`), and they stay in `items`.
-  const customKey = JSON.stringify(customTexts);
-  const customEntries = React.useMemo(
-    () => (JSON.parse(customKey) as string[]).map((text) => new CustomEntry(text)),
-    [customKey],
+  const customValues = useCustomValues(
+    allowCustom ? values.filter((text) => isCustomText({ text, itemsByValue })) : [],
   );
-  const customByValue = React.useMemo(
-    () => new Map(customEntries.map((entry) => [entry.value, entry])),
-    [customEntries],
-  );
-  const customActive = !props.multiple && customEntries.length > 0;
-  const selected: Entry | null =
-    single === null ? null : (optionsByValue.get(single) ?? customByValue.get(single) ?? null);
+  const selectedEntries = React.useMemo((): Entry[] => {
+    const customByValue = new Map(customValues.map((entry) => [entry.value, entry]));
+    return values.flatMap((text) => itemsByValue.get(text) ?? customByValue.get(text) ?? []);
+  }, [values, itemsByValue, customValues]);
+  const selected = selectedEntries[0] ?? null;
+  const proposal = allowCustom ? proposalFor({ query, labels, values }) : null;
 
-  // Items, then the selected custom values, then (custom) the row that takes the query. Single: the selected entry
-  // first.
+  // Items, then the custom values, then the proposal. Single: the selected entry first.
   const entries = React.useMemo((): ReadonlyArray<Entry> => {
-    const typed = query.trim();
-    const taken = typed === '' || labels.has(typed.toLowerCase()) || values.includes(typed);
-    const typedRow = allowCustom && !taken ? [new CustomEntry(typed)] : [];
-    const all: ReadonlyArray<Entry> = [...items, ...customEntries];
-    return [...(props.multiple ? all : selectedFirst(all, selected)), ...typedRow];
-  }, [props.multiple, items, allowCustom, query, values, labels, customEntries, selected]);
+    const all: ReadonlyArray<Entry> = [...items, ...customValues];
+    return [...(props.multiple ? all : selectedFirst(all, selected)), ...(proposal ? [proposal] : [])];
+  }, [props.multiple, items, customValues, selected, proposal]);
+  const customNoteShown = !props.multiple && selected !== null && isCustomValue(selected);
 
   const scrollToHighlight = ({ reason, index }: ComboboxPrimitive.Root.HighlightEventDetails) => {
     const virtualizer = virtualizerRef.current;
@@ -193,21 +220,14 @@ function Combobox(props: ComboboxProps) {
         open: root.open ?? openState,
         virtualized,
         virtualizerRef,
-        custom: allowCustom
-          ? {
-              active: customActive,
-              selected: new Set(customByValue.keys()),
-              label: customLabel,
-              optionLabel: props.customOptionLabel ?? copy.useCustom,
-              noteId,
-            }
-          : null,
+        custom: allowCustom ? { label: customLabel, optionLabel: props.customOptionLabel ?? copy.useCustom } : null,
+        customNoteId: customNoteShown ? noteId : undefined,
       }}>
       {props.multiple ? (
         <ComboboxPrimitive.Root<Entry, true>
           {...shared}
           multiple
-          value={props.value.flatMap((key) => optionsByValue.get(key) ?? customByValue.get(key) ?? [])}
+          value={selectedEntries}
           onValueChange={(next) => props.onValueChange(next.map(entryValue))}>
           {children}
         </ComboboxPrimitive.Root>
@@ -218,7 +238,7 @@ function Combobox(props: ComboboxProps) {
           onValueChange={(next) => props.onValueChange(next === null ? null : entryValue(next))}>
           {children}
           {/* No visible mark for a typed value: the input reads the note, its list row shows the same label. */}
-          {customActive && (
+          {customNoteShown && (
             <span id={noteId} className='sr-only'>
               {customLabel}
             </span>
@@ -255,12 +275,12 @@ function ComboboxInput({
   const { labels } = useLocale();
   const clearLabel = clearLabelProp ?? labels.clear;
   const openLabel = openLabelProp ?? labels.openList;
-  const { custom } = useComboboxContext();
+  const { customNoteId } = useComboboxContext();
   return (
     <ComboboxPrimitive.InputGroup render={<InputGroup className={cn('w-auto', className)} />}>
       <ComboboxPrimitive.Input
         render={<InputGroupInput disabled={disabled} />}
-        aria-describedby={custom?.active ? custom.noteId : undefined}
+        aria-describedby={customNoteId}
         {...props}
       />
       <InputGroupAddon align='inline-end'>
@@ -330,7 +350,7 @@ const ROW_ESTIMATE = 36;
 const OVERSCAN = 20;
 
 interface ComboboxListProps {
-  /** A row: a `ComboboxItem` with `value={option}`. A custom value's rows render themselves. */
+  /** A row: a `ComboboxItem` with `value={option}`. Custom values and the proposal render themselves. */
   readonly children: (option: SelectOption) => React.ReactNode;
   readonly className?: string;
 }
@@ -338,7 +358,14 @@ interface ComboboxListProps {
 /** The rows. With `Combobox virtualized` only those in view render, measured as they mount. */
 function ComboboxList({ children, className }: ComboboxListProps) {
   const { virtualized } = useComboboxContext();
-  const row = (entry: Entry) => (entry instanceof CustomEntry ? <CustomRow entry={entry} /> : children(entry));
+  const row = (entry: Entry) =>
+    isCustomValue(entry) ? (
+      <CustomValueRow entry={entry} />
+    ) : isCustomProposal(entry) ? (
+      <CustomProposalRow entry={entry} />
+    ) : (
+      children(entry)
+    );
   if (virtualized) return <VirtualizedRows row={row} className={className} />;
   return (
     <ComboboxPrimitive.List
@@ -460,21 +487,25 @@ function ComboboxItem({ className, children, indicator, style, ...props }: Combo
   );
 }
 
-/** A custom value's row: the picked text marked with `customLabel`, or the row that takes the query. */
-function CustomRow({ entry }: { entry: CustomEntry }) {
+/** A custom value's row: its text, marked with `customLabel`. */
+function CustomValueRow({ entry }: { entry: CustomValue }) {
   const { custom } = useComboboxContext();
   if (!custom) return null;
-  if (custom.selected.has(entry.value)) {
-    return (
-      <ComboboxItem value={entry}>
-        <span className='truncate'>{entry.value}</span>
-        {/* At the row's end: the value truncates first, the hint keeps its width. */}
-        <span className='ms-auto shrink-0 text-caption text-muted-foreground in-data-highlighted:text-foreground'>
-          {custom.label}
-        </span>
-      </ComboboxItem>
-    );
-  }
+  return (
+    <ComboboxItem value={entry}>
+      <span className='truncate'>{entry.value}</span>
+      {/* At the row's end: the value truncates first, the hint keeps its width. */}
+      <span className='ms-auto shrink-0 text-caption text-muted-foreground in-data-highlighted:text-foreground'>
+        {custom.label}
+      </span>
+    </ComboboxItem>
+  );
+}
+
+/** The proposal's row, worded by `customOptionLabel`. */
+function CustomProposalRow({ entry }: { entry: CustomProposal }) {
+  const { custom } = useComboboxContext();
+  if (!custom) return null;
   // One line, as tall as the other rows: the typed text truncates, the words and quotes around it keep their width.
   return (
     <ComboboxItem value={entry} indicator={<IconPlus className='text-muted-foreground' />}>
@@ -569,4 +600,6 @@ export {
   ComboboxItem,
   ComboboxList,
   ComboboxValue,
+  isCustomValue,
 };
+export type { CustomValue };

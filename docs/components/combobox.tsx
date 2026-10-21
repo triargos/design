@@ -58,7 +58,7 @@ export default defineDocs({
         description={
           <>
             <Code>multiple allowCustom</Code>: chips of options and typed text. A typed chip’s value and label are its
-            text.
+            text; <Code>isCustomValue(item)</Code> tells it apart.
           </>
         }>
         <ComboboxMultipleAllowCustom />
