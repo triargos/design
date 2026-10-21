@@ -45,18 +45,66 @@ const isSameEntry = (a: Entry, b: Entry) => kindOf(a) === kindOf(b) && a.value =
 const isCustomText = ({ text, itemsByValue }: { text: string; itemsByValue: ReadonlyMap<string, SelectOption> }) =>
   text !== '' && !itemsByValue.has(text);
 
-/** The query becomes a proposal unless it is empty, names an item's label (any case), or is already a value. */
+/** Base UI's matching: an `Intl.Collator` that ignores case, accents and punctuation. */
+type TextFilter = ReturnType<typeof ComboboxPrimitive.useFilter>;
+
+const asText = (text: string) => text;
+
+const isSameText = ({ a, b, filter }: { a: string; b: string; filter: TextFilter }) =>
+  filter.startsWith(a, b, asText) && filter.startsWith(b, a, asText);
+
+/** How well a label matches the query, best first. Ties keep the list's order. */
+const MATCH = { exact: 0, prefix: 1, wordStart: 2, contains: 3, none: 4 } as const;
+
+/** A word starts after one of these. */
+const WORD_SEPARATOR = /[\s\-_/(.]/;
+
+function matchOf({ label, query, filter }: { label: string; query: string; filter: TextFilter }): number {
+  if (filter.startsWith(label, query, asText)) {
+    return isSameText({ a: label, b: query, filter }) ? MATCH.exact : MATCH.prefix;
+  }
+  for (let index = 1; index < label.length; index += 1) {
+    if (WORD_SEPARATOR.test(label[index - 1]!) && filter.startsWith(label.slice(index), query, asText)) {
+      return MATCH.wordStart;
+    }
+  }
+  return filter.contains(label, query, asText) ? MATCH.contains : MATCH.none;
+}
+
+/**
+ * Better matches first: exact, prefix, word start, contains. Ties keep the list's order, so a caller's order holds within
+ * each. An empty query keeps the list as it is. Only orders: Base UI still filters.
+ */
+function rankedByMatch<T extends Entry>({
+  entries,
+  query,
+  filter,
+}: {
+  entries: ReadonlyArray<T>;
+  query: string;
+  filter: TextFilter;
+}): ReadonlyArray<T> {
+  if (query === '') return entries;
+  const matches = new Map(entries.map((entry) => [entry, matchOf({ label: entry.label, query, filter })]));
+  // `sort` is stable.
+  return [...entries].sort((a, b) => matches.get(a)! - matches.get(b)!);
+}
+
+/** The query becomes a proposal unless it is empty, names an item's label (as Base UI matches), or is a value. */
 function proposalFor({
   query,
-  labels,
+  items,
   values,
+  filter,
 }: {
   query: string;
-  labels: ReadonlySet<string>;
+  items: ReadonlyArray<SelectOption>;
   values: ReadonlyArray<string>;
+  filter: TextFilter;
 }): CustomProposal | null {
   const text = query.trim();
-  if (text === '' || labels.has(text.toLowerCase()) || values.includes(text)) return null;
+  if (text === '' || values.includes(text)) return null;
+  if (items.some((item) => isSameText({ a: item.label, b: text, filter }))) return null;
   return customProposal(text);
 }
 
@@ -149,11 +197,17 @@ function Combobox(props: ComboboxProps) {
   const [query, setQuery] = React.useState('');
   const virtualizerRef = React.useRef<Virtualizer | null>(null);
   const noteId = React.useId();
-  const copy = useLocale().labels;
+  const { locale, labels: copy } = useLocale();
   const customLabel = props.customLabel ?? copy.custom;
+  // `multiple`: a plain `contains`, the one Base UI filters with; the single variant also matches the selection.
+  const filter = ComboboxPrimitive.useFilter({ locale, multiple: true });
+  const [closingQuery, setClosingQuery] = React.useState('');
+  const open = root.open ?? openState;
+  // The query the list shows. While the popup closes, the one it closed with: Base UI clears a multiple combobox's
+  // input on close, and the rows would jump back to the caller's order during the exit animation.
+  const listQuery = open ? query : closingQuery;
 
   const itemsByValue = React.useMemo(() => new Map(items.map((item) => [item.value, item])), [items]);
-  const labels = React.useMemo(() => new Set(items.map((item) => item.label.toLowerCase())), [items]);
 
   // Single and multiple meet here: from now on, a list of values.
   const allowCustom = props.allowCustom === true;
@@ -172,15 +226,25 @@ function Combobox(props: ComboboxProps) {
   const selected = selectedEntries[0] ?? null;
   // Memoized: a new proposal would give `entries` a new identity, and Base UI would re-filter the list on every render.
   const proposal = React.useMemo(
-    () => (allowCustom ? proposalFor({ query, labels, values }) : null),
-    [allowCustom, query, labels, values],
+    () => (allowCustom ? proposalFor({ query: listQuery, items, values, filter }) : null),
+    [allowCustom, listQuery, items, values, filter],
   );
 
-  // Items, then the custom values, then the proposal. Single: the selected entry first.
+  // Items, then the custom values, then the proposal. While typing, ranked by the query. Otherwise as given; single:
+  // the selected entry first. A single input that shows the selected label is not typing (Base UI then lists every
+  // item).
   const entries = React.useMemo((): ReadonlyArray<Entry> => {
     const all: ReadonlyArray<Entry> = [...items, ...customValues];
-    return [...(props.multiple ? all : selectedFirst(all, selected)), ...(proposal ? [proposal] : [])];
-  }, [props.multiple, items, customValues, selected, proposal]);
+    const showsSelected =
+      !props.multiple && selected !== null && isSameText({ a: selected.label, b: listQuery, filter });
+    const ordered =
+      listQuery !== '' && !showsSelected
+        ? rankedByMatch({ entries: all, query: listQuery, filter })
+        : props.multiple
+          ? all
+          : selectedFirst(all, selected);
+    return [...ordered, ...(proposal ? [proposal] : [])];
+  }, [props.multiple, items, customValues, selected, listQuery, filter, proposal]);
   const customNoteShown = !props.multiple && selected !== null && isCustomValue(selected);
 
   const scrollToHighlight = ({ reason, index }: ComboboxPrimitive.Root.HighlightEventDetails) => {
@@ -197,6 +261,7 @@ function Combobox(props: ComboboxProps) {
     items: entries,
     virtualized,
     autoHighlight: true,
+    locale,
     itemToStringLabel: entryLabel,
     itemToStringValue: entryValue,
     isItemEqualToValue: isSameEntry,
@@ -207,6 +272,8 @@ function Combobox(props: ComboboxProps) {
     open: root.open,
     onOpenChange: (next: boolean, details: ComboboxPrimitive.Root.ChangeEventDetails) => {
       setOpenState(next);
+      // Called before Base UI clears the input.
+      if (!next) setClosingQuery(query);
       onOpenChange?.(next, details);
     },
     onInputValueChange: setQuery,
@@ -221,7 +288,7 @@ function Combobox(props: ComboboxProps) {
       value={{
         chips,
         setChips,
-        open: root.open ?? openState,
+        open,
         virtualized,
         virtualizerRef,
         custom: allowCustom ? { label: customLabel, optionLabel: props.customOptionLabel ?? copy.useCustom } : null,

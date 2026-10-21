@@ -4,6 +4,7 @@ import { ComboboxInADialog } from '../examples/combobox/in-a-dialog';
 import { ComboboxInAField } from '../examples/combobox/in-a-field';
 import { ComboboxMultiple } from '../examples/combobox/multiple';
 import { ComboboxMultipleAllowCustom } from '../examples/combobox/multiple-allow-custom';
+import { ComboboxRankedMatches } from '../examples/combobox/ranked-matches';
 import { ComboboxStates } from '../examples/combobox/states';
 import { ComboboxVirtualized } from '../examples/combobox/virtualized';
 import { ComboboxWithDescription } from '../examples/combobox/with-description';
@@ -38,6 +39,11 @@ export default defineDocs({
           </>
         }>
         <ComboboxMultiple />
+      </ExampleSection>
+      <ExampleSection
+        title='Ranked matches'
+        description='While you type, better matches lead: the exact label, then labels that start with the query, then a word that does, then the rest. Within each, the order of items. Enter picks the first.'>
+        <ComboboxRankedMatches />
       </ExampleSection>
       <ExampleSection title='With description' description='A row’s content is yours; the check keeps its column.'>
         <ComboboxWithDescription />
