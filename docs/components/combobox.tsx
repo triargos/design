@@ -45,9 +45,10 @@ export default defineDocs({
         description={
           <>
             While you type, the exact label leads, then labels that start with the query, then a word that does, then
-            the rest; within each, the order of <Code>items</Code>. Typing <Code>design</Code> lists Design first,
-            though Design system comes earlier in <Code>items</Code>; Enter picks it. With <Code>multiple</Code>, what
-            is already selected goes last, so Enter adds.
+            the rest; within each, the more of the label typed, then the order of <Code>items</Code>. Typing{' '}
+            <Code>design</Code> lists Design first, though Design system comes earlier in <Code>items</Code>; Enter
+            picks it. With <Code>multiple</Code>, what is already selected goes last, so Enter adds, unless you typed
+            half of it or more.
           </>
         }>
         <ComboboxMatching />

@@ -53,8 +53,14 @@ const asText = (text: string) => text;
 const isSameText = ({ a, b, filter }: { a: string; b: string; filter: TextFilter }) =>
   filter.startsWith(a, b, asText) && filter.startsWith(b, a, asText);
 
-/** How well a label matches the query, best first. Ties keep the list's order. */
+/** Where in a label the query matches, best first. */
 const MATCH = { exact: 0, prefix: 1, wordStart: 2, contains: 3, none: 4 } as const;
+
+/**
+ * From this share of a label typed (`coverage`), a prefix or word-start match is what you are typing: it leads even
+ * when selected, and the proposal follows it. “onboard” covers 70% of “Onboarding”; “on” 20%.
+ */
+const STRONG_COVERAGE = 0.5;
 
 /** A word starts after one of these. */
 const WORD_SEPARATOR = /[\s\-_/(.]/;
@@ -72,10 +78,14 @@ function matchOf({ label, query, filter }: { label: string; query: string; filte
 }
 
 /**
- * The list while typing: the matches you can add, best first (exact, prefix, word start); then the proposal, so Enter
- * takes the typed text unless a label or a word in one starts with it; then the matches that only contain the query;
- * then what is already selected (multiple), so Enter adds rather than removes. Ties keep the list's order, so a
- * caller's order holds within each. Only orders: Base UI still filters.
+ * The list while typing, in four groups:
+ * 1. Labels or words in them that start with the query: the ones you can add, and (multiple) the selected ones that are
+ *    strong (`STRONG_COVERAGE`).
+ * 2. The proposal: Enter takes the typed text unless a group 1 entry does.
+ * 3. The ones you can add that only contain the query.
+ * 4. (multiple) The other selected ones, so Enter adds rather than removes.
+ * Within a group: by `MATCH`, then the larger share of the label typed, then the list's order. Only orders: Base UI
+ * still filters.
  */
 function rankedForQuery({
   entries,
@@ -92,18 +102,25 @@ function rankedForQuery({
 }): ReadonlyArray<Entry> {
   const matches = new Map(entries.map((entry) => [entry, matchOf({ label: entry.label, query, filter })]));
   const match = (entry: Entry) => matches.get(entry)!;
-  // `sort` is stable.
-  const best = (list: ReadonlyArray<Entry>) => [...list].sort((a, b) => match(a) - match(b));
-  const addable = entries.filter((entry) => !selected.has(entry));
+  const coverage = (entry: Entry) => Math.min(1, query.length / entry.label.length);
+  const startsWord = (entry: Entry) => match(entry) < MATCH.contains;
+  const strong = (entry: Entry) => startsWord(entry) && coverage(entry) >= STRONG_COVERAGE;
+  // `sort` is stable: equal entries keep the list's order.
+  const best = (list: ReadonlyArray<Entry>) =>
+    [...list].sort((a, b) => match(a) - match(b) || coverage(b) - coverage(a));
+  const leads = (entry: Entry) => (selected.has(entry) ? strong(entry) : startsWord(entry));
   return [
-    ...best(addable.filter((entry) => match(entry) < MATCH.contains)),
+    ...best(entries.filter(leads)),
     ...(proposal ? [proposal] : []),
-    ...best(addable.filter((entry) => match(entry) >= MATCH.contains)),
-    ...best(entries.filter((entry) => selected.has(entry))),
+    ...best(entries.filter((entry) => !leads(entry) && !selected.has(entry))),
+    ...best(entries.filter((entry) => !leads(entry) && selected.has(entry))),
   ];
 }
 
-/** The query becomes a proposal unless it is empty, names an item's label (as Base UI matches), or is a value. */
+/**
+ * The query becomes a proposal unless it is empty, or names a value or an item's label as Base UI matches: case, accents
+ * and punctuation aside, so “onboarding” does not propose a second Onboarding.
+ */
 function proposalFor({
   query,
   items,
@@ -116,8 +133,9 @@ function proposalFor({
   filter: TextFilter;
 }): CustomProposal | null {
   const text = query.trim();
-  if (text === '' || values.includes(text)) return null;
-  if (items.some((item) => isSameText({ a: item.label, b: text, filter }))) return null;
+  if (text === '') return null;
+  const named = [...values, ...items.map((item) => item.label)];
+  if (named.some((name) => isSameText({ a: name, b: text, filter }))) return null;
   return customProposal(text);
 }
 
