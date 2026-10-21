@@ -1,5 +1,5 @@
-import { IconDownload, IconMail, IconTrash, IconX } from '@tabler/icons-react';
-import { useRef, useState } from 'react';
+import { IconCheck, IconDownload, IconMail, IconTrash, IconX } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ActionBar } from '~/components/ui/action-bar';
 import {
@@ -37,12 +37,14 @@ const tasks = (count: number) => `${count} ${count === 1 ? 'task' : 'tasks'}`;
  * Select rows, act on all of them: a checkbox column with select-all, and a bar below the table while anything is
  * selected. The bar holds two groups behind a hairline: the selection (the count in muted text, clear as a ghost ✕)
  * and the actions, each a raised button with its label, Delete… last as a subtle destructive that asks in an alert
- * dialog. In a container under 32rem the labels go to screen readers and the actions become icons.
+ * dialog. Send reminder confirms in the bar itself: its `status` replaces the actions, then the bar closes. In a
+ * container under 32rem the labels go to screen readers and the actions become icons.
  */
 export function BulkSelectionDefault() {
   const [rows, setRows] = useState<ReadonlyArray<(typeof TASKS)[number]>>(TASKS);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set(['1', '3']));
   const [confirming, setConfirming] = useState(false);
+  const [sent, setSent] = useState(false);
   const all = rows.length > 0 && selected.size === rows.length;
   const toggle = (id: string, checked: boolean) =>
     setSelected((current) => {
@@ -52,6 +54,16 @@ export function BulkSelectionDefault() {
       return next;
     });
   const clear = () => setSelected(new Set());
+  // The status shows for a moment, then the bar closes. Status and selection clear together: the closing bar keeps
+  // what it showed.
+  useEffect(() => {
+    if (!sent) return;
+    const timeout = setTimeout(() => {
+      setSent(false);
+      clear();
+    }, 1800);
+    return () => clearTimeout(timeout);
+  }, [sent]);
   // The bar springs out after a clear; it keeps the last count instead of reading "0 selected" on the way.
   const lastCount = useRef(selected.size);
   if (selected.size > 0) lastCount.current = selected.size;
@@ -99,14 +111,24 @@ export function BulkSelectionDefault() {
           </TableBody>
         </Table>
       </Card>
-      <ActionBar open={selected.size > 0} aria-label='Selection'>
+      <ActionBar
+        open={selected.size > 0}
+        status={
+          sent ? (
+            <>
+              <IconCheck className='text-success' />
+              Reminder sent
+            </>
+          ) : undefined
+        }
+        aria-label='Selection'>
         <span className='ps-2.5 whitespace-nowrap text-muted-foreground tabular-nums'>{count} selected</span>
         <Button emphasis='ghost' size='icon' aria-label='Clear selection' onClick={clear}>
           <IconX />
         </Button>
         <Separator orientation='vertical' className='my-1.5' />
         {/* No `data-icon`: its padding would outweigh the square icon-only size below 32rem. */}
-        <Button className='@max-lg:w-9 @max-lg:px-0'>
+        <Button className='@max-lg:w-9 @max-lg:px-0' onClick={() => setSent(true)}>
           <IconMail />
           <span className='@max-lg:sr-only'>Send reminder</span>
         </Button>

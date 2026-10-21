@@ -193,10 +193,11 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
     previous.current = view;
     const shown = layers[view]!;
     const hidden = (Object.keys(layers) as View[]).filter((key) => key !== view).map((key) => layers[key]!);
-    // The items that cascade in: the panel's rows, or the docked toolbar's children.
-    const items = (
-      view === 'panel' ? [...shown.children] : view === 'dock' ? [...(shown.firstElementChild?.children ?? [])] : []
-    ).filter((el): el is HTMLElement => el instanceof HTMLElement);
+    // The items that cascade in: the panel's rows, or the items in the docked toolbar's row.
+    const row = shown.querySelector('[data-slot=action-bar-content]:not([data-exiting])');
+    const items = (view === 'panel' ? [...shown.children] : view === 'dock' ? [...(row?.children ?? [])] : []).filter(
+      (el): el is HTMLElement => el instanceof HTMLElement,
+    );
     const fixSize = (size: { width: number; height: number }) =>
       Object.assign(shell.style, { width: `${size.width}px`, height: `${size.height}px` });
 
