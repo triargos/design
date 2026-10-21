@@ -413,10 +413,11 @@
     @apply bg-sidebar text-foreground;
   }
 
-  /* Icons draw a 1.5px stroke at every size, the optical weight of regular (400) text: the stroke is measured on screen,
-     not in the 24-unit viewBox, so a 12px mark and a 20px icon carry the same line. */
+  /* Icons draw a 1.25px stroke at every size: the stroke is measured on screen, not in the 24-unit viewBox, so a 12px
+     mark and a 20px icon carry the same line. 1.5px smears into a heavy line at 1x and clogs detailed glyphs at 16px;
+     1px fades muted icons below the weight of their label. */
   svg.tabler-icon {
-    stroke-width: 1.5px;
+    stroke-width: 1.25px;
   }
 
   svg.tabler-icon :is(path, line, polyline, polygon, circle, rect, ellipse) {
