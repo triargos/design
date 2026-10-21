@@ -10,7 +10,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Fade In'
-      description='Content that arrives after a load fades in and rises 4px over duration-move. Reduced motion keeps the fade and drops the rise. Content that was there from the first render shows at once.'>
+      description='Content that arrives after a load fades in over duration-feedback, opacity only. Content that was there from the first render shows at once.'>
       <ExampleSection
         title='Default'
         description={
