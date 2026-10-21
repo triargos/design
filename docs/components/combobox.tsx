@@ -2,7 +2,9 @@ import { ComboboxAllowCustom } from '../examples/combobox/allow-custom';
 import { ComboboxDefault } from '../examples/combobox/default';
 import { ComboboxInADialog } from '../examples/combobox/in-a-dialog';
 import { ComboboxInAField } from '../examples/combobox/in-a-field';
+import { ComboboxMatching } from '../examples/combobox/matching';
 import { ComboboxMultiple } from '../examples/combobox/multiple';
+import { ComboboxMultipleAllowCustom } from '../examples/combobox/multiple-allow-custom';
 import { ComboboxStates } from '../examples/combobox/states';
 import { ComboboxVirtualized } from '../examples/combobox/virtualized';
 import { ComboboxWithDescription } from '../examples/combobox/with-description';
@@ -16,7 +18,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Combobox'
-      description='A field that filters a list as you type: Enter picks the first match. Values are the items’ value strings. One value with a clear button, many as chips, or text of your own. For a short list without typing, Select.'>
+      description='A field that filters a list as you type, best matches first: Enter picks the first. Values are the items’ value strings. One value with a clear button, many as chips, or text of your own. For a short list without typing, Select.'>
       <ExampleSection
         title='Default'
         description={
@@ -38,6 +40,19 @@ export default defineDocs({
         }>
         <ComboboxMultiple />
       </ExampleSection>
+      <ExampleSection
+        title='Matching'
+        description={
+          <>
+            While you type, the exact label leads, then labels that start with the query, then a word that does, then
+            the rest; within each, the more of the label typed, then the order of <Code>items</Code>. Typing{' '}
+            <Code>design</Code> lists Design first, though Design system comes earlier in <Code>items</Code>; Enter
+            picks it. With <Code>multiple</Code>, what is already selected goes last, so Enter adds, unless you typed
+            half of it or more.
+          </>
+        }>
+        <ComboboxMatching />
+      </ExampleSection>
       <ExampleSection title='With description' description='A row’s content is yours; the check keeps its column.'>
         <ComboboxWithDescription />
       </ExampleSection>
@@ -46,11 +61,21 @@ export default defineDocs({
         description={
           <>
             <Code>allowCustom</Code>: the value is an option's value or the typed text. While the query names no option,
-            the last row takes it; Enter picks it once nothing else matches. <Code>customLabel</Code> and{' '}
-            <Code>customOptionLabel</Code> word those rows.
+            a row takes it, after the options whose label or a word in it starts with the query: Enter picks it unless
+            one does. <Code>customLabel</Code> and <Code>customOptionLabel</Code> word those rows.
           </>
         }>
         <ComboboxAllowCustom />
+      </ExampleSection>
+      <ExampleSection
+        title='Multiple, allow custom'
+        description={
+          <>
+            <Code>multiple allowCustom</Code>: chips of options and typed text. A typed chip’s value and label are its
+            text; <Code>isCustomValue(item)</Code> tells it apart.
+          </>
+        }>
+        <ComboboxMultipleAllowCustom />
       </ExampleSection>
       <ExampleSection
         title='Virtualized'
