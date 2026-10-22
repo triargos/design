@@ -200,7 +200,10 @@ function IntegerInput({
   const atMax = max !== undefined && value >= max;
 
   return (
-    <div data-slot='integer-input' role='group' className={cn('flex w-full min-w-0 items-center gap-1.5', className)}>
+    <div
+      data-slot='integer-input'
+      role='group'
+      className={cn('flex w-full min-w-0 items-center gap-control-gap', className)}>
       {/* At a limit the stepper stays pressable, its icon dimmed, so a press there can shake the number. */}
       <Button
         size='icon'
@@ -221,9 +224,9 @@ function IntegerInput({
         }}
         className={cn(
           inputSurfaceVariants({ scope: 'group' }),
-          'flex h-9 min-w-0 flex-1 cursor-text items-center justify-center gap-1.5 px-3 text-control max-sm:text-[1rem]',
+          'flex h-control min-w-0 flex-1 cursor-text items-center justify-center gap-control-gap px-field-pad text-control max-sm:text-[1rem]',
         )}>
-        <span ref={shakeScope} className='flex h-full items-center gap-1.5'>
+        <span ref={shakeScope} className='flex h-full items-center gap-control-gap'>
           {/* As wide as its digits, so number and unit center together as one line of text. Clipped top and bottom at
               the field's edge, where the rolling digits come and go. */}
           <motion.span

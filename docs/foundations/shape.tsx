@@ -32,6 +32,11 @@ const ROLE_CLASS: Record<(typeof RADIUS_ROLES)[number]['name'], string> = {
   card: 'rounded-card',
   dialog: 'rounded-dialog',
   panel: 'rounded-panel',
+  checkbox: 'rounded-checkbox',
+  tooltip: 'rounded-tooltip',
+  area: 'rounded-area',
+  block: 'rounded-block',
+  track: 'rounded-track',
 };
 
 export default defineDocs({
@@ -67,7 +72,7 @@ export default defineDocs({
               <Card>
                 <CardHeader
                   actions={
-                    <Button size='icon-xs' aria-label='More'>
+                    <Button size='icon-sm' aria-label='More'>
                       <IconDots />
                     </Button>
                   }>
@@ -89,21 +94,25 @@ export default defineDocs({
 
         <FoundationSection
           title='Control heights'
-          description='Controls that sit in one row share a height and a radius.'>
+          description='Controls that sit in one row share a height and a radius. Heights are tokens too: a sizing theme moves them (Sizing).'>
           <SpecimenList>
-            <SpecimenRow name='40 · 44px' meta={<Code>rounded-control-lg · Button, Input</Code>}>
+            <SpecimenRow name='36px' meta={<Code>h-control · rounded-control · Input, Button</Code>}>
               <div className='flex max-w-md items-center gap-2'>
                 <Input placeholder='Search' aria-label='Search' />
                 <Button intent='primary'>Save</Button>
               </div>
             </SpecimenRow>
-            <SpecimenRow name='32 · 36px' meta={<Code>rounded-control · Button sm, xs</Code>}>
+            <SpecimenRow
+              name='36 · 32px'
+              meta={<Code>h-control · h-control-sm · rounded-control · Button, Button sm</Code>}>
               <div className='flex items-center gap-2'>
                 <Button>Edit</Button>
-                <Button size='xs'>Filter</Button>
+                <Button size='sm'>Filter</Button>
               </div>
             </SpecimenRow>
-            <SpecimenRow name='20 · 24px' meta={<Code>rounded-control-sm · Badge</Code>}>
+            <SpecimenRow
+              name='20 · 24px'
+              meta={<Code>h-control-2xs · h-control-xs · rounded-control-sm · Badge, Button xs</Code>}>
               <div className='flex items-center gap-2'>
                 {(['sm', 'default'] as const).map((size) => (
                   <Badge key={size} size={size}>

@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button';
 export function ButtonIconOnly() {
   return (
     <div className='flex flex-wrap items-center gap-2'>
-      <Button size='icon-xs' aria-label='More'>
+      <Button size='icon-sm' aria-label='More'>
         <IconDots />
       </Button>
       <Button size='icon' aria-label='More'>

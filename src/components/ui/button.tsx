@@ -17,7 +17,7 @@ const buttonShape = cva(
     'hit-area relative inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-control font-medium whitespace-nowrap outline-none select-none',
     'transition-[background-color,border-color,color,box-shadow,opacity,transform,scale,--tw-gradient-from]',
     'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24',
-    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
     'disabled:pointer-events-none disabled:text-disabled-foreground',
   ],
   {
@@ -36,18 +36,20 @@ const buttonShape = cva(
         // Disabled keeps the edge outside the box, where the raised ring sits, so the button does not shrink by 2px.
         raised: 'bg-clip-border disabled:bg-transparent disabled:shadow-[0_0_0_1px_var(--border)]',
       },
-      // Heights 32 / 36 / 40; the default is a field's height (36). The radius follows the height (`rounded-control*`).
-      // Padding: 16px (12px at `xs`), 2px less on the icon side (an icon reads lighter than text). On touch, `hit-area`
-      // grows the target to 44px. Focus: the fields' soft 24% ring.
+      // Heights `control-xs` / `control-sm` / `control` / `control-lg`; the default is a field's height. The radius follows
+      // the height (`rounded-control*`). Padding: `control-pad` (`control-pad-sm` at `sm`, `control-pad-xs` at `xs`), 2px
+      // less on the icon side (an icon reads lighter than text). On touch, `hit-area` grows the target to 44px. Focus:
+      // the fields' soft 24% ring.
       size: {
         default:
-          'h-9 gap-1.5 rounded-control px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
-        xs: "h-8 gap-1 rounded-control px-3 text-caption has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: 'h-10 gap-1.5 rounded-control-lg px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5',
+          'h-control gap-control-gap rounded-control px-control-pad has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad)-2px)]',
+        xs: "h-control-xs gap-control-gap-sm rounded-control-sm px-control-pad-xs text-caption has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-xs)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-xs)-2px)] [&_svg:not([class*='size-'])]:size-icon-xs",
+        sm: "h-control-sm gap-control-gap-sm rounded-control px-control-pad-sm text-caption has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-sm)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-sm)-2px)] [&_svg:not([class*='size-'])]:size-icon-sm",
+        lg: 'h-control-lg gap-control-gap rounded-control-lg px-control-pad has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad)-2px)]',
         // Icon-only sizes match the text sizes, so a row of both lines up.
-        'icon-xs': 'size-8 rounded-control',
-        icon: 'size-9 rounded-control',
-        'icon-lg': 'size-10 rounded-control-lg',
+        'icon-sm': 'size-control-sm rounded-control',
+        icon: 'size-control rounded-control',
+        'icon-lg': 'size-control-lg rounded-control-lg',
       },
       /** Scales to 96% on press, except a menu trigger. `static` keeps it still, where the motion would distract. */
       static: {
@@ -60,6 +62,17 @@ const buttonShape = cva(
 );
 
 type ButtonSize = NonNullable<Parameters<typeof buttonShape>[0]>['size'] & string;
+
+/** The spinner follows the icon size: `icon-xs` at `xs`, `icon` in the `sm` and default buttons, `icon-lg` at `lg`. */
+const SPINNER_SIZE: Record<ButtonSize, string> = {
+  xs: 'size-icon-xs',
+  sm: 'size-icon',
+  'icon-sm': 'size-icon',
+  default: 'size-icon',
+  icon: 'size-icon',
+  lg: 'size-icon-lg',
+  'icon-lg': 'size-icon-lg',
+};
 
 interface ButtonStyleProps {
   intent?: Intent;
@@ -89,16 +102,6 @@ function buttonVariants({
     className,
   );
 }
-
-/** The spinner follows the icon size: 16px in the 32 and 36px buttons, 20px at 40px. */
-const LOADER_SIZE: Record<ButtonSize, number> = {
-  xs: 16,
-  'icon-xs': 16,
-  default: 16,
-  lg: 20,
-  icon: 16,
-  'icon-lg': 20,
-};
 
 /** A pending state shows at least this long, so a fast request does not flash the spinner. */
 const MIN_PENDING_MS = 800;
@@ -171,7 +174,8 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
               animate={{ opacity: 1, y: 0 }}
               exit={below}
               transition={pendingSwap}>
-              <Spinner size={LOADER_SIZE[size]} />
+              {/* The CSS size wins over `size`. */}
+              <Spinner className={SPINNER_SIZE[size]} />
             </motion.span>
           )}
         </AnimatePresence>

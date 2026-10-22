@@ -27,7 +27,7 @@ export function ItemWithActions() {
               </ItemContent>
               <ItemActions>
                 <Badge intent={member.status.intent}>{member.status.label}</Badge>
-                <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`}>
+                <Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${member.name}`}>
                   <IconDots />
                 </Button>
               </ItemActions>

@@ -250,7 +250,7 @@ function VirtualizedTable<T>({
           </table>
           {hasMore && <div ref={sentinelRef} className='h-px' />}
           {isLoadingMore && (
-            <div role='status' className='flex justify-center py-4'>
+            <div role='status' className='flex justify-center py-group'>
               <Spinner className='text-muted-foreground' size={20} />
               <span className='sr-only'>{loadingLabel ?? labels.loadingMore}</span>
             </div>
@@ -385,9 +385,9 @@ const tableCellEdges = cva(
   {
     variants: {
       variant: {
-        default: 'px-3',
-        flush: 'px-3 first:ps-card last:pe-card',
-        card: 'px-3 first:ps-[calc(var(--spacing-card)+1px)] last:pe-[calc(var(--spacing-card)+1px)]',
+        default: 'px-row-pad-x',
+        flush: 'px-row-pad-x first:ps-card last:pe-card',
+        card: 'px-row-pad-x first:ps-[calc(var(--spacing-card)+1px)] last:pe-[calc(var(--spacing-card)+1px)]',
       },
     },
   },
@@ -424,7 +424,7 @@ function TableHead({
       aria-sort={sort === undefined || onSort === undefined ? undefined : ariaSortOf[sort]}
       className={cn(
         tableCellEdges({ variant }),
-        'h-10 text-left align-middle font-medium whitespace-nowrap text-muted-foreground',
+        'h-(--table-head-height) text-left align-middle font-medium whitespace-nowrap text-muted-foreground',
         virtualized && ['sticky top-0 z-20', stickyHeadFill[variant]],
         virtualized && variant !== 'card' && 'after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border',
         className,
@@ -437,21 +437,21 @@ function TableHead({
           type='button'
           onClick={onSort}
           className={cn(
-            'group/sort relative -mx-2 inline-flex items-center gap-1 rounded-control-sm px-2 py-1 font-medium transition-colors duration-feedback outline-none hit-area hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24',
+            'group/sort relative -mx-(--table-sort-pad-x) inline-flex items-center gap-control-gap-sm rounded-control-sm px-(--table-sort-pad-x) py-(--table-sort-pad-y) font-medium transition-colors duration-feedback outline-none hit-area hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24',
             sort !== undefined && sort !== 'none' && 'text-foreground',
           )}>
           {children}
           {sort === undefined || sort === 'none' ? (
             <IconArrowsSort
               aria-hidden
-              className='size-3.5 opacity-0 transition-opacity duration-feedback group-hover/sort:opacity-100 group-focus-visible/sort:opacity-100'
+              className='size-icon-sm opacity-0 transition-opacity duration-feedback group-hover/sort:opacity-100 group-focus-visible/sort:opacity-100'
             />
           ) : (
             // One arrow that turns, so flipping the direction reads as the same column turning over.
             <IconArrowUp
               aria-hidden
               className={cn(
-                'size-3.5 transition-transform duration-move ease-move motion-reduce:transition-none',
+                'size-icon-sm transition-transform duration-move ease-move motion-reduce:transition-none',
                 sort === 'desc' && 'rotate-180',
               )}
             />
@@ -469,7 +469,7 @@ function TableHead({
 // inside the edge, on the head and foot cells' `card` + 1px. WebKit antialiases each cell's fill at fractional column
 // edges and the shell shows through as a seam; a 1px shadow in the fill color reaches under the next cell and closes it.
 // The fill is one variable, so hover and selection move fill and patch together.
-const tableCellVariants = cva('py-2.5 align-middle', {
+const tableCellVariants = cva('py-row-pad-y align-middle', {
   variants: {
     variant: { default: '', flush: '', card: '' },
     section: { head: '', body: '', foot: '' },
@@ -493,7 +493,7 @@ const tableCellVariants = cva('py-2.5 align-middle', {
         'in-[tr:last-child]:first:rounded-es-inner in-[tr:last-child]:last:rounded-ee-inner',
       ],
     },
-    { variant: 'card', section: 'foot', className: 'py-3' },
+    { variant: 'card', section: 'foot', className: 'py-(--table-foot-pad-y)' },
   ],
 });
 
@@ -509,21 +509,24 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
   );
 }
 
-// The band sits in from the sides of its cell (8px in a plain table, 12px on a card) and 4px from the rows; the first
-// band as far from the top edge as from the sides. Its text pads the cell edge less that inset: on the column text.
+// The band sits in from the sides of its cell (`--table-group-inset`, `--table-group-inset-card` on a flush or card table)
+// and `--spacing-tight` from the rows; the first band as far from the top edge as from the sides. Its text pads the cell edge less that inset: on the column text.
 const groupCellInset = {
-  default: 'px-2 first:ps-2 last:pe-2 in-[tr:first-child]:pt-2',
-  flush: 'px-3 first:ps-3 last:pe-3 in-[tr:first-child]:pt-3',
-  card: 'px-3 first:ps-3 last:pe-3 in-[tr:first-child]:pt-3',
+  default:
+    'px-(--table-group-inset) first:ps-(--table-group-inset) last:pe-(--table-group-inset) in-[tr:first-child]:pt-(--table-group-inset)',
+  flush:
+    'px-(--table-group-inset-card) first:ps-(--table-group-inset-card) last:pe-(--table-group-inset-card) in-[tr:first-child]:pt-(--table-group-inset-card)',
+  card: 'px-(--table-group-inset-card) first:ps-(--table-group-inset-card) last:pe-(--table-group-inset-card) in-[tr:first-child]:pt-(--table-group-inset-card)',
 } as const satisfies Record<TableVariant, string>;
 
 const groupBandEdge = {
-  default: 'px-1',
-  flush: 'px-[calc(var(--spacing-card)-(--spacing(3)))]',
-  card: 'px-[calc(var(--spacing-card)-(--spacing(3)))]',
+  default: 'px-[calc(var(--spacing-row-pad-x)-var(--table-group-inset))]',
+  flush: 'px-[calc(var(--spacing-card)-var(--table-group-inset-card))]',
+  card: 'px-[calc(var(--spacing-card)-var(--table-group-inset-card))]',
 } as const satisfies Record<TableVariant, string>;
 
-const groupBand = 'flex min-h-11 items-center gap-2 rounded-control bg-muted font-medium text-foreground';
+const groupBand =
+  'flex min-h-(--table-group-height) items-center gap-row-gap rounded-control bg-muted font-medium text-foreground';
 
 /**
  * A rounded band over every column that names the rows after it, inset in its row; no hairline above or below it.
@@ -552,7 +555,7 @@ function TableGroupRow({
       {...props}>
       <TableCell
         colSpan={colSpan}
-        className={cn('py-1 in-[tr:hover]:[--table-cell-fill:var(--card)]', groupCellInset[variant])}>
+        className={cn('py-tight in-[tr:hover]:[--table-cell-fill:var(--card)]', groupCellInset[variant])}>
         {onOpenChange === undefined ? (
           <div className={cn(groupBand, groupBandEdge[variant])}>{children}</div>
         ) : (
@@ -569,7 +572,7 @@ function TableGroupRow({
             <IconChevronDown
               aria-hidden
               className={cn(
-                'ms-auto size-4 shrink-0 text-muted-foreground transition-[rotate,color] duration-move ease-move group-hover/fold:text-foreground motion-reduce:transition-none',
+                'ms-auto size-icon shrink-0 text-muted-foreground transition-[rotate,color] duration-move ease-move group-hover/fold:text-foreground motion-reduce:transition-none',
                 !open && '-rotate-90',
               )}
             />

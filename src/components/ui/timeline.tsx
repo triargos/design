@@ -35,7 +35,9 @@ interface TimelineItemProps extends React.ComponentProps<'div'> {
 
 /**
  * An event: its marker and the line to the next event, then the children (`TimelineDate`, `TimelineTitle`,
- * `TimelineContent`). A reached event takes the brand edge; the line turns brand once the next one is reached.
+ * `TimelineContent`). A reached event takes the brand edge; the line turns brand once the next one is reached. The
+ * marker column is `--timeline-marker-size` plus `--spacing-group` to the content; the line stops 2px short of each
+ * marker.
  */
 function TimelineItem({ step, className, children, ...props }: TimelineItemProps) {
   const reachedStep = React.use(ReachedStepContext);
@@ -44,7 +46,7 @@ function TimelineItem({ step, className, children, ...props }: TimelineItemProps
     <div
       data-slot='timeline-item'
       className={cn(
-        'group/timeline-item relative flex flex-1 flex-col group-data-[orientation=horizontal]/timeline:mt-8 not-last:group-data-[orientation=horizontal]/timeline:pe-8 group-data-[orientation=vertical]/timeline:ms-8 not-last:group-data-[orientation=vertical]/timeline:pb-12',
+        'group/timeline-item relative flex flex-1 flex-col group-data-[orientation=horizontal]/timeline:mt-[calc(var(--timeline-marker-size)+var(--spacing-group))] not-last:group-data-[orientation=horizontal]/timeline:pe-(--timeline-step-x) group-data-[orientation=vertical]/timeline:ms-[calc(var(--timeline-marker-size)+var(--spacing-group))] not-last:group-data-[orientation=vertical]/timeline:pb-(--timeline-step)',
         className,
       )}
       data-completed={step <= reachedStep || undefined}
@@ -53,12 +55,12 @@ function TimelineItem({ step, className, children, ...props }: TimelineItemProps
         data-slot='timeline-separator'
         aria-hidden='true'
         data-completed={step < reachedStep || undefined}
-        className='absolute self-start bg-primary-subtle group-last/timeline-item:hidden data-completed:bg-primary-solid group-data-[orientation=horizontal]/timeline:-top-6 group-data-[orientation=horizontal]/timeline:h-0.5 group-data-[orientation=horizontal]/timeline:w-[calc(100%-1rem-0.25rem)] group-data-[orientation=horizontal]/timeline:translate-x-4.5 group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:h-[calc(100%-1rem-0.25rem)] group-data-[orientation=vertical]/timeline:w-0.5 group-data-[orientation=vertical]/timeline:-translate-x-1/2 group-data-[orientation=vertical]/timeline:translate-y-4.5'
+        className='absolute self-start bg-primary-subtle group-last/timeline-item:hidden data-completed:bg-primary-solid group-data-[orientation=horizontal]/timeline:-top-[calc(var(--timeline-marker-size)/2+var(--spacing-group))] group-data-[orientation=horizontal]/timeline:h-0.5 group-data-[orientation=horizontal]/timeline:w-[calc(100%-var(--timeline-marker-size)-4px)] group-data-[orientation=horizontal]/timeline:translate-x-[calc(var(--timeline-marker-size)+2px)] group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:-left-[calc(var(--timeline-marker-size)/2+var(--spacing-group))] group-data-[orientation=vertical]/timeline:h-[calc(100%-var(--timeline-marker-size)-4px)] group-data-[orientation=vertical]/timeline:w-0.5 group-data-[orientation=vertical]/timeline:-translate-x-1/2 group-data-[orientation=vertical]/timeline:translate-y-[calc(var(--timeline-marker-size)+2px)]'
       />
       <div
         data-slot='timeline-indicator'
         aria-hidden='true'
-        className='absolute size-4 rounded-full border-2 border-primary-border group-data-completed/timeline-item:border-primary-solid group-data-[orientation=horizontal]/timeline:-top-6 group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:top-0 group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:-translate-x-1/2'
+        className='absolute size-(--timeline-marker-size) rounded-full border-2 border-primary-border group-data-completed/timeline-item:border-primary-solid group-data-[orientation=horizontal]/timeline:-top-[calc(var(--timeline-marker-size)/2+var(--spacing-group))] group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-translate-y-1/2 group-data-[orientation=vertical]/timeline:top-0 group-data-[orientation=vertical]/timeline:-left-[calc(var(--timeline-marker-size)/2+var(--spacing-group))] group-data-[orientation=vertical]/timeline:-translate-x-1/2'
       />
       {children}
     </div>
@@ -73,7 +75,7 @@ function TimelineDate({ className, render, ...props }: useRender.ComponentProps<
     props: mergeProps<'time'>(
       {
         className: cn(
-          'mb-1 block text-caption font-medium text-muted-foreground max-sm:group-data-[orientation=vertical]/timeline:h-4',
+          'mb-tight block text-caption font-medium text-muted-foreground max-sm:group-data-[orientation=vertical]/timeline:h-(--text-caption--line-height)',
           className,
         ),
       },

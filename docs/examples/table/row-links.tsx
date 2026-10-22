@@ -50,7 +50,7 @@ export function TableRowLinks() {
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     render={
-                      <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${project.name}`}>
+                      <Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${project.name}`}>
                         <IconDots />
                       </Button>
                     }

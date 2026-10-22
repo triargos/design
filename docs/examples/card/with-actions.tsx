@@ -10,18 +10,18 @@ const MEMBERS = [
   { name: 'Priya Patel', role: 'Design' },
 ];
 
-/** Header actions are raised xs / icon-xs buttons; row actions inside the list stay ghost. Both end on one column. */
+/** Header actions are raised sm / icon-sm buttons; row actions inside the list stay ghost. Both end on one column. */
 export function CardWithActions() {
   return (
     <Card className='w-full max-w-xl'>
       <CardHeader
         actions={
           <>
-            <Button size='xs'>
+            <Button size='sm'>
               <IconPlus data-icon='inline-start' />
               Invite
             </Button>
-            <Button size='icon-xs' aria-label='More'>
+            <Button size='icon-sm' aria-label='More'>
               <IconDots />
             </Button>
           </>
@@ -40,7 +40,7 @@ export function CardWithActions() {
                 <ItemDescription>{member.role}</ItemDescription>
               </ItemContent>
               <ItemActions>
-                <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`}>
+                <Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${member.name}`}>
                   <IconDots />
                 </Button>
               </ItemActions>

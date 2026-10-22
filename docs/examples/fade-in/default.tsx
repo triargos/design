@@ -27,7 +27,7 @@ export function FadeInDefault() {
     <Card className='w-full max-w-md'>
       <CardHeader
         actions={
-          <Button size='xs' disabled={loading} onClick={() => setLoading(true)}>
+          <Button size='sm' disabled={loading} onClick={() => setLoading(true)}>
             <IconRefresh data-icon='inline-start' />
             Reload
           </Button>

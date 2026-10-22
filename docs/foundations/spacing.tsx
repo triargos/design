@@ -22,6 +22,11 @@ const usage: Record<SpacingStepName, { relation: string; owners: string }> = {
     relation: 'Items that work together',
     owners: 'Field (label → control), page header actions, ItemActions',
   },
+  part: {
+    relation:
+      'The parts of one component: a media or indicator and its text, text and its action, a label beside its control',
+    owners: 'Alert, horizontal Field, Stepper, Progress, Empty media, chart legend, stacked toasts',
+  },
   group: {
     relation: 'Peer blocks; a heading → its content; padding inside a dialog or sheet',
     owners:
@@ -105,7 +110,7 @@ const SamplePage = () => (
 
 export default defineDocs({
   title: 'Spacing',
-  description: 'Five steps, named by relationship.',
+  description: 'Seven steps, named by relationship.',
   group: 'Foundations',
   Page: () => {
     const gaps = true;
@@ -113,7 +118,7 @@ export default defineDocs({
     return (
       <FoundationPage
         title='Spacing'
-        description='Five steps, named by relationship. Peer blocks and a heading and its content share one gap; sections sit three times as far apart (48), and the page header between the two (32). Padding inside rows and controls follows their height (Shape), not this scale.'>
+        description='Seven steps, named by relationship. Peer blocks and a heading and its content share one gap; sections sit three times as far apart (48), and the page header between the two (32). Padding inside rows and controls follows the sizing tokens (Sizing), not this scale.'>
         <FoundationSection
           title='Scale'
           description='Each gap is drawn at its real size. Tune the steps in Customize; every page follows.'>

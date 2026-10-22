@@ -14,7 +14,8 @@ function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
       data-slot='textarea'
       className={cn(
         inputSurfaceVariants(),
-        'flex min-h-[60px] w-full px-[calc(--spacing(3)-1px)] py-2 text-control outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed max-sm:text-[1rem]',
+        '[--field-radius:var(--radius-area)]',
+        'flex min-h-(--textarea-min-height) w-full px-[calc(var(--spacing-field-pad)-1px)] py-field-pad-y text-control outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed max-sm:text-[1rem]',
         className,
       )}
       {...props}

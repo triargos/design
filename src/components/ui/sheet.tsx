@@ -56,7 +56,7 @@ function SheetContent({
         data-side={side}
         data-size={size}
         className={cn(
-          'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none [--modal-inset:calc(var(--spacing-group)+var(--spacing-related))]',
+          'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none',
           'fixed inset-y-0 z-50 h-full w-3/4 duration-move ease-enter data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0 sm:inset-y-2 sm:h-auto sm:rounded-dialog',
           { default: 'sm:max-w-sm', lg: 'sm:max-w-md' }[size],
           'data-[side=right]:right-0 data-[side=right]:rounded-l-dialog data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 sm:data-[side=right]:right-2',
@@ -71,9 +71,12 @@ function SheetContent({
           <SheetClose
             aria-label={closeLabel ?? labels.close}
             render={
-              // Centered on the title's first line: 18px in, half the button (36px) less than the title's line (24px)
-              // 24px in.
-              <Button emphasis='ghost' size='icon' className='absolute top-4.5 right-4.5' />
+              // Centered on the title's first line: `modal` in, less half the button (`control`) over the title's line.
+              <Button
+                emphasis='ghost'
+                size='icon'
+                className='absolute top-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)] right-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)]'
+              />
             }>
             <IconX />
           </SheetClose>
@@ -88,9 +91,10 @@ function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='sheet-header'
       className={cn(
-        // `pr-14` keeps the title clear of the ✕. Without a body, the header ends the dialog.
-        'flex flex-col gap-tight px-(--modal-inset) pt-(--modal-inset) pr-14 pb-[calc(var(--spacing-group)-var(--spacing-tight))]',
-        'in-[[data-slot=sheet-content]:not(:has([data-slot=sheet-body]))]:pb-(--modal-inset)',
+        // The end padding keeps the title clear of the ✕ (its inset, its width and 2px). Without a body, the header ends
+        // the dialog.
+        'flex flex-col gap-tight px-modal pt-modal pr-[calc(var(--spacing-modal)+(var(--spacing-control)+var(--text-heading--line-height))/2+2px)] pb-[calc(var(--spacing-group)-var(--spacing-tight))]',
+        'in-[[data-slot=sheet-content]:not(:has([data-slot=sheet-body]))]:pb-modal',
         className,
       )}
       {...props}
@@ -104,8 +108,8 @@ function SheetBody({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot='sheet-body'
       className={cn(
         // `pt-tight` (with the header's `group − tight`) leaves room for a field's focus ring at the scroll edge.
-        'flex min-h-0 flex-1 flex-col gap-group overflow-y-auto px-(--modal-inset) pt-tight pb-(--modal-inset)',
-        'in-[[data-slot=sheet-content]:not(:has([data-slot=sheet-header]))]:pt-(--modal-inset)',
+        'flex min-h-0 flex-1 flex-col gap-group overflow-y-auto px-modal pt-tight pb-modal',
+        'in-[[data-slot=sheet-content]:not(:has([data-slot=sheet-header]))]:pt-modal',
         className,
       )}
       {...props}
@@ -118,7 +122,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='sheet-footer'
       className={cn(
-        'mt-auto flex shrink-0 flex-col-reverse gap-related border-t bg-muted px-(--modal-inset) py-group sm:flex-row sm:justify-end',
+        'mt-auto flex shrink-0 flex-col-reverse gap-related border-t bg-muted px-modal py-group sm:flex-row sm:justify-end',
         className,
       )}
       {...props}

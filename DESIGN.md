@@ -6,10 +6,12 @@ The guide to this design system. Each design question has one axis. Every token 
 What does it say?             → intent      neutral · primary · info · success · warning · destructive
 How loud is it?               → emphasis    solid · subtle · outline · ghost · raised
 How big is it?                → size        default · sm · xs · lg (per component)
+How dense, how round?         → sizing      density compact · default · comfortable × radius sharp · default · soft · pill
 Where does it sit?            → surface     page · shell · card · popup        ([data-surface])
-What is the text for?         → type role   title · heading · body · control · caption · overline
-How far from its neighbour?   → spacing     tight · related · group · card · page · section
+What is the text for?         → type role   title · heading · body · control · caption
+How far from its neighbour?   → spacing     tight · related · part · group · card · page · section
 What shape is it?             → radius role control-xs · control-sm · control · control-lg · popup · card · dialog · panel
+                                            checkbox · tooltip · area · block · track
 How high does it sit?         → elevation   flat · border · field · raised · popup · modal
 How does it move?             → motion      enter · feedback · move · sheet
 ```
@@ -19,16 +21,16 @@ How does it move?             → motion      enter · feedback · move · sheet
 | Path                                  | Holds                                                                                                                                                                                                                                                                   |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/components/ui/<c>.tsx`           | One component per file. It imports only `~/components/ui`, `~/lib/*` and `~/hooks/*`.                                                                                                                                                                                   |
-| `src/lib/theme/`                      | Theme generator (`README.md`), `brandingThemeCss`, `themeToCssVars`                                                                                                                                                                                                     |
+| `src/lib/theme/`                      | Theme generator (`README.md`), `brandingThemeCss`, `themeToCssVars`, `sizingThemeCss` (`sizing.ts`)                                                                                                                                                                     |
 | `src/tailwind.css`                    | Tokens: `@theme inline` colors, roles, motion, utilities. No `@import 'tailwindcss'`: an entry imports it after Tailwind (`site/styles.css`; an app's own entry, README)                                                                                                |
 | `docs/components/<c>.tsx`             | Docs page for a component: `export default defineDocs({ title, description, group, Page, playground? })`                                                                                                                                                                |
-| `docs/foundations/`, `docs/patterns/` | Token pages (Color, Typography, Spacing, Surfaces, Shape, Loading, Interaction, Motion) and compositions (Bulk Selection, Confirmation, Danger Zone, List in Card, List Page, Page)                                                                                     |
+| `docs/foundations/`, `docs/patterns/` | Token pages (Color, Typography, Spacing, Surfaces, Shape, Sizing, Loading, Interaction, Motion) and compositions (Bulk Selection, Confirmation, Danger Zone, List in Card, List Page, Page)                                                                             |
 | `docs/examples/<c>/<section>.tsx`     | One example per file, one named export `<C><Section>`. It imports app code and packages, never the kit. English copy from one domain: a team workspace (projects, tasks, members, documents, invoices, settings).                                                       |
 | `docs/kit/`                           | Page blocks (`blocks.tsx`): `FoundationPage`, `ExampleSection`, `FoundationSection`, `SpecimenList` + `SpecimenRow`, `Matrix`, `StateCell`, `TileGrid` + `Tile`, `SwatchGrid`, `GapRuler`. Also `defineDocs` (`docs.ts`), `tokens.ts`, `forced-states.ts`, `stack.tsx`. |
 
 - To add a component, write the component, then `docs/components/<c>.tsx`, then its examples. The page title follows the file name (`alert-dialog.tsx` → Alert Dialog).
 - A page lists its examples in this order: Default, Variants, Sizes, content, structure, placement, in context, States. The description is one sentence.
-- Run `pnpm dev` to see the docs site. Customize switches mode, the three brand names (`BrandingTheme`), the surface, and the tunable spacing, type and radius values (`docs/kit/tokens.ts`). Settle a value there, then change `tailwind.css`.
+- Run `pnpm dev` to see the docs site. Customize switches mode, the three brand names (`BrandingTheme`), the sizing style, density and radius (`SizingTheme`), the surface, and the tunable spacing, sizing, type and radius values (`docs/kit/tokens.ts`). A slider starts at the sizing theme's value and writes only what moved. Settle a value there, then change `tailwind.css`.
 - Forced states in a matrix: `StateCell state='hover' | 'press' | 'focus'`. A Board shows an overlay open on a stage through the overlay's `container` prop.
 
 ## API rules
@@ -77,14 +79,13 @@ Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), whic
 
 Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other t-shirt sizes do not compile. Emphasis is `font-medium` and tone is a text level; neither one is a new size.
 
-| Role            | px · weight              | Use                                                                                                            | Owner                                                   |
-| --------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `text-title`    | 28 / 36 · 500, −0.02em   | Page title; a big number (`tabular-nums`)                                                                      | Page pattern, `StatValue`                               |
-| `text-heading`  | 18 / 24 · 500, −0.01em   | Section, dialog, sheet, empty titles                                                                           | Page pattern, `DialogTitle`, `SheetTitle`, `EmptyTitle` |
-| `text-body`     | 14 / 21 · 400            | Reading text; descriptions (muted); row titles (medium). The card header sets 20px leading, its title semibold | `CardTitle`, `ItemTitle`, `*Description`                |
-| `text-control`  | 14 / 20 · 400            | Buttons, fields, menus, tabs, tables                                                                           | `Button`, `Input`, `SelectTrigger`, menu items, tabs    |
-| `text-caption`  | 12 / 16 · 400            | Meta, timestamps, badges, tooltips                                                                             | `Badge`, `TooltipContent`                               |
-| `text-overline` | 10 / 16 · 500, uppercase | Menu and group labels                                                                                          | menu labels                                             |
+| Role           | px · weight            | Use                                                                                                            | Owner                                                   |
+| -------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `text-title`   | 28 / 36 · 500, −0.02em | Page title; a big number (`tabular-nums`)                                                                      | Page pattern, `StatValue`                               |
+| `text-heading` | 18 / 24 · 500, −0.01em | Section, dialog, sheet, empty titles                                                                           | Page pattern, `DialogTitle`, `SheetTitle`, `EmptyTitle` |
+| `text-body`    | 14 / 21 · 400          | Reading text; descriptions (muted); row titles (medium). The card header sets 20px leading, its title semibold | `CardTitle`, `ItemTitle`, `*Description`                |
+| `text-control` | 14 / 20 · 400          | Buttons, fields, menus, tabs, tables                                                                           | `Button`, `Input`, `SelectTrigger`, menu items, tabs    |
+| `text-caption` | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                                             | `Badge`, `TooltipContent`                               |
 
 - Icons (Tabler, `@tabler/icons-react`) draw a 1.25px stroke at every size, the weight of their label (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
 - Below `sm` (640px), fields render 16px text (`max-sm:text-[1rem]`) and `FieldLabel` 16 / 18, so iOS does not zoom on focus. From `sm` up: 14px.
@@ -92,49 +93,96 @@ Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other 
 
 ## Spacing
 
-Six steps, named by relationship. Components own the gaps inside them; the page layout (the Page pattern) owns the gaps between them. Use the step name (`gap-group`, `p-group`), never its number.
+Seven steps, named by relationship. Components own the gaps inside them; the page layout (the Page pattern) owns the gaps between them. Use the step name (`gap-group`, `p-group`), never its number.
 
-| Step      | px  | Relationship                                                   | Owner                                                                                  |
-| --------- | --- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty` |
-| `related` | 8   | Items that work together                                       | `Field` (label → control), page header actions, `ItemActions`                          |
-| `group`   | 16  | Peer blocks; a heading → its content; padding inside a surface | Page header stack, sections, `FieldGroup`, `DialogBody`, `SheetBody`                   |
-| `card`    | 20  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges   |
-| `page`    | 32  | Page header → content                                          | Page pattern                                                                           |
-| `section` | 48  | Section ↔ section                                              | Page pattern                                                                           |
+| Step      | px  | Relationship                                                   | Owner                                                                                   |
+| --------- | --- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty`  |
+| `related` | 8   | Items that work together                                       | `Field` (label → control), page header actions, `ItemActions`                           |
+| `part`    | 12  | The parts of one component                                     | `Alert` text → action, horizontal `Field`, `Stepper`, `Progress`, `Empty` media, toasts |
+| `group`   | 16  | Peer blocks; a heading → its content; padding inside a surface | Page header stack, sections, `FieldGroup`, `DialogBody`, `SheetBody`                    |
+| `card`    | 20  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges    |
+| `page`    | 32  | Page header → content                                          | Page pattern                                                                            |
+| `section` | 48  | Section ↔ section                                              | Page pattern                                                                            |
 
 - A gap derived from two steps is a `calc` of their variables.
 - A section title sits indented to the card text: `px-[calc(--spacing(1)+1px+var(--spacing-card))]` (shell 4px + edge 1px + `card`). A section holds `Card`s.
-- Padding inside rows and controls (`Item`, `Alert`, the card shell's `p-1`) follows control heights and radii, not this scale.
+- Padding inside rows and controls (`Item`, `Alert`, the card shell's inset) follows the sizing tokens (`control-pad`, `row-pad-*`, `*-inset`; Sizing), not this scale. A sizing theme's density moves `part`, `group` and `card` too; `page` and `section` never.
 
 ## Shape
 
-Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role, not the step, and never a literal radius.
+Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role, not the step, and never a literal radius; an inner layer is a `calc()` of roles (`rounded-inner`, a border's `- 1px`).
 
-| Role                 | px  | Use                                                     |
-| -------------------- | --- | ------------------------------------------------------- |
-| `rounded-control-xs` | 4   | Controls 16–20px: checkbox, `Kbd`                       |
-| `rounded-control-sm` | 8   | Controls 20–28px, badges                                |
-| `rounded-control`    | 10  | Controls 32–36px (`Button` `xs`, default, tabs), fields |
-| `rounded-control-lg` | 12  | Controls 40px (`Button` `lg`)                           |
-| `rounded-popup`      | 16  | Menus, popovers, selects                                |
-| `rounded-card`       | 20  | `Card` shell, `Alert`                                   |
-| `rounded-dialog`     | 20  | Dialogs, sheets                                         |
-| `rounded-panel`      | 20  | The page panel                                          |
+| Role                 | px   | Use                                                                     |
+| -------------------- | ---- | ----------------------------------------------------------------------- |
+| `rounded-control-xs` | 4    | Controls 16–20px: `Kbd`                                                 |
+| `rounded-control-sm` | 8    | Controls 20–28px (`Button` `xs`), badges                                |
+| `rounded-control`    | 10   | Controls 32–36px (`Button` `sm`, default, tabs), single-line fields     |
+| `rounded-control-lg` | 12   | Controls 40px (`Button` `lg`)                                           |
+| `rounded-popup`      | 16   | Menus, popovers, selects                                                |
+| `rounded-card`       | 20   | `Card` shell, `Alert`                                                   |
+| `rounded-dialog`     | 20   | Dialogs, sheets                                                         |
+| `rounded-panel`      | 20   | The page panel (the app frame, not a component)                         |
+| `rounded-checkbox`   | 4    | The checkbox box: never a pill                                          |
+| `rounded-tooltip`    | 8    | Tooltips, chart tooltip, an anchored toast                              |
+| `rounded-area`       | 10   | Multi-line fields: `Textarea`, `FileDropZone`, a wrapping `InputGroup`  |
+| `rounded-block`      | 12   | Multi-line rows and blocks: `Item`, `ChoiceCard`, prose `pre` and `img` |
+| `rounded-track`      | full | Switch, slider, progress: tracks and thumbs                             |
+
+- `control-*` is for single-line controls only: a sizing theme may turn them into pills. Anything that wraps takes `area`, `block`, `tooltip` or `checkbox`, which cap. Dots, radio dots and round avatars stay `rounded-full`: geometry, not theme.
 
 - Concentric corners: `inner = outer − inset`. The outer surface sets `--outer-radius` and `--outer-inset`; what sits inside takes `rounded-inner`. Owners: `Card` (content 4px in), `Alert` (action 6px in), popups (items 4px in), `InputGroup` buttons (4px in), combobox chips (4px in).
 - `Avatar` `shape='square'` is the one exception: its radius steps with its size (`rounded-xs` at 12px to `rounded-2xl` at 80px), an icon-like scale no role covers.
-- Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons in a card keep `rounded-control*`: a 10px field 21px into the 12px content is two layers, not a failed concentric pair.
-- Control heights:
+- Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons in a card keep `rounded-control*`: a 10px field 21px into the 16px content is two layers, not a failed concentric pair.
+- Control heights are tokens (Sizing): `h-control` and its steps, never `h-9`.
 
-  | Control  | Heights                                                                          |
-  | -------- | -------------------------------------------------------------------------------- |
-  | `Button` | `xs` 32 · default 36 · `lg` 40 (`icon-*` match)                                  |
-  | Fields   | 36: `Input`, `SelectTrigger`, `InputGroup`, date and time (one height, no sizes) |
-  | Tabs     | 32                                                                               |
-  | `Badge`  | default 24 · `sm` 20 (`shape='pill'` for counts and chips)                       |
+  | Control  | Heights                                                                                                              |
+  | -------- | -------------------------------------------------------------------------------------------------------------------- |
+  | `Button` | `xs` 24 `control-xs` · `sm` 32 `control-sm` · default 36 `control` · `lg` 40 `control-lg` (`icon-*` match from `sm`) |
+  | Fields   | 36 `control`: `Input`, `SelectTrigger`, `InputGroup`, date and time (one height, no sizes)                           |
+  | Tabs     | segmented and pill: tab 32 `control-sm`, list 40 (`--tabs-inset` around it); underline: tab 36                       |
+  | `Badge`  | default 24 `control-xs` · `sm` 20 `control-2xs` (`shape='pill'` for counts and chips)                                |
+  | `Kbd`    | 20 `control-2xs`                                                                                                     |
 
 - On coarse pointers, every control under 44px gets a 44px hit area (`hit-area`; checkbox, radio and switch use `after:`).
+
+## Sizing
+
+Every length a component draws comes from a token, so a sizing theme restyles the whole system by re-declaring tokens. Tokens are literals, never a `var()` to another token: a theme on a subtree changes exactly what it re-declares.
+
+Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/theme/sizing.ts`, each with what it tunes). A name reads thing first, then what about it: `control-pad` is a control's inline padding.
+
+| Family   | Tokens (`@theme`, px)                                                                                                                                                                                 | Utility                                          |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Spacing  | the roles, `tight` … `section` (Spacing)                                                                                                                                                              | `gap-part`, `p-card`                             |
+| Controls | `control-2xs` … `control-lg` 20 · 24 · 32 · 36 · 40; `control-pad-xs` · `control-pad-sm` · `control-pad` 8 · 12 · 16; `control-gap-sm` · `control-gap` 4 · 6; `icon-xs` … `icon-lg` 12 · 14 · 16 · 20 | `h-control`, `px-control-pad`, `size-icon`       |
+| Fields   | `field-pad` 12 (less the border), `field-pad-y` 8 (multi-line)                                                                                                                                        | `px-[calc(var(--spacing-field-pad)-1px)]`        |
+| Rows     | `menu-item` · `menu-item-pad` 36 · 10 (menus, select, combobox); `row-pad-x` · `row-pad-y` 12 · 10 (`Item`, table cells); `row-gap` 8 (icon → label)                                                  | `min-h-menu-item`, `px-row-pad-x`, `gap-row-gap` |
+| Surfaces | `modal` 24, `popup` 10 (popover), `picker` 12 (calendar, color picker); `popup-inset` · `card-inset` 4 · 4, `list-inset` 8 (sidebar, command), each also the `--outer-inset`                          | `p-modal`, `p-popup-inset`                       |
+| Marks    | `track` 4 (slider, progress)                                                                                                                                                                          | `h-track`                                        |
+
+- A length one component owns is a component token in the Component sizing block of `tailwind.css` (`--switch-thumb`, `--tooltip-pad-x`), read as `w-(--switch-thumb)`. Prefer the shared scale.
+- A relationship is a `calc()` of tokens: a menu row's padding from `--spacing-menu-item` and the line height, a button in a field from the two heights.
+- Never scales: the 44px `hit-area`, 16px field text below `sm` (iOS zoom), hairlines (`border`, `h-px`, `ring-3`), the −1px for a border, layout widths (`w-64` sidebar, `max-w-*`, dialog and sheet widths), `page` and `section` spacing.
+
+A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius, each a partial map of token → value, plus its own `tokens`, and `touch` values for below `sm` (640px).
+
+| Axis      | Values                                                                                                                                                                                                                                   |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `density` | `compact` (controls 32, card 16, group 12, switch 14) · `default` · `comfortable` (controls 40, card 24, group 20, icons 18, checkbox 18). Component tokens move with it                                                                 |
+| `radius`  | `sharp` (all 0, the fixed steps too; checkbox and track 2) · `default` · `soft` (×1.2) · `pill` (`control-*` and tabs full; the rest capped). Component radii (`--tabs-radius`, `--alert-radius`) are literal: each radius sets them too |
+
+| Style (`SIZING_STYLES`) | Density · radius   | Its own                                                                                                                                                               |
+| ----------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `triargos`              | default · default  | Nothing: `tailwind.css` as is                                                                                                                                         |
+| `coss`                  | compact · default  | coss ui: controls 32, menu rows 28, popups and controls 10, tabs 8, cards 18, popover padding 16; touch: controls 36, rows 32, icons 18, checkbox 18, switch thumb 20 |
+| `dense`                 | compact · default  | shadcn mira/nova: controls 28, control text 13, checkbox 14, smaller corners; touch: controls 32                                                                      |
+| `soft`                  | comfortable · pill | shadcn maia: rounder surfaces (card 28, popup 24)                                                                                                                     |
+
+- An app renders `sizingThemeCss(theme)` into a `<style>` after the stylesheet, next to `brandingThemeCss`. It writes only the overrides on `:root`, and `touch` in `@media (width < 40rem)`; the default theme writes nothing.
+- A subtree: `sizingThemeCss(theme, '[data-sizing=compact]')` and `data-sizing='compact'` on the element. A popup portals out of the subtree; give it a `container` inside, or theme `:root`.
+- A new token goes in `SIZING_TOKENS` (`sizing.ts`: default, family, what it tunes), with its value in each axis or style that moves it. `pnpm sizing:check` fails when `tailwind.css` and `sizing.ts` drift.
+- A density of your own: `scaleDensity(0.9)` scales every default length to whole px (not radius, type, `page`, `section`; a value of 4px or less moves at most 1px), or pass any token map as `density`.
 
 ## Surfaces and elevation
 
@@ -150,7 +198,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 
 - Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`), `shadow-popup`, `shadow-modal`.
 - Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop.
-- Fields draw their edge as a real border inside the box (a 32px field measures 32px); a `::before` with `shadow-field-edge` lays the accent on it. Fields and popups weight the edge toward the light: heavier at the bottom in light mode, lit at the top in dark. Dark mode drops the shadow and keeps one white ring.
+- Fields draw their edge as a real border inside the box (a 36px field measures 36px); a `::before` with `shadow-field-edge` lays the accent on it. Fields and popups weight the edge toward the light: heavier at the bottom in light mode, lit at the top in dark. Dark mode drops the shadow and keeps one white ring.
 - Borders are for structure (dividers, table rules, dashed drop zones) and state (focus, invalid), never for depth.
 - Quiet fills re-declare per `[data-surface]`, so the same class reads one step from its surface. Restyle a shell by setting its variable.
 - `[data-surface=inverse]` re-declares every color token from the other mode (`brandingThemeCss`), so components inside it need no changes. `dark:` variants still follow the page, and so do the edges and drops.
@@ -221,7 +269,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 - Pick an intent and an emphasis, not a color. Never Tailwind's palette (`text-green-700`) or a literal color.
 - Pair each fill with its foreground. Don't use a bare intent as a fill (`bg-success`), and don't use a `/10` tint for status.
 - Dim with `disabled` / `disabled-foreground`, not `opacity-50`. Field surfaces fade to `opacity-64` (no lift, no accent).
-- Use a radius role, not a step or a literal; nest with `rounded-inner`. Use the elevations, not shadow literals.
+- Use a radius role, not a step or a literal; nest with `rounded-inner`. Use a height or padding token, not a step (`h-control`, not `h-9`). Use the elevations, not shadow literals.
 - Don't add `dark:` color overrides to surfaces; fix the token instead.
 - Don't mix `%` and lengths in a `calc()` that sizes a `radial-gradient` (`ellipse calc(50% + 2px)`): Chromium drops the whole value. Size it in lengths (`circle calc(var(--avatar-size)/2 + var(--avatar-gap))`).
 - In arbitrary values, write the raw token (`var(--card)`), not `var(--color-card)`. `--color-*` resolves on `:root`, so it misses a nested `.dark` and `[data-surface]`.
@@ -234,9 +282,11 @@ intent        neutral · primary · info · success · warning · destructive
 emphasis      solid · subtle · outline · ghost · raised      (intentVariants)
 button        (none) neutral/raised · intent='primary' · emphasis='ghost' · intent='destructive' · destructive + subtle
 text          foreground · muted-foreground · faint-foreground · disabled-foreground
-type          title 28 · heading 18 · body 14 · control 14 · caption 12 · overline 10
-spacing       tight 4 · related 8 · group 16 · card 20 · page 32 · section 48
+type          title 28 · heading 18 · body 14 · control 14 · caption 12
+spacing       tight 4 · related 8 · part 12 · group 16 · card 20 · page 32 · section 48
 radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · dialog 20 · panel 20 · rounded-inner
+              checkbox 4 · tooltip 8 · area 10 · block 12 · track full
+sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 36 · size-icon 16 · sizingThemeCss(SIZING_STYLES.coss) · scaleDensity(0.9)
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal
 block         Card > CardHeader > CardContent [> ItemList [virtualized]]
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)

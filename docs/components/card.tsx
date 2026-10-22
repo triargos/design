@@ -26,7 +26,7 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='With actions'
-        description='Header actions are raised xs / icon-xs buttons; row actions inside the list stay ghost. Both end on one column. A flush ItemList: CardContent with overflow-hidden.'
+        description='Header actions are raised sm / icon-sm buttons; row actions inside the list stay ghost. Both end on one column. A flush ItemList: CardContent with overflow-hidden.'
         bare>
         <CardWithActions />
       </ExampleSection>

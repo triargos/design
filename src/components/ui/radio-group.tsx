@@ -7,11 +7,13 @@ import { selectionControlVariants } from '~/components/ui/checkbox';
 import { cn } from '~/lib/utils';
 
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
-  return <RadioGroupPrimitive data-slot='radio-group' className={cn('grid w-full gap-2', className)} {...props} />;
+  return (
+    <RadioGroupPrimitive data-slot='radio-group' className={cn('grid w-full gap-related', className)} {...props} />
+  );
 }
 
 /**
- * The `Checkbox` surface as a circle. Checked: the brand fill and a 6px dot that scales in and out; with reduced motion
+ * The `Checkbox` surface as a circle. Checked: the brand fill and a `--radio-dot-size` dot that scales in and out; with reduced motion
  * it only fades.
  */
 function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
@@ -23,12 +25,12 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
       <RadioPrimitive.Indicator
         data-slot='radio-group-indicator'
         className={cn(
-          'flex size-4 items-center justify-center',
+          'flex size-(--checkbox-size) items-center justify-center',
           'transition-[scale,opacity] duration-feedback ease-enter motion-reduce:transition-opacity',
           'data-ending-style:scale-0 data-ending-style:opacity-0 data-starting-style:scale-0 data-starting-style:opacity-0',
           'motion-reduce:data-ending-style:scale-100 motion-reduce:data-starting-style:scale-100',
         )}>
-        <span className='size-1.5 rounded-full bg-current' />
+        <span className='size-(--radio-dot-size) rounded-full bg-current' />
       </RadioPrimitive.Indicator>
     </RadioPrimitive.Root>
   );
@@ -43,7 +45,7 @@ function ChoiceCard({ className, children, ...props }: RadioPrimitive.Root.Props
     <RadioPrimitive.Root
       data-slot='choice-card'
       className={cn(
-        'group/choice-card flex min-h-12 w-full items-center justify-between gap-3 rounded-control-lg bg-shell px-4 py-3 text-left text-body font-medium text-foreground outline-none',
+        'group/choice-card flex min-h-(--choice-card-height) w-full items-center justify-between gap-part rounded-block bg-shell px-control-pad py-(--choice-card-pad-y) text-left text-body font-medium text-foreground outline-none',
         'transition-[background-color,box-shadow] duration-feedback hover:bg-muted',
         'focus-visible:ring-3 focus-visible:ring-ring/24',
         'data-checked:bg-card data-checked:shadow-raised',
@@ -55,7 +57,7 @@ function ChoiceCard({ className, children, ...props }: RadioPrimitive.Root.Props
       <span className='min-w-0 truncate'>{children}</span>
       <IconCheck
         aria-hidden
-        className='size-4 shrink-0 text-primary opacity-0 transition-opacity duration-feedback group-data-checked/choice-card:opacity-100 group-data-disabled/choice-card:text-disabled-foreground'
+        className='size-icon shrink-0 text-primary opacity-0 transition-opacity duration-feedback group-data-checked/choice-card:opacity-100 group-data-disabled/choice-card:text-disabled-foreground'
       />
     </RadioPrimitive.Root>
   );

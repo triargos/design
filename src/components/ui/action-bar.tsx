@@ -61,7 +61,7 @@ function ActionBarRow({ className, ...props }: React.ComponentProps<typeof motio
       animate={reduced ? { opacity: 1, transition: fade } : shownRow}
       exit={reduced ? { opacity: 0, transition: fade } : leave}
       className={cn(
-        'flex w-max shrink-0 items-center gap-related p-1.5',
+        'flex w-max shrink-0 items-center gap-related p-(--outer-inset) [&_[data-slot=button]]:rounded-inner',
         !present && 'absolute top-1/2 left-1/2 -translate-1/2',
         className,
       )}
@@ -74,9 +74,10 @@ function ActionBarRow({ className, ...props }: React.ComponentProps<typeof motio
  * A floating toolbar for what is selected: the count, clear, the actions, on the inverted surface like the
  * `BottomNav`. In the page it sticks to the bottom of the scrolling column (`sticky bottom-4 self-center`, in a flex
  * column). On a phone, under a `BottomNavProvider` with a `BottomNav` showing, it docks in the nav instead: the nav's
- * shell morphs to fit it and its items cascade in. A docked bar answers container queries from the nav's width. 6px in
- * from the 16px corner, 36px buttons (`rounded-control`, 10px) are concentric with it. One per page. A `status`
- * replaces the actions once they ran; the shell springs to its size.
+ * shell morphs to fit it and its items cascade in. A docked bar answers container queries from the nav's width. Its
+ * row sits in from the `popup` corner by what brings a `control` button to the nav's height (`control-lg` + 2 ×
+ * `popup-inset`), and its buttons take `rounded-inner`, concentric with the shell. One per page. A `status` replaces
+ * the actions once they ran; the shell springs to its size.
  */
 function ActionBar({ open, status, className, children, 'aria-label': ariaLabel }: ActionBarProps) {
   const nav = useBottomNavDock();
@@ -138,12 +139,16 @@ function ActionBar({ open, status, className, children, 'aria-label': ariaLabel 
       role='toolbar'
       aria-label={ariaLabel}
       data-slot='action-bar'
-      className={cn('relative flex items-center justify-center text-control', surface)}
+      className={cn(
+        'relative flex items-center justify-center text-control',
+        '[--outer-inset:calc((var(--spacing-control-lg)+2*var(--spacing-popup-inset)-var(--spacing-control))/2)] [--outer-radius:var(--radius-popup)]',
+        surface,
+      )}
       {...motionProps}>
       <AnimatePresence initial={false}>
         {showsStatus ? (
           <ActionBarRow key='status' aria-hidden>
-            <span className='flex h-9 items-center gap-1.5 px-2.5 font-medium whitespace-nowrap [&_svg]:size-4 [&_svg]:shrink-0'>
+            <span className='flex h-control items-center gap-control-gap px-(--action-bar-status-pad-x) font-medium whitespace-nowrap [&_svg]:size-icon [&_svg]:shrink-0'>
               {status}
             </span>
           </ActionBarRow>
@@ -183,7 +188,7 @@ function ActionBar({ open, status, className, children, 'aria-label': ariaLabel 
             exit: hidden,
             transition: inlineTransition,
           } as React.ComponentProps<typeof motion.div>,
-          // overflow-hidden: the shell springs past or short of the row; 6px of padding in the row keeps focus rings.
+          // overflow-hidden: the shell springs past or short of the row; the row's padding keeps focus rings.
           'sticky bottom-4 origin-bottom self-center overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup',
         )}
     </AnimatePresence>

@@ -14,15 +14,15 @@ import {
 import { cn } from '~/lib/utils';
 
 /**
- * Rows sit 8px in (`CommandList`'s `p-2`), so `rounded-inner` is the surface's radius less 8px: 8px inline (a popup's 16px,
- * like a card's content), 12px in `CommandDialog` (the dialog's 20px).
+ * Rows sit `--spacing-list-inset` in (`CommandList`'s padding), so `rounded-inner` is the surface's radius less that inset: the
+ * popup's inline, the dialog's in `CommandDialog`.
  */
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (
     <CommandPrimitive
       data-slot='command'
       className={cn(
-        'flex size-full flex-col overflow-hidden bg-transparent text-popover-foreground [--outer-inset:--spacing(2)] [--outer-radius:var(--radius-popup)] in-data-[slot=dialog-content]:[--outer-radius:var(--radius-dialog)]',
+        'flex size-full flex-col overflow-hidden bg-transparent text-popover-foreground [--outer-inset:var(--spacing-list-inset)] [--outer-radius:var(--radius-popup)] in-data-[slot=dialog-content]:[--outer-radius:var(--radius-dialog)]',
         className,
       )}
       {...props}
@@ -59,8 +59,10 @@ function CommandDialog({
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
     // A bare row over a rule, not a field: the search is the palette's header. The icon lines up with the rows' text.
-    <div data-slot='command-input-wrapper' className='flex h-12 shrink-0 items-center gap-2.5 border-b px-5'>
-      <IconSearch aria-hidden className='size-4 shrink-0 text-muted-foreground' />
+    <div
+      data-slot='command-input-wrapper'
+      className='flex h-(--command-input-height) shrink-0 items-center gap-(--command-input-gap) border-b px-[calc(var(--spacing-list-inset)+var(--spacing-row-pad-x))]'>
+      <IconSearch aria-hidden className='size-icon shrink-0 text-muted-foreground' />
       <CommandPrimitive.Input
         data-slot='command-input'
         className={cn(
@@ -77,7 +79,10 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
   return (
     <CommandPrimitive.List
       data-slot='command-list'
-      className={cn('no-scrollbar max-h-96 scroll-py-2 overflow-x-hidden overflow-y-auto p-2 outline-none', className)}
+      className={cn(
+        'no-scrollbar max-h-96 scroll-py-list-inset overflow-x-hidden overflow-y-auto p-list-inset outline-none',
+        className,
+      )}
       {...props}
     />
   );
@@ -87,7 +92,7 @@ function CommandEmpty({ className, ...props }: React.ComponentProps<typeof Comma
   return (
     <CommandPrimitive.Empty
       data-slot='command-empty'
-      className={cn('py-6 text-center text-body', className)}
+      className={cn('py-(--command-empty-pad-y) text-center text-body', className)}
       {...props}
     />
   );
@@ -98,8 +103,8 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
     <CommandPrimitive.Group
       data-slot='command-group'
       className={cn(
-        // Headings in sentence case (`caption`, not `overline`): a palette's groups read as sections, not menu labels.
-        'overflow-hidden text-foreground [[cmdk-group]:not([hidden])~&:not([cmdk-separator]+&)]:pt-2 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-1.5 **:[[cmdk-group-heading]]:pb-1.5 **:[[cmdk-group-heading]]:text-caption **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground',
+        // Headings as menu labels: `caption`, medium, sentence case.
+        'overflow-hidden text-foreground [[cmdk-group]:not([hidden])~&:not([cmdk-separator]+&)]:pt-list-inset **:[[cmdk-group-heading]]:px-row-pad-x **:[[cmdk-group-heading]]:py-(--command-heading-pad-y) **:[[cmdk-group-heading]]:text-caption **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground',
         className,
       )}
       {...props}
@@ -111,7 +116,7 @@ function CommandSeparator({ className, ...props }: React.ComponentProps<typeof C
   return (
     <CommandPrimitive.Separator
       data-slot='command-separator'
-      className={cn('-mx-2 my-2 h-px bg-border', className)}
+      className={cn('-mx-list-inset my-list-inset h-px bg-border', className)}
       {...props}
     />
   );
@@ -122,7 +127,7 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
     <CommandPrimitive.Item
       data-slot='command-item'
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-inner px-3 py-2.5 text-control outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-foreground data-[selected=true]:bg-foreground/6 data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[selected=true]:*:[svg]:text-foreground",
+        "group/command-item relative flex cursor-default items-center gap-row-gap rounded-inner px-row-pad-x py-[calc((var(--spacing-control-lg)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-foreground data-[selected=true]:bg-foreground/6 data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon data-[selected=true]:*:[svg]:text-foreground",
         className,
       )}
       {...props}
@@ -152,7 +157,7 @@ function CommandFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='command-footer'
       className={cn(
-        'flex h-11 shrink-0 items-center justify-between gap-4 border-t bg-muted px-5 text-caption text-muted-foreground',
+        'flex h-(--command-footer-height) shrink-0 items-center justify-between gap-group border-t bg-muted px-[calc(var(--spacing-list-inset)+var(--spacing-row-pad-x))] text-caption text-muted-foreground',
         '**:data-[slot=kbd]:bg-card **:data-[slot=kbd]:shadow-raised dark:**:data-[slot=kbd]:bg-foreground/10',
         className,
       )}

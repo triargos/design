@@ -3,9 +3,10 @@ import { Switch as SwitchPrimitive } from '@base-ui/react/switch';
 import { cn } from '~/lib/utils';
 
 /**
- * A flat track (default 20×36, sm 16×28) with a flat thumb 2px in; no edges, no shadows. Off: a 14% `foreground`
- * veil (`neutral-subtle` is too faint for a white thumb on a light page) and a white thumb. On: the brand fill. Hover strengthens the fill; a press stretches the thumb 4px toward the
- * other side (`--switch-stretch`). The thumb travels (`duration-move`); the fill changes as feedback.
+ * A flat track (`--switch-width`, `--switch-width-sm`) with the thumb (`--switch-thumb`, `--switch-thumb-sm`)
+ * `--switch-inset` in; no edges, no shadows. Off: a 14% `foreground` veil (`neutral-subtle` is too faint for a white
+ * thumb on a light page) and a white thumb. On: the brand fill. Hover strengthens the fill; a press stretches the thumb
+ * 4px toward the other side (`--switch-stretch`). The thumb travels (`duration-move`); the fill changes as feedback.
  */
 function Switch({
   className,
@@ -19,9 +20,10 @@ function Switch({
       data-slot='switch'
       data-size={size}
       className={cn(
-        'peer group/switch relative inline-flex shrink-0 items-center rounded-full bg-foreground/14 p-0.5 outline-none',
-        '[--switch-stretch:0px] data-[size=default]:[--switch-thumb:--spacing(4)] data-[size=sm]:[--switch-thumb:--spacing(3)]',
-        'data-[size=default]:h-5 data-[size=default]:w-9 data-[size=sm]:h-4 data-[size=sm]:w-7',
+        'peer group/switch relative inline-flex shrink-0 items-center rounded-track bg-foreground/14 p-(--switch-inset) outline-none',
+        '[--switch-stretch:0px] data-[size=default]:[--thumb-size:var(--switch-thumb)] data-[size=sm]:[--thumb-size:var(--switch-thumb-sm)]',
+        'data-[size=default]:[--track:var(--switch-width)] data-[size=sm]:[--track:var(--switch-width-sm)]',
+        'h-[calc(var(--thumb-size)+var(--switch-inset)*2)] w-(--track)',
         'transition-[background-color,box-shadow] duration-feedback',
         'after:absolute after:-inset-x-3 after:-inset-y-2',
         'not-data-disabled:hover:bg-foreground/20 not-data-disabled:active:[--switch-stretch:--spacing(1)]',
@@ -36,9 +38,9 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot='switch-thumb'
         className={cn(
-          'pointer-events-none block h-(--switch-thumb) w-[calc(var(--switch-thumb)+var(--switch-stretch))] rounded-full bg-thumb',
+          'pointer-events-none block h-(--thumb-size) w-[calc(var(--thumb-size)+var(--switch-stretch))] rounded-track bg-thumb',
           'transition-[width,translate,background-color] duration-move ease-move motion-reduce:transition-none',
-          'data-checked:translate-x-[calc(var(--switch-thumb)-var(--switch-stretch))] data-checked:bg-primary-solid-foreground',
+          'data-checked:translate-x-[calc(var(--track)-var(--switch-inset)*2-var(--thumb-size)-var(--switch-stretch))] data-checked:bg-primary-solid-foreground',
           'group-data-disabled/switch:bg-disabled-foreground group-data-disabled/switch:data-checked:bg-disabled-foreground',
         )}
       />

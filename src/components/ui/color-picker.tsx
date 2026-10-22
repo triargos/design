@@ -36,7 +36,7 @@ const CUSTOM_GRADIENT = 'conic-gradient(#ef4444, #eab308, #22c55e, #06b6d4, #3b8
 
 const swatchStyle = (color: string): CSSProperties => ({ '--swatch': color }) as CSSProperties;
 
-/** Fill scale per state; selected leaves a 4px gap inside the 2px ring. */
+/** Fill scale per state; selected leaves a gap inside the 2px ring (4px on a 32px swatch). */
 const FILL_SCALE = { rest: 1, hover: 0.92, press: 0.84, checked: 0.625, checkedPress: 0.58 } as const;
 
 /** Interruptible: hover in and out mid-flight retargets from the current scale. A small overshoot on settle. */
@@ -107,7 +107,7 @@ function PresetSwatch({ color, checked, label }: { color: string; checked: boole
       // Selected: the fill shrinks inside a ring of the same color, so the gap works on any surface. Hover only shrinks
       // the fill: a faint ring against the fill reads as a blurred edge.
       className={cn(
-        'hit-area relative flex size-8 shrink-0 items-center justify-center rounded-full outline-none',
+        'hit-area relative flex size-control-sm shrink-0 items-center justify-center rounded-full outline-none',
         'inset-ring-2 inset-ring-transparent transition-shadow duration-feedback data-checked:inset-ring-(--swatch)',
         'focus-visible:ring-3 focus-visible:ring-ring/24',
         'disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50',
@@ -130,7 +130,7 @@ function CustomSwatch({ value, isCustom, label }: { value: string; isCustom: boo
           aria-label={isCustom ? `${label}: ${value}` : label}
           title={label}
           className={cn(
-            'hit-area relative flex size-8 shrink-0 items-center justify-center rounded-full outline-none',
+            'hit-area relative flex size-control-sm shrink-0 items-center justify-center rounded-full outline-none',
             'inset-ring-2 inset-ring-transparent transition-shadow duration-feedback data-checked:inset-ring-(--swatch)',
             'focus-visible:ring-3 focus-visible:ring-ring/24',
             'disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50',
@@ -193,8 +193,8 @@ function ColorPicker({
       aria-labelledby={labelledBy}
       aria-label={labelledBy ? undefined : label}
       className={cn(
-        'flex flex-wrap gap-2 pointer-coarse:gap-3',
-        custom === 'inline' && 'grid grid-cols-6 justify-between gap-y-2.5',
+        'flex flex-wrap gap-related pointer-coarse:gap-3',
+        custom === 'inline' && 'grid grid-cols-6 justify-between gap-y-(--color-picker-row-gap)',
       )}>
       {presets.map((swatch) => (
         <PresetSwatch key={swatch.value} color={swatch.value} checked={preset === swatch.value} label={swatch.label} />
@@ -202,7 +202,7 @@ function ColorPicker({
       {custom === 'popover' && (
         <Popover>
           <CustomSwatch value={value} isCustom={preset === null} label={customLabel} />
-          <PopoverContent align='start' className='w-60 p-3' sideOffset={8}>
+          <PopoverContent align='start' className='w-60 p-picker [--outer-inset:var(--spacing-picker)]' sideOffset={8}>
             <CustomColor value={value} onValueChange={onValueChange} hexLabel={hexLabel} />
           </PopoverContent>
         </Popover>
@@ -213,7 +213,7 @@ function ColorPicker({
   if (custom !== 'inline') return swatches;
 
   return (
-    <div className='flex flex-col gap-3'>
+    <div className='flex flex-col gap-picker'>
       {swatches}
       <CustomColor value={value} onValueChange={onValueChange} hexLabel={hexLabel} />
     </div>
@@ -227,25 +227,25 @@ function CustomColor({
   hexLabel,
 }: Pick<ColorPickerProps, 'value' | 'onValueChange'> & { hexLabel: string }) {
   return (
-    <div className='flex flex-col gap-2.5'>
+    <div className='flex flex-col gap-(--color-picker-row-gap)'>
       {/* react-colorful injects unlayered CSS, which beats layered utilities: overrides of its rules need `!`. */}
       <HexColorPicker
         color={value}
         onChange={onValueChange}
-        className='[&>*:first-child]:rounded-inner! [&>*:first-child]:border-b-0! [&>*:last-child]:mt-3 [&>*:last-child]:h-3! [&>*:last-child]:rounded-full!'
+        className='[&>*:first-child]:rounded-inner! [&>*:first-child]:border-b-0! [&>*:last-child]:mt-picker [&>*:last-child]:h-(--color-picker-hue)! [&>*:last-child]:rounded-track!'
         style={{ width: '100%', height: 160 }}
       />
       <InputGroup>
         <InputGroupAddon>
           <span
             aria-hidden
-            className='size-4 rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
+            className='size-icon rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
             style={{ background: value }}
           />
         </InputGroupAddon>
         <span
           data-slot='input-group-input'
-          className='flex h-full min-w-0 flex-1 items-center px-[calc(--spacing(3)-1px)] text-control max-sm:text-[1rem]'>
+          className='flex h-full min-w-0 flex-1 items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-sm:text-[1rem]'>
           <HexColorInput
             data-slot='input-group-control'
             aria-label={hexLabel}

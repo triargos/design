@@ -82,14 +82,14 @@ const calendarDayVariants = cva(
 function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
   return (
     <>
-      <header className='mb-4 flex h-(--cell-size) items-center justify-between gap-1'>
+      <header className='mb-group flex h-(--cell-size) items-center justify-between gap-control-gap-sm'>
         <AriaCalendarButton
           slot='previous'
           className={cn(
             buttonVariants({ intent: 'neutral', emphasis: 'ghost' }),
             'size-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 disabled:text-disabled-foreground dark:hover:bg-foreground/6',
           )}>
-          <IconChevronLeft className='size-4' />
+          <IconChevronLeft className='size-icon' />
         </AriaCalendarButton>
         <Heading className='text-body font-medium select-none' />
         <AriaCalendarButton
@@ -98,10 +98,12 @@ function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
             buttonVariants({ intent: 'neutral', emphasis: 'ghost' }),
             'size-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 disabled:text-disabled-foreground dark:hover:bg-foreground/6',
           )}>
-          <IconChevronRight className='size-4' />
+          <IconChevronRight className='size-icon' />
         </AriaCalendarButton>
       </header>
-      <CalendarGrid weekdayStyle='short' className='-my-2 border-separate border-spacing-x-0 border-spacing-y-2'>
+      <CalendarGrid
+        weekdayStyle='short'
+        className='-my-related border-separate border-spacing-x-0 border-spacing-y-(--spacing-related)'>
         <CalendarGridHeader>
           {(day) => (
             <CalendarHeaderCell className='p-0 text-caption font-normal text-muted-foreground select-none'>
@@ -132,7 +134,7 @@ function Calendar({ min, max, autoFocus, locale: localeProp, className, ...props
     minValue: toDate(min),
     maxValue: toDate(max),
     autoFocus,
-    className: cn('w-fit p-3 [--cell-size:2.25rem]', className),
+    className: cn('w-fit p-picker [--cell-size:var(--spacing-control)]', className),
   };
   return (
     <I18nProvider locale={locale}>

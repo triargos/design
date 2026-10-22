@@ -282,7 +282,8 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
       data-slot='bottom-nav-shell'
       data-surface='inverse'
       data-view={view}
-      className='pointer-events-auto relative col-start-1 row-start-1 flex items-end justify-center justify-self-center overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup'
+      // The outer corner for every layer: the tabs sit `popup-inset` in, the "More" panel `--spacing-list-inset`.
+      className='pointer-events-auto relative col-start-1 row-start-1 flex items-end justify-center justify-self-center overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-radius:var(--radius-popup)]'
       onBlur={(event) => {
         if (panelOpen && event.relatedTarget instanceof Node && !event.currentTarget.contains(event.relatedTarget))
           setPanelOpen(false);
@@ -292,7 +293,10 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
         data-slot='bottom-nav-list'
         aria-label={ariaLabel}
         inert={view !== 'tabs'}
-        className={cn('relative flex w-max shrink-0 origin-bottom items-center gap-related p-1', className)}
+        className={cn(
+          'relative flex w-max shrink-0 origin-bottom items-center gap-related p-popup-inset [--outer-inset:var(--spacing-popup-inset)]',
+          className,
+        )}
         {...props}>
         <CurrentIndicator />
         {children}
@@ -303,7 +307,7 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
         data-slot='bottom-nav-panel'
         inert={view !== 'panel'}
         style={{ opacity: 0 }}
-        className='absolute top-0 left-1/2 flex no-scrollbar max-h-[calc(100dvh-6rem)] w-[min(17rem,calc(100vw-2rem))] origin-bottom -translate-x-1/2 flex-col overflow-y-auto overscroll-contain p-2'
+        className='absolute top-0 left-1/2 flex no-scrollbar max-h-[calc(100dvh-6rem)] w-[min(17rem,calc(100vw-2rem))] origin-bottom -translate-x-1/2 flex-col overflow-y-auto overscroll-contain p-list-inset [--outer-inset:var(--spacing-list-inset)]'
       />
       <div
         ref={dockRef}
@@ -354,7 +358,7 @@ function CurrentIndicator() {
       aria-hidden
       data-slot='bottom-nav-indicator'
       className={cn(
-        'pointer-events-none absolute top-1 left-0 size-10 translate-x-(--current-left) rounded-control-lg bg-foreground/10 transition-[translate] duration-move ease-move motion-reduce:transition-none',
+        'pointer-events-none absolute top-popup-inset left-0 size-control-lg translate-x-(--current-left) rounded-inner bg-foreground/10 transition-[translate] duration-move ease-move motion-reduce:transition-none',
         !animate && 'transition-none',
         !visible && 'invisible',
       )}
@@ -363,16 +367,16 @@ function CurrentIndicator() {
 }
 
 /**
- * A tab: a 40px square with a 20px icon (`hit-area` makes it 44px to a finger), 4px in from the 16px shell so its 12px
- * corners are concentric and the bar is 48px, the height of a docked `ActionBar` and of the main action. The label is a
- * `<span>` after the icon, read by screen readers only. A count is a `Badge size='sm' shape='pill'` after the label,
- * pinned to the icon's top-right corner.
+ * A tab: a `control-lg` square with an `icon-lg` icon (`hit-area` makes it 44px to a finger), `popup-inset` in from the
+ * shell with `rounded-inner` corners; the bar (`control-lg` + 2 × `popup-inset`) is the height of a docked `ActionBar`
+ * and of the main action. The label is a `<span>` after the icon, read by screen readers only. A count is a
+ * `Badge size='sm' shape='pill'` after the label, pinned to the icon's top-right corner, at least as wide as it is high.
  */
 const bottomNavItemClassName = cn(
-  'hit-area relative flex size-10 shrink-0 items-center justify-center rounded-control-lg text-muted-foreground outline-hidden select-none',
+  'hit-area relative flex size-control-lg shrink-0 items-center justify-center rounded-inner text-muted-foreground outline-hidden select-none',
   'transition-[color,scale] duration-feedback hover:text-foreground active:scale-[0.92] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
-  '[&>svg]:pointer-events-none [&>svg]:size-5 [&>svg]:shrink-0 [&>span:not([data-slot=badge])]:sr-only',
-  '[&>[data-slot=badge]]:absolute [&>[data-slot=badge]]:top-0.5 [&>[data-slot=badge]]:left-[calc(50%+4px)] [&>[data-slot=badge]]:min-w-5 [&>[data-slot=badge]]:tabular-nums',
+  '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>span:not([data-slot=badge])]:sr-only',
+  '[&>[data-slot=badge]]:absolute [&>[data-slot=badge]]:top-0.5 [&>[data-slot=badge]]:left-[calc(50%+4px)] [&>[data-slot=badge]]:min-w-(--badge-height-sm) [&>[data-slot=badge]]:tabular-nums',
   'aria-[current=page]:text-foreground data-current:text-foreground',
   'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
 );
@@ -468,7 +472,8 @@ function BottomNavMore({
 
 /**
  * A row in the "More" list: an icon and its label, an `<a>` or the router's link through `render`. `current` marks the
- * page. 8px in from the 16px shell, its 8px corners are concentric. Closes the list when chosen.
+ * page. `--spacing-list-inset` in from the shell, with `rounded-inner` corners. At least 44px high, a finger's
+ * target. Closes the list when chosen.
  */
 function BottomNavMoreItem({
   className,
@@ -485,9 +490,9 @@ function BottomNavMoreItem({
       {
         'aria-current': current ? 'page' : undefined,
         className: cn(
-          'flex min-h-11 w-full shrink-0 items-center gap-2.5 rounded-control-sm px-3 py-2.5 text-control font-medium text-popover-foreground outline-hidden select-none',
+          'flex min-h-11 w-full shrink-0 items-center gap-(--bottom-nav-gap) rounded-inner px-row-pad-x py-row-pad-y text-control font-medium text-popover-foreground outline-hidden select-none',
           'transition-[background-color,scale] duration-feedback hover:bg-foreground/6 active:scale-[0.96] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
-          '[&>svg]:pointer-events-none [&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-muted-foreground [&>span]:truncate',
+          '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>svg]:text-muted-foreground [&>span]:truncate',
           'aria-[current=page]:bg-foreground/10 aria-[current=page]:[&>svg]:text-foreground',
           className,
         ),
@@ -499,7 +504,7 @@ function BottomNavMoreItem({
 }
 
 /**
- * The one main action beside the bar (create): a 48px square on the inverted surface, a `<button>` or a link through
+ * The one main action beside the bar (create): a square as high as the bar, on the inverted surface, a `<button>` or a link through
  * `render`. Icon only, so it needs an `aria-label`. Steps aside while the bar shows the panel or a docked bar.
  */
 function BottomNavAction({ className, render, ...props }: useRender.ComponentProps<'button'>) {
@@ -514,9 +519,9 @@ function BottomNavAction({ className, render, ...props }: useRender.ComponentPro
       {
         type: 'button',
         className: cn(
-          'relative flex size-12 items-center justify-center rounded-popup bg-popover text-popover-foreground shadow-popup outline-hidden select-none',
+          'relative flex size-[calc(var(--spacing-control-lg)+2*var(--spacing-popup-inset))] items-center justify-center rounded-popup bg-popover text-popover-foreground shadow-popup outline-hidden select-none',
           'transition-[scale] duration-feedback active:scale-[0.92] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
-          '[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-5',
+          '[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-icon-lg',
           className,
         ),
       },

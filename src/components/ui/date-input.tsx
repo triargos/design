@@ -58,7 +58,7 @@ function useFieldLabel(id: string | undefined, fieldRef: React.RefObject<HTMLEle
 
 /**
  * The field surface of a segmented date or time field: `Input` height and padding, the end addon (calendar button or
- * clock) 6px in like an `InputGroupButton` `icon-xs`, so both icons sit on the same spot.
+ * clock) centered in the field's height like an `InputGroupButton` `icon-xs`, so both icons sit on the same spot.
  */
 function DateField<T extends AriaDateValue>({
   className,
@@ -69,7 +69,7 @@ function DateField<T extends AriaDateValue>({
       data-slot='date-field'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-9 w-full min-w-0 cursor-text items-center pr-[5px] pl-[calc(--spacing(3)-1px)] text-control',
+        'flex h-control w-full min-w-0 cursor-text items-center pr-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] pl-[calc(var(--spacing-field-pad)-1px)] text-control',
         'data-disabled:cursor-not-allowed data-disabled:opacity-64 data-disabled:shadow-field-flat data-disabled:before:shadow-none',
         className,
       )}
@@ -88,7 +88,7 @@ function TimeField<T extends AriaTimeValue>({
       data-slot='time-field'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-9 w-full min-w-0 cursor-text items-center pr-[5px] pl-[calc(--spacing(3)-1px)] text-control',
+        'flex h-control w-full min-w-0 cursor-text items-center pr-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] pl-[calc(var(--spacing-field-pad)-1px)] text-control',
         'data-disabled:cursor-not-allowed data-disabled:opacity-64 data-disabled:shadow-field-flat data-disabled:before:shadow-none',
         className,
       )}
@@ -328,7 +328,7 @@ function TimeInput({
         <SegmentsInput />
         <span
           aria-hidden
-          className='flex size-6 shrink-0 items-center justify-center text-muted-foreground in-data-disabled:text-disabled-foreground [&_svg]:size-4'>
+          className='flex size-control-xs shrink-0 items-center justify-center text-muted-foreground in-data-disabled:text-disabled-foreground [&_svg]:size-icon'>
           <IconClock />
         </span>
       </TimeField>

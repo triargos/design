@@ -69,7 +69,7 @@ export function DangerZoneDefault() {
                       <FieldLabel htmlFor={inputId}>Type the name to confirm</FieldLabel>
                       <div className='flex items-center gap-2'>
                         <span className='text-caption font-medium text-muted-foreground'>{NAME}</span>
-                        <CopyButton value={NAME} size='icon-xs' />
+                        <CopyButton value={NAME} size='icon-sm' />
                       </div>
                       <Input
                         id={inputId}

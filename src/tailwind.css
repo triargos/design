@@ -171,7 +171,7 @@
   /* Elevation (DESIGN.md, Elevation): one ring (`--edge`) at every level, more drop the higher it sits. Inline, so the
      colors resolve on the element and `.dark` reaches them. */
   --shadow-border: 0 0 0 1px var(--edge);
-  /* Fields draw their edge as a real border (`--edge-field`), inside the box, so a 32px field is 32px. `shadow-field` is
+  /* Fields draw their edge as a real border (`--edge-field`), inside the box, so a 36px field is 36px. `shadow-field` is
      the lift under it; `shadow-field-edge` goes on a full-size `::before` and lays the light-side accent on the border
      row (heavier at the bottom in light, lit at the top in dark); `shadow-field-flat` drops the lift. */
   --shadow-field: 0 1px 2px 0 var(--field-lift);
@@ -227,15 +227,77 @@
   --radius-card: 20px;
   --radius-dialog: 20px;
   --radius-panel: 20px;
+  /* Shapes that must not follow a pill control: a checkbox stays a box, a tooltip and a multi-line block cap. */
+  --radius-checkbox: 4px;
+  --radius-tooltip: 8px;
+  /* Multi-line fields: `Textarea`, `FileDropZone`, a wrapping `InputGroup` or `ComboboxChips`. */
+  --radius-area: 10px;
+  /* Rows and blocks inside a surface: `Item`, choice card, prose `pre` and `img`. */
+  --radius-block: 12px;
+  /* Tracks and thumbs: switch, slider, progress. */
+  --radius-track: calc(infinity * 1px);
 
-  /* Spacing (DESIGN.md, Spacing): `gap-group`, `p-group`, `space-y-tight`. */
+  /* Sizing (DESIGN.md, Sizing): every length a component draws is a token, so a sizing theme (`lib/theme/sizing.ts`)
+     re-declares them on `:root` or on a subtree. Literal values only, never a `var()` to another token: a theme scoped
+     to a subtree then changes exactly what it re-declares. A name reads thing first, then what about it: `control-pad`
+     is a control's inline padding, `popup-inset` a popup's edge to its rows. Lengths one component owns are below, in
+     Component sizing. */
+
+  /* Spacing roles (DESIGN.md, Spacing), by relationship: `gap-group`, `p-group`, `space-y-tight`. */
+  /* A title and its description; chips apart. */
   --spacing-tight: 0.25rem;
+  /* Items that work together: label to control, a field's addons, OTP slots, swatches, week rows. */
   --spacing-related: 0.5rem;
+  /* The parts of one component: a media or indicator and its text, text and its action, a label beside its control,
+     a chart and its legend, stacked toasts. */
+  --spacing-part: 0.75rem;
+  /* Peer blocks; a heading and its content. */
   --spacing-group: 1rem;
   /* Inside a card: the content's padding, and the header, footer and flush rows on the same edge. */
   --spacing-card: 1.25rem;
   --spacing-page: 2rem;
   --spacing-section: 3rem;
+
+  /* Controls: what is clicked or typed into on one line. Heights (`h-control`, `size-control-sm`), inline padding
+     (`px-control-pad`), icon to label (`gap-control-gap`), icons (`size-icon`). */
+  --spacing-control-2xs: 1.25rem;
+  --spacing-control-xs: 1.5rem;
+  --spacing-control-sm: 2rem;
+  --spacing-control: 2.25rem;
+  --spacing-control-lg: 2.5rem;
+  --spacing-control-pad-xs: 0.5rem;
+  --spacing-control-pad-sm: 0.75rem;
+  --spacing-control-pad: 1rem;
+  --spacing-control-gap-sm: 0.25rem;
+  --spacing-control-gap: 0.375rem;
+  --spacing-icon-xs: 0.75rem;
+  --spacing-icon-sm: 0.875rem;
+  --spacing-icon: 1rem;
+  --spacing-icon-lg: 1.25rem;
+  /* Fields: the text inset (less the 1px border in use), and a multi-line field's block padding. */
+  --spacing-field-pad: 0.75rem;
+  --spacing-field-pad-y: 0.5rem;
+
+  /* Rows: a menu item's height and inline padding (dropdown, context menu, select, combobox); a list or table row's
+     padding (`Item`, table cells, flush accordion); icon to label in any row. */
+  --spacing-menu-item: 2.25rem;
+  --spacing-menu-item-pad: 0.625rem;
+  --spacing-row-pad-x: 0.75rem;
+  --spacing-row-pad-y: 0.625rem;
+  --spacing-row-gap: 0.5rem;
+
+  /* Surfaces: a surface's padding (`modal`: dialog, sheet; `popup`: popover; `picker`: calendar, color picker), and
+     its edge to the rows inside, also its `--outer-inset` (`popup-inset`: menus; `card-inset`: the card shell;
+     `list-inset`: sidebar, bottom nav panel, command list). */
+  --spacing-modal: 1.5rem;
+  --spacing-popup: 0.625rem;
+  --spacing-picker: 0.75rem;
+  --spacing-popup-inset: 0.25rem;
+  --spacing-card-inset: 0.25rem;
+  --spacing-list-inset: 0.5rem;
+
+  /* Marks: a slider's or progress bar's track thickness. */
+  --spacing-track: 0.25rem;
 
   /* Motion (DESIGN.md, Motion), named by what moves. Springs (interruptible motion) live in code. */
   --transition-duration-enter: 100ms;
@@ -264,11 +326,6 @@
   --text-control--line-height: 1.25rem;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
-  /* Menu and group labels; `.text-overline` below adds the uppercase. */
-  --text-overline: 0.625rem;
-  --text-overline--line-height: 1rem;
-  --text-overline--letter-spacing: 0.06em;
-  --text-overline--font-weight: 500;
 
   /* Toast upsert replay (`components/ui/toast.tsx`): odd and even run the same keyframes, so each update restarts them. */
   --animate-toast-success-odd: toast-pulse 0.32s cubic-bezier(0.5, 1, 0.89, 1);
@@ -425,6 +482,116 @@
   }
 }
 
+/* Component sizing: lengths one component owns, read as `w-(--switch-width)`. Literal values, like the scale above;
+   a sizing theme re-declares them too. Named component first, then what about it (`-height`, `-pad-x`, `-gap`,
+   `-inset`, `-size`, `-radius`), grouped by the same families. */
+:root {
+  /* Controls. */
+  /* `Badge`: its heights (its own, not the control scale `Kbd` follows) and inline padding; `Kbd`'s padding. */
+  --badge-height: 1.5rem;
+  --badge-height-sm: 1.25rem;
+  --badge-pad-x: 0.5rem;
+  --badge-pad-x-sm: 0.375rem;
+  --kbd-pad-x: 0.25rem;
+  /* Segmented tabs: the tab's (and its sliding chip's) radius, the track's padding around the tabs. The track's radius
+     follows: tab + min(inset, tab). */
+  --tabs-radius: 10px;
+  --tabs-inset: 0.25rem;
+  /* `ActionBar`: the status that replaces its actions. */
+  --action-bar-status-pad-x: 0.625rem;
+
+  /* Fields. */
+  /* A raised or tinted chip in a field (file button, `InputGroupButton` `action`, combobox chip), a ghost `xs` button
+     in a field. */
+  --field-chip-pad-x: 0.5rem;
+  --field-button-pad-x: 0.375rem;
+  --textarea-min-height: 3.75rem;
+  /* `FileDropZone` padding, default and `sm`. */
+  --file-drop-zone-pad-x: 1.5rem;
+  --file-drop-zone-pad-y: 1.75rem;
+  --file-drop-zone-sm-pad-x: 0.875rem;
+  --file-drop-zone-sm-pad-y: 0.5rem;
+  /* `ColorPicker`: the custom area's row gap, the hue bar. */
+  --color-picker-row-gap: 0.625rem;
+  --color-picker-hue: 0.75rem;
+
+  /* Rows. */
+  /* `Item`: media, content and actions apart. */
+  --item-gap: 0.625rem;
+  /* `Sidebar`: a group label's inline padding; sub-menu rows and the sub-menu's block padding (the tree line follows). */
+  --sidebar-label-pad-x: 0.5rem;
+  --sidebar-sub-height: 1.75rem;
+  --sidebar-sub-pad-y: 0.375rem;
+  /* `BottomNav` "More" panel: icon to label in its rows. */
+  --bottom-nav-gap: 0.625rem;
+  /* `Accordion` `default`: the trigger's padding (half of it below the trigger and the content); the content's end
+     padding. `flush`: the content's bottom padding. */
+  --accordion-pad: 0.5rem;
+  --accordion-content-pad-end: 2.5rem;
+  --accordion-flush-content-pad-bottom: 0.75rem;
+  /* `Table`: the head row; the card variant's footer cells; the sort button; the group band, its inset in the row
+     (plain, and flush or card) and its height. */
+  --table-head-height: 2.5rem;
+  --table-foot-pad-y: 0.75rem;
+  --table-sort-pad-x: 0.5rem;
+  --table-sort-pad-y: 0.25rem;
+  --table-group-inset: 0.5rem;
+  --table-group-inset-card: 0.75rem;
+  --table-group-height: 2.75rem;
+  /* `Command`: the search row and its icon gap, group headings, the empty note, the footer. */
+  --command-input-height: 3rem;
+  --command-input-gap: 0.625rem;
+  --command-heading-pad-y: 0.375rem;
+  --command-empty-pad-y: 1.5rem;
+  --command-footer-height: 2.75rem;
+
+  /* Surfaces. */
+  /* `Alert`: padding (the block padding is also the stacked alert's text-to-action gap), radius (also its
+     `--outer-radius`), the action's inset from the corner. */
+  --alert-pad-x: 1.25rem;
+  --alert-pad-y: 0.625rem;
+  --alert-radius: 20px;
+  --alert-action-inset: 0.375rem;
+  /* `AlertDialogMedia`: the icon on its tile. */
+  --alert-dialog-icon: 1.5rem;
+  /* `Tooltip` (also an anchored toast), `ChartTooltipContent` (its rows sit `pad-y` apart). */
+  --tooltip-pad-x: 0.5rem;
+  --tooltip-pad-y: 0.25rem;
+  --chart-tooltip-pad-x: 0.625rem;
+  --chart-tooltip-pad-y: 0.375rem;
+  /* `Toast`: its padding; how far each toast behind peeks out. */
+  --toast-pad-x: 0.875rem;
+  --toast-pad-y: 0.75rem;
+  --toast-peek: 0.75rem;
+  /* `Empty`: padding, default and `sm`. */
+  --empty-pad-x: 1.5rem;
+  --empty-pad-y: 2.5rem;
+  --empty-pad-x-sm: 1rem;
+  --empty-pad-y-sm: 1.5rem;
+  /* `Prose`: inline `code` and `pre` padding. */
+  --prose-code-pad-x: 0.25rem;
+  --prose-code-pad-y: 0.125rem;
+  --prose-pre-pad: 0.75rem;
+
+  /* Marks: checkbox and radio box, the radio's dot, a choice card; switch track and thumb (`sm` too) and the track's
+     padding around the thumb; the slider thumb; the stepper's numbered indicator; the timeline marker and the distance
+     to the next event (vertical, horizontal). */
+  --checkbox-size: 1rem;
+  --radio-dot-size: 0.375rem;
+  --choice-card-height: 3rem;
+  --choice-card-pad-y: 0.75rem;
+  --switch-width: 2.25rem;
+  --switch-width-sm: 1.75rem;
+  --switch-thumb: 1rem;
+  --switch-thumb-sm: 0.75rem;
+  --switch-inset: 0.125rem;
+  --slider-thumb: 0.75rem;
+  --stepper-indicator-size: 1.25rem;
+  --timeline-marker-size: 1rem;
+  --timeline-step: 3rem;
+  --timeline-step-x: 2rem;
+}
+
 /* A color from data as an intent (`intent: 'data'` in `intentVariants`, `color` on `Badge`). The component sets
    `--data-color` from `style`; this derives the `--intent-*` set from it, so every emphasis keeps one rule. Solid is the
    color itself with black or white on it by lightness; subtle a translucent tint with its text a deeper step of the color
@@ -451,10 +618,6 @@
       translate: -50% -50%;
     }
   }
-}
-
-@utility text-overline {
-  text-transform: uppercase;
 }
 
 /* Scrolls without a scrollbar. */
