@@ -29,15 +29,15 @@ const cardCollapseTransition = {
 const gridCollapsed = { gridTemplateRows: '0fr', opacity: 0 } as const;
 const gridExpanded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 
-// Geometry: the shell is `rounded-card` and sets `--outer-radius` / `--outer-inset` (4px, `p-1`); the content takes
-// `rounded-inner`, so it stays concentric at any tuned card radius.
+// Geometry: the shell is `rounded-card` and sets `--outer-radius` / `--outer-inset` (`p-card-inset`); the content takes
+// `rounded-inner`, so it stays concentric at any tuned card radius or inset.
 //
 // Text edge: content starts inside the card's 1px edge, so what sits on the shell (header, footer) pads `card` + 1px
 // (`px-[calc(var(--spacing-card)+1px)]`). Content padded `p-card` and header text then share one edge, as do header and
-// row actions. Text outside the card that shares the edge (a section title) pads the shell's 4px on top.
+// row actions. Text outside the card that shares the edge (a section title) pads the shell's inset on top.
 //
-// Fields (10px corners) sit 21px into a 12px content corner: too far in to be concentric, and the corners differ
-// enough to read as two layers.
+// Fields (`rounded-control`) sit `card` + 1px into the content corner: too far in to be concentric, and the corners
+// differ enough to read as two layers.
 
 /**
  * The shell (`--card-shell`, default `--shell`) wraps the content on every side, so the content's corners sit on
@@ -53,7 +53,7 @@ function Card({
       data-slot='card'
       data-intent={intent}
       className={cn(
-        'group/card rounded-card bg-(--card-shell) p-1 [--card-shell:var(--shell)] [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-card)]',
+        'group/card rounded-card bg-(--card-shell) p-card-inset [--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)] [--outer-radius:var(--radius-card)]',
         className,
       )}
       {...props}
@@ -83,17 +83,19 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
       )}
       {...props}>
       <div className='min-w-0'>{children}</div>
-      {/* `-my-2`: 32px actions overhang the text line instead of growing the strip, so a header is as tall with
-          actions as without. They end on the same line as the actions of flush rows below (shell 4 + edge 1 +
-          `card`), so header and row actions form one column. */}
-      <div className='-my-2 flex shrink-0 items-center gap-related'>{actions}</div>
+      {/* Negative margin: `control-sm` actions overhang the title's 20px line instead of growing the strip, so a
+          header is as tall with actions as without. They end on the same line as the actions of flush rows below
+          (shell inset + edge 1 + `card`), so header and row actions form one column. */}
+      <div className='-my-[calc((var(--spacing-control-sm)-1.25rem)/2)] flex shrink-0 items-center gap-related'>
+        {actions}
+      </div>
     </div>
   );
 }
 
 /**
- * Springs open and closed with `show`. The header mirrored: `group` from the content, `group` + the shell's 4px from the
- * edge; the sides on the content's text edge.
+ * Springs open and closed with `show`. The header mirrored: `group` from the content, `group` + the shell's inset from
+ * the edge; the sides on the content's text edge.
  */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
   const shouldReduceMotion = useReducedMotion();
@@ -111,7 +113,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
           <div className='min-h-0 overflow-hidden'>
             {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
                 stalls before unmount. */}
-            <div className={cn('mb-4 px-[calc(var(--spacing-card)+1px)] pt-4', className)} {...props}>
+            <div className={cn('mb-group px-[calc(var(--spacing-card)+1px)] pt-group', className)} {...props}>
               {children}
             </div>
           </div>

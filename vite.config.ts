@@ -40,7 +40,17 @@ const shadcnRegistry = (): Plugin => {
 
 // Nav order: Foundations in reading order, then Components and Patterns A–Z.
 const GROUPS = ['foundations', 'components', 'patterns'] as const;
-const FOUNDATIONS = ['Color', 'Typography', 'Spacing', 'Surfaces', 'Shape', 'Loading', 'Interaction', 'Motion'];
+const FOUNDATIONS = [
+  'Color',
+  'Typography',
+  'Spacing',
+  'Surfaces',
+  'Shape',
+  'Sizing',
+  'Loading',
+  'Interaction',
+  'Motion',
+];
 
 interface ObjectNode {
   readonly properties?: ReadonlyArray<{

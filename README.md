@@ -35,6 +35,23 @@ The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib`
 
   Render `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`) into a `<style>` for the colors.
 
+- Sizing (`lib/theme/sizing.ts`): pick a style, or a density and a radius, and render `sizingThemeCss` next to the colors. It writes only what differs from `triargos.css`, and a style's phone values under `@media (width < 40rem)`:
+
+  ```tsx
+  import { scaleDensity, SIZING_STYLES, sizingThemeCss } from '~/lib/theme/sizing';
+
+  // The whole app: a style, or the two axes.
+  <style>{sizingThemeCss(SIZING_STYLES.coss)}</style>
+  <style>{sizingThemeCss({ density: 'compact', radius: 'pill' })}</style>
+  <style>{sizingThemeCss({ density: scaleDensity(0.9), radius: 'default' })}</style>
+
+  // One subtree.
+  <style>{sizingThemeCss(SIZING_STYLES.dense, '[data-sizing=dense]')}</style>
+  <div data-sizing='dense'>…</div>
+  ```
+
+  Styles: `triargos` (default), `coss`, `dense`, `soft`. Densities: `compact`, `default`, `comfortable`. Radii: `sharp`, `default`, `soft`, `pill`. A density of your own: `scaleDensity(factor)` or any map of token to px; `SIZING_TOKENS` lists every token with what it tunes. A theme's `tokens` add any token on top (DESIGN.md, Sizing).
+
 - The registry owns `lib/utils.ts` (`utils`, imported as `~/lib/utils` by every component), `lib/theme/*` with its CSS (`theme`), `hooks/use-mobile.ts` and `components/ui/*`. `add` overwrites them. Keep the app's own helpers, hooks and styles in other files.
 
 ## Develop

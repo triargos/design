@@ -163,7 +163,9 @@ function SelectWithCustom({
 }
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
-  return <SelectPrimitive.Group data-slot='select-group' className={cn('scroll-my-1', className)} {...props} />;
+  return (
+    <SelectPrimitive.Group data-slot='select-group' className={cn('scroll-my-popup-inset', className)} {...props} />
+  );
 }
 
 function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
@@ -176,7 +178,7 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   );
 }
 
-/** The field surface at the field height (36px), like `Input`. */
+/** The field surface at the field height (`--spacing-control`), like `Input`. */
 function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigger.Props) {
   const custom = React.use(SelectCustomContext);
   return (
@@ -186,12 +188,14 @@ function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigge
       aria-invalid={(custom ? custom.invalid && !custom.chosen : undefined) || undefined}
       className={cn(
         inputSurfaceVariants({ scope: 'self' }),
-        "flex h-9 w-full items-center justify-between gap-2 px-[calc(--spacing(3)-1px)] py-1 text-control whitespace-nowrap max-sm:text-[1rem] data-placeholder:text-faint-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "flex h-control w-full items-center justify-between gap-related px-[calc(var(--spacing-field-pad)-1px)] py-1 text-control whitespace-nowrap max-sm:text-[1rem] data-placeholder:text-faint-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       {...props}>
       {children}
-      <SelectPrimitive.Icon render={<IconChevronDown className='pointer-events-none size-4 text-faint-foreground' />} />
+      <SelectPrimitive.Icon
+        render={<IconChevronDown className='pointer-events-none size-icon text-faint-foreground' />}
+      />
     </SelectPrimitive.Trigger>
   );
 }
@@ -210,18 +214,18 @@ function SelectContent({
           data-slot='select-content'
           data-surface='popup'
           className={cn(
-            'relative isolate z-50 max-h-(--available-height) min-w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-popup)]',
+            'relative isolate z-50 max-h-(--available-height) min-w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
             'duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
             // Reduced motion: fade only, no zoom and no slide.
             'motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100 motion-reduce:data-open:slide-in-from-top-0 motion-reduce:data-open:slide-in-from-left-0',
             className,
           )}
           {...props}>
-          <SelectPrimitive.ScrollUpArrow className="top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4">
+          <SelectPrimitive.ScrollUpArrow className="top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-popup-inset [&_svg:not([class*='size-'])]:size-icon">
             <IconChevronUp />
           </SelectPrimitive.ScrollUpArrow>
-          <SelectPrimitive.List className='p-1'>{children}</SelectPrimitive.List>
-          <SelectPrimitive.ScrollDownArrow className="bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4">
+          <SelectPrimitive.List className='p-popup-inset'>{children}</SelectPrimitive.List>
+          <SelectPrimitive.ScrollDownArrow className="bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-popup-inset [&_svg:not([class*='size-'])]:size-icon">
             <IconChevronDown />
           </SelectPrimitive.ScrollDownArrow>
         </SelectPrimitive.Popup>
@@ -234,7 +238,10 @@ function SelectLabel({ className, ...props }: SelectPrimitive.GroupLabel.Props) 
   return (
     <SelectPrimitive.GroupLabel
       data-slot='select-label'
-      className={cn('px-2.5 pt-2 pb-1 text-overline text-muted-foreground', className)}
+      className={cn(
+        'px-menu-item-pad pt-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pb-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/4)] text-caption font-medium text-muted-foreground',
+        className,
+      )}
       {...props}
     />
   );
@@ -245,16 +252,20 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
     <SelectPrimitive.Item
       data-slot='select-item'
       className={cn(
-        "relative flex w-full cursor-default items-center gap-2 rounded-inner py-2 pr-8 pl-2.5 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        // A menu row: the text's line box centered in `--spacing-menu-item`. The check sits `menu-item-pad` from the end; the text
+        // stops a gap before it.
+        "relative flex w-full cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pr-[calc(var(--spacing-menu-item-pad)+var(--spacing-icon)+var(--spacing-control-gap))] pl-menu-item-pad text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       {...props}>
-      <SelectPrimitive.ItemText className='flex min-w-0 flex-1 items-center gap-2 whitespace-nowrap'>
+      <SelectPrimitive.ItemText className='flex min-w-0 flex-1 items-center gap-row-gap whitespace-nowrap'>
         {children}
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
-        render={<span className='pointer-events-none absolute right-2.5 flex size-3.5 items-center justify-center' />}>
-        <IconCheck className='size-4' />
+        render={
+          <span className='pointer-events-none absolute right-menu-item-pad flex size-icon-sm items-center justify-center' />
+        }>
+        <IconCheck className='size-icon' />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   );
@@ -264,7 +275,7 @@ function SelectSeparator({ className, ...props }: SelectPrimitive.Separator.Prop
   return (
     <SelectPrimitive.Separator
       data-slot='select-separator'
-      className={cn('pointer-events-none -mx-1 my-1 h-px bg-border', className)}
+      className={cn('pointer-events-none -mx-popup-inset my-popup-inset h-px bg-border', className)}
       {...props}
     />
   );
@@ -290,9 +301,9 @@ const folded = { gridTemplateRows: '0fr', opacity: 0 } as const;
 const unfolded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 
 /**
- * The text field of a `Select allowCustom`: folds open below the trigger while the custom row is chosen, the 8px gap
- * with it. A line hangs it off the trigger: from under the trigger's text (1px border + 11px) to the middle of the
- * field, which is indented to make room. Put the trigger and it in one element.
+ * The text field of a `Select allowCustom`: folds open below the trigger while the custom row is chosen, the `related`
+ * gap with it. A line hangs it off the trigger: from under the trigger's text (`--spacing-field-pad` in) to the middle
+ * of the field, which is indented to make room. Put the trigger and it in one element.
  */
 function SelectCustomInput({
   className,
@@ -312,10 +323,10 @@ function SelectCustomInput({
           className='-mx-1 -mb-1 grid overflow-hidden'>
           {/* min-h-0: a grid item refuses to shrink below its content as the row folds to 0fr. */}
           <div className='min-h-0 overflow-hidden px-1 pb-1'>
-            <div className={cn('relative pt-2 pl-7', className)}>
+            <div className={cn('relative pt-related pl-[calc(var(--spacing-field-pad)+1rem)]', className)}>
               <span
                 aria-hidden
-                className='absolute top-0 left-[calc(--spacing(3.5)+1px)] h-7 w-2.5 rounded-bl-control-sm border-b border-l border-border'
+                className='absolute top-0 left-[calc(var(--spacing-field-pad)+3px)] h-[calc(var(--spacing-related)+var(--spacing-control)/2+2px)] w-2.5 rounded-bl-[min(var(--radius-lg),var(--radius-control-sm))] border-b border-l border-border'
               />
               <Input
                 data-slot='select-custom-input'

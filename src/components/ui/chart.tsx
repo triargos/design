@@ -73,23 +73,23 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        'grid min-w-32 items-start gap-1.5 rounded-control-sm bg-popover px-2.5 py-1.5 text-caption text-popover-foreground shadow-popup',
+        'grid min-w-32 items-start gap-(--chart-tooltip-pad-y) rounded-tooltip bg-popover px-(--chart-tooltip-pad-x) py-(--chart-tooltip-pad-y) text-caption text-popover-foreground shadow-popup',
         className,
       )}>
       {title !== undefined && title !== '' && <div className='font-medium'>{title}</div>}
-      <div className='grid gap-1.5'>
+      <div className='grid gap-(--chart-tooltip-pad-y)'>
         {payload
           .filter((item) => item.type !== 'none')
           .map((item, index) => {
             const series = seriesConfig(config, item, `${item.name ?? item.dataKey ?? 'value'}`);
             const color: unknown = item.payload?.fill ?? item.color;
             return (
-              <div key={index} className='flex w-full items-center gap-2'>
+              <div key={index} className='flex w-full items-center gap-row-gap'>
                 <div
                   className='size-2 shrink-0 rounded-full bg-(--color-bg)'
                   style={{ '--color-bg': color } as React.CSSProperties}
                 />
-                <div className='flex flex-1 items-center justify-between gap-4 leading-none'>
+                <div className='flex flex-1 items-center justify-between gap-group leading-none'>
                   <span className='text-muted-foreground'>{series?.label ?? item.name}</span>
                   {item.value != null && (
                     <span className='font-mono font-medium text-foreground tabular-nums'>
@@ -121,11 +121,16 @@ function ChartLegendContent({
   if (!payload?.length) return null;
 
   return (
-    <div className={cn('flex items-center justify-center gap-4', verticalAlign === 'top' ? 'pb-3' : 'pt-3', className)}>
+    <div
+      className={cn(
+        'flex items-center justify-center gap-group',
+        verticalAlign === 'top' ? 'pb-part' : 'pt-part',
+        className,
+      )}>
       {payload
         .filter((item) => item.type !== 'none')
         .map((item, index) => (
-          <div key={index} className='flex items-center gap-1.5'>
+          <div key={index} className='flex items-center gap-control-gap'>
             <div className='size-2 shrink-0 rounded-full' style={{ backgroundColor: item.color }} />
             {
               seriesConfig(config, item, `${typeof item.dataKey === 'function' ? 'value' : (item.dataKey ?? 'value')}`)

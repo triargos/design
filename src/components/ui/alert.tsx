@@ -22,10 +22,10 @@ function Alert({ className, intent = 'info', ...props }: AlertProps) {
       data-intent={intent}
       className={cn(
         intentVariants({ intent, emphasis: 'subtle' }),
-        'group/alert flex w-full items-center gap-3 rounded-card px-5 py-2.5 text-body data-[intent=neutral]:text-muted-foreground',
-        '[--outer-inset:--spacing(1.5)] [--outer-radius:var(--radius-card)]',
-        'has-data-[slot=alert-action]:py-1.5 sm:has-data-[slot=alert-action]:pr-1.5',
-        'max-sm:has-data-[slot=alert-action]:flex-col max-sm:has-data-[slot=alert-action]:items-start max-sm:has-data-[slot=alert-action]:gap-2.5 max-sm:has-data-[slot=alert-action]:py-3',
+        'group/alert flex w-full items-center gap-part rounded-(--alert-radius) px-(--alert-pad-x) py-(--alert-pad-y) text-body data-[intent=neutral]:text-muted-foreground',
+        '[--outer-inset:var(--alert-action-inset)] [--outer-radius:var(--alert-radius)]',
+        'has-data-[slot=alert-action]:py-(--alert-action-inset) sm:has-data-[slot=alert-action]:pr-(--alert-action-inset)',
+        'max-sm:has-data-[slot=alert-action]:flex-col max-sm:has-data-[slot=alert-action]:items-start max-sm:has-data-[slot=alert-action]:gap-(--alert-pad-y) max-sm:has-data-[slot=alert-action]:py-part',
         className,
       )}
       {...props}

@@ -17,7 +17,7 @@ function StatLabel({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <p
       data-slot='stat-label'
-      className={cn('flex min-w-0 items-center gap-1.5 text-caption text-muted-foreground', className)}
+      className={cn('flex min-w-0 items-center gap-control-gap text-caption text-muted-foreground', className)}
       {...props}
     />
   );

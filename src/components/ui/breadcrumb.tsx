@@ -15,14 +15,23 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
   return (
     <ol
       data-slot='breadcrumb-list'
-      className={cn('flex flex-wrap items-center gap-1.5 text-body wrap-break-word text-muted-foreground', className)}
+      className={cn(
+        'flex flex-wrap items-center gap-control-gap text-body wrap-break-word text-muted-foreground',
+        className,
+      )}
       {...props}
     />
   );
 }
 
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
-  return <li data-slot='breadcrumb-item' className={cn('inline-flex items-center gap-1', className)} {...props} />;
+  return (
+    <li
+      data-slot='breadcrumb-item'
+      className={cn('inline-flex items-center gap-control-gap-sm', className)}
+      {...props}
+    />
+  );
 }
 
 function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProps<'a'>) {
@@ -51,7 +60,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       data-slot='breadcrumb-separator'
       role='presentation'
       aria-hidden='true'
-      className={cn('[&>svg]:size-3.5', className)}
+      className={cn('[&>svg]:size-icon-sm', className)}
       {...props}>
       {children ?? <IconChevronRight />}
     </li>
@@ -65,7 +74,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'
       data-slot='breadcrumb-ellipsis'
       role='presentation'
       aria-hidden='true'
-      className={cn('flex size-5 items-center justify-center [&>svg]:size-4', className)}
+      className={cn('flex size-control-2xs items-center justify-center [&>svg]:size-icon', className)}
       {...props}>
       <IconDots />
     </span>

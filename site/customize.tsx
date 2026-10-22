@@ -25,21 +25,46 @@ import {
 } from '~/lib/theme/branding';
 import { brandingThemeCss } from '~/lib/theme/branding-theme';
 import { toCss } from '~/lib/theme/color';
+import {
+  DENSITIES,
+  type Density,
+  RADII,
+  type Radius,
+  SIZING_STYLES,
+  type SizingStyle,
+  type SizingTheme,
+  scaleDensity,
+  sizingThemeCss,
+  sizingValues,
+} from '~/lib/theme/sizing';
 import { cn } from '~/lib/utils';
 
 import { type DocsSurface } from '../docs/kit/blocks';
 import {
   DEFAULT_TOKEN_GLOBALS,
   formatToken,
+  sizingGlobals,
   TOKEN_GROUPS,
   type TunableToken,
   tokenCss,
   tokenValue,
 } from '../docs/kit/tokens';
 
-/** The brand and the token scales every page renders with; what the Customize menu tunes. */
+/**
+ * The sizing theme: a named style, or `null` once density or radius moved away from it. A density is a name, or a
+ * factor for `scaleDensity`.
+ */
+interface SizingChoice {
+  readonly style: SizingStyle | null;
+  readonly density: Density | number;
+  readonly radius: Radius;
+}
+
+/** The brand, the sizing theme and the token scales every page renders with; what the Customize menu tunes. */
 interface Customization {
   readonly branding: BrandingTheme;
+  readonly sizing: SizingChoice;
+  /** Only the tokens moved away from the sizing theme's value, so a slider never pins a theme's token. */
   readonly tokens: Readonly<Record<string, number>>;
   /** The surface the examples sit on: chosen in the Customize menu. */
   readonly surface: DocsSurface;
@@ -58,9 +83,52 @@ const FONT_FAMILIES: Record<Font, { readonly label: string; readonly family: str
   'cal-sans': { label: 'Cal Sans', family: "'Cal Sans', sans-serif" },
 };
 
+const SIZING_STYLE_NAMES = Object.keys(SIZING_STYLES) as ReadonlyArray<SizingStyle>;
+const DENSITY_NAMES = Object.keys(DENSITIES) as ReadonlyArray<Density>;
+const RADIUS_NAMES = Object.keys(RADII) as ReadonlyArray<Radius>;
+const STYLE_LABELS: Record<SizingStyle, string> = { triargos: 'Triargos', coss: 'Coss', dense: 'Dense', soft: 'Soft' };
+
+/** A named style as a choice: its density and radius. */
+const styleChoice = (style: SizingStyle): SizingChoice => ({
+  style,
+  density: SIZING_STYLES[style].density,
+  radius: SIZING_STYLES[style].radius,
+});
+
+/** Density and radius alone: `triargos` when both are the default, else no style. */
+const axesChoice = (density: Density | number, radius: Radius): SizingChoice =>
+  density === 'default' && radius === 'default' ? styleChoice('triargos') : { style: null, density, radius };
+
+const sizingTheme = ({ style, density, radius }: SizingChoice): SizingTheme =>
+  style === null
+    ? { density: typeof density === 'number' ? scaleDensity(density) : density, radius }
+    : SIZING_STYLES[style];
+
+/** The Scale slider's range: a factor for `scaleDensity`. */
+const SCALE = { min: 0.8, max: 1.25, step: 0.025 } as const;
+
+/** A stored scale factor in range, else a density name. */
+const densityOf = (value: unknown): Density | number =>
+  typeof value === 'number' && value >= SCALE.min && value <= SCALE.max && value !== 1
+    ? value
+    : oneOf(DENSITY_NAMES, value, 'default');
+
+/** Every tunable token at the sizing theme's value (desktop), before the panel's own moves. */
+const themeGlobals = (sizing: SizingChoice): Record<string, number> => ({
+  ...DEFAULT_TOKEN_GLOBALS,
+  ...sizingGlobals(sizingValues(sizingTheme(sizing)).base),
+});
+
+/** Every tunable token as the pages render it: the sizing theme's value, or the panel's. */
+export const tokenGlobals = (customization: Customization): Record<string, number> => ({
+  ...themeGlobals(customization.sizing),
+  ...customization.tokens,
+});
+
 const DEFAULT: Customization = {
   branding: DEFAULT_BRANDING_THEME,
-  tokens: DEFAULT_TOKEN_GLOBALS,
+  sizing: styleChoice('triargos'),
+  tokens: {},
   surface: 'page',
   font: 'inter',
 };
@@ -78,6 +146,7 @@ const read = (): Customization => {
   if (raw === cache.raw) return cache.value;
   let stored: Partial<{
     branding: Partial<Record<keyof BrandingTheme, unknown>>;
+    sizing: Partial<Record<keyof SizingChoice, unknown>>;
     tokens: Record<string, unknown>;
     surface: unknown;
     font: unknown;
@@ -87,6 +156,12 @@ const read = (): Customization => {
   } catch {
     // A broken entry falls back to the defaults.
   }
+  const style = stored.sizing?.style === null ? null : oneOf(SIZING_STYLE_NAMES, stored.sizing?.style, 'triargos');
+  const sizing =
+    style === null
+      ? axesChoice(densityOf(stored.sizing?.density), oneOf(RADIUS_NAMES, stored.sizing?.radius, 'default'))
+      : styleChoice(style);
+  const baseline = themeGlobals(sizing);
   const value: Customization = {
     branding: {
       primaryColor: oneOf(BRAND_PRIMARY_COLORS, stored.branding?.primaryColor, DEFAULT.branding.primaryColor),
@@ -97,11 +172,15 @@ const read = (): Customization => {
         DEFAULT.branding.destructiveColor,
       ),
     },
+    sizing,
+    // Only values that differ from the theme's: an entry left at the theme's value would pin it.
     tokens: Object.fromEntries(
-      TOKEN_GROUPS.flatMap((group) => group.tokens).map((token) => [
-        token.global,
-        tokenValue(stored.tokens ?? {}, token),
-      ]),
+      TOKEN_GROUPS.flatMap((group) => group.tokens).flatMap((token) => {
+        const tuned = tokenValue(stored.tokens ?? {}, token);
+        return tuned === baseline[token.global] || stored.tokens?.[token.global] === undefined
+          ? []
+          : [[token.global, tuned]];
+      }),
     ),
     surface: oneOf(SURFACES, stored.surface, DEFAULT.surface),
     font: oneOf(FONTS, stored.font, DEFAULT.font),
@@ -128,12 +207,13 @@ const write = (next: Customization | null) => {
 /** Prerendered with the defaults; the stored choice applies after hydration. */
 export const useCustomization = () => useSyncExternalStore(subscribe, read, () => DEFAULT);
 
-/** The theme and token CSS, after `tailwind.css` so it wins. */
+/** The theme, sizing and token CSS, after `tailwind.css` so it wins; the panel's tokens last, over the sizing theme. */
 export function CustomizationStyles() {
-  const { branding, tokens, font } = useCustomization();
+  const { branding, sizing, tokens, font } = useCustomization();
   return (
     <>
       <style data-branding>{brandingThemeCss(branding)}</style>
+      <style data-sizing>{sizingThemeCss(sizingTheme(sizing))}</style>
       <style data-tokens>{tokenCss(tokens)}</style>
       {font !== DEFAULT.font && <style data-font>{`:root{--font-sans:${FONT_FAMILIES[font].family};}`}</style>}
     </>
@@ -188,13 +268,19 @@ function Swatches<A extends BrandColor>({
 function TokenSlider({
   token,
   value,
+  baseline,
   onChange,
 }: {
   token: TunableToken;
   value: number;
+  /** The sizing theme's value: the slider reads as changed away from it. */
+  baseline: number;
   onChange: (value: number) => void;
 }) {
-  const changed = value !== token.defaultValue;
+  const changed = value !== baseline;
+  // A `full` value sits one step past `max`.
+  const full = token.full;
+  const position = full !== undefined && value === full ? token.max + token.step : value;
   return (
     <div className='flex flex-col gap-tight'>
       <div className='flex items-baseline justify-between text-caption'>
@@ -206,10 +292,10 @@ function TokenSlider({
       <Slider
         aria-label={token.label}
         min={token.min}
-        max={token.max}
+        max={full === undefined ? token.max : token.max + token.step}
         step={token.step}
-        value={value}
-        onValueChange={(next) => onChange(next)}
+        value={position}
+        onValueChange={(next) => onChange(full !== undefined && next > token.max ? full : next)}
       />
     </div>
   );
@@ -248,10 +334,20 @@ const cornerAt = (rect: DOMRect, velocity: PanInfo['velocity']): Corner => {
  */
 export function CustomizeMenu() {
   const customization = useCustomization();
-  const { branding, tokens } = customization;
+  const { branding, sizing, tokens } = customization;
+  const baseline = themeGlobals(sizing);
+  const globals = tokenGlobals(customization);
   const setBranding = (next: Partial<BrandingTheme>) => write({ ...customization, branding: { ...branding, ...next } });
-  const setToken = (token: TunableToken, value: number) =>
-    write({ ...customization, tokens: { ...tokens, [token.global]: value } });
+  const setSizing = (next: SizingChoice) => {
+    // Moves that land on the new theme's value are no longer moves.
+    const nextBaseline = themeGlobals(next);
+    const kept = Object.entries(tokens).filter(([name, value]) => nextBaseline[name] !== value);
+    write({ ...customization, sizing: next, tokens: Object.fromEntries(kept) });
+  };
+  const setToken = (token: TunableToken, value: number) => {
+    const { [token.global]: _, ...rest } = tokens;
+    write({ ...customization, tokens: value === baseline[token.global] ? rest : { ...rest, [token.global]: value } });
+  };
   const customized = JSON.stringify(customization) !== JSON.stringify(DEFAULT);
 
   const [open, setOpen] = useState(false);
@@ -350,7 +446,7 @@ export function CustomizeMenu() {
         <PopoverHeader className='px-group pt-group pb-related'>
           <PopoverTitle>Customize</PopoverTitle>
           <PopoverDescription>
-            Surface, font, brand colors and token scales for every page. Saved in this browser.
+            Surface, font, brand colors, sizing and token scales for every page. Saved in this browser.
           </PopoverDescription>
         </PopoverHeader>
         <div className='flex min-h-0 flex-1 flex-col gap-group overflow-y-auto px-group py-related'>
@@ -392,6 +488,84 @@ export function CustomizeMenu() {
               ))}
             </TabsRadioGroup>
           </div>
+          <div role='group' aria-labelledby='sizing-style' className='flex flex-col gap-related'>
+            <span id='sizing-style' className='flex items-baseline justify-between text-body font-medium'>
+              Style
+              {sizing.style === null && <span className='text-caption font-normal text-muted-foreground'>Custom</span>}
+            </span>
+            <TabsRadioGroup
+              variant='segmented'
+              aria-labelledby='sizing-style'
+              value={sizing.style ?? ''}
+              onValueChange={(style) => {
+                setSizing(styleChoice(oneOf(SIZING_STYLE_NAMES, style, 'triargos')));
+              }}
+              className='w-full'>
+              {SIZING_STYLE_NAMES.map((style) => (
+                <TabsRadio key={style} value={style} className='flex-1'>
+                  {STYLE_LABELS[style]}
+                </TabsRadio>
+              ))}
+            </TabsRadioGroup>
+          </div>
+          <div role='group' aria-labelledby='sizing-density' className='flex flex-col gap-related'>
+            <span id='sizing-density' className='text-body font-medium'>
+              Density
+            </span>
+            <TabsRadioGroup
+              variant='segmented'
+              aria-labelledby='sizing-density'
+              value={typeof sizing.density === 'string' ? sizing.density : ''}
+              onValueChange={(density) =>
+                setSizing(axesChoice(oneOf(DENSITY_NAMES, density, 'default'), sizing.radius))
+              }
+              className='w-full'>
+              {DENSITY_NAMES.map((density) => (
+                <TabsRadio key={density} value={density} className='flex-1 capitalize'>
+                  {density}
+                </TabsRadio>
+              ))}
+            </TabsRadioGroup>
+            <div className='flex items-baseline justify-between text-caption'>
+              <span className='text-foreground'>Scale</span>
+              <span
+                className={cn(
+                  'tabular-nums',
+                  typeof sizing.density === 'number' ? 'text-foreground' : 'text-muted-foreground',
+                )}>
+                {typeof sizing.density === 'number' ? `×${sizing.density.toFixed(3)}` : '×1 (named)'}
+              </span>
+            </div>
+            <Slider
+              aria-label='Scale'
+              min={SCALE.min}
+              max={SCALE.max}
+              step={SCALE.step}
+              value={typeof sizing.density === 'number' ? sizing.density : 1}
+              onValueChange={(scale) => {
+                // Snap away float noise from the step arithmetic.
+                const factor = Math.round(scale * 1000) / 1000;
+                setSizing(axesChoice(factor === 1 ? 'default' : factor, sizing.radius));
+              }}
+            />
+          </div>
+          <div role='group' aria-labelledby='sizing-radius' className='flex flex-col gap-related'>
+            <span id='sizing-radius' className='text-body font-medium'>
+              Radius
+            </span>
+            <TabsRadioGroup
+              variant='segmented'
+              aria-labelledby='sizing-radius'
+              value={sizing.radius}
+              onValueChange={(radius) => setSizing(axesChoice(sizing.density, oneOf(RADIUS_NAMES, radius, 'default')))}
+              className='w-full'>
+              {RADIUS_NAMES.map((radius) => (
+                <TabsRadio key={radius} value={radius} className='flex-1 capitalize'>
+                  {radius}
+                </TabsRadio>
+              ))}
+            </TabsRadioGroup>
+          </div>
           <Swatches
             legend='Primary'
             name='primary'
@@ -422,7 +596,8 @@ export function CustomizeMenu() {
                     <TokenSlider
                       key={token.global}
                       token={token}
-                      value={tokenValue(tokens, token)}
+                      value={tokenValue(globals, token)}
+                      baseline={tokenValue(baseline, token)}
                       onChange={(value) => setToken(token, value)}
                     />
                   ))}

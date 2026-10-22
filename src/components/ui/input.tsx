@@ -12,8 +12,8 @@ import { cn } from '~/lib/utils';
  * - `within`: any other wrapper whose descendants receive focus and carry `aria-invalid`.
  */
 const inputSurfaceVariants = cva(
-  // Resting: a real 1px `--edge-field` border inside the box (a 36px field measures 36px; `hit-area` grows it
-  // to 44px on touch), the light-side accent laid on
+  // Resting: a real 1px `--edge-field` border inside the box (a `--spacing-control` field measures exactly that;
+  // `hit-area` grows it to 44px on touch), the light-side accent laid on
   // the border row by a full-size `::before` (`shadow-field-edge`), and a small lift (`shadow-field`). The fill stops
   // at the border (`bg-clip-padding`), so the translucent edge mixes with the surface behind. In dark the field fills
   // with a third of its edge color (white ~2.5%), one step lighter, never a hole. Focus: a `ring` border and a soft 3px
@@ -21,9 +21,10 @@ const inputSurfaceVariants = cva(
   // no lift, no accent. Read-only (`readonly`, or Base UI's `data-readonly`): `shadow-field-flat`; it stays focusable
   // (to select and copy) but never rings. No hover style.
   [
-    // `--outer-radius`: buttons and chips inside the field take `rounded-inner` with their own `--outer-inset`.
-    'hit-area relative rounded-control border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--outer-radius:var(--radius-control)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
-    'before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-control)-1px)] before:shadow-field-edge',
+    // `--field-radius` drives the box, the `::before` accent and `--outer-radius` (buttons and chips inside take
+    // `rounded-inner` with their own `--outer-inset`). A multi-line field sets it to `--radius-area`.
+    'hit-area relative rounded-(--field-radius) border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--field-radius:var(--radius-control)] [--outer-radius:var(--field-radius)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
+    'before:pointer-events-none before:absolute before:inset-0 before:rounded-[max(0px,calc(var(--field-radius)-1px))] before:shadow-field-edge',
     'transition-[background-color,border-color,box-shadow] duration-feedback outline-none',
   ],
   {
@@ -70,7 +71,8 @@ const inputSurfaceVariants = cva(
 /**
  * `className` and `style` go to the field surface (size, layout, padding, font); every other prop, the ref included,
  * goes to the native input. A click on the surface's padding focuses the input. `type='file'`: the picker button is a
- * raised 24px chip 6px in (`rounded-inner`), like an `InputGroupButton`; the file name, or the empty note, is muted.
+ * raised `--spacing-control-xs` chip centered in the field (`rounded-inner`), like an `InputGroupButton`; the file
+ * name, or the empty note, is muted.
  */
 function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
   return (
@@ -79,8 +81,9 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
       style={style}
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-9 w-full min-w-0 cursor-text items-center px-[calc(--spacing(3)-1px)] text-control max-sm:text-[1rem]',
-        'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-1',
+        'flex h-control w-full min-w-0 cursor-text items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-sm:text-[1rem]',
+        // The chip's inset less the border and the input's 1px padding.
+        'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-2px)]',
         className,
       )}
       onPointerDown={(event) => {
@@ -93,8 +96,8 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         data-slot='input-control'
         className={cn(
           'h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
-          '[&[type=file]]:h-auto [&[type=file]]:p-px [&[type=file]]:cursor-pointer [&[type=file]]:text-muted-foreground [&[type=file]]:[--outer-inset:--spacing(1.5)]',
-          'file:me-2 file:h-6 file:cursor-pointer file:rounded-inner file:border-0 file:bg-card file:px-2 file:text-caption file:font-medium file:text-foreground file:shadow-raised file:transition-shadow file:duration-feedback hover:file:shadow-raised-hover dark:file:bg-foreground/10',
+          '[&[type=file]]:h-auto [&[type=file]]:p-px [&[type=file]]:cursor-pointer [&[type=file]]:text-muted-foreground [&[type=file]]:[--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)]',
+          'file:me-related file:h-control-xs file:cursor-pointer file:rounded-inner file:border-0 file:bg-card file:px-(--field-chip-pad-x) file:text-caption file:font-medium file:text-foreground file:shadow-raised file:transition-shadow file:duration-feedback hover:file:shadow-raised-hover dark:file:bg-foreground/10',
         )}
         {...props}
       />

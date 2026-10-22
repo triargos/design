@@ -43,7 +43,6 @@ const roles = [
     owner: 'Button, Input, Select, MenuItem, TabsTrigger',
   },
   { className: 'text-caption', role: 'caption', use: 'Meta, timestamps, badges, tooltips', owner: 'Badge, Tooltip' },
-  { className: 'text-overline', role: 'overline', use: 'Menu and group labels, uppercase', owner: 'MenuLabel' },
 ] as const;
 
 const sentence = 'Website redesign kickoff';
@@ -85,7 +84,7 @@ export default defineDocs({
                     <Code>{owner}</Code>
                   </>
                 }>
-                <p className={`${className} text-balance`}>{className === 'text-overline' ? 'Members' : sentence}</p>
+                <p className={`${className} text-balance`}>{sentence}</p>
               </SpecimenRow>
             ))}
           </SpecimenList>

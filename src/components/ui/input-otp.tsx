@@ -122,7 +122,7 @@ function InputOTP({
         onValueChange={handleValueChange}
         onValueInvalid={handleValueInvalid}
         className={cn(
-          'flex max-w-full items-center gap-2',
+          'flex max-w-full items-center gap-related',
           'data-invalid:animate-otp-shake motion-reduce:animate-none',
           className,
         )}
@@ -148,9 +148,9 @@ function InputOTPSlot({ className, ...props }: InputOTPSlotProps) {
       data-slot='input-otp-slot'
       className={cn(
         inputSurfaceVariants({ scope: 'self' }),
-        // `Input`'s box: 40px, `text-control`, the field ring; touch: 44px and 16px text, so iOS does not zoom.
+        // `Input`'s box at `control-lg`, `text-control`, the field ring; touch: 44px and 16px text, so iOS does not zoom.
         // `shrink` + `min-w-0`: in a narrow column (320px) the slots give up width; `flex-1` stretches them to one.
-        'relative size-10 min-w-0 shrink p-0 text-center text-control text-foreground tabular-nums',
+        'relative size-control-lg min-w-0 shrink p-0 text-center text-control text-foreground tabular-nums',
         'pointer-coarse:size-11 pointer-coarse:text-[1rem]',
         // In an invalid `Field` the digits keep their color; only a slot flagged invalid turns them.
         'aria-invalid:text-destructive',

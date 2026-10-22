@@ -27,6 +27,10 @@
           "type": "registry:lib"
         },
         {
+          "path": "src/lib/theme/sizing.ts",
+          "type": "registry:lib"
+        },
+        {
           "path": "src/lib/theme/theme-generator.ts",
           "type": "registry:lib"
         },
