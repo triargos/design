@@ -79,7 +79,7 @@ export function ListPageDefault() {
                       </ItemDescription>
                     </ItemContent>
                     <ItemActions>
-                      <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`}>
+                      <Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${member.name}`}>
                         <IconDots />
                       </Button>
                     </ItemActions>
@@ -94,7 +94,7 @@ export function ListPageDefault() {
                 <EmptyTitle>No members match “{query.trim()}”</EmptyTitle>
                 <EmptyDescription>Check the spelling, or search by email.</EmptyDescription>
                 <EmptyContent>
-                  <Button size='xs' onClick={() => setQuery('')}>
+                  <Button size='sm' onClick={() => setQuery('')}>
                     Clear search
                   </Button>
                 </EmptyContent>

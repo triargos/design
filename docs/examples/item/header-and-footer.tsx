@@ -23,7 +23,7 @@ export function ItemHeaderAndFooter() {
             </ItemContent>
             <ItemFooter>
               <span className='text-caption text-muted-foreground'>1 of 2 approvals</span>
-              <Button size='xs'>Remind</Button>
+              <Button size='sm'>Remind</Button>
             </ItemFooter>
           </Item>
         </ItemList>

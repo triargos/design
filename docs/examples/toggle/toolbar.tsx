@@ -6,13 +6,13 @@ import { Toggle } from '~/components/ui/toggle';
 export function ToggleToolbar() {
   return (
     <div className='flex items-center gap-0.5 text-muted-foreground'>
-      <Toggle size='icon-xs' aria-label='Bold' defaultPressed>
+      <Toggle size='icon-sm' aria-label='Bold' defaultPressed>
         <IconBold />
       </Toggle>
-      <Toggle size='icon-xs' aria-label='Italic'>
+      <Toggle size='icon-sm' aria-label='Italic'>
         <IconItalic />
       </Toggle>
-      <Toggle size='icon-xs' aria-label='Underline'>
+      <Toggle size='icon-sm' aria-label='Underline'>
         <IconUnderline />
       </Toggle>
     </div>

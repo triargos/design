@@ -32,13 +32,15 @@ import { Inline, Stack } from '../kit/stack';
 
 type Size = NonNullable<ButtonProps['size']>;
 
-const TEXT_SIZES: ReadonlyArray<{ size: Size; height: number; radius: string }> = [
-  { size: 'xs', height: 32, radius: 'control' },
-  { size: 'default', height: 36, radius: 'control' },
-  { size: 'lg', height: 40, radius: 'control-lg' },
+/** `xs` has no icon-only size. */
+const TEXT_SIZES: ReadonlyArray<{ size: Size; height: number; radius: string; icon?: Size }> = [
+  { size: 'xs', height: 24, radius: 'control-sm' },
+  { size: 'sm', height: 32, radius: 'control', icon: 'icon-sm' },
+  { size: 'default', height: 36, radius: 'control', icon: 'icon' },
+  { size: 'lg', height: 40, radius: 'control-lg', icon: 'icon-lg' },
 ];
 
-const ICON_SIZES: ReadonlyArray<Size> = ['icon-xs', 'icon', 'icon-lg'];
+const ICON_SIZES: ReadonlyArray<Size> = TEXT_SIZES.flatMap(({ icon }) => (icon === undefined ? [] : [icon]));
 
 /** The pairs to reach for, with the props that select each one. */
 const PAIRS: ReadonlyArray<{
@@ -130,7 +132,7 @@ export default defineDocs({
       <ExampleSection title='Intent and emphasis' description='The five pairs. Pairs, below, says when each one fits.'>
         <ButtonVariants />
       </ExampleSection>
-      <ExampleSection title='Sizes' description='32 / 36 / 40px; the default is the field height.'>
+      <ExampleSection title='Sizes' description='24 / 32 / 36 / 40px; the default is the field height.'>
         <ButtonSizes />
       </ExampleSection>
       <ExampleSection
@@ -242,7 +244,7 @@ export default defineDocs({
         <Matrix
           columns={['primary/solid', 'neutral/raised', 'neutral/ghost', 'icon']}
           columnWidth='7rem'
-          rows={TEXT_SIZES.map(({ size, height, radius }, index) => ({
+          rows={TEXT_SIZES.map(({ size, height, radius, icon }) => ({
             name: size,
             meta: <Code>{`${height}px · rounded-${radius}`}</Code>,
             cells: [
@@ -257,9 +259,11 @@ export default defineDocs({
                 <IconPlus data-icon='inline-start' />
                 New
               </Button>,
-              <Button key='i' size={ICON_SIZES[index]} aria-label='More'>
-                <IconDots />
-              </Button>,
+              icon === undefined ? null : (
+                <Button key='i' size={icon} aria-label='More'>
+                  <IconDots />
+                </Button>
+              ),
             ],
           }))}
         />
@@ -298,7 +302,7 @@ export default defineDocs({
           <Card>
             <CardHeader
               actions={
-                <Button size='icon-xs' aria-label='Edit'>
+                <Button size='icon-sm' aria-label='Edit'>
                   <IconPencil />
                 </Button>
               }>
@@ -312,7 +316,7 @@ export default defineDocs({
                     <ItemDescription>Row actions: ghost</ItemDescription>
                   </ItemContent>
                   <ItemActions>
-                    <Button emphasis='ghost' size='icon-xs' aria-label='More'>
+                    <Button emphasis='ghost' size='icon-sm' aria-label='More'>
                       <IconDots />
                     </Button>
                   </ItemActions>

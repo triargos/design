@@ -132,7 +132,7 @@ function SidebarTrigger({
     <Button
       emphasis='ghost'
       data-slot='sidebar-trigger'
-      size='icon-xs'
+      size='icon-sm'
       aria-label={ariaLabel}
       aria-expanded={isMobile ? openMobile : open}
       className={className}

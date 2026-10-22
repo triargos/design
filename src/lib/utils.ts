@@ -21,6 +21,7 @@ const twMerge = extendTailwindMerge({
         'control-sm',
         'control',
         'control-lg',
+        'control-pad-xs',
         'control-pad-sm',
         'control-pad',
         'control-gap-sm',

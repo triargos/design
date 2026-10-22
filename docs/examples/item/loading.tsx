@@ -31,7 +31,7 @@ export function ItemLoading() {
     <Card className='w-full max-w-xl'>
       <CardHeader
         actions={
-          <Button size='xs' onClick={() => setLoading(true)} disabled={loading}>
+          <Button size='sm' onClick={() => setLoading(true)} disabled={loading}>
             Reload
           </Button>
         }>

@@ -14,7 +14,7 @@ import { Code, ExampleSection, FoundationPage, FoundationSection, Matrix } from 
 import { defineDocs } from '../kit/docs';
 
 const INVITE_LINK = 'https://acme.example/invite/k3f9';
-const SIZES = ['icon-xs', 'icon', 'icon-lg'] as const;
+const SIZES = ['icon-sm', 'icon', 'icon-lg'] as const;
 
 /** Keeps its button in the copied state: clicks it now and again before the 2s reset. */
 function Copied({ children }: { children: ReactNode }) {
@@ -77,7 +77,7 @@ export default defineDocs({
         title='Next to a value'
         description={
           <>
-            <Code>size='icon-xs'</Code>
+            <Code>size='icon-sm'</Code>
           </>
         }>
         <CopyButtonNextToAValue />

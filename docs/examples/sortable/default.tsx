@@ -71,7 +71,7 @@ export function SortableDefault() {
                   </ItemContent>
                   <ItemActions className='min-w-0 flex-1 justify-end'>
                     <span className='truncate text-muted-foreground'>{item.description}</span>
-                    <Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${item.title}`}>
+                    <Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${item.title}`}>
                       <IconDots />
                     </Button>
                   </ItemActions>

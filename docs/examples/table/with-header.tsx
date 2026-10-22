@@ -25,7 +25,7 @@ export function TableWithHeader() {
     <Card className='w-full max-w-2xl'>
       <CardHeader
         actions={
-          <Button size='icon-xs' aria-label='More'>
+          <Button size='icon-sm' aria-label='More'>
             <IconDots />
           </Button>
         }>
