@@ -71,7 +71,7 @@ export function FoundationPage({
           {docs?.sourceHref !== undefined && (
             <Button
               emphasis='ghost'
-              size='icon-xs'
+              size='icon-sm'
               aria-label={`${title} source on GitHub`}
               className='text-muted-foreground'
               render={<a href={docs.sourceHref} target='_blank' rel='noreferrer' />}>
@@ -202,7 +202,7 @@ export function ExampleCode({ section }: { section: string }) {
       <div className='flex items-center justify-between gap-related px-1 pt-1'>
         <Button
           emphasis='ghost'
-          size='xs'
+          size='sm'
           aria-expanded={open}
           aria-controls={codeId}
           onClick={() => setOpen((value) => !value)}
@@ -214,7 +214,7 @@ export function ExampleCode({ section }: { section: string }) {
           />
           {open ? 'Hide code' : 'Show code'}
         </Button>
-        <CopyButton value={source} label='Copy code' size='icon-xs' />
+        <CopyButton value={source} label='Copy code' size='icon-sm' />
       </div>
       <CardFooter show={open} className='mb-1 px-0 pt-1'>
         <pre

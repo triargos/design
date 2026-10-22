@@ -99,7 +99,7 @@ export default defineDocs({
           <SpecimenRow name='Hit area' meta={<Code>hit-area</Code>}>
             <div className='flex items-center gap-group'>
               <div className='relative flex size-11 shrink-0 items-center justify-center rounded-control-lg border border-dashed border-border-strong'>
-                <Button size='icon-xs' aria-label='More'>
+                <Button size='icon-sm' aria-label='More'>
                   <IconDots />
                 </Button>
               </div>

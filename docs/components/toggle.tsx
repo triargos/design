@@ -24,7 +24,7 @@ export default defineDocs({
     component: Toggle,
     args: { children: 'Archived' },
     argTypes: {
-      size: { control: 'select', options: ['xs', 'default', 'lg'] },
+      size: { control: 'select', options: ['xs', 'sm', 'default', 'lg'] },
       disabled: { control: 'boolean' },
     },
   },
@@ -45,7 +45,7 @@ export default defineDocs({
         title='Sizes'
         description={
           <>
-            As <Code>Button</Code>: <Code>xs 32 · default 36 · lg 40</Code>, and <Code>icon-*</Code>.
+            As <Code>Button</Code>: <Code>xs 24 · sm 32 · default 36 · lg 40</Code>, and <Code>icon-*</Code>.
           </>
         }>
         <ToggleSizes />

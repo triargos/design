@@ -116,8 +116,8 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | Role                 | px   | Use                                                                     |
 | -------------------- | ---- | ----------------------------------------------------------------------- |
 | `rounded-control-xs` | 4    | Controls 16–20px: `Kbd`                                                 |
-| `rounded-control-sm` | 8    | Controls 20–28px, badges                                                |
-| `rounded-control`    | 10   | Controls 32–36px (`Button` `xs`, default, tabs), single-line fields     |
+| `rounded-control-sm` | 8    | Controls 20–28px (`Button` `xs`), badges                                |
+| `rounded-control`    | 10   | Controls 32–36px (`Button` `sm`, default, tabs), single-line fields     |
 | `rounded-control-lg` | 12   | Controls 40px (`Button` `lg`)                                           |
 | `rounded-popup`      | 16   | Menus, popovers, selects                                                |
 | `rounded-card`       | 20   | `Card` shell, `Alert`                                                   |
@@ -136,13 +136,13 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 - Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons in a card keep `rounded-control*`: a 10px field 21px into the 16px content is two layers, not a failed concentric pair.
 - Control heights are tokens (Sizing): `h-control` and its steps, never `h-9`.
 
-  | Control  | Heights                                                                                        |
-  | -------- | ---------------------------------------------------------------------------------------------- |
-  | `Button` | `xs` 32 `control-sm` · default 36 `control` · `lg` 40 `control-lg` (`icon-*` match)            |
-  | Fields   | 36 `control`: `Input`, `SelectTrigger`, `InputGroup`, date and time (one height, no sizes)     |
-  | Tabs     | segmented and pill: tab 32 `control-sm`, list 40 (`--tabs-inset` around it); underline: tab 36 |
-  | `Badge`  | default 24 `control-xs` · `sm` 20 `control-2xs` (`shape='pill'` for counts and chips)          |
-  | `Kbd`    | 20 `control-2xs`                                                                               |
+  | Control  | Heights                                                                                                              |
+  | -------- | -------------------------------------------------------------------------------------------------------------------- |
+  | `Button` | `xs` 24 `control-xs` · `sm` 32 `control-sm` · default 36 `control` · `lg` 40 `control-lg` (`icon-*` match from `sm`) |
+  | Fields   | 36 `control`: `Input`, `SelectTrigger`, `InputGroup`, date and time (one height, no sizes)                           |
+  | Tabs     | segmented and pill: tab 32 `control-sm`, list 40 (`--tabs-inset` around it); underline: tab 36                       |
+  | `Badge`  | default 24 `control-xs` · `sm` 20 `control-2xs` (`shape='pill'` for counts and chips)                                |
+  | `Kbd`    | 20 `control-2xs`                                                                                                     |
 
 - On coarse pointers, every control under 44px gets a 44px hit area (`hit-area`; checkbox, radio and switch use `after:`).
 
@@ -152,14 +152,14 @@ Every length a component draws comes from a token, so a sizing theme restyles th
 
 Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/theme/sizing.ts`, each with what it tunes). A name reads thing first, then what about it: `control-pad` is a control's inline padding.
 
-| Family   | Tokens (`@theme`, px)                                                                                                                                                          | Utility                                          |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
-| Spacing  | the roles, `tight` … `section` (Spacing)                                                                                                                                       | `gap-part`, `p-card`                             |
-| Controls | `control-2xs` … `control-lg` 20 · 24 · 32 · 36 · 40; `control-pad-sm` · `control-pad` 12 · 16; `control-gap-sm` · `control-gap` 4 · 6; `icon-xs` … `icon-lg` 12 · 14 · 16 · 20 | `h-control`, `px-control-pad`, `size-icon`       |
-| Fields   | `field-pad` 12 (less the border), `field-pad-y` 8 (multi-line)                                                                                                                 | `px-[calc(var(--spacing-field-pad)-1px)]`        |
-| Rows     | `menu-item` · `menu-item-pad` 36 · 10 (menus, select, combobox); `row-pad-x` · `row-pad-y` 12 · 10 (`Item`, table cells); `row-gap` 8 (icon → label)                           | `min-h-menu-item`, `px-row-pad-x`, `gap-row-gap` |
-| Surfaces | `modal` 24, `popup` 10 (popover), `picker` 12 (calendar, color picker); `popup-inset` · `card-inset` 4 · 4, `list-inset` 8 (sidebar, command), each also the `--outer-inset`   | `p-modal`, `p-popup-inset`                       |
-| Marks    | `track` 4 (slider, progress)                                                                                                                                                   | `h-track`                                        |
+| Family   | Tokens (`@theme`, px)                                                                                                                                                                                 | Utility                                          |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Spacing  | the roles, `tight` … `section` (Spacing)                                                                                                                                                              | `gap-part`, `p-card`                             |
+| Controls | `control-2xs` … `control-lg` 20 · 24 · 32 · 36 · 40; `control-pad-xs` · `control-pad-sm` · `control-pad` 8 · 12 · 16; `control-gap-sm` · `control-gap` 4 · 6; `icon-xs` … `icon-lg` 12 · 14 · 16 · 20 | `h-control`, `px-control-pad`, `size-icon`       |
+| Fields   | `field-pad` 12 (less the border), `field-pad-y` 8 (multi-line)                                                                                                                                        | `px-[calc(var(--spacing-field-pad)-1px)]`        |
+| Rows     | `menu-item` · `menu-item-pad` 36 · 10 (menus, select, combobox); `row-pad-x` · `row-pad-y` 12 · 10 (`Item`, table cells); `row-gap` 8 (icon → label)                                                  | `min-h-menu-item`, `px-row-pad-x`, `gap-row-gap` |
+| Surfaces | `modal` 24, `popup` 10 (popover), `picker` 12 (calendar, color picker); `popup-inset` · `card-inset` 4 · 4, `list-inset` 8 (sidebar, command), each also the `--outer-inset`                          | `p-modal`, `p-popup-inset`                       |
+| Marks    | `track` 4 (slider, progress)                                                                                                                                                                          | `h-track`                                        |
 
 - A length one component owns is a component token in the Component sizing block of `tailwind.css` (`--switch-thumb`, `--tooltip-pad-x`), read as `w-(--switch-thumb)`. Prefer the shared scale.
 - A relationship is a `calc()` of tokens: a menu row's padding from `--spacing-menu-item` and the line height, a button in a field from the two heights.

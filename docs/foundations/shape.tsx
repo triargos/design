@@ -72,7 +72,7 @@ export default defineDocs({
               <Card>
                 <CardHeader
                   actions={
-                    <Button size='icon-xs' aria-label='More'>
+                    <Button size='icon-sm' aria-label='More'>
                       <IconDots />
                     </Button>
                   }>
@@ -104,13 +104,15 @@ export default defineDocs({
             </SpecimenRow>
             <SpecimenRow
               name='36 · 32px'
-              meta={<Code>h-control · h-control-sm · rounded-control · Button, Button xs</Code>}>
+              meta={<Code>h-control · h-control-sm · rounded-control · Button, Button sm</Code>}>
               <div className='flex items-center gap-2'>
                 <Button>Edit</Button>
-                <Button size='xs'>Filter</Button>
+                <Button size='sm'>Filter</Button>
               </div>
             </SpecimenRow>
-            <SpecimenRow name='20 · 24px' meta={<Code>h-control-2xs · h-control-xs · rounded-control-sm · Badge</Code>}>
+            <SpecimenRow
+              name='20 · 24px'
+              meta={<Code>h-control-2xs · h-control-xs · rounded-control-sm · Badge, Button xs</Code>}>
               <div className='flex items-center gap-2'>
                 {(['sm', 'default'] as const).map((size) => (
                   <Badge key={size} size={size}>

@@ -108,7 +108,7 @@ export function Install({ name, title }: { name: string; title: string }) {
           <div className='px-1 pt-1'>
             <Button
               emphasis='ghost'
-              size='xs'
+              size='sm'
               aria-expanded={setupOpen}
               aria-controls={setupId}
               onClick={() => setSetupOpen((open) => !open)}
@@ -130,7 +130,7 @@ export function Install({ name, title }: { name: string; title: string }) {
               </p>
               <div className='flex items-start gap-related'>
                 <Command command={setup} label='Add the registry' className='py-1' />
-                <CopyButton value={setup} label='Copy registry command' size='icon-xs' />
+                <CopyButton value={setup} label='Copy registry command' size='icon-sm' />
               </div>
             </div>
           </CardFooter>

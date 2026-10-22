@@ -39,7 +39,7 @@ export function ListInCardVirtualized() {
     <Card className='w-full max-w-2xl'>
       <CardHeader
         actions={
-          <Button size='xs'>
+          <Button size='sm'>
             <IconPlus data-icon='inline-start' />
             Invite
           </Button>
@@ -65,7 +65,7 @@ export function ListInCardVirtualized() {
                 <Badge intent={member.invited ? 'warning' : 'success'}>{member.invited ? 'Invited' : 'Active'}</Badge>
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    render={<Button emphasis='ghost' size='icon-xs' aria-label={`Actions for ${member.name}`} />}>
+                    render={<Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${member.name}`} />}>
                     <IconDots />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end'>

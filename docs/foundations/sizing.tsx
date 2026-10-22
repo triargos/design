@@ -197,11 +197,11 @@ function Controls() {
           New task
         </Button>
         <Button>Share</Button>
-        <Button size='xs'>Filter</Button>
+        <Button size='sm'>Filter</Button>
         <Button size='icon' emphasis='ghost' aria-label='More'>
           <IconDots />
         </Button>
-        <Button size='icon-xs' aria-label='Copy'>
+        <Button size='icon-sm' aria-label='Copy'>
           <IconCopy />
         </Button>
       </div>
@@ -240,7 +240,7 @@ function SampleUI({ id }: { id: string }) {
         <Alert>
           <AlertContent>The trial ends on March 31.</AlertContent>
           <AlertAction>
-            <Button size='xs'>Upgrade</Button>
+            <Button size='sm'>Upgrade</Button>
           </AlertAction>
         </Alert>
         <Card>

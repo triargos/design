@@ -34,7 +34,7 @@ function ConfirmDelete({ container }: { container: HTMLElement }) {
             <FieldLabel htmlFor={inputId}>Type the name to confirm</FieldLabel>
             <div className='flex items-center gap-related'>
               <span className='text-caption font-medium text-muted-foreground'>{NAME}</span>
-              <CopyButton value={NAME} size='icon-xs' />
+              <CopyButton value={NAME} size='icon-sm' />
             </div>
             <Input id={inputId} placeholder={NAME} value={value} onChange={(event) => setValue(event.target.value)} />
           </Field>

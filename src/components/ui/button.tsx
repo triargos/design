@@ -36,16 +36,18 @@ const buttonShape = cva(
         // Disabled keeps the edge outside the box, where the raised ring sits, so the button does not shrink by 2px.
         raised: 'bg-clip-border disabled:bg-transparent disabled:shadow-[0_0_0_1px_var(--border)]',
       },
-      // Heights `control-sm` / `control` / `control-lg`; the default is a field's height. The radius follows the height
-      // (`rounded-control*`). Padding: `control-pad` (`control-pad-sm` at `xs`), 2px less on the icon side (an icon reads
-      // lighter than text). On touch, `hit-area` grows the target to 44px. Focus: the fields' soft 24% ring.
+      // Heights `control-xs` / `control-sm` / `control` / `control-lg`; the default is a field's height. The radius follows
+      // the height (`rounded-control*`). Padding: `control-pad` (`control-pad-sm` at `sm`, `control-pad-xs` at `xs`), 2px
+      // less on the icon side (an icon reads lighter than text). On touch, `hit-area` grows the target to 44px. Focus:
+      // the fields' soft 24% ring.
       size: {
         default:
           'h-control gap-control-gap rounded-control px-control-pad has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad)-2px)]',
-        xs: "h-control-sm gap-control-gap-sm rounded-control px-control-pad-sm text-caption has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-sm)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-sm)-2px)] [&_svg:not([class*='size-'])]:size-icon-sm",
+        xs: "h-control-xs gap-control-gap-sm rounded-control-sm px-control-pad-xs text-caption has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-xs)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-xs)-2px)] [&_svg:not([class*='size-'])]:size-icon-xs",
+        sm: "h-control-sm gap-control-gap-sm rounded-control px-control-pad-sm text-caption has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-sm)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-sm)-2px)] [&_svg:not([class*='size-'])]:size-icon-sm",
         lg: 'h-control-lg gap-control-gap rounded-control-lg px-control-pad has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad)-2px)]',
         // Icon-only sizes match the text sizes, so a row of both lines up.
-        'icon-xs': 'size-control-sm rounded-control',
+        'icon-sm': 'size-control-sm rounded-control',
         icon: 'size-control rounded-control',
         'icon-lg': 'size-control-lg rounded-control-lg',
       },
@@ -60,6 +62,17 @@ const buttonShape = cva(
 );
 
 type ButtonSize = NonNullable<Parameters<typeof buttonShape>[0]>['size'] & string;
+
+/** The spinner follows the icon size: `icon-xs` at `xs`, `icon` in the `sm` and default buttons, `icon-lg` at `lg`. */
+const SPINNER_SIZE: Record<ButtonSize, string> = {
+  xs: 'size-icon-xs',
+  sm: 'size-icon',
+  'icon-sm': 'size-icon',
+  default: 'size-icon',
+  icon: 'size-icon',
+  lg: 'size-icon-lg',
+  'icon-lg': 'size-icon-lg',
+};
 
 interface ButtonStyleProps {
   intent?: Intent;
@@ -161,8 +174,8 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
               animate={{ opacity: 1, y: 0 }}
               exit={below}
               transition={pendingSwap}>
-              {/* `icon` in the `xs` and default buttons, `icon-lg` at `lg`: the CSS size wins over `size`. */}
-              <Spinner className={size === 'lg' || size === 'icon-lg' ? 'size-icon-lg' : 'size-icon'} />
+              {/* The CSS size wins over `size`. */}
+              <Spinner className={SPINNER_SIZE[size]} />
             </motion.span>
           )}
         </AnimatePresence>
