@@ -29,7 +29,7 @@ interface DialogContentProps extends DialogPrimitive.Popup.Props, Pick<DialogPri
 }
 
 /**
- * A modal: one popup surface, `DialogHeader` and `DialogBody` on it `--modal-inset` (24px) in, `DialogFooter` a
+ * A modal: one popup surface, `DialogHeader` and `DialogBody` on it `modal` (`--spacing-modal`) in, `DialogFooter` a
  * `muted` band under a rule. The body scrolls when the dialog meets the screen's height. The backdrop's exit holds its
  * last frame (`fill-mode-forwards`), so it doesn't flash back to full blur while a slower popup leaves.
  * `AlertDialog` and `Sheet` share these classes.
@@ -56,7 +56,7 @@ function DialogContent({
         data-surface='popup'
         data-size={size}
         className={cn(
-          'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none [--modal-inset:calc(var(--spacing-group)+var(--spacing-related))]',
+          'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none',
           'fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog duration-modal ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-97 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-97 motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100',
           // Under an open nested dialog it steps back: smaller per level, dimmed by an overlay (`after:`).
           'transition-[scale] ease-move data-nested-dialog-open:scale-[calc(1-0.04*var(--nested-dialogs))] motion-reduce:data-nested-dialog-open:scale-100',
@@ -71,9 +71,12 @@ function DialogContent({
           <DialogClose
             aria-label={closeLabel ?? labels.close}
             render={
-              // Centered on the title's first line: 18px in, half the button (36px) less than the title's line (24px)
-              // 24px in.
-              <Button emphasis='ghost' size='icon' className='absolute top-4.5 right-4.5' />
+              // Centered on the title's first line: `modal` in, less half the button (`control`) over the title's line.
+              <Button
+                emphasis='ghost'
+                size='icon'
+                className='absolute top-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)] right-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)]'
+              />
             }>
             <IconX />
           </DialogClose>
@@ -88,9 +91,10 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='dialog-header'
       className={cn(
-        // `pr-14` keeps the title clear of the ✕. Without a body, the header ends the dialog.
-        'flex flex-col gap-tight px-(--modal-inset) pt-(--modal-inset) pr-14 pb-[calc(var(--spacing-group)-var(--spacing-tight))]',
-        'in-[[data-slot=dialog-content]:not(:has([data-slot=dialog-body]))]:pb-(--modal-inset)',
+        // The end padding keeps the title clear of the ✕ (its inset, its width and 2px). Without a body, the header ends
+        // the dialog.
+        'flex flex-col gap-tight px-modal pt-modal pr-[calc(var(--spacing-modal)+(var(--spacing-control)+var(--text-heading--line-height))/2+2px)] pb-[calc(var(--spacing-group)-var(--spacing-tight))]',
+        'in-[[data-slot=dialog-content]:not(:has([data-slot=dialog-body]))]:pb-modal',
         className,
       )}
       {...props}
@@ -104,8 +108,8 @@ function DialogBody({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot='dialog-body'
       className={cn(
         // `pt-tight` (with the header's `group − tight`) leaves room for a field's focus ring at the scroll edge.
-        'flex min-h-0 flex-col gap-group overflow-y-auto px-(--modal-inset) pt-tight pb-(--modal-inset)',
-        'in-[[data-slot=dialog-content]:not(:has([data-slot=dialog-header]))]:pt-(--modal-inset)',
+        'flex min-h-0 flex-col gap-group overflow-y-auto px-modal pt-tight pb-modal',
+        'in-[[data-slot=dialog-content]:not(:has([data-slot=dialog-header]))]:pt-modal',
         className,
       )}
       {...props}
@@ -118,7 +122,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='dialog-footer'
       className={cn(
-        'flex shrink-0 flex-col-reverse gap-related border-t bg-muted px-(--modal-inset) py-group sm:flex-row sm:justify-end',
+        'flex shrink-0 flex-col-reverse gap-related border-t bg-muted px-modal py-group sm:flex-row sm:justify-end',
         className,
       )}
       {...props}

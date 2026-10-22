@@ -28,8 +28,8 @@ const layerMotion = (rest: number): Variants => ({
 const emptyVariants = cva('group/empty flex min-w-0 flex-1 flex-col items-center justify-center text-center', {
   variants: {
     size: {
-      default: 'px-6 py-10',
-      sm: 'px-4 py-6',
+      default: 'px-(--empty-pad-x) py-(--empty-pad-y)',
+      sm: 'px-(--empty-pad-x-sm) py-(--empty-pad-y-sm)',
     },
     bordered: {
       true: 'rounded-card border border-dashed border-border',
@@ -63,7 +63,7 @@ const emptyMediaVariants = cva('flex shrink-0 items-center justify-center', {
       /** Three skeleton cards stacked front to back; they fan out on hover. */
       skeleton: 'mb-group w-full',
       /** One icon on a quiet tile. */
-      icon: "mb-3 size-10 rounded-control-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-5",
+      icon: "mb-part size-control-lg rounded-control-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-icon-lg",
     },
   },
   defaultVariants: { variant: 'skeleton' },
@@ -96,13 +96,13 @@ function SkeletonStack() {
     <div className='relative h-18 w-40'>
       <motion.div
         variants={layerMotion(-16)}
-        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.84] rounded-control-lg border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_9%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-2 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_4%)]'
+        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.84] rounded-block border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_9%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-2 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_4%)]'
       />
       <motion.div
         variants={layerMotion(-8)}
-        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.92] rounded-control-lg border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_4.5%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-1 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_7%)]'
+        className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.92] rounded-block border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_4.5%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-1 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_7%)]'
       />
-      <div className='absolute inset-x-0 bottom-0 flex h-14 items-center gap-2.5 rounded-control-lg border border-(--edge-field) bg-card bg-clip-padding px-3 shadow-field dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]'>
+      <div className='absolute inset-x-0 bottom-0 flex h-14 items-center gap-2.5 rounded-block border border-(--edge-field) bg-card bg-clip-padding px-3 shadow-field dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_10%)]'>
         <div className='size-7 shrink-0 rounded-full bg-foreground/12 dark:bg-foreground/15' />
         <div className='flex flex-1 flex-col gap-1.5'>
           <div className='h-2.5 w-3/4 rounded-full bg-foreground/8 dark:bg-foreground/10' />

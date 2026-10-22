@@ -23,27 +23,32 @@ type TabsVariant = 'segmented' | 'underline' | 'pill';
 const tabsListVariants = cva('relative isolate flex w-fit max-w-full items-center', {
   variants: {
     variant: {
-      // Track radius = tab radius + track padding, so the corners stay concentric.
-      segmented: 'flex-wrap rounded-[calc(var(--radius-control)+--spacing(1))] bg-shell p-1',
+      // Track radius = tab radius + track padding, so the corners stay concentric; the padding counts only up to the
+      // tab radius, so square tabs sit in a square track.
+      segmented:
+        'flex-wrap rounded-[calc(var(--tabs-radius)+min(var(--tabs-inset),var(--tabs-radius)))] bg-shell p-(--tabs-inset)',
       underline: 'gap-group border-b border-border',
-      pill: 'flex-wrap gap-1.5',
+      pill: 'flex-wrap gap-control-gap',
     },
   },
 });
 
 const tabsTriggerVariants = cva(
   [
-    'hit-area relative inline-flex h-8 shrink-0 items-center justify-center gap-1.5 text-control font-medium whitespace-nowrap text-muted-foreground select-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',
+    'hit-area relative inline-flex h-control-sm shrink-0 items-center justify-center gap-control-gap text-control font-medium whitespace-nowrap text-muted-foreground select-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-icon',
     'transition-[color,background-color,scale] duration-feedback outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24',
     'disabled:pointer-events-none disabled:text-disabled-foreground data-disabled:pointer-events-none data-disabled:text-disabled-foreground',
   ],
   {
     variants: {
       variant: {
-        segmented: 'rounded-control px-3 aria-[current=page]:text-foreground data-active:text-foreground',
-        underline: 'h-9 rounded-control-xs px-0.5 data-active:text-foreground',
-        // A resting fill, so each pill reads as a target; the indicator covers it when checked.
-        pill: 'rounded-full bg-neutral-subtle px-3.5 font-normal hover:bg-foreground/8 active:scale-[0.96] motion-reduce:active:scale-100 aria-checked:bg-transparent aria-checked:text-primary-solid-foreground aria-checked:hover:bg-transparent aria-checked:hover:text-primary-solid-foreground data-active:bg-transparent data-active:text-primary-solid-foreground data-active:hover:bg-transparent',
+        segmented:
+          'rounded-(--tabs-radius) px-control-pad-sm aria-[current=page]:text-foreground data-active:text-foreground',
+        // 2px in from the ends, room for the focus ring.
+        underline: 'h-control rounded-control-xs px-0.5 data-active:text-foreground',
+        // A resting fill, so each pill reads as a target; the indicator covers it when checked. 2px more padding than a
+        // segmented tab: the round ends eat into it.
+        pill: 'rounded-full bg-neutral-subtle px-[calc(var(--spacing-control-pad-sm)+2px)] font-normal hover:bg-foreground/8 active:scale-[0.96] motion-reduce:active:scale-100 aria-checked:bg-transparent aria-checked:text-primary-solid-foreground aria-checked:hover:bg-transparent aria-checked:hover:text-primary-solid-foreground data-active:bg-transparent data-active:text-primary-solid-foreground data-active:hover:bg-transparent',
       },
     },
   },
@@ -58,7 +63,7 @@ const indicatorVariants = cva(
   {
     variants: {
       variant: {
-        segmented: 'rounded-control bg-card shadow-raised dark:bg-foreground/10',
+        segmented: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/10',
         underline: 'after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full after:bg-foreground',
         pill: 'rounded-full bg-primary-solid',
       },

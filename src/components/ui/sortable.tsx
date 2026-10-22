@@ -39,7 +39,8 @@ function SortableItem({ id, render, ...props }: SortableItemProps) {
 
 /**
  * The grip; name the row in its `aria-label` (`Move Design review`). As an `ItemMedia`, it pulls in so the dots, not
- * the button, sit on the row's content edge, and lays out at 16px tall so it centres on the title's line.
+ * the button, sit on the row's content edge (the grip glyph's 4px side bearing on the start), and lays out at the icon's
+ * height so it centres on the title's line.
  */
 function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: ComponentProps<'button'>) {
   const { labels } = useLocale();
@@ -50,13 +51,13 @@ function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: Co
       type='button'
       aria-label={ariaLabel ?? labels.dragToReorder}
       className={cn(
-        'hit-area relative flex size-6 shrink-0 cursor-grab items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-1 in-data-[slot=item-media]:-mr-1 in-data-[slot=item-media]:-ml-2',
+        'hit-area relative flex size-control-xs shrink-0 cursor-grab items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-mr-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-ml-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2+4px)]',
         className,
       )}
       {...props}
       {...handle?.listeners}
       {...handle?.attributes}>
-      <IconGripVertical aria-hidden className='size-4' />
+      <IconGripVertical aria-hidden className='size-icon' />
     </button>
   );
 }

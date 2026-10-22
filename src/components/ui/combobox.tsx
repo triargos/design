@@ -424,7 +424,7 @@ function ComboboxContent({
           data-surface='popup'
           className={cn(
             // At least as wide as the field, wider for long items, up to the window.
-            'group/combobox-content relative flex max-h-[min(var(--available-height),23rem)] max-w-(--available-width) min-w-(--anchor-width) origin-(--transform-origin) flex-col overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-popup)]',
+            'group/combobox-content relative flex max-h-[min(var(--available-height),23rem)] max-w-(--available-width) min-w-(--anchor-width) origin-(--transform-origin) flex-col overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
             'duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
             // Reduced motion: fade only, no zoom and no slide.
             'motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100 motion-reduce:data-open:slide-in-from-top-0 motion-reduce:data-open:slide-in-from-left-0',
@@ -471,7 +471,10 @@ function ComboboxList({ children, className }: ComboboxListProps) {
   return (
     <ComboboxPrimitive.List
       data-slot='combobox-list'
-      className={cn('min-h-0 flex-1 scroll-py-1 overflow-y-auto overscroll-contain p-1 data-empty:p-0', className)}>
+      className={cn(
+        'min-h-0 flex-1 scroll-py-popup-inset overflow-y-auto overscroll-contain p-popup-inset data-empty:p-0',
+        className,
+      )}>
       {(entry: Entry) => <React.Fragment key={entryKey(entry)}>{row(entry)}</React.Fragment>}
     </ComboboxPrimitive.List>
   );
@@ -490,7 +493,7 @@ function VirtualizedRows({ row, className }: { row: (entry: Entry) => React.Reac
     // Keys the size cache by item, not index: a row never inherits the size of whatever sat at its index before.
     getItemKey: (index) => entryKey(filtered[index]!),
     overscan: OVERSCAN,
-    // No paddingStart/End: the listbox's `p-1` is the one inset, on every side, so a row's `rounded-inner` stays
+    // No paddingStart/End: the listbox's `p-popup-inset` is the one inset, on every side, so a row's `rounded-inner` stays
     // concentric with the popup. Scroll padding keeps a keyboard-scrolled row clear of the edge.
     scrollPaddingEnd: 4,
     scrollPaddingStart: 4,
@@ -508,7 +511,9 @@ function VirtualizedRows({ row, className }: { row: (entry: Entry) => React.Reac
   );
 
   return (
-    <ComboboxPrimitive.List data-slot='combobox-list' className={cn('overflow-hidden p-1 data-empty:p-0', className)}>
+    <ComboboxPrimitive.List
+      data-slot='combobox-list'
+      className={cn('overflow-hidden p-popup-inset data-empty:p-0', className)}>
       {filtered.length > 0 && (
         <div
           role='presentation'
@@ -540,8 +545,8 @@ interface ComboboxItemProps extends ComboboxPrimitive.Item.Props {
 }
 
 /**
- * A row. The check leads in its own 16px column, kept empty when unselected, so labels line up; the same place as the
- * indicator of a menu's checkbox item. Long labels wrap, except in a virtualized list, where a row keeps to one line.
+ * A menu row (`--spacing-menu-item`). The check leads in its own icon-wide column, kept empty when unselected, so labels
+ * line up; the same place as the indicator of a menu's checkbox item. Long labels wrap, except in a virtualized list, where a row keeps to one line.
  */
 function ComboboxItem({ className, children, indicator, style, ...props }: ComboboxItemProps) {
   const virtual = React.use(VirtualRowContext);
@@ -549,7 +554,7 @@ function ComboboxItem({ className, children, indicator, style, ...props }: Combo
     <ComboboxPrimitive.Item
       data-slot='combobox-item'
       className={cn(
-        "grid w-full cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-inner px-2.5 py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "grid w-full cursor-default grid-cols-[var(--spacing-icon)_minmax(0,1fr)] items-center gap-row-gap rounded-inner px-menu-item-pad py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
         className,
       )}
       {...(virtual && {
@@ -581,7 +586,7 @@ function ComboboxItem({ className, children, indicator, style, ...props }: Combo
       ) : (
         <span className='col-start-1 flex'>{indicator}</span>
       )}
-      <div className={cn('col-start-2 flex min-w-0 items-center gap-2', virtual ? 'truncate' : 'wrap-anywhere')}>
+      <div className={cn('col-start-2 flex min-w-0 items-center gap-row-gap', virtual ? 'truncate' : 'wrap-anywhere')}>
         {children}
       </div>
     </ComboboxPrimitive.Item>
@@ -622,7 +627,10 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
     <ComboboxPrimitive.Empty
       data-slot='combobox-empty'
       // Base UI renders the children only while the list is empty.
-      className={cn('text-center text-body text-muted-foreground not-empty:px-2.5 not-empty:py-2', className)}
+      className={cn(
+        'text-center text-body text-muted-foreground not-empty:px-menu-item-pad not-empty:py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)]',
+        className,
+      )}
       {...props}
     />
   );
@@ -637,8 +645,9 @@ function ComboboxChips({ className, ...props }: ComboboxPrimitive.Chips.Props) {
       data-slot='combobox-chips'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        // 24px chips 6px in (5px padding + the border), so 36px with one row; rows wrap 4px apart.
-        'flex min-h-9 flex-wrap items-center gap-1 p-[5px] text-body',
+        // `control-xs` chips centered in a `control` row (the padding + the border); rows wrap a chip gap apart.
+        // Multi-line once they wrap: the area radius.
+        'flex min-h-control flex-wrap items-center gap-tight p-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] text-body [--field-radius:var(--radius-area)]',
         // Base UI marks the input `disabled` and chips `aria-disabled`; block the whole surface.
         'has-disabled:pointer-events-none has-disabled:cursor-not-allowed',
         className,
@@ -659,8 +668,8 @@ function ComboboxChip({ className, children, removeLabel: removeLabelProp, ...pr
     <ComboboxPrimitive.Chip
       data-slot='combobox-chip'
       className={cn(
-        // A flat 4% fill, no lift. 24px, 6px inside the 36px field: `rounded-inner` follows the field's curve.
-        'flex h-6 w-fit items-center rounded-inner bg-foreground/4 pl-2 text-caption font-medium whitespace-nowrap text-foreground [--outer-inset:--spacing(1.5)] aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed dark:bg-foreground/8',
+        // A flat 4% fill, no lift. `control-xs`, centered in the `control` row: `rounded-inner` follows the field's curve.
+        'flex h-control-xs w-fit items-center rounded-inner bg-foreground/4 pl-(--field-chip-pad-x) text-caption font-medium whitespace-nowrap text-foreground [--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)] aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed dark:bg-foreground/8',
         className,
       )}
       {...props}>
@@ -668,9 +677,9 @@ function ComboboxChip({ className, children, removeLabel: removeLabelProp, ...pr
       <ComboboxPrimitive.ChipRemove
         aria-label={removeLabel}
         // The full chip height is the hit area; only the glyph shows, brightening on hover.
-        className='flex h-full shrink-0 cursor-pointer items-center px-2 text-faint-foreground outline-none hover:text-foreground focus-visible:text-foreground'
+        className='flex h-full shrink-0 cursor-pointer items-center px-(--field-chip-pad-x) text-faint-foreground outline-none hover:text-foreground focus-visible:text-foreground'
         data-slot='combobox-chip-remove'>
-        <IconX className='pointer-events-none size-3.5' />
+        <IconX className='pointer-events-none size-icon-sm' />
       </ComboboxPrimitive.ChipRemove>
     </ComboboxPrimitive.Chip>
   );
@@ -680,9 +689,9 @@ function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Pro
   return (
     <ComboboxPrimitive.Input
       data-slot='combobox-chip-input'
-      // Text on the field's 12px line when empty (5px padding + 6px); 4px after a chip.
+      // Text on the field's padding line when empty (`field-pad` less the chips' inset); a chip gap after a chip.
       className={cn(
-        'h-6 min-w-16 flex-1 pl-1.5 outline-none max-sm:text-[1rem] placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-1',
+        'h-control-xs min-w-16 flex-1 pl-[calc(var(--spacing-field-pad)-calc((var(--spacing-control)-var(--spacing-control-xs))/2))] outline-none max-sm:text-[1rem] placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-tight',
         className,
       )}
       {...props}

@@ -60,9 +60,9 @@ const toastClassName = cn([
   'bg-[color-mix(in_srgb,var(--popover),black_calc(1%*max(0,var(--toast-index,0))))] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),black_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover',
   '[transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s]',
   // Gap fill, so hovering between expanded toasts keeps them expanded
-  'after:absolute after:bottom-full after:left-0 after:h-[calc(var(--toast-gap)+1px)] after:w-full',
-  '[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-gap:--spacing(3)] [--toast-peek:--spacing(3)] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]',
-  '[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--toast-gap)*-1+var(--toast-swipe-movement-y))]',
+  'after:absolute after:bottom-full after:left-0 after:h-[calc(var(--spacing-part)+1px)] after:w-full',
+  '[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]',
+  '[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--spacing-part)*-1+var(--toast-swipe-movement-y))]',
   // Stacked
   'transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--toast-peek))-(var(--toast-shrink)*var(--toast-calc-height))))_scale(var(--toast-scale))]',
   'data-limited:opacity-0',
@@ -97,10 +97,10 @@ function Toasts({ container }: Pick<ToastProviderProps, 'container'>) {
               data-slot='toast'
               swipeDirection={['right', 'down']}
               toast={item}>
-              <Toast.Content className='pointer-events-auto flex items-center gap-2 overflow-hidden px-3.5 py-3 text-body transition-opacity duration-move data-behind:opacity-0 data-behind:not-data-expanded:pointer-events-none data-expanded:opacity-100'>
+              <Toast.Content className='pointer-events-auto flex items-center gap-row-gap overflow-hidden px-(--toast-pad-x) py-(--toast-pad-y) text-body transition-opacity duration-move data-behind:opacity-0 data-behind:not-data-expanded:pointer-events-none data-expanded:opacity-100'>
                 {Icon && (
                   <div
-                    className='self-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:h-lh [&>svg]:w-4'
+                    className='self-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:h-lh [&>svg]:w-icon'
                     data-slot='toast-icon'>
                     <Icon className='in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=loading]:text-muted-foreground in-data-[type=success]:text-success in-data-[type=warning]:text-warning' />
                   </div>
@@ -111,7 +111,7 @@ function Toasts({ container }: Pick<ToastProviderProps, 'container'>) {
                 </div>
                 {item.actionProps && (
                   <Toast.Action
-                    className={buttonVariants({ intent: 'neutral', emphasis: 'solid', className: 'ms-2' })}
+                    className={buttonVariants({ intent: 'neutral', emphasis: 'solid', className: 'ms-related' })}
                     data-slot='toast-action'>
                     {item.actionProps.children}
                   </Toast.Action>
@@ -140,7 +140,7 @@ function AnchoredToasts({ container }: Pick<ToastProviderProps, 'container'>) {
             <Toast.Positioner key={item.id} className='isolate z-60' data-slot='toast-positioner' toast={item}>
               <Toast.Root
                 className={cn(
-                  'w-fit max-w-xs origin-(--transform-origin) rounded-control-sm bg-popover px-2 py-1 text-caption text-balance text-popover-foreground shadow-popup',
+                  'w-fit max-w-xs origin-(--transform-origin) rounded-tooltip bg-popover px-(--tooltip-pad-x) py-(--tooltip-pad-y) text-caption text-balance text-popover-foreground shadow-popup',
                   'transition-[opacity,scale] duration-enter ease-enter data-ending-style:opacity-0 data-starting-style:opacity-0 motion-safe:data-ending-style:scale-95 motion-safe:data-starting-style:scale-95',
                   replayClassName(item),
                 )}

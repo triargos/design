@@ -6,14 +6,14 @@ import { IconMinus } from '@tabler/icons-react';
 import { cn } from '~/lib/utils';
 
 /**
- * A flat 16px control, shared by `Checkbox` and `RadioGroupItem`; no shadows. Resting: transparent with a 1px
+ * A flat `--checkbox-size` control, shared by `Checkbox` and `RadioGroupItem`; no shadows. Resting: transparent with a 1px
  * `neutral-border` rim inside the box; hover fills it with the `neutral-subtle` veil. Checked: the brand fill, no rim.
  * Focus and invalid recolor the rim, as on `Input`. Disabled: the disabled fill, no rim. The `after:` box grows the
  * target past the label gap.
  */
 const selectionControlVariants = cva(
   [
-    'peer relative flex size-4 shrink-0 items-center justify-center inset-ring inset-ring-neutral-border outline-none',
+    'peer relative flex size-(--checkbox-size) shrink-0 items-center justify-center inset-ring inset-ring-neutral-border outline-none',
     'transition-[background-color,box-shadow,color,scale] duration-feedback',
     'after:absolute after:-inset-x-3 after:-inset-y-2',
     'not-data-disabled:hover:bg-neutral-subtle not-data-disabled:active:scale-[0.96] motion-reduce:not-data-disabled:active:scale-100',
@@ -28,7 +28,7 @@ const selectionControlVariants = cva(
     variants: {
       shape: {
         square: [
-          'rounded-control-xs',
+          'rounded-checkbox',
           'data-indeterminate:bg-primary-solid data-indeterminate:text-primary-solid-foreground data-indeterminate:inset-ring-transparent',
           'not-data-disabled:data-indeterminate:hover:bg-[color-mix(in_oklch,var(--primary-solid),black_8%)]',
           'data-indeterminate:data-disabled:bg-disabled data-indeterminate:data-disabled:text-disabled-foreground',
@@ -108,7 +108,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
       <CheckboxPrimitive.Indicator
         keepMounted
         data-slot='checkbox-indicator'
-        className='pointer-events-none grid text-current *:col-start-1 *:row-start-1 [&_svg]:size-3'
+        className='pointer-events-none grid text-current *:col-start-1 *:row-start-1 [&_svg]:size-icon-xs'
         render={(props, state) => (
           <span {...props}>
             <CheckboxMark checked={state.checked} indeterminate={state.indeterminate} />

@@ -15,7 +15,11 @@ export function ProseEditable() {
       role='textbox'
       aria-multiline='true'
       aria-label='Announcement'
-      className={cn(inputSurfaceVariants({ scope: 'self' }), proseVariants(), 'min-h-32 w-full max-w-md px-3 py-2')}>
+      className={cn(
+        inputSurfaceVariants({ scope: 'self' }),
+        proseVariants(),
+        'min-h-32 w-full max-w-md px-3 py-2 [--field-radius:var(--radius-area)]',
+      )}>
       <h2>Office closed on Friday</h2>
       <p>
         The office is closed on <strong>Friday, May 9</strong>. Tasks due that day move to Monday.

@@ -6,12 +6,12 @@ import * as React from 'react';
 import { cn } from '~/lib/utils';
 
 /**
- * A row in the menu, highlighted by pointer or keyboard, `rounded-inner` 4px in; icons muted unless they set a color
- * (not the check or dot). `indicator` leaves the left gutter for a check or dot. `destructive`: the row and its icon
- * take the destructive hue; highlighted, its subtle fill.
+ * A row in the menu, highlighted by pointer or keyboard, `rounded-inner` (`popup-inset` in); icons muted unless they set
+ * a color (not the check or dot). `indicator` leaves the left gutter for a check or dot. `destructive`: the row and its
+ * icon take the destructive hue; highlighted, its subtle fill.
  */
 const dropdownMenuItemVariants = cva(
-  "relative flex cursor-default items-center gap-2 rounded-inner py-2 text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative flex cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
   {
     variants: {
       intent: {
@@ -19,7 +19,10 @@ const dropdownMenuItemVariants = cva(
         destructive:
           'text-destructive data-highlighted:bg-destructive-subtle data-highlighted:text-destructive *:[svg]:text-destructive!',
       },
-      indicator: { false: 'px-2.5', true: 'pr-2.5 pl-8.5' },
+      indicator: {
+        false: 'px-menu-item-pad',
+        true: 'pr-menu-item-pad pl-[calc(var(--spacing-menu-item-pad)+var(--spacing-icon)+var(--spacing-row-gap))]',
+      },
     },
     compoundVariants: [
       { intent: 'neutral', indicator: false, className: "[&_svg:not([class*='text-'])]:text-muted-foreground" },
@@ -62,7 +65,7 @@ function DropdownMenuContent({
           data-slot='dropdown-menu-content'
           data-surface='popup'
           className={cn(
-            'max-h-(--available-height) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-1 text-popover-foreground shadow-popup outline-none [--outer-inset:--spacing(1)] [--outer-radius:var(--radius-popup)]',
+            'max-h-(--available-height) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-popup-inset text-popover-foreground shadow-popup outline-none [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
             'duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
             // Reduced motion: fade only, no zoom and no slide.
             'motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100 motion-reduce:data-open:slide-in-from-top-0 motion-reduce:data-open:slide-in-from-left-0',
@@ -84,7 +87,10 @@ function DropdownMenuLabel({ className, ...props }: React.ComponentProps<'div'>)
   return (
     <div
       data-slot='dropdown-menu-label'
-      className={cn('px-2.5 pt-2 pb-1 text-caption font-medium text-muted-foreground', className)}
+      className={cn(
+        'px-menu-item-pad pt-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pb-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/4)] text-caption font-medium text-muted-foreground',
+        className,
+      )}
       {...props}
     />
   );
@@ -118,7 +124,7 @@ function DropdownMenuCheckboxItem({
       closeOnClick={closeOnClick}
       className={cn(dropdownMenuItemVariants({ indicator: true }), className)}
       {...props}>
-      <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
+      <span className='pointer-events-none absolute left-menu-item-pad flex size-icon items-center justify-center'>
         <MenuPrimitive.CheckboxItemIndicator>
           <IconCheck />
         </MenuPrimitive.CheckboxItemIndicator>
@@ -139,7 +145,7 @@ function DropdownMenuRadioItem({ className, children, closeOnClick = true, ...pr
       closeOnClick={closeOnClick}
       className={cn(dropdownMenuItemVariants({ indicator: true }), className)}
       {...props}>
-      <span className='pointer-events-none absolute left-2.5 flex size-4 items-center justify-center'>
+      <span className='pointer-events-none absolute left-menu-item-pad flex size-icon items-center justify-center'>
         <MenuPrimitive.RadioItemIndicator>
           <IconCircle className='size-2 fill-current' />
         </MenuPrimitive.RadioItemIndicator>
@@ -153,7 +159,7 @@ function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.
   return (
     <MenuPrimitive.Separator
       data-slot='dropdown-menu-separator'
-      className={cn('-mx-1 my-1 h-px bg-border', className)}
+      className={cn('-mx-popup-inset my-popup-inset h-px bg-border', className)}
       {...props}
     />
   );

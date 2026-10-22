@@ -57,10 +57,10 @@ function FieldGroup({
   return <div data-slot='field-group' className={cn(fieldGroupVariants({ columns }), className)} {...props} />;
 }
 
-const fieldVariants = cva('group/field flex w-full gap-3 data-[invalid=true]:text-destructive', {
+const fieldVariants = cva('group/field flex w-full gap-part data-[invalid=true]:text-destructive', {
   variants: {
     orientation: {
-      // `related`, not 12px: a field has no solid border, so the eye adds its inner top space to the label gap.
+      // `related`, not `--spacing-part`: a field has no solid border, so the eye adds its inner top space to the label gap.
       vertical: ['flex-col gap-related [&>*]:w-full [&>.sr-only]:w-auto'],
       horizontal: [
         'flex-row items-center',
@@ -125,16 +125,16 @@ function FieldLabel({
     <label
       data-slot='field-label'
       className={cn(
-        // A 16px line box: 1px of air above and below the 14px text, on top of the field's `related` gap. Below `sm`,
-        // 16 / 18, next to the 16px field text.
-        'group/field-label peer/field-label flex w-fit items-center gap-2 text-body leading-4 font-medium select-none max-sm:text-[1rem] max-sm:leading-[1.125rem]',
+        // A line box 2px taller than the text: 1px of air above and below, on top of the field's `related` gap. Below
+        // `sm`, 16 / 18, next to the 16px field text.
+        'group/field-label peer/field-label flex w-fit items-center gap-related text-body leading-[calc(var(--text-body)+2px)] font-medium select-none max-sm:text-[1rem] max-sm:leading-[1.125rem]',
         'group-data-[disabled=true]/field:text-disabled-foreground peer-disabled:cursor-not-allowed peer-disabled:text-disabled-foreground',
         className,
       )}
       {...props}>
       {children}
       {required && (
-        <span aria-hidden className='-ml-1 text-caption text-muted-foreground'>
+        <span aria-hidden className='-ml-[calc(var(--spacing-related)/2)] text-caption text-muted-foreground'>
           *
         </span>
       )}
@@ -148,7 +148,7 @@ function FieldTitle({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='field-label'
       className={cn(
-        'flex w-fit items-center gap-2 text-body font-medium group-data-[disabled=true]/field:text-disabled-foreground',
+        'flex w-fit items-center gap-related text-body font-medium group-data-[disabled=true]/field:text-disabled-foreground',
         className,
       )}
       {...props}
@@ -183,7 +183,7 @@ function FieldSeparator({ children, className, ...props }: React.ComponentProps<
       <Separator className='absolute inset-0 top-1/2' />
       {children && (
         <span
-          className='relative mx-auto block w-fit bg-surface px-2 text-muted-foreground'
+          className='relative mx-auto block w-fit bg-surface px-related text-muted-foreground'
           data-slot='field-separator-content'>
           {children}
         </span>

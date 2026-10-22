@@ -26,7 +26,7 @@ function Accordion({
         className={cn(
           'flex w-full flex-col',
           // In a sheet, run past the body's padding to the sheet's edge.
-          variant === 'flush' && 'in-data-[slot=sheet-body]:-mx-(--modal-inset) in-data-[slot=sheet-body]:w-auto',
+          variant === 'flush' && 'in-data-[slot=sheet-body]:-mx-modal in-data-[slot=sheet-body]:w-auto',
           className,
         )}
         {...props}
@@ -36,7 +36,7 @@ function Accordion({
 }
 
 const accordionItemVariants = cva('border-b border-border-subtle last:border-b-0', {
-  variants: { variant: { default: 'pb-1', flush: '' } },
+  variants: { variant: { default: 'pb-[calc(var(--accordion-pad)/2)]', flush: '' } },
 });
 
 function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
@@ -52,7 +52,7 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
 
 /**
  * Plus that folds into a minus: the vertical stroke collapses while the trigger's panel is open. 5/3 units of a 16-unit
- * box drawn at 12px: the icons' 1.25px stroke.
+ * box drawn at `icon-xs` (12px): the icons' 1.25px stroke.
  */
 function AccordionIndicator({ className }: { className?: string }) {
   return (
@@ -77,15 +77,16 @@ function AccordionIndicator({ className }: { className?: string }) {
 }
 
 const accordionTriggerVariants = cva(
-  'hit-area relative flex w-full flex-1 items-start gap-2 text-left text-body font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/24 aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
+  'hit-area relative flex w-full flex-1 items-start gap-row-gap text-left text-body font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/24 aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
   {
     variants: {
       variant: {
-        default: 'rounded-control px-2 pt-2 pb-1',
+        // `area`, not `control`: a long title wraps.
+        default: 'rounded-area px-(--accordion-pad) pt-(--accordion-pad) pb-[calc(var(--accordion-pad)/2)]',
         // `card` in from the content's edge: on the header text, as `ItemList` rows. The ring sits inside the row, which
         // the card clips.
         flush:
-          'items-center rounded-none px-card py-2.5 transition-colors duration-feedback hover:bg-row-hover focus-visible:ring-inset in-data-[slot=sheet-body]:px-(--modal-inset)',
+          'items-center rounded-none px-card py-row-pad-y transition-colors duration-feedback hover:bg-row-hover focus-visible:ring-inset in-data-[slot=sheet-body]:px-modal',
       },
     },
   },
@@ -101,8 +102,8 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
         {...props}>
         <span
           data-slot='accordion-trigger-icon'
-          className='flex h-[1lh] w-5 shrink-0 items-center justify-center text-muted-foreground'>
-          <AccordionIndicator className='size-3' />
+          className='flex h-[1lh] w-icon-lg shrink-0 items-center justify-center text-muted-foreground'>
+          <AccordionIndicator className='size-icon-xs' />
         </span>
         {children}
       </AccordionPrimitive.Trigger>
@@ -110,15 +111,16 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
   );
 }
 
-// Indented to the trigger's title: its padding + the 20px icon + the 8px gap.
+// Indented to the trigger's title: its padding + the icon box (`icon-lg`) + the gap.
 const accordionContentVariants = cva(
-  '[&_a:not([data-slot=button])]:underline [&_a:not([data-slot=button])]:underline-offset-3 [&_a:not([data-slot=button])]:hover:text-foreground [&_p:not(:last-child)]:mb-4',
+  '[&_a:not([data-slot=button])]:underline [&_a:not([data-slot=button])]:underline-offset-3 [&_a:not([data-slot=button])]:hover:text-foreground [&_p:not(:last-child)]:mb-group',
   {
     variants: {
       variant: {
-        default: 'ps-9 pe-10 pb-1',
+        default:
+          'ps-[calc(var(--accordion-pad)+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-(--accordion-content-pad-end) pb-[calc(var(--accordion-pad)/2)]',
         flush:
-          'ps-[calc(var(--spacing-card)+1.75rem)] pe-card pb-3 in-data-[slot=sheet-body]:ps-[calc(var(--modal-inset)+1.75rem)] in-data-[slot=sheet-body]:pe-(--modal-inset)',
+          'ps-[calc(var(--spacing-card)+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-card pb-(--accordion-flush-content-pad-bottom) in-data-[slot=sheet-body]:ps-[calc(var(--spacing-modal)+var(--spacing-icon-lg)+var(--spacing-row-gap))] in-data-[slot=sheet-body]:pe-modal',
       },
     },
   },

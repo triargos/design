@@ -226,7 +226,7 @@ function VirtualizedItemList<T>({
       </div>
       {hasMore && <div ref={sentinelRef} className='h-px' />}
       {isLoadingMore && (
-        <div role='status' className='flex justify-center py-4'>
+        <div role='status' className='flex justify-center py-group'>
           <Spinner className='text-muted-foreground' size={20} />
           <span className='sr-only'>{loadingLabel ?? labels.loadingMore}</span>
         </div>
@@ -310,7 +310,7 @@ function Item({
     props: mergeProps<'div'>(
       {
         className: cn(
-          'group/item flex w-full flex-wrap items-center gap-2.5 rounded-control-lg border border-transparent px-3 py-2.5 text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
+          'group/item flex w-full flex-wrap items-center gap-(--item-gap) rounded-block border border-transparent px-row-pad-x py-row-pad-y text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
           className,
         ),
       },
@@ -320,14 +320,14 @@ function Item({
 }
 
 // Beside a title and description: `default` media up to 17px (an icon, a checkbox, a dot) stays on the title's line,
-// taller media start 2px down; `icon` is a quiet square tile, centred, 32px beside a title alone and 40px beside both
-// (a field-height tile, a little shorter than the two lines).
-const itemMediaVariants = cva('flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none', {
+// taller media start 2px down; `icon` is a quiet square tile, centred, `control-sm` beside a title alone and
+// `control-lg` beside both (a little shorter than the two lines).
+const itemMediaVariants = cva('flex shrink-0 items-center justify-center gap-row-gap [&_svg]:pointer-events-none', {
   variants: {
     variant: {
       default:
         'group-has-data-[slot=item-description]/item:min-h-lh group-has-data-[slot=item-description]/item:self-start group-has-data-[slot=item-description]/item:py-0.5',
-      icon: "size-8 rounded-control-lg bg-muted text-muted-foreground group-has-data-[slot=item-description]/item:size-10 [&_svg:not([class*='size-'])]:size-4",
+      icon: "size-control-sm rounded-control-lg bg-muted text-muted-foreground group-has-data-[slot=item-description]/item:size-control-lg [&_svg:not([class*='size-'])]:size-icon",
     },
   },
   defaultVariants: {
@@ -371,7 +371,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot='item-title'
       className={cn(
         'block w-fit max-w-full min-w-0 truncate text-body font-medium underline-offset-4',
-        'has-[>*]:flex has-[>*]:items-center has-[>*]:gap-2 has-[>*]:*:shrink-0 has-[>*]:[&>span:not([data-slot])]:shrink has-[>*]:[&>span:not([data-slot])]:truncate',
+        'has-[>*]:flex has-[>*]:items-center has-[>*]:gap-row-gap has-[>*]:*:shrink-0 has-[>*]:[&>span:not([data-slot])]:shrink has-[>*]:[&>span:not([data-slot])]:truncate',
         className,
       )}
       {...props}
@@ -403,7 +403,7 @@ function ItemChevron({ className, ...props }: React.ComponentProps<typeof IconCh
       data-slot='item-chevron'
       aria-hidden
       className={cn(
-        'size-4 shrink-0 text-faint-foreground transition-[color,translate] duration-feedback',
+        'size-icon shrink-0 text-faint-foreground transition-[color,translate] duration-feedback',
         'group-hover/item:text-muted-foreground group-focus-visible/item:text-muted-foreground',
         'motion-safe:group-hover/item:translate-x-0.5 motion-safe:group-focus-visible/item:translate-x-0.5',
         className,
@@ -418,7 +418,7 @@ function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='item-header'
-      className={cn('flex basis-full items-center justify-between gap-2', className)}
+      className={cn('flex basis-full items-center justify-between gap-related', className)}
       {...props}
     />
   );
@@ -429,7 +429,7 @@ function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='item-footer'
-      className={cn('flex basis-full items-center justify-between gap-2', className)}
+      className={cn('flex basis-full items-center justify-between gap-related', className)}
       {...props}
     />
   );
