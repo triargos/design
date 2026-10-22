@@ -77,7 +77,7 @@ function ContextMenuLabel({ className, ...props }: React.ComponentProps<'div'>) 
   return (
     <div
       data-slot='context-menu-label'
-      className={cn('px-2.5 pt-2 pb-1 text-overline text-muted-foreground', className)}
+      className={cn('px-2.5 pt-2 pb-1 text-caption font-medium text-muted-foreground', className)}
       {...props}
     />
   );

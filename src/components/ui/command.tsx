@@ -98,7 +98,7 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
     <CommandPrimitive.Group
       data-slot='command-group'
       className={cn(
-        // Headings in sentence case (`caption`, not `overline`): a palette's groups read as sections, not menu labels.
+        // Headings as menu labels: `caption`, medium, sentence case.
         'overflow-hidden text-foreground [[cmdk-group]:not([hidden])~&:not([cmdk-separator]+&)]:pt-2 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-1.5 **:[[cmdk-group-heading]]:pb-1.5 **:[[cmdk-group-heading]]:text-caption **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground',
         className,
       )}

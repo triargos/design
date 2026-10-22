@@ -22,7 +22,6 @@ export const TYPE_ROLES = [
   { name: 'body', px: 14, lineHeight: 21, tracking: undefined, weight: 400 },
   { name: 'control', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
   { name: 'caption', px: 12, lineHeight: 16, tracking: undefined, weight: 400 },
-  { name: 'overline', px: 10, lineHeight: 16, tracking: '0.06em', weight: 500 },
 ] as const;
 
 export type TypeRole = (typeof TYPE_ROLES)[number];

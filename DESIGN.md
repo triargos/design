@@ -7,7 +7,7 @@ What does it say?             → intent      neutral · primary · info · succ
 How loud is it?               → emphasis    solid · subtle · outline · ghost · raised
 How big is it?                → size        default · sm · xs · lg (per component)
 Where does it sit?            → surface     page · shell · card · popup        ([data-surface])
-What is the text for?         → type role   title · heading · body · control · caption · overline
+What is the text for?         → type role   title · heading · body · control · caption
 How far from its neighbour?   → spacing     tight · related · group · card · page · section
 What shape is it?             → radius role control-xs · control-sm · control · control-lg · popup · card · dialog · panel
 How high does it sit?         → elevation   flat · border · field · raised · popup · modal
@@ -77,14 +77,13 @@ Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), whic
 
 Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other t-shirt sizes do not compile. Emphasis is `font-medium` and tone is a text level; neither one is a new size.
 
-| Role            | px · weight              | Use                                                                                                            | Owner                                                   |
-| --------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `text-title`    | 28 / 36 · 500, −0.02em   | Page title; a big number (`tabular-nums`)                                                                      | Page pattern, `StatValue`                               |
-| `text-heading`  | 18 / 24 · 500, −0.01em   | Section, dialog, sheet, empty titles                                                                           | Page pattern, `DialogTitle`, `SheetTitle`, `EmptyTitle` |
-| `text-body`     | 14 / 21 · 400            | Reading text; descriptions (muted); row titles (medium). The card header sets 20px leading, its title semibold | `CardTitle`, `ItemTitle`, `*Description`                |
-| `text-control`  | 14 / 20 · 400            | Buttons, fields, menus, tabs, tables                                                                           | `Button`, `Input`, `SelectTrigger`, menu items, tabs    |
-| `text-caption`  | 12 / 16 · 400            | Meta, timestamps, badges, tooltips                                                                             | `Badge`, `TooltipContent`                               |
-| `text-overline` | 10 / 16 · 500, uppercase | Menu and group labels                                                                                          | menu labels                                             |
+| Role           | px · weight            | Use                                                                                                            | Owner                                                   |
+| -------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `text-title`   | 28 / 36 · 500, −0.02em | Page title; a big number (`tabular-nums`)                                                                      | Page pattern, `StatValue`                               |
+| `text-heading` | 18 / 24 · 500, −0.01em | Section, dialog, sheet, empty titles                                                                           | Page pattern, `DialogTitle`, `SheetTitle`, `EmptyTitle` |
+| `text-body`    | 14 / 21 · 400          | Reading text; descriptions (muted); row titles (medium). The card header sets 20px leading, its title semibold | `CardTitle`, `ItemTitle`, `*Description`                |
+| `text-control` | 14 / 20 · 400          | Buttons, fields, menus, tabs, tables                                                                           | `Button`, `Input`, `SelectTrigger`, menu items, tabs    |
+| `text-caption` | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                                             | `Badge`, `TooltipContent`                               |
 
 - Icons (Tabler, `@tabler/icons-react`) draw a 1.25px stroke at every size, the weight of their label (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
 - Below `sm` (640px), fields render 16px text (`max-sm:text-[1rem]`) and `FieldLabel` 16 / 18, so iOS does not zoom on focus. From `sm` up: 14px.
@@ -234,7 +233,7 @@ intent        neutral · primary · info · success · warning · destructive
 emphasis      solid · subtle · outline · ghost · raised      (intentVariants)
 button        (none) neutral/raised · intent='primary' · emphasis='ghost' · intent='destructive' · destructive + subtle
 text          foreground · muted-foreground · faint-foreground · disabled-foreground
-type          title 28 · heading 18 · body 14 · control 14 · caption 12 · overline 10
+type          title 28 · heading 18 · body 14 · control 14 · caption 12
 spacing       tight 4 · related 8 · group 16 · card 20 · page 32 · section 48
 radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · dialog 20 · panel 20 · rounded-inner
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal

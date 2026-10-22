@@ -264,11 +264,6 @@
   --text-control--line-height: 1.25rem;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
-  /* Menu and group labels; `.text-overline` below adds the uppercase. */
-  --text-overline: 0.625rem;
-  --text-overline--line-height: 1rem;
-  --text-overline--letter-spacing: 0.06em;
-  --text-overline--font-weight: 500;
 
   /* Toast upsert replay (`components/ui/toast.tsx`): odd and even run the same keyframes, so each update restarts them. */
   --animate-toast-success-odd: toast-pulse 0.32s cubic-bezier(0.5, 1, 0.89, 1);
@@ -451,10 +446,6 @@
       translate: -50% -50%;
     }
   }
-}
-
-@utility text-overline {
-  text-transform: uppercase;
 }
 
 /* Scrolls without a scrollbar. */
