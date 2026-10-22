@@ -3,7 +3,7 @@ import pages, { type DocsPage as DocsPageEntry } from 'virtual:docs-index';
 
 import { DocsModeContext, ExampleSourceContext } from '../docs/kit/blocks';
 import { type DocsModule, TokensContext } from '../docs/kit/docs';
-import { useCustomization } from './customize';
+import { tokenGlobals, useCustomization } from './customize';
 import { Install } from './install';
 import { controlsOf, Playground } from './playground';
 
@@ -81,7 +81,8 @@ const stayOnPage = (event: MouseEvent<HTMLDivElement>) => {
  */
 export function DocsPage({ page }: { page: DocsPageEntry }) {
   const { docs, sources } = use(loadPage(page));
-  const { surface, tokens } = useCustomization();
+  const customization = useCustomization();
+  const { surface } = customization;
   // A layout effect runs before the page's own effects (`Copy Button` clicks its buttons in one), after children render.
   useLayoutEffect(() => docs.setup?.(), [docs]);
   const { Page, playground } = docs;
@@ -112,7 +113,7 @@ export function DocsPage({ page }: { page: DocsPageEntry }) {
           surface,
         };
   return (
-    <TokensContext value={tokens}>
+    <TokensContext value={tokenGlobals(customization)}>
       <DocsModeContext value={mode}>{board}</DocsModeContext>
     </TokensContext>
   );
