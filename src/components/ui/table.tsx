@@ -508,8 +508,8 @@ const groupBand = 'flex h-(--table-group-height) items-center gap-related text-c
 
 /**
  * A flat band across every column that names the rows after it, `--table-group-height` high: lower than a row, so it
- * reads as a label for the rows, not as one of them. Children: an optional leading icon and the name; `count` adds a
- * counter after them. Static, or with `onOpenChange` a fold button (`aria-expanded`, a chevron at the end); the call
+ * reads as a label for the rows, not as one of them. Children: an optional leading icon and the name; `count` follows
+ * them, muted. Static, or with `onOpenChange` a fold button (`aria-expanded`, a chevron at the end); the call
  * site leaves out the rows of a closed group.
  */
 function TableGroupRow({
@@ -534,9 +534,7 @@ function TableGroupRow({
     <>
       {children}
       {count !== undefined && (
-        <span
-          data-slot='table-group-count'
-          className='inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-card px-1 text-caption text-muted-foreground tabular-nums shadow-border'>
+        <span data-slot='table-group-count' className='font-normal text-muted-foreground tabular-nums'>
           {count}
         </span>
       )}
