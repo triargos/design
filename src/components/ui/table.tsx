@@ -507,13 +507,14 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
 const groupBand = 'flex h-(--table-group-height) items-center gap-related text-caption font-medium text-foreground';
 
 /**
- * A flat `muted` band across every column that names the rows after it, `--table-group-height` high: lower than a row,
- * so it reads as a label for the rows, not as one of them. Static, or with `onOpenChange` a fold button
- * (`aria-expanded`, a chevron at the end); the call site leaves out the rows of a closed group. Children: an optional
- * leading icon, the name, a count (`<span className='font-normal text-muted-foreground tabular-nums'>`).
+ * A flat band across every column that names the rows after it, `--table-group-height` high: lower than a row, so it
+ * reads as a label for the rows, not as one of them. Children: an optional leading icon and the name; `count` adds a
+ * counter after them. Static, or with `onOpenChange` a fold button (`aria-expanded`, a chevron at the end); the call
+ * site leaves out the rows of a closed group.
  */
 function TableGroupRow({
   colSpan,
+  count,
   open = true,
   onOpenChange,
   className,
@@ -522,21 +523,36 @@ function TableGroupRow({
 }: Omit<ComponentProps<'tr'>, 'children'> & {
   /** Columns of the table: the band spans them all. */
   colSpan: number;
+  /** The group's rows, shown as a counter after the name. */
+  count?: number;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   children: ReactNode;
 }) {
   const variant = use(TableVariantContext);
+  const content = (
+    <>
+      {children}
+      {count !== undefined && (
+        <span
+          data-slot='table-group-count'
+          className='inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-card px-1 text-caption text-muted-foreground tabular-nums shadow-border'>
+          {count}
+        </span>
+      )}
+    </>
+  );
   return (
     <TableRow
       data-slot='table-group-row'
-      className={cn(variant !== 'card' && 'bg-muted hover:bg-muted', className)}
+      // `muted`, lightened toward the card, so the rows' hairlines still show against it.
+      className={cn(variant !== 'card' && 'bg-muted/65 hover:bg-muted/65', className)}
       {...props}>
       <TableCell
         colSpan={colSpan}
-        className='py-0 [--table-cell-fill:var(--muted)] in-[tr:hover]:[--table-cell-fill:var(--muted)]'>
+        className='py-0 [--table-cell-fill:color-mix(in_oklch,var(--muted)_65%,var(--card))] in-[tr:hover]:[--table-cell-fill:color-mix(in_oklch,var(--muted)_65%,var(--card))]'>
         {onOpenChange === undefined ? (
-          <div className={groupBand}>{children}</div>
+          <div className={groupBand}>{content}</div>
         ) : (
           <button
             type='button'
@@ -546,7 +562,7 @@ function TableGroupRow({
               groupBand,
               'group/fold relative w-full rounded-control-xs text-left outline-none hit-area focus-visible:ring-3 focus-visible:ring-ring/24',
             )}>
-            {children}
+            {content}
             <IconChevronDown
               aria-hidden
               className={cn(
