@@ -31,7 +31,7 @@ import { cn } from '~/lib/utils';
 //   shell: `<Card><Table variant='card'>…</Table></Card>`.
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
-// - groups: `TableGroupRow`, a rounded band inset in its row over every column; with `onOpenChange` it folds its rows.
+// - groups: `TableGroupRow`, a flat `muted` band across every column; with `onOpenChange` it folds its rows.
 // - a row that opens a page: `TableRowLink` in one cell; its click area covers the row (a `tr` cannot be a link).
 // - a long table: `Table virtualized items itemKey`, as `ItemList virtualized`: the rows in view render between two
 //   spacer rows, the header sticks, the columns are `table-fixed`.
@@ -363,8 +363,6 @@ function TableRow({ className, selected = false, ref, ...props }: ComponentProps
       aria-rowindex={virtualRow?.rowIndex ?? (virtualized && section === 'head' ? 1 : undefined)}
       className={cn(
         variant !== 'card' && 'border-b border-border-subtle transition-colors data-selected:bg-muted',
-        // No hairline above a group band.
-        variant !== 'card' && '[&:has(+tr[data-slot=table-group-row])]:border-b-transparent',
         variant !== 'card' && section === 'body' && 'hover:bg-row-hover',
         // A row link's click area covers the row; the row's other controls sit above it.
         'has-data-[slot=table-row-link]:relative',
@@ -484,9 +482,6 @@ const tableCellVariants = cva('py-row-pad-y align-middle', {
         'in-[tr:hover]:[--table-cell-fill:color-mix(in_oklch,var(--muted)_50%,var(--card))]',
         'in-[tr[data-selected]]:[--table-cell-fill:var(--muted)]',
         'border-b border-b-border-subtle in-[tr:last-child]:border-b-(--edge)',
-        // No hairline next to a group band: the band separates. The border takes the fill, so the shell does not show.
-        'in-[tr:has(+tr[data-slot=table-group-row])]:border-b-(--table-cell-fill)',
-        'in-[tr[data-slot=table-group-row]:not(:last-child)]:border-b-(--table-cell-fill)',
         'in-[tr:first-child]:border-t in-[tr:first-child]:border-t-(--edge)',
         'first:border-s first:border-s-(--edge) first:ps-card last:border-e last:border-e-(--edge) last:pe-card',
         'in-[tr:first-child]:first:rounded-ss-inner in-[tr:first-child]:last:rounded-se-inner',
@@ -509,32 +504,17 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
   );
 }
 
-// The band sits in from the sides of its cell (`--table-group-inset`, `--table-group-inset-card` on a flush or card table)
-// and `--spacing-tight` from the rows; the first band as far from the top edge as from the sides. Its text pads the cell edge less that inset: on the column text.
-const groupCellInset = {
-  default:
-    'px-(--table-group-inset) first:ps-(--table-group-inset) last:pe-(--table-group-inset) in-[tr:first-child]:pt-(--table-group-inset)',
-  flush:
-    'px-(--table-group-inset-card) first:ps-(--table-group-inset-card) last:pe-(--table-group-inset-card) in-[tr:first-child]:pt-(--table-group-inset-card)',
-  card: 'px-(--table-group-inset-card) first:ps-(--table-group-inset-card) last:pe-(--table-group-inset-card) in-[tr:first-child]:pt-(--table-group-inset-card)',
-} as const satisfies Record<TableVariant, string>;
-
-const groupBandEdge = {
-  default: 'px-[calc(var(--spacing-row-pad-x)-var(--table-group-inset))]',
-  flush: 'px-[calc(var(--spacing-card)-var(--table-group-inset-card))]',
-  card: 'px-[calc(var(--spacing-card)-var(--table-group-inset-card))]',
-} as const satisfies Record<TableVariant, string>;
-
-const groupBand =
-  'flex min-h-(--table-group-height) items-center gap-row-gap rounded-control bg-muted font-medium text-foreground';
+const groupBand = 'flex h-(--table-group-height) items-center gap-related text-caption font-medium text-foreground';
 
 /**
- * A rounded band over every column that names the rows after it, inset in its row; no hairline above or below it.
- * Static, or with `onOpenChange` a fold button (`aria-expanded`, a chevron at the end); the call site leaves out the
- * rows of a closed group. Children: an optional leading icon, the name, a count (`Badge size='sm' shape='pill'`).
+ * A flat band across every column that names the rows after it, `--table-group-height` high: lower than a row, so it
+ * reads as a label for the rows, not as one of them. Children: an optional leading icon and the name; `count` follows
+ * them, muted. Static, or with `onOpenChange` a fold button (`aria-expanded`, a chevron at the end); the call
+ * site leaves out the rows of a closed group.
  */
 function TableGroupRow({
   colSpan,
+  count,
   open = true,
   onOpenChange,
   className,
@@ -543,21 +523,34 @@ function TableGroupRow({
 }: Omit<ComponentProps<'tr'>, 'children'> & {
   /** Columns of the table: the band spans them all. */
   colSpan: number;
+  /** The group's rows, shown as a counter after the name. */
+  count?: number;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   children: ReactNode;
 }) {
   const variant = use(TableVariantContext);
+  const content = (
+    <>
+      {children}
+      {count !== undefined && (
+        <span data-slot='table-group-count' className='font-normal text-muted-foreground tabular-nums'>
+          {count}
+        </span>
+      )}
+    </>
+  );
   return (
     <TableRow
       data-slot='table-group-row'
-      className={cn(variant !== 'card' && 'border-b-transparent hover:bg-transparent', className)}
+      // `muted`, lightened toward the card, so the rows' hairlines still show against it.
+      className={cn(variant !== 'card' && 'bg-muted/65 hover:bg-muted/65', className)}
       {...props}>
       <TableCell
         colSpan={colSpan}
-        className={cn('py-tight in-[tr:hover]:[--table-cell-fill:var(--card)]', groupCellInset[variant])}>
+        className='py-0 [--table-cell-fill:color-mix(in_oklch,var(--muted)_65%,var(--card))] in-[tr:hover]:[--table-cell-fill:color-mix(in_oklch,var(--muted)_65%,var(--card))]'>
         {onOpenChange === undefined ? (
-          <div className={cn(groupBand, groupBandEdge[variant])}>{children}</div>
+          <div className={groupBand}>{content}</div>
         ) : (
           <button
             type='button'
@@ -565,14 +558,13 @@ function TableGroupRow({
             onClick={() => onOpenChange(!open)}
             className={cn(
               groupBand,
-              groupBandEdge[variant],
-              'group/fold w-full text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/24',
+              'group/fold relative w-full rounded-control-xs text-left outline-none hit-area focus-visible:ring-3 focus-visible:ring-ring/24',
             )}>
-            {children}
+            {content}
             <IconChevronDown
               aria-hidden
               className={cn(
-                'ms-auto size-icon shrink-0 text-muted-foreground transition-[rotate,color] duration-move ease-move group-hover/fold:text-foreground motion-reduce:transition-none',
+                'ms-auto size-icon-sm shrink-0 text-muted-foreground transition-[rotate,color] duration-move ease-move group-hover/fold:text-foreground motion-reduce:transition-none',
                 !open && '-rotate-90',
               )}
             />
