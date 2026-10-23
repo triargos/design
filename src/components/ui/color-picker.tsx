@@ -1,5 +1,5 @@
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
-import { motion, type Transition, useReducedMotion } from 'framer-motion';
+import { motion, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
 import { type CSSProperties, type PointerEvent, useState } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 
@@ -72,7 +72,7 @@ function SwatchFill({
   checked: boolean;
   hovered: boolean;
   pressed: boolean;
-  style: CSSProperties;
+  style: MotionStyle;
 }) {
   const reduceMotion = useReducedMotion();
   const scale = checked

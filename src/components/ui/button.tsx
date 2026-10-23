@@ -75,12 +75,12 @@ const SPINNER_SIZE: Record<ButtonSize, string> = {
 };
 
 interface ButtonStyleProps {
-  intent?: Intent;
-  emphasis?: Emphasis;
-  size?: ButtonSize;
+  intent?: Intent | undefined;
+  emphasis?: Emphasis | undefined;
+  size?: ButtonSize | undefined;
   /** No scale on press. */
-  static?: boolean;
-  className?: string;
+  static?: boolean | undefined;
+  className?: string | undefined;
 }
 
 /** The button classes, for an element that must stay itself (a toolbar part, a calendar day). */

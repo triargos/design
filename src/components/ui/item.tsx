@@ -3,7 +3,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { motion, type Transition, useReducedMotion } from 'framer-motion';
+import { motion, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import useMeasure from 'react-use-measure';
 
@@ -89,6 +89,7 @@ const heightSpring: Transition = { type: 'spring', stiffness: 800, damping: 55, 
 function StaticItemList({
   className,
   children,
+  style,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...props
@@ -103,6 +104,8 @@ function StaticItemList({
       initial={false}
       animate={{ height: bounds.height > 0 ? bounds.height : 'auto' }}
       transition={reduced ? { duration: 0 } : heightSpring}
+      // React's `CSSProperties` allows `undefined` values, `MotionStyle` does not: a plain style object is a valid one.
+      {...(style && { style: style as MotionStyle })}
       {...props}>
       <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
         {rows.map((row, index) => (

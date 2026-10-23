@@ -174,7 +174,7 @@ interface ToastProviderProps {
   /** Milliseconds until a toast closes; `0` keeps it open. */
   timeout?: number;
   /** Where the stack portals to; defaults to `body`. */
-  container?: HTMLElement;
+  container?: HTMLElement | undefined;
   children?: ReactNode;
 }
 

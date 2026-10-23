@@ -39,9 +39,13 @@ const focusFirstSegment = (event: React.MouseEvent<HTMLElement>) => {
 
 /**
  * `FieldLabel htmlFor={id}` only names and focuses a native input. A segmented field is a group of spinbuttons, so this
- * finds the label, returns its id for `aria-labelledby`, and focuses the first segment when the label is clicked.
+ * finds the label, returns `aria-labelledby` to spread on the field (empty until found), and focuses the first segment
+ * when the label is clicked.
  */
-function useFieldLabel(id: string | undefined, fieldRef: React.RefObject<HTMLElement | null>): string | undefined {
+function useFieldLabel(
+  id: string | undefined,
+  fieldRef: React.RefObject<HTMLElement | null>,
+): { 'aria-labelledby'?: string } {
   const [labelId, setLabelId] = React.useState<string>();
   React.useEffect(() => {
     if (!id) return;
@@ -53,7 +57,7 @@ function useFieldLabel(id: string | undefined, fieldRef: React.RefObject<HTMLEle
     label.addEventListener('click', focus);
     return () => label.removeEventListener('click', focus);
   }, [id, fieldRef]);
-  return labelId;
+  return labelId === undefined ? {} : { 'aria-labelledby': labelId };
 }
 
 /**
@@ -63,7 +67,7 @@ function useFieldLabel(id: string | undefined, fieldRef: React.RefObject<HTMLEle
 function DateField<T extends AriaDateValue>({
   className,
   ...props
-}: Omit<DateFieldProps<T>, 'className'> & { className?: string; ref?: React.Ref<HTMLDivElement> }) {
+}: Omit<DateFieldProps<T>, 'className'> & { className?: string | undefined; ref?: React.Ref<HTMLDivElement> }) {
   return (
     <AriaDateField
       data-slot='date-field'
@@ -82,7 +86,7 @@ function DateField<T extends AriaDateValue>({
 function TimeField<T extends AriaTimeValue>({
   className,
   ...props
-}: Omit<TimeFieldProps<T>, 'className'> & { className?: string; ref?: React.Ref<HTMLDivElement> }) {
+}: Omit<TimeFieldProps<T>, 'className'> & { className?: string | undefined; ref?: React.Ref<HTMLDivElement> }) {
   return (
     <AriaTimeField
       data-slot='time-field'
@@ -174,17 +178,14 @@ function DateInput({
   className,
   onBlur,
   ref,
-  id,
-  name,
-  'aria-label': ariaLabel,
   'aria-invalid': ariaInvalid,
-  'aria-describedby': ariaDescribedBy,
+  ...fieldProps
 }: DateInputProps) {
   const { locale: contextLocale, labels } = useLocale();
   const locale = localeProp ?? contextLocale;
   const chooseDateLabel = chooseDateLabelProp ?? labels.chooseDate;
   const fieldRef = React.useRef<HTMLDivElement>(null);
-  const labelId = useFieldLabel(id, fieldRef);
+  const labelledBy = useFieldLabel(fieldProps.id, fieldRef);
   const [open, setOpen] = React.useState(false);
   // The segments hold what is typed; the value only changes once the year has four digits, since typing `2026`
   // passes through the years 2, 20 and 202. A new `value` from outside replaces the draft.
@@ -205,8 +206,7 @@ function DateInput({
     <I18nProvider locale={locale}>
       <DateField
         ref={fieldRef}
-        id={id}
-        name={name}
+        {...fieldProps}
         value={draft}
         onChange={(next) => {
           setDraft(next);
@@ -224,13 +224,11 @@ function DateInput({
             setOpen(true);
           }
         }}
-        isDisabled={disabled}
+        isDisabled={disabled ?? false}
         isInvalid={ariaInvalid === true || ariaInvalid === 'true'}
         validationBehavior='aria'
         shouldForceLeadingZeros
-        aria-label={ariaLabel}
-        aria-labelledby={labelId}
-        aria-describedby={ariaDescribedBy}
+        {...labelledBy}
         onMouseDown={focusFirstSegment}
         className={className}>
         {({ state }) => {
@@ -300,29 +298,25 @@ function TimeInput({
   locale: localeProp,
   disabled,
   className,
-  id,
-  name,
-  'aria-label': ariaLabel,
   'aria-invalid': ariaInvalid,
+  ...fieldProps
 }: TimeInputProps) {
   const locale = localeProp ?? useLocale().locale;
   const fieldRef = React.useRef<HTMLDivElement>(null);
-  const labelId = useFieldLabel(id, fieldRef);
+  const labelledBy = useFieldLabel(fieldProps.id, fieldRef);
 
   return (
     <I18nProvider locale={locale}>
       <TimeField
         ref={fieldRef}
-        id={id}
-        name={name}
+        {...fieldProps}
         value={toTimeValue(value)}
         onChange={(time) => onValueChange(time ? `${pad(time.hour)}:${pad(time.minute)}` : '')}
-        isDisabled={disabled}
-        isInvalid={ariaInvalid}
+        isDisabled={disabled ?? false}
+        isInvalid={ariaInvalid ?? false}
         validationBehavior='aria'
         shouldForceLeadingZeros
-        aria-label={ariaLabel}
-        aria-labelledby={labelId}
+        {...labelledBy}
         onMouseDown={focusFirstSegment}
         className={className}>
         <SegmentsInput />

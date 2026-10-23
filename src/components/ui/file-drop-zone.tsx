@@ -31,7 +31,7 @@ interface FileDropZoneProps extends VariantProps<typeof fileDropZoneVariants> {
   accept?: string;
   multiple?: boolean;
   disabled?: boolean;
-  className?: string;
+  className?: string | undefined;
   children: ReactNode;
   'aria-label'?: string;
   'aria-invalid'?: boolean;

@@ -7,7 +7,12 @@
 
 export type Color = [L: number, C: number, H: number, A?: number];
 export type ColorFormat = 'LCH' | 'P3' | 'RGB';
-export type ColorAdjustment = Partial<{ l: number; c: number; h: number; a: number }>;
+export type ColorAdjustment = {
+  l?: number | undefined;
+  c?: number | undefined;
+  h?: number | undefined;
+  a?: number | undefined;
+};
 
 type Vec3 = [number, number, number];
 type Matrix3 = [Vec3, Vec3, Vec3];
@@ -33,12 +38,13 @@ export const ANY_COLOR_REGEX = RegExp(`^${ANY_COLOR_REGEX_LOOSE.source}$`, 'i');
 
 const D50: Vec3 = [0.3457 / 0.3585, 1, 0.2958 / 0.3585];
 
-export function toCss(format: ColorFormat, [l, c, h, a]: Color): string {
+export function toCss(format: ColorFormat, color: Color): string {
+  const [l, c, h, a] = color;
   return format === 'LCH'
     ? `lch(${round3(l)}% ${round3(c)} ${round3(h)}${a === undefined ? '' : ' / ' + round3(a)})`
     : format === 'P3'
-      ? lchToP3String([l, c, h, a])
-      : lchToRgbString([l, c, h, a]);
+      ? lchToP3String(color)
+      : lchToRgbString(color);
 }
 
 export function fromCss(css: string): Color {

@@ -179,7 +179,7 @@ export interface Theme {
   menuTheme: () => Theme;
   selectedTheme: () => Theme;
   focusTheme: () => Theme;
-  baseTheme?: Theme;
+  baseTheme?: Theme | undefined;
 }
 
 /** Thin borders get their own step only on 2x displays; elsewhere they equal the regular border. */

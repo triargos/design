@@ -23,7 +23,7 @@ type StageToast = ReturnType<typeof makeToast>;
  * A toast stack confined to a box: its own manager, its portal inside the box (`transform-gpu` makes the fixed
  * viewport position against it), no timeout, so the toasts stay open. The box is toast-wide, so the stack sits in it.
  */
-function Stage({ show, height = 'h-28' }: { show: (stageToast: StageToast) => void; height?: string }) {
+function Stage({ show, height = 'h-28' }: { show: (stageToast: StageToast) => void; height?: string | undefined }) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [manager] = useState(() => Toast.createToastManager());
   const [anchoredManager] = useState(() => Toast.createToastManager());

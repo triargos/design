@@ -30,8 +30,8 @@ interface DateRange {
 
 type CalendarProps = {
   /** Earliest and latest day that can be picked, `YYYY-MM-DD`; days outside are disabled. */
-  min?: string;
-  max?: string;
+  min?: string | undefined;
+  max?: string | undefined;
   /** Focuses the selected day (or today) on mount: for a calendar that opens in a popup. */
   autoFocus?: boolean;
   /** BCP 47; sets the month names, weekday names and the first day of the week. */
@@ -133,7 +133,7 @@ function Calendar({ min, max, autoFocus, locale: localeProp, className, ...props
     'data-slot': 'calendar',
     minValue: toDate(min),
     maxValue: toDate(max),
-    autoFocus,
+    autoFocus: autoFocus ?? false,
     className: cn('w-fit p-picker [--cell-size:var(--spacing-control)]', className),
   };
   return (

@@ -480,7 +480,13 @@ function ComboboxList({ children, className }: ComboboxListProps) {
   );
 }
 
-function VirtualizedRows({ row, className }: { row: (entry: Entry) => React.ReactNode; className?: string }) {
+function VirtualizedRows({
+  row,
+  className,
+}: {
+  row: (entry: Entry) => React.ReactNode;
+  className?: string | undefined;
+}) {
   const { open, virtualizerRef } = useComboboxContext();
   const filtered = ComboboxPrimitive.useFilteredItems<Entry>();
   const scrollRef = React.useRef<HTMLDivElement | null>(null);

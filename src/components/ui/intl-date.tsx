@@ -4,7 +4,7 @@ import { useLocale } from '~/components/ui/locale';
 /** BCP 47 locale (default `en-US`) and IANA time zone (default: the runtime's) of every formatter here. */
 interface FormatProps {
   locale?: string;
-  timeZone?: string;
+  timeZone?: string | undefined;
 }
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
