@@ -529,15 +529,12 @@
   --accordion-pad: 0.5rem;
   --accordion-content-pad-end: 2.5rem;
   --accordion-flush-content-pad-bottom: 0.75rem;
-  /* `Table`: the head row; the card variant's footer cells; the sort button; the group band, its inset in the row
-     (plain, and flush or card) and its height. */
+  /* `Table`: the head row; the card variant's footer cells; the sort button; the group band's height. */
   --table-head-height: 2.5rem;
   --table-foot-pad-y: 0.75rem;
   --table-sort-pad-x: 0.5rem;
   --table-sort-pad-y: 0.25rem;
-  --table-group-inset: 0.5rem;
-  --table-group-inset-card: 0.75rem;
-  --table-group-height: 2.75rem;
+  --table-group-height: 1.75rem;
   /* `Command`: the search row and its icon gap, group headings, the empty note, the footer. */
   --command-input-height: 3rem;
   --command-input-gap: 0.625rem;

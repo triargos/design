@@ -38,8 +38,8 @@ const PROJECTS = [
 const COLUMNS = 3;
 
 /**
- * `TableGroupRow` names the rows after it: an icon, the name, a count pill. With `onOpenChange` it folds them, and the
- * call site leaves them out.
+ * `TableGroupRow` names the rows after it: an icon, the name, a count. With `onOpenChange` it folds them, and the call
+ * site leaves them out.
  */
 export function TableGroupedRows() {
   const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
@@ -67,11 +67,9 @@ export function TableGroupedRows() {
             return (
               <Fragment key={project.id}>
                 <TableGroupRow colSpan={COLUMNS} open={open} onOpenChange={(next) => setOpen(project.id, next)}>
-                  <IconFolder aria-hidden className='size-4 shrink-0 text-muted-foreground' />
+                  <IconFolder aria-hidden className='size-icon-sm shrink-0 text-muted-foreground' />
                   {project.name}
-                  <Badge size='sm' shape='pill' className='tabular-nums'>
-                    {project.tasks.length}
-                  </Badge>
+                  <span className='font-normal text-muted-foreground tabular-nums'>{project.tasks.length}</span>
                 </TableGroupRow>
                 {open &&
                   project.tasks.map((task) => (
