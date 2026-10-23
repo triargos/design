@@ -534,7 +534,7 @@
   --table-foot-pad-y: 0.75rem;
   --table-sort-pad-x: 0.5rem;
   --table-sort-pad-y: 0.25rem;
-  --table-group-height: 1.75rem;
+  --table-group-height: 2rem;
   /* `Command`: the search row and its icon gap, group headings, the empty note, the footer. */
   --command-input-height: 3rem;
   --command-input-gap: 0.625rem;
