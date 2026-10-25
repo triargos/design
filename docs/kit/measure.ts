@@ -64,3 +64,81 @@ export const measureGaps = (root: Element): ReadonlyArray<GapBand> => {
   }
   return [...bands.values()].sort((a, b) => a.top - b.top || a.left - b.left);
 };
+
+/** A paint's top and bottom edge in px, from the top of the element's border box. */
+export interface PaintedExtent {
+  /** The border box height: what the element measures. */
+  readonly box: number;
+  readonly top: number;
+  readonly bottom: number;
+}
+
+let alphaContext: CanvasRenderingContext2D | null | undefined;
+
+/** Whether a computed color paints anything: drawn on a canvas, so every CSS color syntax counts. */
+const isVisible = (color: string): boolean => {
+  alphaContext ??= document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+  if (alphaContext === null) return color !== 'transparent';
+  alphaContext.clearRect(0, 0, 1, 1);
+  alphaContext.fillStyle = 'transparent';
+  alphaContext.fillStyle = color;
+  alphaContext.fillRect(0, 0, 1, 1);
+  return alphaContext.getImageData(0, 0, 1, 1).data[3]! > 0;
+};
+
+/** Splits a computed `box-shadow` list at the commas between shadows, not those inside a color function. */
+const splitShadows = (value: string): ReadonlyArray<string> => {
+  const parts: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let index = 0; index < value.length; index++) {
+    const char = value[index];
+    if (char === '(') depth++;
+    else if (char === ')') depth--;
+    else if (char === ',' && depth === 0) {
+      parts.push(value.slice(start, index));
+      start = index + 1;
+    }
+  }
+  parts.push(value.slice(start));
+  return parts.map((part) => part.trim()).filter((part) => part !== '' && part !== 'none');
+};
+
+/**
+ * The rows `element` paints with a hard edge: a visible border, the fill (clipped where `background-clip` says), and
+ * every unblurred shadow. An inset shadow paints inside the padding box, an outer one around the border box, grown by
+ * its spread. Blurred drops have no edge and are left out. `undefined` when nothing paints (a ghost at rest).
+ */
+export const paintedExtent = (element: HTMLElement): PaintedExtent | undefined => {
+  const style = getComputedStyle(element);
+  const box = element.offsetHeight;
+  const borderTop = parseFloat(style.borderTopWidth);
+  const borderBottom = parseFloat(style.borderBottomWidth);
+  const spans: Array<readonly [number, number]> = [];
+
+  if ((borderTop > 0 && isVisible(style.borderTopColor)) || (borderBottom > 0 && isVisible(style.borderBottomColor))) {
+    spans.push([borderTop > 0 && isVisible(style.borderTopColor) ? 0 : borderTop, box]);
+  }
+  if (isVisible(style.backgroundColor) || style.backgroundImage !== 'none') {
+    const clip = style.backgroundClip;
+    if (clip === 'border-box') spans.push([0, box]);
+    else if (clip === 'padding-box') spans.push([borderTop, box - borderBottom]);
+    else spans.push([borderTop + parseFloat(style.paddingTop), box - borderBottom - parseFloat(style.paddingBottom)]);
+  }
+  for (const shadow of splitShadows(style.boxShadow)) {
+    const color = /[a-z-]+\([^)]*\)|#[\da-f]+|\btransparent\b/i.exec(shadow)?.[0];
+    if (color === undefined || !isVisible(color)) continue;
+    const [offsetY = 0, blur = 0, spread = 0] = [...shadow.replace(color, '').matchAll(/-?[\d.]+px/g)]
+      .map(([length]) => parseFloat(length))
+      .slice(1);
+    if (blur > 0) continue;
+    if (shadow.includes('inset')) spans.push([borderTop, box - borderBottom]);
+    else spans.push([Math.min(0, offsetY - spread), Math.max(box, box + offsetY + spread)]);
+  }
+  if (spans.length === 0) return undefined;
+  return {
+    box,
+    top: Math.min(...spans.map(([top]) => top)),
+    bottom: Math.max(...spans.map(([, bottom]) => bottom)),
+  };
+};

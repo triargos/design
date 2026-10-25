@@ -180,6 +180,9 @@
   --shadow-raised: 0 0 0 1px var(--edge), 0 1px 2px -1px var(--raised-lift), 0 2px 4px 0 var(--raised-ambient);
   --shadow-raised-hover:
     0 0 0 1px var(--edge-hover), 0 1px 2px -1px var(--raised-lift-hover), 0 2px 4px 0 var(--raised-ambient-hover);
+  /* No ring: a raised button draws its `--edge` as a border, inside the box, so this is the raised drop alone. */
+  --shadow-raised-drop: 0 1px 2px -1px var(--raised-lift), 0 2px 4px 0 var(--raised-ambient);
+  --shadow-raised-drop-hover: 0 1px 2px -1px var(--raised-lift-hover), 0 2px 4px 0 var(--raised-ambient-hover);
   /* No ring: the card draws its `--edge` as a border, so this is the drop and the lit edge alone. */
   --shadow-card: 0 -1px 0 0 var(--card-edge-top), 0 1px 0 0 var(--card-edge-bottom), 0 1px 2px 0 var(--card-drop);
   --shadow-popup:

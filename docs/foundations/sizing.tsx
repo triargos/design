@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react';
 
 import { Alert, AlertAction, AlertContent } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
+import { Button, type ButtonProps } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Checkbox } from '~/components/ui/checkbox';
 import {
@@ -17,6 +17,7 @@ import {
 } from '~/components/ui/dropdown-menu';
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
+import { EMPHASES, type Emphasis, type Intent } from '~/components/ui/intent-variants';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 import { Kbd, KbdGroup } from '~/components/ui/kbd';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
@@ -45,8 +46,9 @@ import {
   sizingValues,
 } from '~/lib/theme/sizing';
 
-import { Code, FoundationPage, FoundationSection, SpecimenList, SpecimenRow } from '../kit/blocks';
+import { Code, FoundationPage, FoundationSection, Matrix, SpecimenList, SpecimenRow, StateCell } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
+import { PaintCheck, PaintCheckGroup } from '../kit/paint-check';
 
 const STYLES: ReadonlyArray<{ name: SizingStyle; label: string; description: string }> = [
   { name: 'triargos', label: 'Triargos', description: 'The default: 36px controls, 10px corners, 20px cards.' },
@@ -440,6 +442,51 @@ function ValueTable({
   );
 }
 
+/** Every emphasis, at the intent it is used with. */
+const PAINT_ROWS: ReadonlyArray<{ intent: Intent; emphasis: Emphasis }> = EMPHASES.map((emphasis) => ({
+  intent: emphasis === 'solid' ? 'primary' : 'neutral',
+  emphasis,
+}));
+
+/** The states that change what a button paints; `size` columns at rest. Focus adds its ring outside, on purpose. */
+const PAINT_COLUMNS: ReadonlyArray<{
+  name: string;
+  state: 'rest' | 'hover';
+  props: Partial<ButtonProps>;
+}> = [
+  { name: 'rest', state: 'rest', props: {} },
+  { name: 'hover', state: 'hover', props: {} },
+  { name: 'open', state: 'rest', props: { 'aria-expanded': true } },
+  { name: 'disabled', state: 'rest', props: { disabled: true } },
+  { name: 'sm', state: 'rest', props: { size: 'sm' } },
+  { name: 'lg', state: 'rest', props: { size: 'lg' } },
+];
+
+/** One row per emphasis: each button measured, so a row of buttons at one size always lines up. */
+function ButtonPaintMatrix() {
+  return (
+    <PaintCheckGroup>
+      <Matrix
+        columns={PAINT_COLUMNS.map(({ name }) => name)}
+        columnWidth='6rem'
+        rows={PAINT_ROWS.map(({ intent, emphasis }) => ({
+          name: emphasis,
+          meta: <Code>{intent}</Code>,
+          cells: PAINT_COLUMNS.map(({ name, state, props }) => (
+            <StateCell key={name} state={state}>
+              <PaintCheck>
+                <Button intent={intent} emphasis={emphasis} {...props}>
+                  Action
+                </Button>
+              </PaintCheck>
+            </StateCell>
+          )),
+        }))}
+      />
+    </PaintCheckGroup>
+  );
+}
+
 export default defineDocs({
   title: 'Sizing',
   description: 'Two axes size every component: density and radius. A sizing theme sets them on the page or a subtree.',
@@ -511,6 +558,19 @@ export default defineDocs({
             </div>
           </SpecimenRow>
         </SpecimenList>
+      </FoundationSection>
+
+      <FoundationSection
+        title='Painted height'
+        description={
+          <>
+            A control paints exactly its box: fill, border and rings stay between the dashed guides, so a 36px button
+            looks 36px at every emphasis and in every state. Measured live in this page’s theme and mode; a red reading
+            is a regression. Edges are borders inside the box (<Code>--edge</Code> on <Code>raised</Code>,{' '}
+            <Code>--intent-border</Code> on <Code>outline</Code>), never a ring outside it.
+          </>
+        }>
+        <ButtonPaintMatrix />
       </FoundationSection>
 
       <FoundationSection
