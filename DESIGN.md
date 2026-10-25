@@ -197,7 +197,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | Modal      | `rounded-dialog bg-popover shadow-modal`; header and body `--modal-inset` (24px) in, the footer a `muted` band under a rule; backdrop `black/32` + blur | `DialogContent`, `AlertDialogContent`, `SheetContent`       |
 
 - Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`; `-drop` + `-drop-hover` without the ring, on a raised button's `--edge` border), `shadow-popup`, `shadow-modal`.
-- Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop.
+- Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop. A raised button is the exception: its edge is a border over its own fill, so on a saturated surface it still reads as the button's.
 - Fields and buttons draw their edge as a real border inside the box (a 36px field or button measures 36px, and so does its fill at every emphasis); a `::before` with `shadow-field-edge` lays the accent on it. Fields and popups weight the edge toward the light: heavier at the bottom in light mode, lit at the top in dark. Dark mode drops the shadow and keeps one white ring.
 - Borders are for structure (dividers, table rules, dashed drop zones) and state (focus, invalid), never for depth.
 - Quiet fills re-declare per `[data-surface]`, so the same class reads one step from its surface. Restyle a shell by setting its variable.
