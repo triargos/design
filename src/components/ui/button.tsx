@@ -14,7 +14,7 @@ import { cn } from '~/lib/utils';
  */
 const buttonShape = cva(
   [
-    'hit-area relative inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-control font-medium whitespace-nowrap outline-none select-none',
+    'hit-area relative inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-border text-control font-medium whitespace-nowrap outline-none select-none',
     'transition-[background-color,border-color,color,box-shadow,opacity,transform,scale,--tw-gradient-from]',
     'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24',
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
@@ -24,17 +24,24 @@ const buttonShape = cva(
     variants: {
       emphasis: {
         // A top-down gradient from 15% lighter to the fill, a 1px inset highlight (30% lighter) along the top edge, a
-        // 10% darker edge; hover lifts the gradient's top to the highlight shade.
+        // 10% darker edge; hover lifts the gradient's top to the highlight shade. The fill stops at the edge; disabled has
+        // no edge, so its fill takes the whole box.
         solid: [
-          'border-[color-mix(in_oklch,var(--intent-solid),black_10%)] bg-linear-to-b from-[color-mix(in_oklch,var(--intent-solid),white_15%)] to-(--intent-solid) shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--intent-solid),white_30%)] hover:from-[color-mix(in_oklch,var(--intent-solid),white_30%)]',
-          'disabled:border-transparent disabled:bg-disabled disabled:bg-none disabled:shadow-none',
+          'border-[color-mix(in_oklch,var(--intent-solid),black_10%)] bg-clip-padding bg-linear-to-b from-[color-mix(in_oklch,var(--intent-solid),white_15%)] to-(--intent-solid) shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--intent-solid),white_30%)] hover:from-[color-mix(in_oklch,var(--intent-solid),white_30%)]',
+          'disabled:border-transparent disabled:bg-disabled disabled:bg-clip-border disabled:bg-none disabled:shadow-none',
         ],
         subtle: 'disabled:bg-disabled',
-        outline: 'disabled:inset-ring-border',
+        // The edge is the border, not `intentVariants`' inset ring: an inset ring paints inside the border, 2px short.
+        outline: 'border-(--intent-border) inset-ring-0 disabled:border-border',
         ghost: '',
-        // `intentVariants` paints the fill and the edge; the transparent border only keeps the size of the others.
-        // Disabled keeps the edge outside the box, where the raised ring sits, so the button does not shrink by 2px.
-        raised: 'bg-clip-border disabled:bg-transparent disabled:shadow-[0_0_0_1px_var(--border)]',
+        // The `--edge` is the border, inside the box, as on a field: the raised ring would sit outside it and draw the
+        // button 2px taller than the others. The fill stops at the edge, so the edge takes the color behind it.
+        // `shadow-raised-drop` is the raised drop without the ring.
+        raised: [
+          'border-(--edge) bg-clip-padding shadow-raised-drop',
+          'hover:border-(--edge-hover) hover:shadow-raised-drop-hover aria-expanded:border-(--edge-hover) aria-expanded:shadow-raised-drop-hover',
+          'disabled:border-border disabled:bg-transparent disabled:shadow-none',
+        ],
       },
       // Heights `control-xs` / `control-sm` / `control` / `control-lg`; the default is a field's height. The radius follows
       // the height (`rounded-control*`). Padding: `control-pad` (`control-pad-sm` at `sm`, `control-pad-xs` at `xs`), 2px
