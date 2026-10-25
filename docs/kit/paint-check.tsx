@@ -68,8 +68,9 @@ const describe = (extent: PaintedExtent | undefined): { label: string; ok: boole
 /**
  * Measures the `[data-slot]` control inside: the rows it paints (fill, border, rings) must be its border box, so a row
  * of controls at one size lines up whatever their emphasis. Dashed guides mark the box; the label says what it paints.
+ * `backdrop` sets the surface the control sits on, e.g. a saturated fill where a translucent edge disappears.
  */
-export function PaintCheck({ children }: { children: ReactNode }) {
+export function PaintCheck({ backdrop, children }: { backdrop?: string; children: ReactNode }) {
   const id = useId();
   const report = use(PaintCheckContext);
   const root = useRef<HTMLDivElement>(null);
@@ -108,17 +109,19 @@ export function PaintCheck({ children }: { children: ReactNode }) {
 
   return (
     <div className='flex flex-col items-start gap-tight'>
-      <div ref={root} className='relative isolate flex'>
-        {/* The box's top and bottom row, behind the control: a control that paints short of them shows the guide. */}
-        <span
-          aria-hidden
-          className='absolute -inset-x-2 top-0 -z-10 border-t border-dashed border-muted-foreground/50'
-        />
-        <span
-          aria-hidden
-          className='absolute -inset-x-2 bottom-0 -z-10 border-b border-dashed border-muted-foreground/50'
-        />
-        {children}
+      <div className={cn('flex', backdrop !== undefined && ['rounded-control-sm px-2.5 py-1.5', backdrop])}>
+        <div ref={root} className='relative isolate flex'>
+          {/* The box's top and bottom row, behind the control: a control that paints short of them shows the guide. */}
+          <span
+            aria-hidden
+            className='absolute -inset-x-2 top-0 -z-10 border-t border-dashed border-muted-foreground/50'
+          />
+          <span
+            aria-hidden
+            className='absolute -inset-x-2 bottom-0 -z-10 border-b border-dashed border-muted-foreground/50'
+          />
+          {children}
+        </div>
       </div>
       <span
         className={cn(

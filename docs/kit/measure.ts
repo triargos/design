@@ -75,16 +75,18 @@ export interface PaintedExtent {
 
 let alphaContext: CanvasRenderingContext2D | null | undefined;
 
-/** Whether a computed color paints anything: drawn on a canvas, so every CSS color syntax counts. */
-const isVisible = (color: string): boolean => {
+/** A computed color's alpha, 0–255: drawn on a canvas, so every CSS color syntax counts. */
+const alphaOf = (color: string): number => {
   alphaContext ??= document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-  if (alphaContext === null) return color !== 'transparent';
+  if (alphaContext === null) return color === 'transparent' ? 0 : 255;
   alphaContext.clearRect(0, 0, 1, 1);
   alphaContext.fillStyle = 'transparent';
   alphaContext.fillStyle = color;
   alphaContext.fillRect(0, 0, 1, 1);
-  return alphaContext.getImageData(0, 0, 1, 1).data[3]! > 0;
+  return alphaContext.getImageData(0, 0, 1, 1).data[3]!;
 };
+
+const isVisible = (color: string): boolean => alphaOf(color) > 0;
 
 /** Splits a computed `box-shadow` list at the commas between shadows, not those inside a color function. */
 const splitShadows = (value: string): ReadonlyArray<string> => {
@@ -108,6 +110,9 @@ const splitShadows = (value: string): ReadonlyArray<string> => {
  * The rows `element` paints with a hard edge: a visible border, the fill (clipped where `background-clip` says), and
  * every unblurred shadow. An inset shadow paints inside the padding box, an outer one around the border box, grown by
  * its spread. Blurred drops have no edge and are left out. `undefined` when nothing paints (a ghost at rest).
+ *
+ * A translucent border around a fill that stops inside it takes the color of the surface behind, not the control's:
+ * on a saturated surface it vanishes, and the control reads as its fill. Then the fill is the extent, not the border.
  */
 export const paintedExtent = (element: HTMLElement): PaintedExtent | undefined => {
   const style = getComputedStyle(element);
@@ -116,11 +121,15 @@ export const paintedExtent = (element: HTMLElement): PaintedExtent | undefined =
   const borderBottom = parseFloat(style.borderBottomWidth);
   const spans: Array<readonly [number, number]> = [];
 
-  if ((borderTop > 0 && isVisible(style.borderTopColor)) || (borderBottom > 0 && isVisible(style.borderBottomColor))) {
+  const clip = style.backgroundClip;
+  const hasFill = isVisible(style.backgroundColor) || style.backgroundImage !== 'none';
+  const borderOnSurface = hasFill && clip !== 'border-box' && alphaOf(style.borderTopColor) < 255;
+  const hasBorder =
+    (borderTop > 0 && isVisible(style.borderTopColor)) || (borderBottom > 0 && isVisible(style.borderBottomColor));
+  if (hasBorder && !borderOnSurface) {
     spans.push([borderTop > 0 && isVisible(style.borderTopColor) ? 0 : borderTop, box]);
   }
-  if (isVisible(style.backgroundColor) || style.backgroundImage !== 'none') {
-    const clip = style.backgroundClip;
+  if (hasFill) {
     if (clip === 'border-box') spans.push([0, box]);
     else if (clip === 'padding-box') spans.push([borderTop, box - borderBottom]);
     else spans.push([borderTop + parseFloat(style.paddingTop), box - borderBottom - parseFloat(style.paddingBottom)]);
