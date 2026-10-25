@@ -35,10 +35,11 @@ const buttonShape = cva(
         outline: 'border-(--intent-border) inset-ring-0 disabled:border-border',
         ghost: '',
         // The `--edge` is the border, inside the box, as on a field: the raised ring would sit outside it and draw the
-        // button 2px taller than the others. The fill stops at the edge, so the edge takes the color behind it.
+        // button 2px taller than the others. The fill runs under the edge, so the edge darkens the button's own fill: on a
+        // saturated surface an edge over the surface would vanish and leave the fill 2px short.
         // `shadow-raised-drop` is the raised drop without the ring.
         raised: [
-          'border-(--edge) bg-clip-padding shadow-raised-drop',
+          'border-(--edge) bg-clip-border shadow-raised-drop',
           'hover:border-(--edge-hover) hover:shadow-raised-drop-hover aria-expanded:border-(--edge-hover) aria-expanded:shadow-raised-drop-hover',
           'disabled:border-border disabled:bg-transparent disabled:shadow-none',
         ],

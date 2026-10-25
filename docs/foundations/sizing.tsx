@@ -483,6 +483,23 @@ function ButtonPaintMatrix() {
           )),
         }))}
       />
+      {/* A saturated surface, as in a hero: an edge over the surface would take its color and vanish. */}
+      <Card>
+        <CardContent className='flex flex-wrap items-start gap-group p-group'>
+          {(['raised', 'outline'] as const).map((emphasis) =>
+            PAINT_COLUMNS.slice(0, 2).map(({ name, state }) => (
+              <StateCell key={`${emphasis}-${name}`} state={state}>
+                <PaintCheck backdrop='bg-primary-solid'>
+                  <Button emphasis={emphasis}>
+                    {emphasis === 'raised' ? 'Raised' : 'Outline'}
+                    {state === 'hover' ? ' · hover' : ''}
+                  </Button>
+                </PaintCheck>
+              </StateCell>
+            )),
+          )}
+        </CardContent>
+      </Card>
     </PaintCheckGroup>
   );
 }
@@ -564,9 +581,9 @@ export default defineDocs({
         title='Painted height'
         description={
           <>
-            A control paints exactly its box: fill, border and rings stay between the dashed guides, so a 36px button
-            looks 36px at every emphasis and in every state. Measured live in this page’s theme and mode; a red reading
-            is a regression. Edges are borders inside the box (<Code>--edge</Code> on <Code>raised</Code>,{' '}
+            A control paints exactly its box: fill, border and rings stay between the dashed guides, on any surface, so
+            a 36px button looks 36px at every emphasis and in every state. Measured live in this page’s theme and mode;
+            a red reading is a regression. Edges are borders inside the box (<Code>--edge</Code> on <Code>raised</Code>,{' '}
             <Code>--intent-border</Code> on <Code>outline</Code>), never a ring outside it.
           </>
         }>
