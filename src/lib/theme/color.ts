@@ -127,6 +127,17 @@ export function adjustTo(color: Color, override: ColorAdjustment): Color {
   ];
 }
 
+/** Adds `chroma` toward `hue` to the color's chroma and hue, as vectors in the a/b plane; L and A stay. */
+export function tintToward(color: Color, hue: number, chroma: number): Color {
+  const [l, c, h, a] = color;
+  const radians = Math.PI / 180;
+  const x = c * Math.cos(h * radians) + chroma * Math.cos(hue * radians);
+  const y = c * Math.sin(h * radians) + chroma * Math.sin(hue * radians);
+  const chromaOut = clamp(Math.hypot(x, y), 0, 132);
+  const hueOut = (Math.atan2(y, x) / radians + 360) % 360;
+  return a === undefined ? [l, chromaOut, hueOut] : [l, chromaOut, hueOut, a];
+}
+
 /** Interpolates in XYZ (D50), not in polar LCH. */
 export function mix(from: Color, to: Color, amount: number): Color {
   const fromAlpha = from[3] ?? 1;

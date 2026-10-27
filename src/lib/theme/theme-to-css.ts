@@ -1,7 +1,10 @@
-import { adjust, adjustTo, fromCss, mix, toCss, type Color } from './color';
+import { adjust, adjustTo, fromCss, mix, tintToward, toCss, type Color } from './color';
 import { generateTheme, type Theme } from './theme-generator';
 
-/** Chroma and hue of the quiet fills (`--muted`, `--shell`, `--field`); see `fillTint` in `branding-theme.ts`. */
+/**
+ * The chroma the quiet fills (`--muted`, `--shell`, `--field`) add toward hue `h`, on top of their surface's own; see
+ * `fillTint` in `branding-theme.ts`.
+ */
 export interface FillTint {
   readonly c: number;
   readonly h: number;
@@ -64,18 +67,17 @@ function surfaceThemes(page: Theme): { card: Theme; cardCard: Theme; popup: Them
  * The tokens that mean "one step relative to the surface I'm on". Each surface (`[data-surface]`) re-declares them
  * from its own theme, so `bg-muted` or `bg-field` keeps its step on the page, a card, or a popup. `--surface` is the
  * surface's own color. `--shell` is the tint wrapping a card (card shell, dialog shell, tab track). `--muted`,
- * `--shell` and `--field` take the `FillTint`.
+ * `--shell` and `--field` add the `FillTint` to the surface's chroma and hue.
  */
 function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
   const { color } = theme;
   const mode = theme.isDark ? 'dark' : 'light';
   const fieldTint = { c: tint.c * FIELD_TINT_SCALE, h: tint.h };
-  const step = (l: number, stepTint: FillTint): string =>
-    toCss(theme.colorFormat, adjustTo(adjust(fromCss(color.bgBase), { l }), stepTint));
+  const tinted = (fill: Color, fillTint: FillTint): string =>
+    toCss(theme.colorFormat, tintToward(fill, fillTint.h, fillTint.c));
+  const step = (l: number, stepTint: FillTint): string => tinted(adjust(fromCss(color.bgBase), { l }), stepTint);
   return {
-    '--muted': theme.isDark
-      ? toCss(theme.colorFormat, adjustTo(fromCss(color.bgShade), tint))
-      : step(MUTED_STEP_LIGHT, tint),
+    '--muted': theme.isDark ? tinted(fromCss(color.bgShade), tint) : step(MUTED_STEP_LIGHT, tint),
     '--border-subtle': color.bgBorderFaint,
     '--border': color.bgBorder,
     '--border-strong': color.bgBorderStrong,

@@ -1,5 +1,6 @@
 import { BRAND_ANCHORS } from './brand-anchors';
 import type { BrandingTheme } from './branding';
+import { tintToward } from './color';
 import { generateTheme, type ThemeInput } from './theme-generator';
 import { inverseSurfaceVars, surfaceRules, themeToCssVars, type FillTint } from './theme-to-css';
 
@@ -31,35 +32,26 @@ const BASE_CHROMA_SCALE: Record<ThemeMode, number> = {
 const PRIMARY_TINT_CHROMA: Record<ThemeMode, number> = { light: 0.5, dark: 0 };
 
 /**
- * The quiet fills (`--muted`, `--shell`, `--field`) lean a tad toward the primary's hue, the same direction as the
- * light page tint (`PRIMARY_TINT_CHROMA`): a warm primary gives warm grays, a cool one cool grays. Chroma 3 read as
- * colored (blue on indigo); 1 reads as a gray with a temperature.
+ * Chroma the quiet fills (`--muted`, `--shell`, `--field`) add toward the primary's hue on top of their surface's own
+ * gray: a warm primary gives warmer grays, a cool one cooler ones. Added, not replacing the surface's chroma and hue:
+ * replaced, a fill on a tinted gray (slate) read as another gray than the page around it.
  */
-const FILL_CHROMA: Record<ThemeMode, number> = { light: 1, dark: 0.5 };
+const FILL_TINT_CHROMA: Record<ThemeMode, number> = { light: 0.5, dark: 0.25 };
 
 const fillTint = (theme: BrandingTheme, mode: ThemeMode): FillTint => ({
-  c: FILL_CHROMA[mode],
+  c: FILL_TINT_CHROMA[mode],
   h: BRAND_ANCHORS[theme.primaryColor][2],
 });
-
-/** Adds `chroma` toward `hue` to `[c, h]`, as vectors in the LCH a/b plane. */
-function tintToward([chroma, hue]: [number, number], towardHue: number, tint: number): [number, number] {
-  const radians = Math.PI / 180;
-  const a = chroma * Math.cos(hue * radians) + tint * Math.cos(towardHue * radians);
-  const b = chroma * Math.sin(hue * radians) + tint * Math.sin(towardHue * radians);
-  return [Math.hypot(a, b), (Math.atan2(b, a) / radians + 360) % 360];
-}
 
 function brandingThemeInput(theme: BrandingTheme, mode: ThemeMode, contrast: number): ThemeInput {
   const [, baseChroma, baseHue] = BRAND_ANCHORS[theme.baseColor];
   const primary = BRAND_ANCHORS[theme.primaryColor];
-  const [chroma, hue] = tintToward(
-    [baseChroma * BASE_CHROMA_SCALE[mode], baseHue],
-    primary[2],
-    PRIMARY_TINT_CHROMA[mode],
-  );
   return {
-    base: [BASE_LIGHTNESS[mode], chroma, hue],
+    base: tintToward(
+      [BASE_LIGHTNESS[mode], baseChroma * BASE_CHROMA_SCALE[mode], baseHue],
+      primary[2],
+      PRIMARY_TINT_CHROMA[mode],
+    ),
     accent: primary,
     contrast,
     colorFormat: 'LCH',
