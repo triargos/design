@@ -30,7 +30,8 @@ const gridCollapsed = { gridTemplateRows: '0fr', opacity: 0 } as const;
 const gridExpanded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 
 // Geometry: the shell is `rounded-card` and sets `--outer-radius` / `--outer-inset` (`p-card-inset`); the content takes
-// `rounded-inner`, so it stays concentric at any tuned card radius or inset.
+// `rounded-inner`, so it stays concentric at any tuned card radius or inset. Without a shell it falls back to
+// `rounded-card` (a list under a plain section title); an `--outer-radius` / `--outer-inset` set on or above it wins.
 //
 // Text edge: content starts inside the card's 1px edge, so what sits on the shell (header, footer) pads `card` + 1px
 // (`px-[calc(var(--spacing-card)+1px)]`). Content padded `p-card` and header text then share one edge, as do header and
@@ -162,7 +163,12 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
     render,
     state: { slot: 'card-content', surface: 'card' },
     props: mergeProps<'div'>(
-      { className: cn('rounded-inner border border-(--edge) bg-card bg-clip-padding shadow-card', className) },
+      {
+        className: cn(
+          'rounded-[max(0px,calc(var(--outer-radius,var(--radius-card))-var(--outer-inset,0px)))] border border-(--edge) bg-card bg-clip-padding shadow-card',
+          className,
+        ),
+      },
       props,
     ),
   });
