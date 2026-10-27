@@ -17,11 +17,16 @@ import { cn } from '~/lib/utils';
  * - `Tabs` > `TabsList` > `TabsTrigger value`, with `TabsContent` panels: Base UI tabs.
  * - `TabsNav` > `TabsLink`: a `<nav>` of page links; `current` marks the page.
  * - `TabsRadioGroup value onValueChange` > `TabsRadio value`: a single choice without panels.
+ *
+ * `segmented` also takes `shape='pill'`: round tabs on a round track 2px around them, for a control inside a row (a
+ * menu row's theme switch). An icon-only tab there needs an `aria-label`.
  */
 type TabsVariant = 'segmented' | 'underline' | 'pill';
+type TabsShape = 'default' | 'pill';
 
 const tabsListVariants = cva('relative isolate flex w-fit max-w-full items-center', {
   variants: {
+    shape: { default: '', pill: '' },
     variant: {
       // Track radius = tab radius + track padding, so the corners stay concentric; the padding counts only up to the
       // tab radius, so square tabs sit in a square track.
@@ -31,6 +36,14 @@ const tabsListVariants = cva('relative isolate flex w-fit max-w-full items-cente
       pill: 'flex-wrap gap-control-gap',
     },
   },
+  compoundVariants: [
+    {
+      variant: 'segmented',
+      shape: 'pill',
+      // The tab's own fill reads one step from the row it sits on, so the track tints with the text color.
+      className: '[--tabs-inset:2px] [--tabs-radius:var(--radius-track)] bg-foreground/6',
+    },
+  ],
 });
 
 const tabsTriggerVariants = cva(
@@ -42,8 +55,9 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
+        // An icon alone: as wide as the icon and `control-pad-xs` either side.
         segmented:
-          'rounded-(--tabs-radius) px-control-pad-sm aria-[current=page]:text-foreground data-active:text-foreground',
+          'rounded-(--tabs-radius) px-control-pad-sm has-[>svg:only-child]:px-control-pad-xs aria-[current=page]:text-foreground data-active:text-foreground aria-checked:text-foreground',
         // 2px in from the ends, room for the focus ring.
         underline: 'h-control rounded-control-xs px-0.5 data-active:text-foreground',
         // A resting fill, so each pill reads as a target; the indicator covers it when checked. 2px more padding than a
@@ -73,20 +87,26 @@ const indicatorVariants = cva(
 
 const TabsVariantContext = React.createContext<TabsVariant>('segmented');
 
-type VariantProp = { variant?: TabsVariant };
+type VariantProp = { variant?: TabsVariant; shape?: TabsShape };
 
 function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
   return <TabsPrimitive.Root data-slot='tabs' className={cn('group/tabs', className)} {...props} />;
 }
 
 /** The tab row of `Tabs`. */
-function TabsList({ className, variant = 'segmented', children, ...props }: TabsPrimitive.List.Props & VariantProp) {
+function TabsList({
+  className,
+  variant = 'segmented',
+  shape = 'default',
+  children,
+  ...props
+}: TabsPrimitive.List.Props & VariantProp) {
   return (
     <TabsVariantContext value={variant}>
       <TabsPrimitive.List
         data-slot='tabs-list'
         data-variant={variant}
-        className={cn(tabsListVariants({ variant }), className)}
+        className={cn(tabsListVariants({ variant, shape }), className)}
         {...props}>
         <TabsPrimitive.Indicator data-slot='tabs-indicator' className={indicatorVariants({ variant })} />
         {children}
@@ -123,6 +143,7 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
 function TabsNav({
   className,
   variant = 'segmented',
+  shape = 'default',
   'aria-label': ariaLabel,
   children,
   ...props
@@ -134,7 +155,7 @@ function TabsNav({
         data-slot='tabs-list'
         data-variant={variant}
         aria-label={ariaLabel ?? labels.pageTabs}
-        className={cn(tabsListVariants({ variant }), className)}
+        className={cn(tabsListVariants({ variant, shape }), className)}
         {...props}>
         <SlidingIndicator activeSelector='[aria-current=page]' variant={variant} />
         {children}
@@ -177,6 +198,7 @@ const RadioContext = React.createContext<RadioState | null>(null);
 function TabsRadioGroup({
   className,
   variant = 'pill',
+  shape = 'default',
   value,
   onValueChange,
   children,
@@ -189,7 +211,7 @@ function TabsRadioGroup({
           role='radiogroup'
           data-slot='tabs-list'
           data-variant={variant}
-          className={cn(tabsListVariants({ variant }), 'w-auto', className)}
+          className={cn(tabsListVariants({ variant, shape }), 'w-auto', className)}
           {...props}>
           <SlidingIndicator activeSelector='[aria-checked=true]' variant={variant} />
           {children}

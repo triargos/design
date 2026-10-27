@@ -3,6 +3,7 @@ import { TabsAsRadio } from '../examples/tabs/as-radio';
 import { TabsDefault } from '../examples/tabs/default';
 import { TabsInACard } from '../examples/tabs/in-a-card';
 import { TabsPill } from '../examples/tabs/pill';
+import { TabsSegmentedPill } from '../examples/tabs/segmented-pill';
 import { TabsUnderline } from '../examples/tabs/underline';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -41,6 +42,17 @@ export default defineDocs({
           </>
         }>
         <TabsAsRadio />
+      </ExampleSection>
+      <ExampleSection
+        title='Segmented pill'
+        description={
+          <>
+            <Code>shape='pill'</Code> on a segmented list: round tabs 2px into a round track, for a control inside a row
+            (a menu row's theme switch). Icon-only tabs need an <Code>aria-label</Code>; <Code>flex-1</Code> tabs fill
+            the width.
+          </>
+        }>
+        <TabsSegmentedPill />
       </ExampleSection>
       <ExampleSection title='In a card' bare>
         <TabsInACard />
