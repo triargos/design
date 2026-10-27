@@ -80,6 +80,23 @@
       ]
     },
     {
+      "name": "use-virtual-rows",
+      "type": "registry:hook",
+      "dependencies": [
+        "@tanstack/react-virtual@3.14.13"
+      ],
+      "registryDependencies": [
+        "@triargos/locale",
+        "@triargos/spinner"
+      ],
+      "files": [
+        {
+          "path": "src/hooks/use-virtual-rows.tsx",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "accordion",
       "type": "registry:ui",
       "dependencies": [
@@ -715,16 +732,14 @@
       "dependencies": [
         "@base-ui/react@1.8.0",
         "@tabler/icons-react@3.49.0",
-        "@tanstack/react-virtual@3.14.13",
         "class-variance-authority@^0.7.1",
         "framer-motion@13.4.4",
         "react-use-measure@^2.1.7"
       ],
       "registryDependencies": [
-        "@triargos/locale",
         "@triargos/skeleton",
-        "@triargos/spinner",
         "@triargos/theme",
+        "@triargos/use-virtual-rows",
         "@triargos/utils"
       ],
       "files": [
@@ -1079,13 +1094,11 @@
       "dependencies": [
         "@base-ui/react@1.8.0",
         "@tabler/icons-react@3.49.0",
-        "@tanstack/react-virtual@3.14.13",
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/spinner",
         "@triargos/theme",
+        "@triargos/use-virtual-rows",
         "@triargos/utils"
       ],
       "files": [

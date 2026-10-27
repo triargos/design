@@ -1,16 +1,14 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { IconChevronRight } from '@tabler/icons-react';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { motion, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import useMeasure from 'react-use-measure';
 
 import { Skeleton } from '~/components/ui/skeleton';
-import { Spinner } from '~/components/ui/spinner';
 
-import { useLocale } from '~/components/ui/locale';
+import { LoadMore, useVirtualRows } from '~/hooks/use-virtual-rows';
 import { cn } from '~/lib/utils';
 
 /**
@@ -120,27 +118,6 @@ function StaticItemList({
   );
 }
 
-/** Distance from the top of the scroll content of `scrollElement` to the top of `element`. */
-function useOffsetInScrollElement(scrollElement: HTMLElement | null, element: HTMLElement | null) {
-  const [offset, setOffset] = React.useState(0);
-  React.useLayoutEffect(() => {
-    if (!scrollElement || !element) return;
-    const measure = () =>
-      setOffset(
-        element.getBoundingClientRect().top -
-          scrollElement.getBoundingClientRect().top -
-          scrollElement.clientTop +
-          scrollElement.scrollTop,
-      );
-    measure();
-    // Content above the list can change height after it loads.
-    const observer = new ResizeObserver(measure);
-    for (const child of scrollElement.children) observer.observe(child);
-    return () => observer.disconnect();
-  }, [scrollElement, element]);
-  return offset;
-}
-
 function VirtualizedItemList<T>({
   className,
   items,
@@ -157,41 +134,21 @@ function VirtualizedItemList<T>({
   'aria-labelledby': ariaLabelledBy,
   ...props
 }: Extract<ItemListProps<T>, { virtualized: true }>) {
-  const { labels } = useLocale();
   const ownScroll = scrollElement === undefined;
   const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
   const scroller = ownScroll ? container : scrollElement;
   const [list, setList] = React.useState<HTMLDivElement | null>(null);
-  const scrollMargin = useOffsetInScrollElement(scroller, list);
-  const virtualizer = useVirtualizer({
-    count: items.length,
-    getScrollElement: () => scroller,
-    estimateSize: () => estimatedItemSize,
-    getItemKey: (index) => itemKey(items[index]!),
-    overscan: 5,
-    scrollMargin,
+  const { virtualizer, scrollMargin, sentinelRef } = useVirtualRows({
+    items,
+    itemKey,
+    estimatedItemSize,
+    scroller,
+    start: list,
+    hasMore,
+    isLoadingMore,
+    onLoadMore,
   });
   const rows = virtualizer.getVirtualItems();
-
-  const sentinelRef = React.useRef<HTMLDivElement>(null);
-  const [nearEnd, setNearEnd] = React.useState(false);
-  // Re-observe when `hasMore` mounts the sentinel and after each page, so a sentinel still in view reports again.
-  React.useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel || !scroller) {
-      setNearEnd(false);
-      return;
-    }
-    const observer = new IntersectionObserver(([entry]) => setNearEnd(entry!.isIntersecting), {
-      root: scroller,
-      rootMargin: '500px',
-    });
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [scroller, items.length, hasMore]);
-  React.useEffect(() => {
-    if (nearEnd && hasMore && !isLoadingMore) onLoadMore?.();
-  }, [nearEnd, hasMore, isLoadingMore, onLoadMore]);
 
   return (
     <div
@@ -229,13 +186,7 @@ function VirtualizedItemList<T>({
           ))}
         </div>
       </div>
-      {hasMore && <div ref={sentinelRef} className='h-px' />}
-      {isLoadingMore && (
-        <div role='status' className='flex justify-center py-group'>
-          <Spinner className='text-muted-foreground' size={20} />
-          <span className='sr-only'>{loadingLabel ?? labels.loadingMore}</span>
-        </div>
-      )}
+      <LoadMore sentinelRef={sentinelRef} hasMore={hasMore} isLoadingMore={isLoadingMore} label={loadingLabel} />
     </div>
   );
 }
