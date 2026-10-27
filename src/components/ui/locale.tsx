@@ -42,7 +42,7 @@ interface Labels {
   readonly more: string;
   /** SortableItemHandle. */
   readonly dragToReorder: string;
-  /** A `SheetPage`'s back button. */
+  /** A `DrawerPage`'s back button. */
   readonly back: string;
 }
 

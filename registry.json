@@ -490,6 +490,27 @@
       ]
     },
     {
+      "name": "drawer",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react@1.8.0",
+        "@tabler/icons-react@3.49.0",
+        "framer-motion@13.4.4"
+      ],
+      "registryDependencies": [
+        "@triargos/button",
+        "@triargos/locale",
+        "@triargos/theme",
+        "@triargos/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/drawer.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "dropdown-menu",
       "type": "registry:ui",
       "dependencies": [

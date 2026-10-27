@@ -35,10 +35,10 @@ const durations = [
     owner: 'Dialog, AlertDialog',
   },
   {
-    className: 'duration-sheet',
+    className: 'duration-drawer',
     ms: 560,
-    use: 'A bottom sheet entering and leaving, on ease-spring',
-    owner: "SheetContent side='bottom'",
+    use: 'A drawer entering and leaving, on ease-spring',
+    owner: 'DrawerContent',
   },
   {
     className: 'duration-indicator',
@@ -50,7 +50,7 @@ const durations = [
     className: 'duration-press',
     ms: 300,
     use: 'A press releasing, a check popping in, on ease-spring-bounce',
-    owner: 'SheetOption',
+    owner: 'DrawerOption',
   },
 ] as const;
 
@@ -71,8 +71,8 @@ const easings = [
 const springs = [
   {
     className: 'ease-spring',
-    duration: 'duration-sheet',
-    use: 'ζ 0.82, about 1% overshoot. Sheets, pages, arriving content.',
+    duration: 'duration-drawer',
+    use: 'ζ 0.82, about 1% overshoot. Drawers, pages, arriving content.',
   },
   {
     className: 'ease-spring-bounce',
@@ -163,7 +163,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Springs in CSS'
-        description='A damped spring sampled into linear(), for motion that CSS runs: a sheet, a page, an indicator. Interruptible motion in code stays a Motion spring.'>
+        description='A damped spring sampled into linear(), for motion that CSS runs: a drawer, a page, an indicator. Interruptible motion in code stays a Motion spring.'>
         <SpecimenList>
           {springs.map((spring) => (
             <SpecimenRow key={spring.className} name={spring.className} meta={spring.use}>
