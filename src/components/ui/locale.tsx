@@ -42,6 +42,8 @@ interface Labels {
   readonly more: string;
   /** SortableItemHandle. */
   readonly dragToReorder: string;
+  /** A `SheetPage`'s back button. */
+  readonly back: string;
 }
 
 const englishLabels: Labels = {
@@ -69,6 +71,7 @@ const englishLabels: Labels = {
   mainNavigation: 'Main',
   more: 'More',
   dragToReorder: 'Drag to reorder',
+  back: 'Back',
 };
 
 interface LocaleContextValue {

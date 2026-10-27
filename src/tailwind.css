@@ -625,6 +625,20 @@
   --bottom-nav-tab-height: 3.25rem;
   /* A docked `ActionBar`'s buttons in a labelled nav: a finger's target. */
   --bottom-nav-action-height: 2.75rem;
+  /* `SheetContent side='bottom'`: its corner and its inset from the screen edge; its pages' padding; the grabber;
+     a menu row, its corner and its padding; an option row's corner. */
+  --sheet-bottom-radius: 2rem;
+  --sheet-bottom-inset: 0.5rem;
+  --sheet-page-pad: 0.625rem;
+  --sheet-grabber-width: 2.25rem;
+  --sheet-grabber-height: 0.25rem;
+  --sheet-menu-item-height: 3rem;
+  --sheet-menu-item-radius: 0.875rem;
+  --sheet-menu-item-pad-x: 0.875rem;
+  --sheet-option-radius: 1rem;
+  /* `side='bottom'` rows and page titles: a phone's text size, as fields below `sm`. */
+  --sheet-text: 1rem;
+  --sheet-text-leading: 1.5rem;
   /* `Accordion` `default`: the trigger's padding (half of it below the trigger and the content); the content's end
      padding. `flush`: the content's bottom padding. */
   --accordion-pad: 0.5rem;

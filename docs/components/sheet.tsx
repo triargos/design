@@ -1,3 +1,4 @@
+import { SheetBottom } from '../examples/sheet/bottom';
 import { SheetDefault } from '../examples/sheet/default';
 import { SheetDirections } from '../examples/sheet/directions';
 import { SheetSizes } from '../examples/sheet/sizes';
@@ -42,6 +43,20 @@ export default defineDocs({
           </>
         }>
         <SheetDirections />
+      </ExampleSection>
+      <ExampleSection
+        title='Bottom, with pages'
+        description={
+          <>
+            <Code>side='bottom'</Code>: a menu on a phone, floating 8px in, springing up (
+            <Code>duration-sheet ease-spring</Code>). Drag its top down to dismiss. <Code>SheetStack</Code> holds{' '}
+            <Code>SheetPage</Code>s: <Code>SheetMenuItem push</Code> morphs to the next one: its rows blur out, the next
+            page's cascade in from the side, the sheet springs to its height. The page's back button pops it; on open
+            the rows rise in. <Code>SheetMenuGroup</Code>s part with a hairline; <Code>SheetOption</Code> is a choice
+            with a check. <Code>useSheetStack()</Code> pushes from code.
+          </>
+        }>
+        <SheetBottom />
       </ExampleSection>
     </FoundationPage>
   ),
