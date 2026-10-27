@@ -75,8 +75,7 @@ export function DrawerAccountMenu() {
                 {theme === 'dark' ? <IconMoon /> : <IconSun />}
                 <span id='drawer-account-theme'>Appearance</span>
                 <TabsRadioGroup
-                  variant='segmented'
-                  shape='pill'
+                  variant='inline'
                   aria-labelledby='drawer-account-theme'
                   value={theme}
                   onValueChange={setTheme}>

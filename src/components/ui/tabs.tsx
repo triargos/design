@@ -12,39 +12,36 @@ import { cn } from '~/lib/utils';
  * - `segmented`: a track on the shell, the active tab a raised chip that slides. Views of a page.
  * - `underline`: tabs on a hairline, the active one underlined. Sections inside a card or a popup.
  * - `pill`: separate pills, the active one in the brand fill. Filters and choices.
+ * - `inline`: `segmented`, round and 2px into a track tinted with the text color, for a control inside a row (a menu
+ *   row's theme switch). An icon-only tab needs an `aria-label`.
  *
  * And each has its own semantics:
  * - `Tabs` > `TabsList` > `TabsTrigger value`, with `TabsContent` panels: Base UI tabs.
  * - `TabsNav` > `TabsLink`: a `<nav>` of page links; `current` marks the page.
  * - `TabsRadioGroup value onValueChange` > `TabsRadio value`: a single choice without panels.
- *
- * `segmented` also takes `shape='pill'`: round tabs on a round track 2px around them, for a control inside a row (a
- * menu row's theme switch). An icon-only tab there needs an `aria-label`.
  */
-type TabsVariant = 'segmented' | 'underline' | 'pill';
-type TabsShape = 'default' | 'pill';
+type TabsVariant = 'segmented' | 'underline' | 'pill' | 'inline';
+
+// Track radius = tab radius + track padding, so the corners stay concentric; the padding counts only up to the tab
+// radius, so square tabs sit in a square track.
+const segmentedTrack =
+  'flex-wrap rounded-[calc(var(--tabs-radius)+min(var(--tabs-inset),var(--tabs-radius)))] p-(--tabs-inset)';
 
 const tabsListVariants = cva('relative isolate flex w-fit max-w-full items-center', {
   variants: {
-    shape: { default: '', pill: '' },
     variant: {
-      // Track radius = tab radius + track padding, so the corners stay concentric; the padding counts only up to the
-      // tab radius, so square tabs sit in a square track.
-      segmented:
-        'flex-wrap rounded-[calc(var(--tabs-radius)+min(var(--tabs-inset),var(--tabs-radius)))] bg-shell p-(--tabs-inset)',
+      segmented: cn(segmentedTrack, 'bg-shell'),
       underline: 'gap-group border-b border-border',
       pill: 'flex-wrap gap-control-gap',
+      // The tab's own fill reads one step from the row it sits on, so the track tints with the text color.
+      inline: cn(segmentedTrack, 'bg-foreground/6 [--tabs-inset:2px] [--tabs-radius:var(--radius-track)]'),
     },
   },
-  compoundVariants: [
-    {
-      variant: 'segmented',
-      shape: 'pill',
-      // The tab's own fill reads one step from the row it sits on, so the track tints with the text color.
-      className: '[--tabs-inset:2px] [--tabs-radius:var(--radius-track)] bg-foreground/6',
-    },
-  ],
 });
+
+// An icon alone: as wide as the icon and `control-pad-xs` either side.
+const segmentedTab =
+  'rounded-(--tabs-radius) px-control-pad-sm has-[>svg:only-child]:px-control-pad-xs aria-[current=page]:text-foreground data-active:text-foreground aria-checked:text-foreground';
 
 const tabsTriggerVariants = cva(
   [
@@ -55,9 +52,8 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
-        // An icon alone: as wide as the icon and `control-pad-xs` either side.
-        segmented:
-          'rounded-(--tabs-radius) px-control-pad-sm has-[>svg:only-child]:px-control-pad-xs aria-[current=page]:text-foreground data-active:text-foreground aria-checked:text-foreground',
+        segmented: segmentedTab,
+        inline: segmentedTab,
         // 2px in from the ends, room for the focus ring.
         underline: 'h-control rounded-control-xs px-0.5 data-active:text-foreground',
         // A resting fill, so each pill reads as a target; the indicator covers it when checked. 2px more padding than a
@@ -78,6 +74,7 @@ const indicatorVariants = cva(
     variants: {
       variant: {
         segmented: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/10',
+        inline: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/10',
         underline: 'after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full after:bg-foreground',
         pill: 'rounded-full bg-primary-solid',
       },
@@ -87,26 +84,20 @@ const indicatorVariants = cva(
 
 const TabsVariantContext = React.createContext<TabsVariant>('segmented');
 
-type VariantProp = { variant?: TabsVariant; shape?: TabsShape };
+type VariantProp = { variant?: TabsVariant };
 
 function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
   return <TabsPrimitive.Root data-slot='tabs' className={cn('group/tabs', className)} {...props} />;
 }
 
 /** The tab row of `Tabs`. */
-function TabsList({
-  className,
-  variant = 'segmented',
-  shape = 'default',
-  children,
-  ...props
-}: TabsPrimitive.List.Props & VariantProp) {
+function TabsList({ className, variant = 'segmented', children, ...props }: TabsPrimitive.List.Props & VariantProp) {
   return (
     <TabsVariantContext value={variant}>
       <TabsPrimitive.List
         data-slot='tabs-list'
         data-variant={variant}
-        className={cn(tabsListVariants({ variant, shape }), className)}
+        className={cn(tabsListVariants({ variant }), className)}
         {...props}>
         <TabsPrimitive.Indicator data-slot='tabs-indicator' className={indicatorVariants({ variant })} />
         {children}
@@ -143,7 +134,6 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
 function TabsNav({
   className,
   variant = 'segmented',
-  shape = 'default',
   'aria-label': ariaLabel,
   children,
   ...props
@@ -155,7 +145,7 @@ function TabsNav({
         data-slot='tabs-list'
         data-variant={variant}
         aria-label={ariaLabel ?? labels.pageTabs}
-        className={cn(tabsListVariants({ variant, shape }), className)}
+        className={cn(tabsListVariants({ variant }), className)}
         {...props}>
         <SlidingIndicator activeSelector='[aria-current=page]' variant={variant} />
         {children}
@@ -198,7 +188,6 @@ const RadioContext = React.createContext<RadioState | null>(null);
 function TabsRadioGroup({
   className,
   variant = 'pill',
-  shape = 'default',
   value,
   onValueChange,
   children,
@@ -211,7 +200,7 @@ function TabsRadioGroup({
           role='radiogroup'
           data-slot='tabs-list'
           data-variant={variant}
-          className={cn(tabsListVariants({ variant, shape }), 'w-auto', className)}
+          className={cn(tabsListVariants({ variant }), 'w-auto', className)}
           {...props}>
           <SlidingIndicator activeSelector='[aria-checked=true]' variant={variant} />
           {children}
