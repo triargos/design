@@ -13,22 +13,22 @@ import { useState } from 'react';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import {
-  Sheet,
-  SheetContent,
-  SheetMenuGroup,
-  SheetMenuItem,
-  SheetMenuRow,
-  SheetMenuValue,
-  SheetOption,
-  SheetOptionContent,
-  SheetOptionDescription,
-  SheetOptionGroup,
-  SheetOptionMedia,
-  SheetOptionTitle,
-  SheetPage,
-  SheetStack,
-  SheetTrigger,
-} from '~/components/ui/sheet';
+  Drawer,
+  DrawerContent,
+  DrawerMenuGroup,
+  DrawerMenuItem,
+  DrawerMenuRow,
+  DrawerMenuValue,
+  DrawerOption,
+  DrawerOptionContent,
+  DrawerOptionDescription,
+  DrawerOptionGroup,
+  DrawerOptionMedia,
+  DrawerOptionTitle,
+  DrawerPage,
+  DrawerStack,
+  DrawerTrigger,
+} from '~/components/ui/drawer';
 import { TabsRadio, TabsRadioGroup } from '~/components/ui/tabs';
 
 const WORKSPACES = [
@@ -37,22 +37,22 @@ const WORKSPACES = [
 ] as const;
 
 /**
- * An account menu on a phone: menu groups on the first page, a picker pushed on top. Drag the top down, tap outside or
+ * An account menu on a phone: menu groups on the first page, a picker pushed on top. Swipe it down, tap outside or
  * press Esc to close; picking closes it after the check moves.
  */
-export function SheetBottom() {
+export function DrawerAccountMenu() {
   const [open, setOpen] = useState(false);
   const [workspace, setWorkspace] = useState<string>('family');
   const [theme, setTheme] = useState('system');
   const current = WORKSPACES.find((option) => option.id === workspace)!;
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={<Button />}>Account menu</SheetTrigger>
-      <SheetContent side='bottom' aria-label='Account menu'>
-        <SheetStack initial='root'>
-          <SheetPage page='root'>
-            <div className='flex touch-none items-center gap-part px-related pb-related'>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger render={<Button />}>Account menu</DrawerTrigger>
+      <DrawerContent aria-label='Account menu'>
+        <DrawerStack initial='root'>
+          <DrawerPage page='root'>
+            <div className='flex items-center gap-part px-related pb-related'>
               <Avatar size='3xl'>
                 <AvatarFallback>AM</AvatarFallback>
               </Avatar>
@@ -61,23 +61,23 @@ export function SheetBottom() {
                 <p className='truncate text-caption text-muted-foreground'>Lindenschule · {current.title}</p>
               </div>
             </div>
-            <SheetMenuGroup>
-              <SheetMenuItem>
+            <DrawerMenuGroup>
+              <DrawerMenuItem>
                 <IconSettings />
                 <span>Settings</span>
-              </SheetMenuItem>
-              <SheetMenuItem push='workspace'>
+              </DrawerMenuItem>
+              <DrawerMenuItem push='workspace'>
                 <IconDeviceDesktop />
                 <span>Workspace</span>
-                <SheetMenuValue>{current.title}</SheetMenuValue>
-              </SheetMenuItem>
-              <SheetMenuRow>
+                <DrawerMenuValue>{current.title}</DrawerMenuValue>
+              </DrawerMenuItem>
+              <DrawerMenuRow>
                 {theme === 'dark' ? <IconMoon /> : <IconSun />}
-                <span id='sheet-bottom-theme'>Appearance</span>
+                <span id='drawer-account-theme'>Appearance</span>
                 <TabsRadioGroup
                   variant='segmented'
                   shape='pill'
-                  aria-labelledby='sheet-bottom-theme'
+                  aria-labelledby='drawer-account-theme'
                   value={theme}
                   onValueChange={setTheme}>
                   <TabsRadio value='light' aria-label='Light'>
@@ -90,40 +90,40 @@ export function SheetBottom() {
                     <IconDeviceDesktop />
                   </TabsRadio>
                 </TabsRadioGroup>
-              </SheetMenuRow>
-            </SheetMenuGroup>
-            <SheetMenuGroup>
-              <SheetMenuItem>
+              </DrawerMenuRow>
+            </DrawerMenuGroup>
+            <DrawerMenuGroup>
+              <DrawerMenuItem>
                 <IconMessageReport />
                 <span>Report a problem</span>
-              </SheetMenuItem>
-              <SheetMenuItem intent='destructive' onClick={() => setOpen(false)}>
+              </DrawerMenuItem>
+              <DrawerMenuItem intent='destructive' onClick={() => setOpen(false)}>
                 <IconLogout />
                 <span>Sign out</span>
-              </SheetMenuItem>
-            </SheetMenuGroup>
-          </SheetPage>
-          <SheetPage page='workspace' title='Workspace'>
-            <SheetOptionGroup aria-label='Workspace'>
+              </DrawerMenuItem>
+            </DrawerMenuGroup>
+          </DrawerPage>
+          <DrawerPage page='workspace' title='Workspace'>
+            <DrawerOptionGroup aria-label='Workspace'>
               {WORKSPACES.map((option) => (
-                <SheetOption
+                <DrawerOption
                   key={option.id}
                   checked={workspace === option.id}
                   onClick={() => {
                     setWorkspace(option.id);
                     setTimeout(() => setOpen(false), 220);
                   }}>
-                  <SheetOptionMedia>{option.icon}</SheetOptionMedia>
-                  <SheetOptionContent>
-                    <SheetOptionTitle>{option.title}</SheetOptionTitle>
-                    <SheetOptionDescription>{option.description}</SheetOptionDescription>
-                  </SheetOptionContent>
-                </SheetOption>
+                  <DrawerOptionMedia>{option.icon}</DrawerOptionMedia>
+                  <DrawerOptionContent>
+                    <DrawerOptionTitle>{option.title}</DrawerOptionTitle>
+                    <DrawerOptionDescription>{option.description}</DrawerOptionDescription>
+                  </DrawerOptionContent>
+                </DrawerOption>
               ))}
-            </SheetOptionGroup>
-          </SheetPage>
-        </SheetStack>
-      </SheetContent>
-    </Sheet>
+            </DrawerOptionGroup>
+          </DrawerPage>
+        </DrawerStack>
+      </DrawerContent>
+    </Drawer>
   );
 }
