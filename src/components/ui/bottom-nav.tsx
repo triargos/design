@@ -80,7 +80,7 @@ const cascade = {
 const dockReturnTransition: Transition = { duration: 0.2, ease: 'easeOut' };
 
 /**
- * The app navigation on a phone, floating over the page on the inverted surface: a bar of icon tabs (`BottomNavList`)
+ * The app navigation on a phone, floating over the page on the popup surface: a bar of icon tabs (`BottomNavList`)
  * in the middle and an optional main action (`BottomNavAction`) at the end. Hidden from `md` up, where the `Sidebar`
  * takes over. `fixed` to the viewport; give the scrolling panel `pb-24` below `md` so the last content clears it. Pads
  * for the home indicator (`env(safe-area-inset-bottom)`, needs `viewport-fit=cover`). The bar's shell morphs to what it
@@ -114,7 +114,7 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 /**
- * The bar: a shell on the inverted surface holding three layers, the `<nav>` of 3–5 tabs, the "More" panel and the
+ * The bar: a popup shell holding three layers, the `<nav>` of 3–5 tabs, the "More" panel and the
  * dock. The shell takes the size of the layer that shows and morphs between them. A fill slides to the current tab.
  * Escape, a tap outside or focus leaving closes the panel. The panel scrolls past `100dvh - 6rem` with no scrollbar.
  *
@@ -293,7 +293,6 @@ function BottomNavList({
     <div
       ref={shellRef}
       data-slot='bottom-nav-shell'
-      data-surface='inverse'
       data-view={view}
       // The outer corner for every layer: the tabs sit `popup-inset` in, the "More" panel `--spacing-list-inset`.
       className={cn(
@@ -416,7 +415,7 @@ const bottomNavItemClassName = cn(
   '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>span:not([data-slot=badge])]:sr-only',
   '[&>[data-slot=badge]]:absolute [&>[data-slot=badge]]:top-0.5 [&>[data-slot=badge]]:left-[calc(50%+4px)] [&>[data-slot=badge]]:min-w-(--badge-height-sm) [&>[data-slot=badge]]:tabular-nums',
   // `labels`: the label under the icon, the tab shrinking to fit; the badge on the icon's corner, ringed in the bar.
-  // `muted-foreground` is set for the page, not the darker inverse popup: as caption text it falls under 4.5:1 there.
+  // `muted-foreground` is set for the page, not the popup: as caption text it falls under 4.5:1 there.
   'group-data-labels/bottom-nav:text-[color-mix(in_oklab,var(--muted-foreground),var(--foreground)_15%)]',
   'group-data-labels/bottom-nav:h-(--bottom-nav-tab-height) group-data-labels/bottom-nav:w-(--bottom-nav-tab-width) group-data-labels/bottom-nav:min-w-0 group-data-labels/bottom-nav:shrink group-data-labels/bottom-nav:flex-col group-data-labels/bottom-nav:gap-0.5',
   'group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:not-sr-only group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:max-w-full group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:truncate group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:px-tight group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:text-caption group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:font-medium',
@@ -548,7 +547,7 @@ function BottomNavMoreItem({
 }
 
 /**
- * The one main action beside the bar (create): a square as high as the bar, on the inverted surface, a `<button>` or a link through
+ * The one main action beside the bar (create): a square as high as the bar, a popup, a `<button>` or a link through
  * `render`. Icon only, so it needs an `aria-label`. Steps aside while the bar shows the panel or a docked bar.
  */
 function BottomNavAction({ className, render, ...props }: useRender.ComponentProps<'button'>) {
@@ -574,7 +573,6 @@ function BottomNavAction({ className, render, ...props }: useRender.ComponentPro
   });
   return (
     <motion.div
-      data-surface='inverse'
       className='pointer-events-auto col-start-1 row-start-1 origin-bottom justify-self-end'
       initial={false}
       animate={away ? (reduced ? { opacity: 0 } : leave) : rest}
