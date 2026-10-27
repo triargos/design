@@ -45,6 +45,9 @@ type BarContextValue = {
   readonly panel: HTMLElement | null;
   readonly setPanel: (panel: HTMLElement | null) => void;
   readonly panelId: string;
+  /** The tab just tapped, shown as current until the page it opens moves `aria-current`. */
+  readonly optimisticCurrent: string | null;
+  readonly setOptimisticCurrent: (tab: string | null) => void;
 };
 
 const BarContext = React.createContext<BarContextValue | null>(null);
@@ -53,6 +56,27 @@ function useBar(part: string) {
   const bar = React.use(BarContext);
   if (bar === null) throw new Error(`${part} must be used within a BottomNav.`);
   return bar;
+}
+
+/** The id of the "More" tab, for its rows: a row tapped makes the tab current. */
+const MoreTabContext = React.createContext<string | null>(null);
+
+/**
+ * A tab that shows as current from the tap on. A router sets `aria-current` only once the next page renders, which
+ * on a phone lags the tap by that render; the fill and the tab's color move at once instead. `aria-current` stays the
+ * router's. A click that opens a new tab or window, or that the link handles itself (`preventDefault`), changes
+ * nothing.
+ */
+function useOptimisticCurrent(part: string, tab: string) {
+  const { optimisticCurrent, setOptimisticCurrent } = useBar(part);
+  return {
+    isOptimisticCurrent: optimisticCurrent === tab,
+    onTap: (event: React.MouseEvent<HTMLElement>) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return;
+      if (event.altKey || event.currentTarget.getAttribute('aria-current') === 'page') return;
+      setOptimisticCurrent(tab);
+    },
+  };
 }
 
 // The morph, after Danny Williams's morphing menu: the shell squeezes for 70ms, then springs to the size of what it
@@ -92,6 +116,7 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
   const [panelOpen, setPanelOpen] = React.useState(false);
   const [panel, setPanel] = React.useState<HTMLElement | null>(null);
   const panelId = React.useId();
+  const [optimisticCurrent, setOptimisticCurrent] = React.useState<string | null>(null);
   // A docked bar wins: selecting closes the panel.
   React.useEffect(() => {
     if (docked) setPanelOpen(false);
@@ -99,7 +124,8 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
   const view: View = docked ? 'dock' : panelOpen ? 'panel' : 'tabs';
 
   return (
-    <BarContext value={{ view, panelOpen, setPanelOpen, panel, setPanel, panelId }}>
+    <BarContext
+      value={{ view, panelOpen, setPanelOpen, panel, setPanel, panelId, optimisticCurrent, setOptimisticCurrent }}>
       <div
         data-slot='bottom-nav'
         className={cn(
@@ -131,7 +157,8 @@ function BottomNavList({
   ...props
 }: React.ComponentProps<'nav'> & { labels?: boolean }) {
   const ariaLabel = ariaLabelProp ?? useLocale().labels.mainNavigation;
-  const { view, panelOpen, setPanelOpen, setPanel, panelId } = useBar('BottomNavList');
+  const { view, panelOpen, setPanelOpen, setPanel, panelId, optimisticCurrent, setOptimisticCurrent } =
+    useBar('BottomNavList');
   const setDock = useBottomNavDock()?.setDock;
   const reduced = useReducedMotion() ?? false;
   const shellRef = React.useRef<HTMLDivElement>(null);
@@ -142,6 +169,15 @@ function BottomNavList({
   const morphing = React.useRef(false);
 
   React.useLayoutEffect(() => setPanel(panelRef.current), [setPanel]);
+
+  // The tapped tab gives way once the page sets `aria-current`, on it or, after a redirect, on another tab.
+  React.useEffect(() => {
+    const shell = shellRef.current;
+    if (optimisticCurrent === null || shell === null) return;
+    const observer = new MutationObserver(() => setOptimisticCurrent(null));
+    observer.observe(shell, { subtree: true, attributes: true, attributeFilter: ['aria-current', 'data-current'] });
+    return () => observer.disconnect();
+  }, [optimisticCurrent, setOptimisticCurrent]);
 
   // The dock is offered only while the bar shows: under `md:hidden` the shell has no size.
   React.useEffect(() => {
@@ -310,6 +346,7 @@ function BottomNavList({
         aria-label={ariaLabel}
         inert={view !== 'tabs'}
         data-labels={labels || undefined}
+        data-optimistic={optimisticCurrent !== null || undefined}
         className={cn(
           'group/bottom-nav relative flex w-max shrink-0 origin-bottom items-center gap-related p-popup-inset [--outer-inset:var(--spacing-popup-inset)]',
           // Capped by the `BottomNav`'s width (`cqw`), not the shell's: the morph back from the panel measures the tabs
@@ -354,8 +391,9 @@ function BottomNavList({
 }
 
 /**
- * The fill under the current tab. It follows `aria-current` / `data-current` in the DOM, so a router link that sets
- * `aria-current` itself moves it too. Slides with `duration-move`, as the tabs indicator does; jumps on mount.
+ * The fill under the current tab. It follows the tab just tapped (`data-optimistic-current`), else `aria-current` /
+ * `data-current` in the DOM, so a router link that sets `aria-current` itself moves it too. Slides with `duration-move`,
+ * as the tabs indicator does; jumps on mount.
  */
 function CurrentIndicator() {
   const ref = React.useRef<HTMLSpanElement>(null);
@@ -367,7 +405,9 @@ function CurrentIndicator() {
     const list = indicator?.parentElement;
     if (indicator === null || list === null || list === undefined) return;
     const measure = () => {
-      const current = list.querySelector<HTMLElement>('[aria-current=page], [data-current]');
+      const current =
+        list.querySelector<HTMLElement>('[data-optimistic-current]') ??
+        list.querySelector<HTMLElement>('[aria-current=page], [data-current]');
       setVisible(current !== null);
       if (current === null) return;
       indicator.style.setProperty('--current-left', `${current.offsetLeft}px`);
@@ -381,7 +421,11 @@ function CurrentIndicator() {
     // Each tab too: labelled tabs shrink as a late web font widens their neighbours.
     for (const child of list.children) resize.observe(child);
     const mutation = new MutationObserver(measure);
-    mutation.observe(list, { subtree: true, attributes: true, attributeFilter: ['aria-current', 'data-current'] });
+    mutation.observe(list, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['aria-current', 'data-current', 'data-optimistic-current'],
+    });
     return () => {
       cancelAnimationFrame(frame);
       resize.disconnect();
@@ -422,13 +466,15 @@ const bottomNavItemClassName = cn(
   'group-data-labels/bottom-nav:h-(--bottom-nav-tab-height) group-data-labels/bottom-nav:w-(--bottom-nav-tab-width) group-data-labels/bottom-nav:min-w-0 group-data-labels/bottom-nav:shrink group-data-labels/bottom-nav:flex-col group-data-labels/bottom-nav:gap-0.5',
   'group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:not-sr-only group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:max-w-full group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:truncate group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:px-tight group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:text-caption group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:font-medium',
   'group-data-labels/bottom-nav:[&>[data-slot=badge]]:top-1 group-data-labels/bottom-nav:[&>[data-slot=badge]]:left-[calc(50%+6px)] group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-2 group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-popover',
-  'aria-[current=page]:text-foreground data-current:text-foreground',
+  // While a tapped tab waits for its page, it alone looks current.
+  'group-not-data-optimistic/bottom-nav:aria-[current=page]:text-foreground group-not-data-optimistic/bottom-nav:data-current:text-foreground data-optimistic-current:text-foreground',
   'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
 );
 
 /**
  * A tab that links: an `<a>`, or the router's link through `render` (`render={<NavLink to='…' end />}`). `current`
- * marks the page; a router link that sets `aria-current` itself needs none.
+ * marks the page; a router link that sets `aria-current` itself needs none. Looks current from the tap on, before
+ * the page it opens renders.
  */
 function BottomNavLink({
   className,
@@ -436,12 +482,18 @@ function BottomNavLink({
   current,
   ...props
 }: useRender.ComponentProps<'a'> & { current?: boolean }) {
+  const { isOptimisticCurrent, onTap } = useOptimisticCurrent('BottomNavLink', React.useId());
   return useRender({
     defaultTagName: 'a',
     render,
     state: { slot: 'bottom-nav-link' },
     props: mergeProps<'a'>(
-      { 'aria-current': current ? 'page' : undefined, className: cn(bottomNavItemClassName, className) },
+      {
+        'aria-current': current ? 'page' : undefined,
+        ...(isOptimisticCurrent && { 'data-optimistic-current': '' }),
+        className: cn(bottomNavItemClassName, className),
+        onClick: onTap,
+      },
       props,
     ),
   });
@@ -482,7 +534,8 @@ function BottomNavMore({
   className?: string;
 }) {
   const label = labelProp ?? useLocale().labels.more;
-  const { panelOpen, setPanelOpen, panel, panelId } = useBar('BottomNavMore');
+  const { panelOpen, setPanelOpen, panel, panelId, optimisticCurrent } = useBar('BottomNavMore');
+  const tab = React.useId();
   const [holdsCurrent, setHoldsCurrent] = React.useState(false);
 
   React.useEffect(() => {
@@ -498,6 +551,7 @@ function BottomNavMore({
     <>
       <BottomNavButton
         current={holdsCurrent}
+        data-optimistic-current={optimisticCurrent === tab ? '' : undefined}
         aria-expanded={panelOpen}
         aria-controls={panelId}
         className={className}
@@ -510,7 +564,7 @@ function BottomNavMore({
         <IconDots />
         <span>{label}</span>
       </BottomNavButton>
-      {panel !== null && createPortal(children, panel)}
+      {panel !== null && createPortal(<MoreTabContext value={tab}>{children}</MoreTabContext>, panel)}
     </>
   );
 }
@@ -518,7 +572,7 @@ function BottomNavMore({
 /**
  * A row in the "More" list: an icon and its label, an `<a>` or the router's link through `render`. `current` marks the
  * page. `--spacing-list-inset` in from the shell, with `rounded-inner` corners. At least 44px high, a finger's
- * target. Closes the list when chosen.
+ * target. Closes the list when chosen; the "More" tab looks current from the tap on.
  */
 function BottomNavMoreItem({
   className,
@@ -527,6 +581,9 @@ function BottomNavMoreItem({
   ...props
 }: useRender.ComponentProps<'a'> & { current?: boolean }) {
   const { setPanelOpen } = useBar('BottomNavMoreItem');
+  const moreTab = React.use(MoreTabContext);
+  if (moreTab === null) throw new Error('BottomNavMoreItem must be used within a BottomNavMore.');
+  const { onTap } = useOptimisticCurrent('BottomNavMoreItem', moreTab);
   return useRender({
     defaultTagName: 'a',
     render,
@@ -541,7 +598,10 @@ function BottomNavMoreItem({
           'aria-[current=page]:bg-foreground/10 aria-[current=page]:[&>svg]:text-foreground',
           className,
         ),
-        onClick: () => setPanelOpen(false),
+        onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+          onTap(event);
+          setPanelOpen(false);
+        },
       },
       props,
     ),
