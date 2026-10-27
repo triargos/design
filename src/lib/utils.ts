@@ -74,10 +74,10 @@ const twMerge = extendTailwindMerge({
         'popup',
         'modal',
       ],
-      ease: ['enter', 'move'],
+      ease: ['enter', 'move', 'spring', 'spring-bounce'],
     },
     // `tailwind-merge` has no theme scale for durations.
-    classGroups: { duration: [{ duration: ['enter', 'feedback', 'move', 'modal'] }] },
+    classGroups: { duration: [{ duration: ['enter', 'feedback', 'move', 'modal', 'drawer', 'indicator', 'press'] }] },
   },
 });
 
