@@ -66,6 +66,7 @@ Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), whic
 | `disabled`                                                                     | Disabled fill. Never `opacity-50`; fields fade to `opacity-64`, graphic controls (slider) dim. |
 | `muted`, `field`, `shell`                                                      | Quiet fills, one step from their surface. `muted` is also the selected row.                    |
 | `row-hover`                                                                    | Row under the pointer in lists, tables, accordions                                             |
+| `highlight`                                                                    | Row under the pointer or keyboard in menus, options, drawers, the sidebar: `foreground` at 6%  |
 | `skeleton`                                                                     | The `Skeleton` fill: `foreground` thinned, reads on any surface                                |
 | `border-subtle` · `border` · `border-strong`                                   | Row separators · hairlines · edges that must read                                              |
 | `ring`                                                                         | Focus: `ring-3 ring-ring/24` on fields and controls alike                                      |

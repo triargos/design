@@ -307,7 +307,7 @@ const menuRowClassName = cn(
 
 /** Hover, press, focus and disabled for a row that is a control. */
 const pressableRowClassName = cn(
-  'text-left outline-hidden transition-colors duration-feedback hover:bg-foreground/5 focus-visible:ring-3 focus-visible:ring-ring/24 active:bg-foreground/5',
+  'text-left outline-hidden transition-colors duration-feedback hover:bg-highlight focus-visible:ring-3 focus-visible:ring-ring/24 active:bg-highlight',
   'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
 );
 

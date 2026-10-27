@@ -560,7 +560,7 @@ function ComboboxItem({ className, children, indicator, style, ...props }: Combo
     <ComboboxPrimitive.Item
       data-slot='combobox-item'
       className={cn(
-        "grid w-full cursor-default grid-cols-[var(--spacing-icon)_minmax(0,1fr)] items-center gap-row-gap rounded-inner px-menu-item-pad py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
+        "grid w-full cursor-default grid-cols-[var(--spacing-icon)_minmax(0,1fr)] items-center gap-row-gap rounded-inner px-menu-item-pad py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-highlight data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
         className,
       )}
       {...(virtual && {

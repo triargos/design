@@ -95,6 +95,13 @@ const fills: ReadonlyArray<SwatchToken> = [
     token: 'row-hover',
     role: 'Row under the pointer: lists, tables, accordions; half a muted step',
     on: 'var(--foreground)',
+    css: 'color-mix(in oklab, var(--muted) 50%, transparent)',
+  },
+  {
+    token: 'highlight',
+    role: 'Row under the pointer or keyboard: menus, options, drawer, sidebar',
+    on: 'var(--foreground)',
+    css: 'color-mix(in oklab, var(--foreground) 6%, transparent)',
   },
   { token: 'field', role: 'File rows, inset boxes; surface-relative', on: 'var(--foreground)' },
   { token: 'disabled', role: 'Disabled controls and fields', on: 'var(--disabled-foreground)' },

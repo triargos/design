@@ -198,6 +198,9 @@
   /* A row under the pointer in a list, table or accordion: half a `muted` step, so it stays one step below the selected
      row (`bg-muted`). Relative to the surface it sits on, like `muted`. */
   --color-row-hover: color-mix(in oklab, var(--muted) 50%, transparent);
+  /* A row under the pointer or the keyboard in a menu, a list of options, a drawer or the app's navigation: the text
+     color, thinned, so it reads on any surface. */
+  --color-highlight: color-mix(in oklab, var(--foreground) 6%, transparent);
   /* `Skeleton`: the text color, thinned, so it reads on any surface (page, card, popup, inverse) without a seam. */
   --color-skeleton: color-mix(in oklab, var(--foreground) 7%, transparent);
 

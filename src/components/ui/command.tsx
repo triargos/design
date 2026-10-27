@@ -127,7 +127,7 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
     <CommandPrimitive.Item
       data-slot='command-item'
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-row-gap rounded-inner px-row-pad-x py-[calc((var(--spacing-control-lg)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-foreground data-[selected=true]:bg-foreground/6 data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon data-[selected=true]:*:[svg]:text-foreground",
+        "group/command-item relative flex cursor-default items-center gap-row-gap rounded-inner px-row-pad-x py-[calc((var(--spacing-control-lg)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-foreground data-[selected=true]:bg-highlight data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon data-[selected=true]:*:[svg]:text-foreground",
         className,
       )}
       {...props}

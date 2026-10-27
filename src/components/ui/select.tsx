@@ -254,7 +254,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
       className={cn(
         // A menu row: the text's line box centered in `--spacing-menu-item`. The check sits `menu-item-pad` from the end; the text
         // stops a gap before it.
-        "relative flex w-full cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pr-[calc(var(--spacing-menu-item-pad)+var(--spacing-icon)+var(--spacing-control-gap))] pl-menu-item-pad text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "relative flex w-full cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pr-[calc(var(--spacing-menu-item-pad)+var(--spacing-icon)+var(--spacing-control-gap))] pl-menu-item-pad text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-highlight data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       {...props}>

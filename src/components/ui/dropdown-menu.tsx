@@ -11,7 +11,7 @@ import { cn } from '~/lib/utils';
  * icon take the destructive hue; highlighted, its subtle fill.
  */
 const dropdownMenuItemVariants = cva(
-  "relative flex cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
+  "relative flex cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-highlight data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
   {
     variants: {
       intent: {
@@ -202,7 +202,7 @@ function DropdownMenuSubTrigger({ className, children, ...props }: MenuPrimitive
       data-slot={`${slot}-sub-trigger`}
       className={cn(
         dropdownMenuItemVariants(),
-        'data-popup-open:bg-foreground/6 data-popup-open:text-foreground',
+        'data-popup-open:bg-highlight data-popup-open:text-foreground',
         className,
       )}
       {...props}>

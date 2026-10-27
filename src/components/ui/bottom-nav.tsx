@@ -591,7 +591,7 @@ function BottomNavMoreItem({
         'aria-current': current ? 'page' : undefined,
         className: cn(
           'flex min-h-11 w-full shrink-0 items-center gap-(--bottom-nav-gap) rounded-inner px-row-pad-x py-row-pad-y text-control font-medium text-popover-foreground outline-hidden select-none',
-          'transition-[background-color,scale] duration-feedback hover:bg-foreground/6 active:scale-[0.96] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
+          'transition-[background-color,scale] duration-feedback hover:bg-highlight active:scale-[0.96] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
           '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>svg]:text-muted-foreground [&>span]:truncate',
           'aria-[current=page]:bg-foreground/10 aria-[current=page]:[&>svg]:text-foreground',
           className,
