@@ -66,7 +66,7 @@ function DrawerContent({
             aria-hidden
             data-slot='drawer-grabber'
             className='flex shrink-0 justify-center pt-related pb-(--drawer-page-pad)'>
-            <div className='h-(--drawer-grabber-height) w-(--drawer-grabber-width) rounded-full bg-border' />
+            <div className='h-1 w-9 rounded-full bg-border' />
           </div>
           {children}
         </DrawerPrimitive.Popup>
@@ -270,9 +270,7 @@ function DrawerPage({
             className='absolute left-0 rounded-full [&>svg]:size-icon-lg'>
             <IconChevronLeft />
           </Button>
-          <h2
-            id={titleId}
-            className='truncate px-control-lg text-(length:--drawer-text) leading-(--drawer-text-leading) font-medium'>
+          <h2 id={titleId} className='truncate px-control-lg text-[1rem] leading-6 font-medium'>
             {title}
           </h2>
         </div>
@@ -300,21 +298,21 @@ function DrawerMenuGroup({ className, ...props }: React.ComponentProps<'div'>) {
 
 /** A row's box and text, for `DrawerMenuItem` and `DrawerMenuRow`: the icon first, the label in a `<span>`. */
 const menuRowClassName = cn(
-  'flex min-h-(--drawer-menu-item-height) w-full items-center gap-(--drawer-menu-item-pad-x) rounded-(--drawer-menu-item-radius) px-(--drawer-menu-item-pad-x) text-(length:--drawer-text) leading-(--drawer-text-leading) text-popover-foreground select-none',
+  'flex min-h-(--drawer-menu-item-height) w-full items-center gap-(--drawer-menu-item-pad-x) rounded-(--drawer-menu-item-radius) px-(--drawer-menu-item-pad-x) text-[1rem] leading-6 text-popover-foreground select-none',
   '[&>svg]:pointer-events-none [&>svg]:shrink-0 [&>svg:first-child]:size-icon-lg [&>svg:first-child]:text-muted-foreground',
   '[&>span:not([data-slot])]:min-w-0 [&>span:not([data-slot])]:flex-1 [&>span:not([data-slot])]:truncate',
 );
 
 /** Hover, press, focus and disabled for a row that is a control. */
 const pressableRowClassName = cn(
-  'text-left outline-hidden transition-colors duration-feedback hover:bg-foreground/5 focus-visible:ring-3 focus-visible:ring-ring/24 active:bg-foreground/5',
+  'text-left outline-hidden transition-colors duration-feedback hover:bg-highlight focus-visible:ring-3 focus-visible:ring-ring/24 active:bg-highlight',
   'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
 );
 
 /**
  * A menu row: an `icon-lg` icon, the label in a `<span>`, an optional `DrawerMenuValue`. A `<button>`, or a link
  * through `render`. `push` opens that `DrawerPage` and ends the row in a chevron. `intent='destructive'` colors icon
- * and label (sign out). Rows take a phone's text size, as fields below `sm`: a menu is read at arm's length.
+ * and label (sign out). Rows take a phone's text size, as fields on a phone: a menu is read at arm's length.
  */
 function DrawerMenuItem({
   className,
@@ -399,7 +397,7 @@ function DrawerOption({
       aria-checked={checked}
       data-slot='drawer-option'
       className={cn(
-        'group/drawer-option flex min-h-(--drawer-menu-item-height) w-full items-center gap-part rounded-(--drawer-option-radius) px-(--drawer-menu-item-pad-x) py-(--drawer-page-pad) text-(length:--drawer-text) leading-(--drawer-text-leading) text-popover-foreground select-none',
+        'group/drawer-option flex min-h-(--drawer-menu-item-height) w-full items-center gap-part rounded-(--drawer-option-radius) px-(--drawer-menu-item-pad-x) py-(--drawer-page-pad) text-[1rem] leading-6 text-popover-foreground select-none',
         pressableRowClassName,
         className,
       )}

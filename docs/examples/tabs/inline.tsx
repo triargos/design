@@ -3,22 +3,17 @@ import { useState } from 'react';
 
 import { TabsRadio, TabsRadioGroup } from '~/components/ui/tabs';
 
-/** `shape='pill'`: a compact round control inside a row; icon-only tabs carry an `aria-label`. */
-export function TabsSegmentedPill() {
+/** `variant='inline'`: a compact round control inside a row; icon-only tabs carry an `aria-label`. */
+export function TabsInline() {
   const [theme, setTheme] = useState('system');
   const [view, setView] = useState('forYou');
   return (
     <div className='flex w-full max-w-sm flex-col gap-group'>
       <div className='flex items-center justify-between gap-group'>
-        <span id='tabs-pill-theme' className='text-control'>
+        <span id='tabs-inline-theme' className='text-control'>
           Appearance
         </span>
-        <TabsRadioGroup
-          variant='segmented'
-          shape='pill'
-          aria-labelledby='tabs-pill-theme'
-          value={theme}
-          onValueChange={setTheme}>
+        <TabsRadioGroup variant='inline' aria-labelledby='tabs-inline-theme' value={theme} onValueChange={setTheme}>
           <TabsRadio value='light' aria-label='Light'>
             <IconSun />
           </TabsRadio>
@@ -30,13 +25,7 @@ export function TabsSegmentedPill() {
           </TabsRadio>
         </TabsRadioGroup>
       </div>
-      <TabsRadioGroup
-        variant='segmented'
-        shape='pill'
-        aria-label='Documents'
-        value={view}
-        onValueChange={setView}
-        className='w-full'>
+      <TabsRadioGroup variant='inline' aria-label='Documents' value={view} onValueChange={setView} className='w-full'>
         <TabsRadio value='forYou' className='flex-1'>
           For you
         </TabsRadio>

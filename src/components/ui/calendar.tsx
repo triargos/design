@@ -59,7 +59,7 @@ type CalendarProps = {
 const calendarDayVariants = cva(
   [
     'flex size-full items-center justify-center rounded-control text-body leading-none',
-    'transition-colors duration-feedback group-hover/day:bg-foreground/6',
+    'transition-colors duration-feedback group-hover/day:bg-highlight',
     'group-data-focus-visible/day:ring-3 group-data-focus-visible/day:ring-ring/24',
     'group-data-today/day:bg-foreground/6 group-data-today/day:font-medium',
     'group-data-outside-month/day:text-muted-foreground group-data-disabled/day:text-disabled-foreground',
@@ -87,7 +87,7 @@ function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
           slot='previous'
           className={cn(
             buttonVariants({ intent: 'neutral', emphasis: 'ghost' }),
-            'size-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 disabled:text-disabled-foreground dark:hover:bg-foreground/6',
+            'size-(--cell-size) rounded-control p-0 select-none hover:bg-highlight disabled:text-disabled-foreground',
           )}>
           <IconChevronLeft className='size-icon' />
         </AriaCalendarButton>
@@ -96,7 +96,7 @@ function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
           slot='next'
           className={cn(
             buttonVariants({ intent: 'neutral', emphasis: 'ghost' }),
-            'size-(--cell-size) rounded-control p-0 select-none hover:bg-foreground/6 disabled:text-disabled-foreground dark:hover:bg-foreground/6',
+            'size-(--cell-size) rounded-control p-0 select-none hover:bg-highlight disabled:text-disabled-foreground',
           )}>
           <IconChevronRight className='size-icon' />
         </AriaCalendarButton>

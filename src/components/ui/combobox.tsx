@@ -560,7 +560,7 @@ function ComboboxItem({ className, children, indicator, style, ...props }: Combo
     <ComboboxPrimitive.Item
       data-slot='combobox-item'
       className={cn(
-        "grid w-full cursor-default grid-cols-[var(--spacing-icon)_minmax(0,1fr)] items-center gap-row-gap rounded-inner px-menu-item-pad py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-foreground/6 data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
+        "grid w-full cursor-default grid-cols-[var(--spacing-icon)_minmax(0,1fr)] items-center gap-row-gap rounded-inner px-menu-item-pad py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-highlight data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
         className,
       )}
       {...(virtual && {
@@ -697,7 +697,7 @@ function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Pro
       data-slot='combobox-chip-input'
       // Text on the field's padding line when empty (`field-pad` less the chips' inset); a chip gap after a chip.
       className={cn(
-        'h-control-xs min-w-16 flex-1 pl-[calc(var(--spacing-field-pad)-calc((var(--spacing-control)-var(--spacing-control-xs))/2))] outline-none max-sm:text-[1rem] placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-tight',
+        'h-control-xs min-w-16 flex-1 pl-[calc(var(--spacing-field-pad)-calc((var(--spacing-control)-var(--spacing-control-xs))/2))] outline-none max-md:text-[1rem] placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-tight',
         className,
       )}
       {...props}

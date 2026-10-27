@@ -453,12 +453,19 @@ export interface SwatchToken {
   readonly kind?: SwatchKind;
   /** Text color shown on a fill, as a CSS value. */
   readonly on?: string;
+  /** The color, for a token `tailwind.css` only inlines into its utilities (no `--token` to read). */
+  readonly css?: string;
 }
 
-const swatchStyle = (token: string, kind: SwatchKind, on: string | undefined): CSSProperties => {
+const swatchStyle = (
+  token: string,
+  kind: SwatchKind,
+  on: string | undefined,
+  css: string | undefined,
+): CSSProperties => {
   switch (kind) {
     case 'fill':
-      return { background: `var(--${token})`, color: on };
+      return { background: css ?? `var(--${token})`, color: on };
     case 'text':
       return { color: `var(--${token})` };
     case 'line':
@@ -466,13 +473,13 @@ const swatchStyle = (token: string, kind: SwatchKind, on: string | undefined): C
   }
 };
 
-export function Swatch({ token, role, kind = 'fill', on }: SwatchToken) {
+export function Swatch({ token, role, kind = 'fill', on, css }: SwatchToken) {
   const labelFont = useLabelFont();
   const [ref, value] = useCustomProperty(token);
   return (
     <div ref={ref} className='flex min-w-0 flex-col gap-related'>
       <div
-        style={swatchStyle(token, kind, on)}
+        style={swatchStyle(token, kind, on, css)}
         className={cn(
           'flex h-20 items-end rounded-xl p-3 text-heading ring-1 ring-foreground/10 ring-inset',
           kind !== 'fill' && 'bg-background',

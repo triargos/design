@@ -198,6 +198,9 @@
   /* A row under the pointer in a list, table or accordion: half a `muted` step, so it stays one step below the selected
      row (`bg-muted`). Relative to the surface it sits on, like `muted`. */
   --color-row-hover: color-mix(in oklab, var(--muted) 50%, transparent);
+  /* A row under the pointer or the keyboard in a menu, a list of options, a drawer or the app's navigation: the text
+     color, thinned, so it reads on any surface. */
+  --color-highlight: color-mix(in oklab, var(--foreground) 6%, transparent);
   /* `Skeleton`: the text color, thinned, so it reads on any surface (page, card, popup, inverse) without a seam. */
   --color-skeleton: color-mix(in oklab, var(--foreground) 7%, transparent);
 
@@ -625,20 +628,15 @@
   --bottom-nav-tab-height: 3.25rem;
   /* A docked `ActionBar`'s buttons in a labelled nav: a finger's target. */
   --bottom-nav-action-height: 2.75rem;
-  /* `DrawerContent`: its corner and its inset from the screen edge; its pages' padding; the grabber;
-     a menu row, its corner and its padding; an option row's corner. */
+  /* `DrawerContent`: its corner and its inset from the screen edge; its pages' padding; a menu row, its corner and its
+     padding; an option row's corner. */
   --drawer-radius: 2rem;
   --drawer-inset: 0.5rem;
   --drawer-page-pad: 0.625rem;
-  --drawer-grabber-width: 2.25rem;
-  --drawer-grabber-height: 0.25rem;
   --drawer-menu-item-height: 3rem;
   --drawer-menu-item-radius: 0.875rem;
   --drawer-menu-item-pad-x: 0.875rem;
   --drawer-option-radius: 1rem;
-  /* `Drawer` rows and page titles: a phone's text size, as fields below `sm`. */
-  --drawer-text: 1rem;
-  --drawer-text-leading: 1.5rem;
   /* `Accordion` `default`: the trigger's padding (half of it below the trigger and the content); the content's end
      padding. `flush`: the content's bottom padding. */
   --accordion-pad: 0.5rem;

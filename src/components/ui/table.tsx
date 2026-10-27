@@ -1,7 +1,6 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { IconArrowsSort, IconArrowUp, IconChevronDown } from '@tabler/icons-react';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { cva } from 'class-variance-authority';
 import {
   type ComponentProps,
@@ -10,15 +9,11 @@ import {
   type Ref,
   use,
   useCallback,
-  useEffect,
   useLayoutEffect,
-  useRef,
   useState,
 } from 'react';
 
-import { useLocale } from '~/components/ui/locale';
-import { Spinner } from '~/components/ui/spinner';
-
+import { LoadMore, useVirtualRows } from '~/hooks/use-virtual-rows';
 import { cn } from '~/lib/utils';
 
 // Markup for a TanStack Table (`useTable`, `table.FlexRender`) or a static table. Three variants:
@@ -114,27 +109,6 @@ function Table<T>(props: TableProps<T>) {
   );
 }
 
-/** Distance from the top of the scroll content of `scrollElement` to the top of `element`. */
-function useOffsetInScrollElement(scrollElement: HTMLElement | null, element: HTMLElement | null) {
-  const [offset, setOffset] = useState(0);
-  useLayoutEffect(() => {
-    if (!scrollElement || !element) return;
-    const measure = () =>
-      setOffset(
-        element.getBoundingClientRect().top -
-          scrollElement.getBoundingClientRect().top -
-          scrollElement.clientTop +
-          scrollElement.scrollTop,
-      );
-    measure();
-    // Content above the table (or the header) can change height after it loads.
-    const observer = new ResizeObserver(measure);
-    for (const child of scrollElement.children) observer.observe(child);
-    return () => observer.disconnect();
-  }, [scrollElement, element]);
-  return offset;
-}
-
 function VirtualizedTable<T>({
   className,
   variant = 'default',
@@ -154,19 +128,19 @@ function VirtualizedTable<T>({
   'aria-rowcount': ariaRowCount,
   ...props
 }: Extract<TableProps<T>, { virtualized: true }>) {
-  const { labels } = useLocale();
   const ownScroll = scrollElement === undefined;
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const scroller = ownScroll ? container : scrollElement;
   const [body, setBody] = useState<HTMLTableSectionElement | null>(null);
-  const scrollMargin = useOffsetInScrollElement(scroller, body);
-  const virtualizer = useVirtualizer({
-    count: items.length,
-    getScrollElement: () => scroller,
-    estimateSize: () => estimatedItemSize,
-    getItemKey: (index) => itemKey(items[index]!),
-    overscan: 5,
-    scrollMargin,
+  const { virtualizer, scrollMargin, sentinelRef } = useVirtualRows({
+    items,
+    itemKey,
+    estimatedItemSize,
+    scroller,
+    start: body,
+    hasMore,
+    isLoadingMore,
+    onLoadMore,
   });
   const rows = virtualizer.getVirtualItems();
   const first = rows[0];
@@ -184,26 +158,6 @@ function VirtualizedTable<T>({
     const count = Array.from(row.cells).reduce((sum, cell) => sum + cell.colSpan, 0);
     if (count !== columnCount) setColumnCount(count);
   });
-
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const [nearEnd, setNearEnd] = useState(false);
-  // Re-observe when `hasMore` mounts the sentinel and after each page, so a sentinel still in view reports again.
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel || !scroller) {
-      setNearEnd(false);
-      return;
-    }
-    const observer = new IntersectionObserver(([entry]) => setNearEnd(entry!.isIntersecting), {
-      root: scroller,
-      rootMargin: '500px',
-    });
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [scroller, items.length, hasMore]);
-  useEffect(() => {
-    if (nearEnd && hasMore && !isLoadingMore) onLoadMore?.();
-  }, [nearEnd, hasMore, isLoadingMore, onLoadMore]);
 
   return (
     <TableVariantContext value={variant}>
@@ -248,13 +202,7 @@ function VirtualizedTable<T>({
               {paddingBottom > 0 && <TableSpacer edge='bottom' height={paddingBottom} columnCount={columnCount} />}
             </TableBody>
           </table>
-          {hasMore && <div ref={sentinelRef} className='h-px' />}
-          {isLoadingMore && (
-            <div role='status' className='flex justify-center py-group'>
-              <Spinner className='text-muted-foreground' size={20} />
-              <span className='sr-only'>{loadingLabel ?? labels.loadingMore}</span>
-            </div>
-          )}
+          <LoadMore sentinelRef={sentinelRef} hasMore={hasMore} isLoadingMore={isLoadingMore} label={loadingLabel} />
         </div>
       </TableVirtualizedContext>
     </TableVariantContext>

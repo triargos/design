@@ -162,14 +162,10 @@ export const SIZING_TOKENS = {
   '--drawer-radius': t('surfaces', '32px', 'Drawer radius'),
   '--drawer-inset': t('surfaces', '8px', 'Drawer inset from the screen edge'),
   '--drawer-page-pad': t('surfaces', '10px', 'Drawer page padding and block gap'),
-  '--drawer-grabber-width': t('surfaces', '36px', 'Drawer grabber width'),
-  '--drawer-grabber-height': t('surfaces', '4px', 'Drawer grabber height'),
   '--drawer-menu-item-height': t('surfaces', '48px', 'Drawer menu row height'),
   '--drawer-menu-item-radius': t('surfaces', '14px', 'Drawer menu row radius'),
   '--drawer-menu-item-pad-x': t('surfaces', '14px', 'Drawer menu row padding and icon gap'),
   '--drawer-option-radius': t('surfaces', '16px', 'Drawer option row radius'),
-  '--drawer-text': t('surfaces', '16px', 'Drawer row and page title text'),
-  '--drawer-text-leading': t('surfaces', '24px', 'Drawer row and page title line height'),
   '--tooltip-pad-x': t('surfaces', '8px', 'Tooltip and anchored toast inline padding'),
   '--tooltip-pad-y': t('surfaces', '4px', 'Tooltip and anchored toast block padding'),
   '--chart-tooltip-pad-x': t('surfaces', '10px', 'Chart tooltip inline padding'),
@@ -389,6 +385,9 @@ export const RADII = {
     '--radius-block': '0px',
     '--tabs-radius': '0px',
     '--alert-radius': '0px',
+    '--drawer-radius': '0px',
+    '--drawer-menu-item-radius': '0px',
+    '--drawer-option-radius': '0px',
     '--radius-track': '2px',
     '--radius-xs': '0px',
     '--radius-sm': '0px',
@@ -416,6 +415,9 @@ export const RADII = {
     '--radius-block': '14px',
     '--tabs-radius': '12px',
     '--alert-radius': '24px',
+    '--drawer-radius': '38px',
+    '--drawer-menu-item-radius': '17px',
+    '--drawer-option-radius': '19px',
   },
   pill: {
     '--radius-control-xs': '9999px',
@@ -438,7 +440,7 @@ export const RADII = {
 export type Radius = keyof typeof RADII;
 
 /**
- * A sizing theme: a density and a radius, then its own `tokens` on top. `touch` applies below `sm` (640px), on top of
+ * A sizing theme: a density and a radius, then its own `tokens` on top. `touch` applies on a phone, below `md` (768px), on top of
  * the rest: a phone gets bigger targets than a desktop.
  */
 export interface SizingTheme {
@@ -640,13 +642,13 @@ const declarations = (values: SizingValues): string =>
 
 /**
  * The CSS for a sizing theme: only what it overrides, on `selector` (`:root`, or a subtree such as
- * `[data-sizing=dense]`), and its `touch` values below `sm`. Empty for the default theme. Render it into a `<style>`
+ * `[data-sizing=dense]`), and its `touch` values below `md`. Empty for the default theme. Render it into a `<style>`
  * after `tailwind.css`.
  */
 export function sizingThemeCss(theme: SizingTheme, selector = ':root'): string {
   const { base, touch } = sizingValues(theme);
   const rules: Array<string> = [];
   if (Object.keys(base).length > 0) rules.push(`${selector}{${declarations(base)}}`);
-  if (Object.keys(touch).length > 0) rules.push(`@media (width < 40rem){${selector}{${declarations(touch)}}}`);
+  if (Object.keys(touch).length > 0) rules.push(`@media (width < 48rem){${selector}{${declarations(touch)}}}`);
   return rules.join('\n');
 }

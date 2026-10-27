@@ -127,7 +127,7 @@ function FieldLabel({
       className={cn(
         // A line box 2px taller than the text: 1px of air above and below, on top of the field's `related` gap. Below
         // `sm`, 16 / 18, next to the 16px field text.
-        'group/field-label peer/field-label flex w-fit items-center gap-related text-body leading-[calc(var(--text-body)+2px)] font-medium select-none max-sm:text-[1rem] max-sm:leading-[1.125rem]',
+        'group/field-label peer/field-label flex w-fit items-center gap-related text-body leading-[calc(var(--text-body)+2px)] font-medium select-none max-md:text-[1rem] max-md:leading-[1.125rem]',
         'group-data-[disabled=true]/field:text-disabled-foreground peer-disabled:cursor-not-allowed peer-disabled:text-disabled-foreground',
         className,
       )}

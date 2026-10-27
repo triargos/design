@@ -511,7 +511,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Sizing'
-      description='Two axes size every component: density (control heights, paddings, gaps, icons, card and dialog padding) and radius (every radius role). A sizing theme picks one of each, adds its own values and, below 640px, its touch values; sizingThemeCss renders it for :root or a subtree. The hit area, the 16px field text on a phone, hairlines and layout widths never scale.'>
+      description='Two axes size every component: density (control heights, paddings, gaps, icons, card and dialog padding) and radius (every radius role). A sizing theme picks one of each, adds its own values and, on a phone (below 768px), its touch values; sizingThemeCss renders it for :root or a subtree. The hit area, the 16px field text on a phone, hairlines and layout widths never scale.'>
       <FoundationSection
         title='Styles'
         description={
@@ -631,7 +631,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Style values'
-        description='Each style’s values on top of its density and radius, then its touch values below 640px.'>
+        description='Each style’s values on top of its density and radius, then its touch values on a phone, below 768px.'>
         <ValueTable
           columns={STYLES.filter((style) => style.name !== 'triargos').flatMap((style) => {
             const values = sizingValues(SIZING_STYLES[style.name]);

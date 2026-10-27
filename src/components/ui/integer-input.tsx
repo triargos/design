@@ -224,7 +224,7 @@ function IntegerInput({
         }}
         className={cn(
           inputSurfaceVariants({ scope: 'group' }),
-          'flex h-control min-w-0 flex-1 cursor-text items-center justify-center gap-control-gap px-field-pad text-control max-sm:text-[1rem]',
+          'flex h-control min-w-0 flex-1 cursor-text items-center justify-center gap-control-gap px-field-pad text-control max-md:text-[1rem]',
         )}>
         <span ref={shakeScope} className='flex h-full items-center gap-control-gap'>
           {/* As wide as its digits, so number and unit center together as one line of text. Clipped top and bottom at

@@ -223,7 +223,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
 const sidebarMenuButtonVariants = cva(
   [
     'flex items-center gap-row-gap overflow-hidden px-control-pad-sm text-body outline-hidden focus-visible:ring-3 focus-visible:ring-ring/24 [&>span:last-child]:truncate [&>svg]:size-icon [&>svg]:shrink-0',
-    'hover:bg-foreground/5 hover:text-sidebar-accent-foreground active:bg-foreground/10 active:text-sidebar-accent-foreground',
+    'hover:bg-highlight hover:text-sidebar-accent-foreground active:bg-foreground/10 active:text-sidebar-accent-foreground',
     'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
     // The current row is a raised chip, as `emphasis='raised'` paints one.
     'aria-[current=page]:bg-card aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground aria-[current=page]:shadow-raised aria-[current=page]:hover:bg-card dark:aria-[current=page]:bg-foreground/10 dark:aria-[current=page]:hover:bg-foreground/10',
@@ -234,7 +234,7 @@ const sidebarMenuButtonVariants = cva(
         item: [
           // Collapsed to its icon: a square with the icon centered.
           'h-control-sm w-full rounded-control py-[calc((var(--spacing-control-sm)-var(--spacing-icon))/2)] text-left transition-[width,height,padding] motion-reduce:transition-none group-data-[collapsible=icon]:size-control-sm! group-data-[collapsible=icon]:p-[calc((var(--spacing-control-sm)-var(--spacing-icon))/2)]!',
-          'data-popup-open:hover:bg-foreground/5 data-popup-open:hover:text-sidebar-accent-foreground',
+          'data-popup-open:hover:bg-highlight data-popup-open:hover:text-sidebar-accent-foreground',
         ],
         sub: 'h-(--sidebar-sub-height) min-w-0 rounded-control-sm text-sidebar-foreground group-data-[collapsible=icon]:hidden',
       },

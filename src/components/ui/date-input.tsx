@@ -124,12 +124,12 @@ function DateSegment({ className, ...props }: DateSegmentProps) {
   );
 }
 
-/** The segments of a `DateField` or `TimeField`. They render 16px below `sm`, so iOS does not zoom on focus. */
+/** The segments of a `DateField` or `TimeField`. They render 16px below `md`, so iOS does not zoom on focus. */
 function SegmentsInput({ className, ...props }: Omit<AriaDateInputProps, 'children'>) {
   return (
     <AriaDateInput
       className={composeRenderProps(className, (className) =>
-        cn('flex min-w-0 flex-1 items-center max-sm:text-[1rem]', className),
+        cn('flex min-w-0 flex-1 items-center max-md:text-[1rem]', className),
       )}
       {...props}>
       {(segment) => <DateSegment segment={segment} />}
@@ -240,7 +240,7 @@ function DateInput({
               <span className='relative flex min-w-0 flex-1 items-center'>
                 <SegmentsInput className={cn('peer', showPlaceholder && 'opacity-0 focus-within:opacity-100')} />
                 {showPlaceholder && (
-                  <span className='pointer-events-none absolute inset-y-0 left-0 flex items-center truncate text-faint-foreground peer-focus-within:hidden max-sm:text-[1rem]'>
+                  <span className='pointer-events-none absolute inset-y-0 left-0 flex items-center truncate text-faint-foreground peer-focus-within:hidden max-md:text-[1rem]'>
                     {placeholder}
                   </span>
                 )}
