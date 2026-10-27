@@ -314,7 +314,7 @@ const pressableRowClassName = cn(
 /**
  * A menu row: an `icon-lg` icon, the label in a `<span>`, an optional `DrawerMenuValue`. A `<button>`, or a link
  * through `render`. `push` opens that `DrawerPage` and ends the row in a chevron. `intent='destructive'` colors icon
- * and label (sign out). Rows take a phone's text size, as fields below `sm`: a menu is read at arm's length.
+ * and label (sign out). Rows take a phone's text size, as fields on a phone: a menu is read at arm's length.
  */
 function DrawerMenuItem({
   className,

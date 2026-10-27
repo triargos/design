@@ -438,7 +438,7 @@ export const RADII = {
 export type Radius = keyof typeof RADII;
 
 /**
- * A sizing theme: a density and a radius, then its own `tokens` on top. `touch` applies below `sm` (640px), on top of
+ * A sizing theme: a density and a radius, then its own `tokens` on top. `touch` applies on a phone, below `md` (768px), on top of
  * the rest: a phone gets bigger targets than a desktop.
  */
 export interface SizingTheme {
@@ -640,13 +640,13 @@ const declarations = (values: SizingValues): string =>
 
 /**
  * The CSS for a sizing theme: only what it overrides, on `selector` (`:root`, or a subtree such as
- * `[data-sizing=dense]`), and its `touch` values below `sm`. Empty for the default theme. Render it into a `<style>`
+ * `[data-sizing=dense]`), and its `touch` values below `md`. Empty for the default theme. Render it into a `<style>`
  * after `tailwind.css`.
  */
 export function sizingThemeCss(theme: SizingTheme, selector = ':root'): string {
   const { base, touch } = sizingValues(theme);
   const rules: Array<string> = [];
   if (Object.keys(base).length > 0) rules.push(`${selector}{${declarations(base)}}`);
-  if (Object.keys(touch).length > 0) rules.push(`@media (width < 40rem){${selector}{${declarations(touch)}}}`);
+  if (Object.keys(touch).length > 0) rules.push(`@media (width < 48rem){${selector}{${declarations(touch)}}}`);
   return rules.join('\n');
 }

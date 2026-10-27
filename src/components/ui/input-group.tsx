@@ -137,7 +137,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
 
 /**
  * The text control of an `InputGroup`: a box that takes the space between the addons and carries the padding and text
- * style (`className` goes here), around the native input (every other prop and the ref; 16px below `sm`, so iOS does
+ * style (`className` goes here), around the native input (every other prop and the ref; 16px below `md`, so iOS does
  * not zoom). The group owns the surface, focus ring, invalid state and disabled fill.
  */
 function InputGroupInput({ className, style, ...props }: React.ComponentProps<'input'>) {
@@ -146,7 +146,7 @@ function InputGroupInput({ className, style, ...props }: React.ComponentProps<'i
       data-slot='input-group-input'
       style={style}
       className={cn(
-        'flex h-full min-w-0 flex-1 cursor-text items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-sm:text-[1rem]',
+        'flex h-full min-w-0 flex-1 cursor-text items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-md:text-[1rem]',
         className,
       )}>
       <InputPrimitive
@@ -160,14 +160,14 @@ function InputGroupInput({ className, style, ...props }: React.ComponentProps<'i
 
 /**
  * The multi-line control of an `InputGroup`, bare: the group draws the surface. Pair it with a `block-start` or
- * `block-end` addon for a toolbar or a count. 16px below `sm`, so iOS does not zoom.
+ * `block-end` addon for a toolbar or a count. 16px below `md`, so iOS does not zoom.
  */
 function InputGroupTextarea({ className, ...props }: React.ComponentProps<'textarea'>) {
   return (
     <textarea
       data-slot='input-group-control'
       className={cn(
-        'flex min-h-(--textarea-min-height) w-full resize-none bg-transparent px-[calc(var(--spacing-field-pad)-1px)] py-field-pad-y text-control outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed max-sm:text-[1rem]',
+        'flex min-h-(--textarea-min-height) w-full resize-none bg-transparent px-[calc(var(--spacing-field-pad)-1px)] py-field-pad-y text-control outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed max-md:text-[1rem]',
         className,
       )}
       {...props}

@@ -89,7 +89,7 @@ Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other 
 | `text-caption` | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                                             | `Badge`, `TooltipContent`                               |
 
 - Icons (Tabler, `@tabler/icons-react`) draw a 1.25px stroke at every size, the weight of their label (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
-- Below `sm` (640px), fields render 16px text (`max-sm:text-[1rem]`) and `FieldLabel` 16 / 18, so iOS does not zoom on focus. From `sm` up: 14px.
+- A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, the dissolved `Card`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`) and `FieldLabel` 16 / 18, so iOS does not zoom on focus, and a sizing theme's `touch` values apply. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
 - A new role goes in `tailwind.css` **and** in `cn` (`lib/utils.ts`). Otherwise `cn` drops the text color next to it.
 
 ## Spacing
@@ -164,9 +164,9 @@ Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/the
 
 - A length one component owns is a component token in the Component sizing block of `tailwind.css` (`--switch-thumb`, `--tooltip-pad-x`), read as `w-(--switch-thumb)`. Prefer the shared scale.
 - A relationship is a `calc()` of tokens: a menu row's padding from `--spacing-menu-item` and the line height, a button in a field from the two heights.
-- Never scales: the 44px `hit-area`, 16px field text below `sm` (iOS zoom), hairlines (`border`, `h-px`, `ring-3`), the −1px for a border, layout widths (`w-64` sidebar, `max-w-*`, dialog and sheet widths), `page` and `section` spacing.
+- Never scales: the 44px `hit-area`, 16px field text below `md` (iOS zoom), hairlines (`border`, `h-px`, `ring-3`), the −1px for a border, layout widths (`w-64` sidebar, `max-w-*`, dialog and sheet widths), `page` and `section` spacing.
 
-A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius, each a partial map of token → value, plus its own `tokens`, and `touch` values for below `sm` (640px).
+A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius, each a partial map of token → value, plus its own `tokens`, and `touch` values for a phone (below `md`, 768px).
 
 | Axis      | Values                                                                                                                                                                                                                                   |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

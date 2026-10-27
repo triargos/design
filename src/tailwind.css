@@ -639,7 +639,7 @@
   --drawer-menu-item-radius: 0.875rem;
   --drawer-menu-item-pad-x: 0.875rem;
   --drawer-option-radius: 1rem;
-  /* `Drawer` rows and page titles: a phone's text size, as fields below `sm`. */
+  /* `Drawer` rows and page titles: a phone's text size, as fields on a phone (below `md`). */
   --drawer-text: 1rem;
   --drawer-text-leading: 1.5rem;
   /* `Accordion` `default`: the trigger's padding (half of it below the trigger and the content); the content's end

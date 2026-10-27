@@ -245,7 +245,7 @@ function CustomColor({
         </InputGroupAddon>
         <span
           data-slot='input-group-input'
-          className='flex h-full min-w-0 flex-1 items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-sm:text-[1rem]'>
+          className='flex h-full min-w-0 flex-1 items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-md:text-[1rem]'>
           <HexColorInput
             data-slot='input-group-control'
             aria-label={hexLabel}

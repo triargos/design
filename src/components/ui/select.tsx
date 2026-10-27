@@ -188,7 +188,7 @@ function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigge
       aria-invalid={(custom ? custom.invalid && !custom.chosen : undefined) || undefined}
       className={cn(
         inputSurfaceVariants({ scope: 'self' }),
-        "flex h-control w-full items-center justify-between gap-related px-[calc(var(--spacing-field-pad)-1px)] py-1 text-control whitespace-nowrap max-sm:text-[1rem] data-placeholder:text-faint-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "flex h-control w-full items-center justify-between gap-related px-[calc(var(--spacing-field-pad)-1px)] py-1 text-control whitespace-nowrap max-md:text-[1rem] data-placeholder:text-faint-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       {...props}>

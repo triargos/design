@@ -81,7 +81,7 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
       style={style}
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-control w-full min-w-0 cursor-text items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-sm:text-[1rem]',
+        'flex h-control w-full min-w-0 cursor-text items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-md:text-[1rem]',
         // The chip's inset less the border and the input's 1px padding.
         'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-2px)]',
         className,
@@ -91,7 +91,7 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         event.preventDefault();
         event.currentTarget.querySelector('input')?.focus();
       }}>
-      {/* Below `sm` the field renders 16px (`max-sm:text-[1rem]`), so iOS does not zoom on focus; the input inherits it. */}
+      {/* Below `sm` the field renders 16px (`max-md:text-[1rem]`), so iOS does not zoom on focus; the input inherits it. */}
       <InputPrimitive
         data-slot='input-control'
         className={cn(

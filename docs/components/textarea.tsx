@@ -11,7 +11,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Textarea'
-      description='Multi-line text on the field surface. On touch it renders 16px, where iOS does not zoom; in an Input Group, InputGroupTextarea.'>
+      description='Multi-line text on the field surface. On a phone it renders 16px, where iOS does not zoom; in an Input Group, InputGroupTextarea.'>
       <ExampleSection title='Default' description='At least 60px; grows with rows.'>
         <TextareaDefault />
       </ExampleSection>
