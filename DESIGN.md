@@ -186,15 +186,15 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 
 ## Surfaces and elevation
 
-| Layer      | Classes                                                                                                                                                 | Owner                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| App frame  | `bg-sidebar`                                                                                                                                            | `body`, `Sidebar`                                           |
-| Page panel | `bg-background md:rounded-panel`                                                                                                                        | the page frame                                              |
-| Card shell | `rounded-card bg-(--card-shell)`, default `--shell`                                                                                                     | `Card`                                                      |
-| Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), `shadow-card`                                                                         | `CardContent`, `Table variant='card'` body                  |
-| Popup      | `rounded-popup bg-popover shadow-popup`, fade + zoom from 95% over `duration-enter`                                                                     | `PopoverContent`, menus, `SelectContent`, `ComboboxContent` |
-| Inverse    | `data-surface='inverse'` + `rounded-popup bg-popover shadow-popup`: the other mode's tokens, dark on a light page and light on a dark one               | `BottomNav`, `ActionBar`                                    |
-| Modal      | `rounded-dialog bg-popover shadow-modal`; header and body `--modal-inset` (24px) in, the footer a `muted` band under a rule; backdrop `black/32` + blur | `DialogContent`, `AlertDialogContent`, `SheetContent`       |
+| Layer      | Classes                                                                                                                                                    | Owner                                                       |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| App frame  | `bg-sidebar`                                                                                                                                               | `body`, `Sidebar`                                           |
+| Page panel | `bg-background md:rounded-panel`                                                                                                                           | the page frame                                              |
+| Card shell | `rounded-card bg-(--card-shell)`, default `--shell`; below `md` (`layout='responsive'`, the default) no shell: the header is a section title over the card | `Card`                                                      |
+| Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), `shadow-card`                                                                            | `CardContent`, `Table variant='card'` body                  |
+| Popup      | `rounded-popup bg-popover shadow-popup`, fade + zoom from 95% over `duration-enter`                                                                        | `PopoverContent`, menus, `SelectContent`, `ComboboxContent` |
+| Inverse    | `data-surface='inverse'` + `rounded-popup bg-popover shadow-popup`: the other mode's tokens, dark on a light page and light on a dark one                  | `BottomNav`, `ActionBar`                                    |
+| Modal      | `rounded-dialog bg-popover shadow-modal`; header and body `--modal-inset` (24px) in, the footer a `muted` band under a rule; backdrop `black/32` + blur    | `DialogContent`, `AlertDialogContent`, `SheetContent`       |
 
 - Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`; `-drop` + `-drop-hover` without the ring, on a raised button's `--edge` border), `shadow-popup`, `shadow-modal`.
 - Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop. A raised button is the exception: its edge is a border over its own fill, so on a saturated surface it still reads as the button's.
