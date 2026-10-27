@@ -461,8 +461,6 @@ const bottomNavItemClassName = cn(
   '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>span:not([data-slot=badge])]:sr-only',
   '[&>[data-slot=badge]]:absolute [&>[data-slot=badge]]:top-0.5 [&>[data-slot=badge]]:left-[calc(50%+4px)] [&>[data-slot=badge]]:min-w-(--badge-height-sm) [&>[data-slot=badge]]:tabular-nums',
   // `labels`: the label under the icon, the tab shrinking to fit; the badge on the icon's corner, ringed in the bar.
-  // `muted-foreground` is set for the page, not the popup: as caption text it falls under 4.5:1 there.
-  'group-data-labels/bottom-nav:text-[color-mix(in_oklab,var(--muted-foreground),var(--foreground)_15%)]',
   'group-data-labels/bottom-nav:h-(--bottom-nav-tab-height) group-data-labels/bottom-nav:w-(--bottom-nav-tab-width) group-data-labels/bottom-nav:min-w-0 group-data-labels/bottom-nav:shrink group-data-labels/bottom-nav:flex-col group-data-labels/bottom-nav:gap-0.5',
   'group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:not-sr-only group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:max-w-full group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:truncate group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:px-tight group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:text-caption group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:font-medium',
   'group-data-labels/bottom-nav:[&>[data-slot=badge]]:top-1 group-data-labels/bottom-nav:[&>[data-slot=badge]]:left-[calc(50%+6px)] group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-2 group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-popover',
