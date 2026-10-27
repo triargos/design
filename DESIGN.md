@@ -89,7 +89,7 @@ Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other 
 | `text-caption` | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                                             | `Badge`, `TooltipContent`                               |
 
 - Icons (Tabler, `@tabler/icons-react`) draw a 1.25px stroke at every size, the weight of their label (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
-- A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, the dissolved `Card`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`) and `FieldLabel` 16 / 18, so iOS does not zoom on focus, and a sizing theme's `touch` values apply. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
+- A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, the dissolved `Card`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`) and `FieldLabel` 16 / 18 (a `Drawer`'s rows 16 / 24), so iOS does not zoom on focus, and a sizing theme's `touch` values apply. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
 - A new role goes in `tailwind.css` **and** in `cn` (`lib/utils.ts`). Otherwise `cn` drops the text color next to it.
 
 ## Spacing
@@ -168,10 +168,10 @@ Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/the
 
 A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius, each a partial map of token → value, plus its own `tokens`, and `touch` values for a phone (below `md`, 768px).
 
-| Axis      | Values                                                                                                                                                                                                                                   |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `density` | `compact` (controls 32, card 16, group 12, switch 14) · `default` · `comfortable` (controls 40, card 24, group 20, icons 18, checkbox 18). Component tokens move with it                                                                 |
-| `radius`  | `sharp` (all 0, the fixed steps too; checkbox and track 2) · `default` · `soft` (×1.2) · `pill` (`control-*` and tabs full; the rest capped). Component radii (`--tabs-radius`, `--alert-radius`) are literal: each radius sets them too |
+| Axis      | Values                                                                                                                                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `density` | `compact` (controls 32, card 16, group 12, switch 14) · `default` · `comfortable` (controls 40, card 24, group 20, icons 18, checkbox 18). Component tokens move with it                                                                                      |
+| `radius`  | `sharp` (all 0, the fixed steps too; checkbox and track 2) · `default` · `soft` (×1.2) · `pill` (`control-*` and tabs full; the rest capped). Component radii (`--tabs-radius`, `--alert-radius`, `--drawer-*-radius`) are literal: each radius sets them too |
 
 | Style (`SIZING_STYLES`) | Density · radius   | Its own                                                                                                                                                               |
 | ----------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
