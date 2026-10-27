@@ -55,25 +55,26 @@ function useBar(part: string) {
   return bar;
 }
 
-// The morph, after Danny Williams's morphing menu: the shell squeezes for 100ms, then springs to the size of what it
+// The morph, after Danny Williams's morphing menu: the shell squeezes for 70ms, then springs to the size of what it
 // shows next (the dock, close in size to the tabs, skips the squeeze). The old content shrinks to 80% and blurs out as
 // it squeezes; the new content cascades in, rising and sharpening, as the shell opens. The shell springs, so a quick
 // open-close turns around from where it is.
-const squeeze = { duration: 0.1, ease: [0.4, 0, 0.2, 1] } as const;
-const opening = { type: 'spring', duration: 0.4, bounce: 0.24 } as const;
-const closing = { type: 'spring', duration: 0.4, bounce: 0.15 } as const;
+// A tab bar is tapped all day: the whole morph settles in under 400ms.
+const squeeze = { duration: 0.07, ease: [0.4, 0, 0.2, 1] } as const;
+const opening = { type: 'spring', duration: 0.3, bounce: 0.2 } as const;
+const closing = { type: 'spring', duration: 0.28, bounce: 0.12 } as const;
 const resizing = { type: 'spring', duration: 0.25, bounce: 0 } as const;
 const leave = { opacity: 0, scale: 0.8, filter: 'blur(8px)' } as const;
 const rest = { opacity: 1, scale: 1, filter: 'blur(0px)' } as const;
-const leaveTransition: Transition = { duration: 0.15 };
-const returnTransition: Transition = { duration: 0.22, delay: 0.08, ease: 'easeOut' };
+const leaveTransition: Transition = { duration: 0.1 };
+const returnTransition: Transition = { duration: 0.18, delay: 0.05, ease: 'easeOut' };
 /**
- * How each layer's items cascade in (ms). The panel's rows wait for the squeeze and rise far, with a little overshoot,
+ * How each layer's items cascade in (ms). The panel's rows wait for the squeeze and rise, with a little overshoot,
  * into a shell growing several rows tall. The dock swaps with the tabs at the same height and about the same width: no
  * squeeze, and its buttons start with the shell, rising a little on `ease-enter`.
  */
 const cascade = {
-  panel: { y: 48, blur: 4, delay: 200, step: 20, duration: 400, easing: 'cubic-bezier(0.34, 1.3, 0.64, 1)' },
+  panel: { y: 24, blur: 2, delay: 90, step: 15, duration: 260, easing: 'cubic-bezier(0.34, 1.3, 0.64, 1)' },
   dock: { y: 8, blur: 2, delay: 0, step: 15, duration: 250, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' },
 } as const;
 /** The tabs coming back from the dock: at once, as the shell springs. */
@@ -228,7 +229,7 @@ function BottomNavList({
     const running: Array<{ stop: () => void }> = [];
     const track = <T extends { stop: () => void }>(animation: T) => (running.push(animation), animation);
     morphing.current = true;
-    // Rows rising from 48px below would make the panel scrollable mid-morph; it scrolls once they land.
+    // Rows rising from below would make the panel scrollable mid-morph; it scrolls once they land.
     layers.panel.style.overflowY = 'hidden';
     const start = { width: shell.offsetWidth, height: shell.offsetHeight };
     fixSize(start);

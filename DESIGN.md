@@ -214,7 +214,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | `ease-enter`                            | `cubic-bezier(0.23, 1, 0.32, 1)`       | Enter and exit                                                    |
 | `ease-move`                             | `cubic-bezier(0.645, 0.045, 0.355, 1)` | Moving what is already on screen                                  |
 | `duration-drawer`                       | 560ms                                  | A drawer entering and leaving; its pages morph on Motion springs  |
-| `duration-indicator` · `duration-press` | 600 · 300ms                            | A springing tab fill; a press release or a check popping in       |
+| `duration-indicator` · `duration-press` | 400 · 300ms                            | A springing tab fill; a press release or a check popping in       |
 | `ease-spring`                           | `linear(…)`, ζ 0.82, ~1% overshoot     | Drawers, pages, arriving content (CSS)                            |
 | `ease-spring-bounce`                    | `linear(…)`, ζ 0.62, ~8% overshoot     | An indicator, a press release, a check (CSS); never under text    |
 
@@ -294,7 +294,7 @@ sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal
 block         Card > CardHeader > CardContent [> ItemList [virtualized]]
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
-motion        duration-enter 100 · feedback 150 · move 200 · modal 150 · drawer 560 · indicator 600 · press 300 · ease-enter · ease-move · ease-spring · ease-spring-bounce
+motion        duration-enter 100 · feedback 150 · move 200 · modal 150 · drawer 560 · indicator 400 · press 300 · ease-enter · ease-move · ease-spring · ease-spring-bounce
 values        value + onValueChange · dates YYYY-MM-DD · options SelectOption
 locale        LocaleProvider locale timeZone labels (root) · a prop wins · else en-US, English
 data color    Badge color · StatusDot color (exclusive with intent) · var(--category-1 … 8)

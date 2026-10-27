@@ -400,7 +400,7 @@
   );
   /* A drawer entering and leaving; a bouncing indicator; a press release. Its pages morph on Motion springs. */
   --transition-duration-drawer: 560ms;
-  --transition-duration-indicator: 600ms;
+  --transition-duration-indicator: 400ms;
   --transition-duration-press: 300ms;
 
   --text-*: initial;
