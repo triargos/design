@@ -31,6 +31,19 @@ const dropdownMenuItemVariants = cva(
   },
 );
 
+/**
+ * The `data-slot` prefix of the parts inside a menu: `ContextMenuContent` renders these same parts as `context-menu-*`.
+ */
+const MenuSlotContext = React.createContext<'dropdown-menu' | 'context-menu'>('dropdown-menu');
+
+/** The menu popup; `ContextMenuContent` shares it. */
+const menuPopupClassName = cn(
+  'max-h-(--available-height) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-popup-inset text-popover-foreground shadow-popup outline-none [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
+  'duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+  // Reduced motion: fade only, no zoom and no slide.
+  'motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100 motion-reduce:data-open:slide-in-from-top-0 motion-reduce:data-open:slide-in-from-left-0',
+);
+
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot='dropdown-menu' {...props} />;
 }
@@ -64,13 +77,7 @@ function DropdownMenuContent({
         <MenuPrimitive.Popup
           data-slot='dropdown-menu-content'
           data-surface='popup'
-          className={cn(
-            'max-h-(--available-height) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-popup-inset text-popover-foreground shadow-popup outline-none [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
-            'duration-enter ease-enter data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-            // Reduced motion: fade only, no zoom and no slide.
-            'motion-reduce:data-closed:zoom-out-100 motion-reduce:data-open:zoom-in-100 motion-reduce:data-open:slide-in-from-top-0 motion-reduce:data-open:slide-in-from-left-0',
-            className,
-          )}
+          className={cn(menuPopupClassName, className)}
           {...props}
         />
       </MenuPrimitive.Positioner>
@@ -79,14 +86,16 @@ function DropdownMenuContent({
 }
 
 function DropdownMenuGroup(props: MenuPrimitive.Group.Props) {
-  return <MenuPrimitive.Group data-slot='dropdown-menu-group' {...props} />;
+  const slot = React.use(MenuSlotContext);
+  return <MenuPrimitive.Group data-slot={`${slot}-group`} {...props} />;
 }
 
 /** A plain heading: Base UI's `GroupLabel` must sit inside a `Group`, which call sites do not always use. */
 function DropdownMenuLabel({ className, ...props }: React.ComponentProps<'div'>) {
+  const slot = React.use(MenuSlotContext);
   return (
     <div
-      data-slot='dropdown-menu-label'
+      data-slot={`${slot}-label`}
       className={cn(
         'px-menu-item-pad pt-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pb-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/4)] text-caption font-medium text-muted-foreground',
         className,
@@ -102,9 +111,10 @@ function DropdownMenuItem({
   intent = 'neutral',
   ...props
 }: MenuPrimitive.Item.Props & { intent?: 'neutral' | 'destructive' }) {
+  const slot = React.use(MenuSlotContext);
   return (
     <MenuPrimitive.Item
-      data-slot='dropdown-menu-item'
+      data-slot={`${slot}-item`}
       data-intent={intent}
       className={cn(dropdownMenuItemVariants({ intent }), className)}
       {...props}
@@ -118,9 +128,10 @@ function DropdownMenuCheckboxItem({
   closeOnClick = true,
   ...props
 }: MenuPrimitive.CheckboxItem.Props) {
+  const slot = React.use(MenuSlotContext);
   return (
     <MenuPrimitive.CheckboxItem
-      data-slot='dropdown-menu-checkbox-item'
+      data-slot={`${slot}-checkbox-item`}
       closeOnClick={closeOnClick}
       className={cn(dropdownMenuItemVariants({ indicator: true }), className)}
       {...props}>
@@ -135,13 +146,15 @@ function DropdownMenuCheckboxItem({
 }
 
 function DropdownMenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
-  return <MenuPrimitive.RadioGroup data-slot='dropdown-menu-radio-group' {...props} />;
+  const slot = React.use(MenuSlotContext);
+  return <MenuPrimitive.RadioGroup data-slot={`${slot}-radio-group`} {...props} />;
 }
 
 function DropdownMenuRadioItem({ className, children, closeOnClick = true, ...props }: MenuPrimitive.RadioItem.Props) {
+  const slot = React.use(MenuSlotContext);
   return (
     <MenuPrimitive.RadioItem
-      data-slot='dropdown-menu-radio-item'
+      data-slot={`${slot}-radio-item`}
       closeOnClick={closeOnClick}
       className={cn(dropdownMenuItemVariants({ indicator: true }), className)}
       {...props}>
@@ -156,9 +169,10 @@ function DropdownMenuRadioItem({ className, children, closeOnClick = true, ...pr
 }
 
 function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.Props) {
+  const slot = React.use(MenuSlotContext);
   return (
     <MenuPrimitive.Separator
-      data-slot='dropdown-menu-separator'
+      data-slot={`${slot}-separator`}
       className={cn('-mx-popup-inset my-popup-inset h-px bg-border', className)}
       {...props}
     />
@@ -166,9 +180,10 @@ function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.
 }
 
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<'span'>) {
+  const slot = React.use(MenuSlotContext);
   return (
     <span
-      data-slot='dropdown-menu-shortcut'
+      data-slot={`${slot}-shortcut`}
       className={cn('ml-auto text-caption tracking-widest text-faint-foreground', className)}
       {...props}
     />
@@ -176,13 +191,15 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<'spa
 }
 
 function DropdownMenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
-  return <MenuPrimitive.SubmenuRoot data-slot='dropdown-menu-sub' {...props} />;
+  const slot = React.use(MenuSlotContext);
+  return <MenuPrimitive.SubmenuRoot data-slot={`${slot}-sub`} {...props} />;
 }
 
 function DropdownMenuSubTrigger({ className, children, ...props }: MenuPrimitive.SubmenuTrigger.Props) {
+  const slot = React.use(MenuSlotContext);
   return (
     <MenuPrimitive.SubmenuTrigger
-      data-slot='dropdown-menu-sub-trigger'
+      data-slot={`${slot}-sub-trigger`}
       className={cn(
         dropdownMenuItemVariants(),
         'data-popup-open:bg-foreground/6 data-popup-open:text-foreground',
@@ -217,6 +234,8 @@ function DropdownMenuSubContent({
 
 export {
   DropdownMenu,
+  MenuSlotContext,
+  menuPopupClassName,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,

@@ -427,11 +427,10 @@
       "name": "context-menu",
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react@1.8.0",
-        "@tabler/icons-react@3.49.0",
-        "class-variance-authority@^0.7.1"
+        "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
+        "@triargos/dropdown-menu",
         "@triargos/theme",
         "@triargos/utils"
       ],
