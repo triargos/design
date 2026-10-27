@@ -338,9 +338,10 @@ function BottomNavList({
           labels ? 'inset-0' : 'bottom-0 left-1/2 w-max -translate-x-1/2',
           // With labels, a docked bar fills the tabs' box: `--bottom-nav-action-height` buttons, the rest of the height
           // an even inset on every side, `rounded-inner` corners. What leads the row (a status) sits at the start, the
-          // buttons at the end; a row of one (a status that replaced them) centers.
+          // buttons at the end; a row of one (a status that replaced them) centers, on both axes: it is lower than the
+          // buttons, so the bar fills the box.
           labels && [
-            '[&_[data-slot=action-bar]]:w-full',
+            '[&_[data-slot=action-bar]]:size-full',
             '[&_[data-slot=action-bar]]:[--outer-inset:calc((var(--bottom-nav-tab-height)+2*var(--spacing-popup-inset)-var(--bottom-nav-action-height))/2)]',
             '[&_[data-slot=action-bar-content]]:w-full [&_[data-slot=action-bar-content]]:justify-center [&_[data-slot=action-bar-content]>:first-child:not(:only-child)]:me-auto',
             '[&_[data-slot=action-bar-content]>[data-slot=button]]:h-(--bottom-nav-action-height)',
