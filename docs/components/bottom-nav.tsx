@@ -1,4 +1,5 @@
 import { BottomNavDefault } from '../examples/bottom-nav/default';
+import { BottomNavLabels } from '../examples/bottom-nav/labels';
 import { BottomNavWithSelection } from '../examples/bottom-nav/with-selection';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -24,6 +25,19 @@ export default defineDocs({
         }
         bare>
         <BottomNavDefault />
+      </ExampleSection>
+      <ExampleSection
+        title='Labels'
+        description={
+          <>
+            <Code>BottomNavList labels</Code>: the label under each icon (<Code>--bottom-nav-tab-width</Code> ×{' '}
+            <Code>--bottom-nav-tab-height</Code>) and a fill that springs to the tab (
+            <Code>duration-indicator ease-spring-bounce</Code>). Tabs shrink to fit four or five on a phone. The page
+            keeps <Code>pb-36</Code>.
+          </>
+        }
+        bare>
+        <BottomNavLabels />
       </ExampleSection>
       <ExampleSection
         title='With selection'

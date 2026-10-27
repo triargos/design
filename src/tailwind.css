@@ -309,6 +309,99 @@
   --transition-duration-modal: 150ms;
   --ease-enter: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-move: cubic-bezier(0.645, 0.045, 0.355, 1);
+  /* Springs for CSS: a damped spring sampled into `linear()`. `spring` (ζ 0.82, ~1% overshoot) carries sheets and
+     pages; `spring-bounce` (ζ 0.62, ~8% overshoot) a press release, an indicator, a check. Never on a transform that
+     carries text (Motion, below). Interruptible motion in code stays a Motion spring. */
+  --ease-spring: linear(
+    0,
+    0.0214,
+    0.076,
+    0.1514,
+    0.2383,
+    0.3298,
+    0.4206,
+    0.5074,
+    0.5878,
+    0.6606,
+    0.725,
+    0.7811,
+    0.829,
+    0.8693,
+    0.9028,
+    0.93,
+    0.9518,
+    0.9689,
+    0.9822,
+    0.9921,
+    0.9993,
+    1.0044,
+    1.0078,
+    1.0098,
+    1.0108,
+    1.0111,
+    1.0108,
+    1.0102,
+    1.0094,
+    1.0084,
+    1.0074,
+    1.0064,
+    1.0054,
+    1.0045,
+    1.0037,
+    1.003,
+    1.0024,
+    1.0019,
+    1.0014,
+    1.0011,
+    1
+  );
+  --ease-spring-bounce: linear(
+    0,
+    0.0325,
+    0.1153,
+    0.2291,
+    0.3579,
+    0.4897,
+    0.6153,
+    0.7289,
+    0.8269,
+    0.9077,
+    0.9711,
+    1.0183,
+    1.0509,
+    1.0712,
+    1.0812,
+    1.0834,
+    1.0799,
+    1.0724,
+    1.0626,
+    1.0518,
+    1.0408,
+    1.0304,
+    1.0212,
+    1.0132,
+    1.0067,
+    1.0016,
+    0.9979,
+    0.9954,
+    0.9939,
+    0.9931,
+    0.9931,
+    0.9934,
+    0.9941,
+    0.9949,
+    0.9958,
+    0.9967,
+    0.9976,
+    0.9984,
+    0.999,
+    0.9995,
+    1
+  );
+  /* A bottom sheet entering and leaving; a bouncing indicator; a press release. Its pages morph on Motion springs. */
+  --transition-duration-sheet: 560ms;
+  --transition-duration-indicator: 600ms;
+  --transition-duration-press: 300ms;
 
   --text-*: initial;
 
@@ -527,6 +620,25 @@
   --sidebar-sub-pad-y: 0.375rem;
   /* `BottomNav` "More" panel: icon to label in its rows. */
   --bottom-nav-gap: 0.625rem;
+  /* `BottomNavList labels`: a tab with its label under the icon (it shrinks to fit 4–5 on a phone). */
+  --bottom-nav-tab-width: 5.5rem;
+  --bottom-nav-tab-height: 3.25rem;
+  /* A docked `ActionBar`'s buttons in a labelled nav: a finger's target. */
+  --bottom-nav-action-height: 2.75rem;
+  /* `SheetContent side='bottom'`: its corner and its inset from the screen edge; its pages' padding; the grabber;
+     a menu row, its corner and its padding; an option row's corner. */
+  --sheet-bottom-radius: 2rem;
+  --sheet-bottom-inset: 0.5rem;
+  --sheet-page-pad: 0.625rem;
+  --sheet-grabber-width: 2.25rem;
+  --sheet-grabber-height: 0.25rem;
+  --sheet-menu-item-height: 3rem;
+  --sheet-menu-item-radius: 0.875rem;
+  --sheet-menu-item-pad-x: 0.875rem;
+  --sheet-option-radius: 1rem;
+  /* `side='bottom'` rows and page titles: a phone's text size, as fields below `sm`. */
+  --sheet-text: 1rem;
+  --sheet-text-leading: 1.5rem;
   /* `Accordion` `default`: the trigger's padding (half of it below the trigger and the content); the content's end
      padding. `flush`: the content's bottom padding. */
   --accordion-pad: 0.5rem;

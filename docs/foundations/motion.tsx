@@ -34,6 +34,24 @@ const durations = [
     use: 'Dialogs and their backdrop: enter and exit. Larger than a popup, so slower',
     owner: 'Dialog, AlertDialog',
   },
+  {
+    className: 'duration-sheet',
+    ms: 560,
+    use: 'A bottom sheet entering and leaving, on ease-spring',
+    owner: "SheetContent side='bottom'",
+  },
+  {
+    className: 'duration-indicator',
+    ms: 600,
+    use: 'An indicator springing to the current tab, on ease-spring-bounce',
+    owner: 'BottomNavList labels',
+  },
+  {
+    className: 'duration-press',
+    ms: 300,
+    use: 'A press releasing, a check popping in, on ease-spring-bounce',
+    owner: 'SheetOption',
+  },
 ] as const;
 
 const easings = [
@@ -46,6 +64,20 @@ const easings = [
     className: 'ease-move',
     curve: [0.645, 0.045, 0.355, 1],
     use: 'Moving what is already on screen: accelerate, then brake.',
+  },
+] as const;
+
+/** Damped springs sampled into `linear()`, for CSS transitions. */
+const springs = [
+  {
+    className: 'ease-spring',
+    duration: 'duration-sheet',
+    use: 'ζ 0.82, about 1% overshoot. Sheets, pages, arriving content.',
+  },
+  {
+    className: 'ease-spring-bounce',
+    duration: 'duration-indicator',
+    use: 'ζ 0.62, about 8% overshoot. An indicator, a press release, a check. Never on a transform that carries text.',
   },
 ] as const;
 
@@ -124,6 +156,18 @@ export default defineDocs({
                 <Curve curve={easing.curve} />
                 <p className='text-body text-pretty text-muted-foreground'>{easing.use}</p>
               </div>
+            </SpecimenRow>
+          ))}
+        </SpecimenList>
+      </FoundationSection>
+
+      <FoundationSection
+        title='Springs in CSS'
+        description='A damped spring sampled into linear(), for motion that CSS runs: a sheet, a page, an indicator. Interruptible motion in code stays a Motion spring.'>
+        <SpecimenList>
+          {springs.map((spring) => (
+            <SpecimenRow key={spring.className} name={spring.className} meta={spring.use}>
+              <Run className={`${spring.duration} ${spring.className}`} label={spring.className} />
             </SpecimenRow>
           ))}
         </SpecimenList>

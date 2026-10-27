@@ -117,8 +117,18 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
  * The bar: a shell on the inverted surface holding three layers, the `<nav>` of 3–5 tabs, the "More" panel and the
  * dock. The shell takes the size of the layer that shows and morphs between them. A fill slides to the current tab.
  * Escape, a tap outside or focus leaving closes the panel. The panel scrolls past `100dvh - 6rem` with no scrollbar.
+ *
+ * `labels`: each tab shows its label under the icon (`--bottom-nav-tab-width` × `--bottom-nav-tab-height`) and the
+ * fill springs to the current tab. Tabs shrink to fit 4–5 on a phone. A docked `ActionBar` takes the tabs' box, so
+ * docking morphs only the content. For an app whose tabs are not recognisable by icon alone.
  */
-function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...props }: React.ComponentProps<'nav'>) {
+function BottomNavList({
+  className,
+  children,
+  labels = false,
+  'aria-label': ariaLabelProp,
+  ...props
+}: React.ComponentProps<'nav'> & { labels?: boolean }) {
   const ariaLabel = ariaLabelProp ?? useLocale().labels.mainNavigation;
   const { view, panelOpen, setPanelOpen, setPanel, panelId } = useBar('BottomNavList');
   const setDock = useBottomNavDock()?.setDock;
@@ -170,9 +180,10 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
   }, [panelOpen, setPanelOpen, panelId]);
 
   // A layer that changes size while it shows (a docked count grows a digit) resizes the shell without the squeeze.
+  // With labels the dock has the tabs' box and never resizes the shell.
   React.useEffect(() => {
     const shell = shellRef.current;
-    const layer = view === 'dock' ? dockRef.current : view === 'panel' ? panelRef.current : null;
+    const layer = view === 'dock' && !labels ? dockRef.current : view === 'panel' ? panelRef.current : null;
     if (shell === null || layer === null) return;
     const observer = new ResizeObserver(() => {
       if (morphing.current || layer.offsetWidth === 0) return;
@@ -183,7 +194,7 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
     });
     observer.observe(layer);
     return () => observer.disconnect();
-  }, [view, reduced]);
+  }, [view, labels, reduced]);
 
   React.useLayoutEffect(() => {
     const shell = shellRef.current;
@@ -193,6 +204,8 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
     previous.current = view;
     const shown = layers[view]!;
     const hidden = (Object.keys(layers) as View[]).filter((key) => key !== view).map((key) => layers[key]!);
+    // The layer whose size the shell takes: with labels a docked bar fills the tabs' box, so the shell sizes to them.
+    const sizedBy = view === 'dock' && labels ? layers.tabs : shown;
     // The items that cascade in: the panel's rows, or the items in the docked toolbar's row.
     const row = shown.querySelector('[data-slot=action-bar-content]:not([data-exiting])');
     const items = (view === 'panel' ? [...shown.children] : view === 'dock' ? [...(row?.children ?? [])] : []).filter(
@@ -203,7 +216,7 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
 
     if (from === view || reduced) {
       // Mount, or reduced motion: no squeeze, no blur, no cascade; the layers only fade.
-      if (view === 'tabs') Object.assign(shell.style, { width: '', height: '' });
+      if (sizedBy === layers.tabs) Object.assign(shell.style, { width: '', height: '' });
       else fixSize({ width: shown.offsetWidth, height: shown.offsetHeight });
       const fade = { duration: from === view ? 0 : 0.15 };
       for (const layer of hidden) animate(layer, { opacity: 0 }, fade);
@@ -225,15 +238,15 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
     const docking = from === 'dock' || view === 'dock';
     const spring = () => {
       const target = {
-        width: [shell.offsetWidth, shown.offsetWidth],
-        height: [shell.offsetHeight, shown.offsetHeight],
+        width: [shell.offsetWidth, sizedBy.offsetWidth],
+        height: [shell.offsetHeight, sizedBy.offsetHeight],
       };
       void track(animate(shell, target, view === 'tabs' ? closing : opening)).then(() => {
         if (cancelled) return;
         morphing.current = false;
         layers.panel!.style.overflowY = '';
-        // Back on the tabs, the shell sizes itself again.
-        if (view === 'tabs') Object.assign(shell.style, { width: '', height: '' });
+        // On the tabs' size, the shell sizes itself again.
+        if (sizedBy === layers.tabs) Object.assign(shell.style, { width: '', height: '' });
       });
     };
     if (docking) spring();
@@ -274,7 +287,7 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
       layers.panel!.style.overflowY = '';
       for (const animation of running) animation.stop();
     };
-  }, [view, reduced]);
+  }, [view, labels, reduced]);
 
   return (
     <div
@@ -283,7 +296,10 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
       data-surface='inverse'
       data-view={view}
       // The outer corner for every layer: the tabs sit `popup-inset` in, the "More" panel `--spacing-list-inset`.
-      className='pointer-events-auto relative col-start-1 row-start-1 flex items-end justify-center justify-self-center overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-radius:var(--radius-popup)]'
+      className={cn(
+        'pointer-events-auto relative col-start-1 row-start-1 flex items-end justify-center justify-self-center overflow-hidden rounded-popup bg-popover text-popover-foreground shadow-popup [--outer-radius:var(--radius-popup)]',
+        labels && 'max-w-full',
+      )}
       onBlur={(event) => {
         if (panelOpen && event.relatedTarget instanceof Node && !event.currentTarget.contains(event.relatedTarget))
           setPanelOpen(false);
@@ -293,8 +309,12 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
         data-slot='bottom-nav-list'
         aria-label={ariaLabel}
         inert={view !== 'tabs'}
+        data-labels={labels || undefined}
         className={cn(
-          'relative flex w-max shrink-0 origin-bottom items-center gap-related p-popup-inset [--outer-inset:var(--spacing-popup-inset)]',
+          'group/bottom-nav relative flex w-max shrink-0 origin-bottom items-center gap-related p-popup-inset [--outer-inset:var(--spacing-popup-inset)]',
+          // Capped by the `BottomNav`'s width (`cqw`), not the shell's: the morph back from the panel measures the tabs
+          // while the shell still has the panel's width.
+          labels && 'max-w-[100cqw] gap-0',
           className,
         )}
         {...props}>
@@ -314,7 +334,19 @@ function BottomNavList({ className, children, 'aria-label': ariaLabelProp, ...pr
         data-slot='bottom-nav-dock'
         inert={view !== 'dock'}
         style={{ opacity: 0 }}
-        className='absolute bottom-0 left-1/2 w-max origin-bottom -translate-x-1/2'
+        className={cn(
+          'absolute origin-bottom',
+          labels ? 'inset-0' : 'bottom-0 left-1/2 w-max -translate-x-1/2',
+          // With labels, a docked bar fills the tabs' box: `--bottom-nav-action-height` buttons, the rest of the height
+          // an even inset on every side, `rounded-inner` corners. What leads the row (a status) sits at the start, the
+          // buttons at the end; a row of one (a status that replaced them) centers.
+          labels && [
+            '[&_[data-slot=action-bar]]:w-full',
+            '[&_[data-slot=action-bar]]:[--outer-inset:calc((var(--bottom-nav-tab-height)+2*var(--spacing-popup-inset)-var(--bottom-nav-action-height))/2)]',
+            '[&_[data-slot=action-bar-content]]:w-full [&_[data-slot=action-bar-content]]:justify-center [&_[data-slot=action-bar-content]>:first-child:not(:only-child)]:me-auto',
+            '[&_[data-slot=action-bar-content]>[data-slot=button]]:h-(--bottom-nav-action-height)',
+          ],
+        )}
       />
     </div>
   );
@@ -338,11 +370,15 @@ function CurrentIndicator() {
       setVisible(current !== null);
       if (current === null) return;
       indicator.style.setProperty('--current-left', `${current.offsetLeft}px`);
+      indicator.style.setProperty('--current-width', `${current.offsetWidth}px`);
+      indicator.style.setProperty('--current-height', `${current.offsetHeight}px`);
     };
     measure();
     const frame = requestAnimationFrame(() => setAnimate(true));
     const resize = new ResizeObserver(measure);
     resize.observe(list);
+    // Each tab too: labelled tabs shrink as a late web font widens their neighbours.
+    for (const child of list.children) resize.observe(child);
     const mutation = new MutationObserver(measure);
     mutation.observe(list, { subtree: true, attributes: true, attributeFilter: ['aria-current', 'data-current'] });
     return () => {
@@ -358,7 +394,9 @@ function CurrentIndicator() {
       aria-hidden
       data-slot='bottom-nav-indicator'
       className={cn(
-        'pointer-events-none absolute top-popup-inset left-0 size-control-lg translate-x-(--current-left) rounded-inner bg-foreground/10 transition-[translate] duration-move ease-move motion-reduce:transition-none',
+        'pointer-events-none absolute top-popup-inset left-0 h-(--current-height,var(--spacing-control-lg)) w-(--current-width,var(--spacing-control-lg)) translate-x-(--current-left) rounded-inner bg-foreground/10 transition-[translate,width] duration-move ease-move motion-reduce:transition-none',
+        // No text rides it, so it may overshoot.
+        'group-data-labels/bottom-nav:bg-foreground/12 group-data-labels/bottom-nav:duration-indicator group-data-labels/bottom-nav:ease-spring-bounce',
         !animate && 'transition-none',
         !visible && 'invisible',
       )}
@@ -377,6 +415,12 @@ const bottomNavItemClassName = cn(
   'transition-[color,scale] duration-feedback hover:text-foreground active:scale-[0.92] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
   '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>span:not([data-slot=badge])]:sr-only',
   '[&>[data-slot=badge]]:absolute [&>[data-slot=badge]]:top-0.5 [&>[data-slot=badge]]:left-[calc(50%+4px)] [&>[data-slot=badge]]:min-w-(--badge-height-sm) [&>[data-slot=badge]]:tabular-nums',
+  // `labels`: the label under the icon, the tab shrinking to fit; the badge on the icon's corner, ringed in the bar.
+  // `muted-foreground` is set for the page, not the darker inverse popup: as caption text it falls under 4.5:1 there.
+  'group-data-labels/bottom-nav:text-[color-mix(in_oklab,var(--muted-foreground),var(--foreground)_15%)]',
+  'group-data-labels/bottom-nav:h-(--bottom-nav-tab-height) group-data-labels/bottom-nav:w-(--bottom-nav-tab-width) group-data-labels/bottom-nav:min-w-0 group-data-labels/bottom-nav:shrink group-data-labels/bottom-nav:flex-col group-data-labels/bottom-nav:gap-0.5',
+  'group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:not-sr-only group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:max-w-full group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:truncate group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:px-tight group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:text-caption group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:font-medium',
+  'group-data-labels/bottom-nav:[&>[data-slot=badge]]:top-1 group-data-labels/bottom-nav:[&>[data-slot=badge]]:left-[calc(50%+6px)] group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-2 group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-popover',
   'aria-[current=page]:text-foreground data-current:text-foreground',
   'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
 );

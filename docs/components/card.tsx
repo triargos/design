@@ -43,6 +43,19 @@ export default defineDocs({
         bare>
         <CardWithFooter />
       </ExampleSection>
+      <ExampleSection
+        title='On a phone'
+        description={
+          <>
+            Below <Code>md</Code> (where the Bottom Nav shows) the shell dissolves: <Code>CardHeader</Code> becomes a
+            section title over the page, <Code>CardFooter</Code> a line under the card, and <Code>CardContent</Code> the
+            only surface, <Code>rounded-card</Code>. Narrow the window to see it. <Code>layout='inset'</Code> keeps the
+            shell at every width. On a phone, sections sit 24px apart.
+          </>
+        }
+        bare>
+        <CardWithActions />
+      </ExampleSection>
       <ExampleSection title='Stacked' description='Peer cards sit one group step apart, in a stack or in columns.' bare>
         <CardStacked />
       </ExampleSection>
