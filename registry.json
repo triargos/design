@@ -348,6 +348,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@triargos/icon-swap",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -450,9 +451,9 @@
       ],
       "registryDependencies": [
         "@triargos/button",
+        "@triargos/icon-swap",
         "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@triargos/theme"
       ],
       "files": [
         {
@@ -612,6 +613,23 @@
       "files": [
         {
           "path": "src/components/ui/file-drop-zone.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-swap",
+      "type": "registry:ui",
+      "dependencies": [
+        "framer-motion@13.4.4"
+      ],
+      "registryDependencies": [
+        "@triargos/theme",
+        "@triargos/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/icon-swap.tsx",
           "type": "registry:ui"
         }
       ]
