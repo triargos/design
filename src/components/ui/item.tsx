@@ -15,7 +15,9 @@ import { cn } from '~/lib/utils';
 
 /**
  * A row of an `ItemList`: a list item around one `Item`. The row padding is `card`, and the hairline below it stops
- * there, so it lines up with the row content instead of running into the card's rounded edge.
+ * there, so it lines up with the row content instead of running into the card's rounded edge. A row with an icon tile
+ * pads `card` on the block axis too, so the tile sits as far from the row's top and bottom as from its left edge; a
+ * text row keeps `row-pad-y`, as its line box already adds air.
  */
 function ItemListRow({ last, ...props }: React.ComponentProps<'div'> & { last: boolean }) {
   return (
@@ -23,7 +25,7 @@ function ItemListRow({ last, ...props }: React.ComponentProps<'div'> & { last: b
       role='listitem'
       data-slot='item-list-row'
       className={cn(
-        '*:data-[slot=item]:px-card',
+        '*:data-[slot=item]:px-card *:data-[slot=item]:has-[[data-slot=item-media][data-variant=icon]]:py-card',
         !last &&
           'relative after:absolute after:right-card after:bottom-0 after:left-card after:h-px after:bg-border-subtle',
       )}
