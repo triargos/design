@@ -620,6 +620,11 @@
   --sidebar-sub-pad-y: 0.375rem;
   /* `BottomNav` "More" panel: icon to label in its rows. */
   --bottom-nav-gap: 0.625rem;
+  /* `BottomNavList labels`: a tab with its label under the icon (it shrinks to fit 4–5 on a phone). */
+  --bottom-nav-tab-width: 5.5rem;
+  --bottom-nav-tab-height: 3.25rem;
+  /* A docked `ActionBar`'s buttons in a labelled nav: a finger's target. */
+  --bottom-nav-action-height: 2.75rem;
   /* `Accordion` `default`: the trigger's padding (half of it below the trigger and the content); the content's end
      padding. `flush`: the content's bottom padding. */
   --accordion-pad: 0.5rem;
