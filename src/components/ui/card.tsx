@@ -43,26 +43,18 @@ const gridExpanded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 /**
  * The shell (`--card-shell`, default `--shell`) wraps the content on every side, so the content's corners sit on
  * the shell, never on the page; restyle the tint by setting the variable. `intent='destructive'` marks only the title.
- *
- * `layout='responsive'` (default): below `md` (the phone layout, where the `BottomNav` shows) the shell dissolves. The
- * header becomes a section title above the card, the footer a line below it, and `CardContent` is the only surface,
- * `rounded-card`. A viewport breakpoint, not a container query: a narrow card in a desktop column keeps its shell.
- * `layout='inset'` keeps the shell at every width.
  */
 function Card({
   className,
   intent = 'neutral',
-  layout = 'responsive',
   ...props
-}: ComponentProps<'section'> & { intent?: 'neutral' | 'destructive'; layout?: 'responsive' | 'inset' }) {
+}: ComponentProps<'section'> & { intent?: 'neutral' | 'destructive' }) {
   return (
     <section
       data-slot='card'
       data-intent={intent}
-      data-layout={layout}
       className={cn(
         'group/card rounded-card bg-(--card-shell) p-card-inset [--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)] [--outer-radius:var(--radius-card)]',
-        layout === 'responsive' && 'max-md:rounded-none max-md:bg-transparent max-md:p-0 max-md:[--outer-inset:0px]',
         className,
       )}
       {...props}
@@ -78,15 +70,7 @@ function Card({
 function CardHeader({ className, actions, children, ...props }: ComponentProps<'div'> & { actions?: ReactNode }) {
   if (actions === undefined) {
     return (
-      <div
-        data-slot='card-header'
-        className={cn(
-          'px-[calc(var(--spacing-card)+1px)] py-group',
-          // Phone layout: a section title, `tight` in from the card's edge (optically on its text), `related` above it.
-          'max-md:group-data-[layout=responsive]/card:px-tight max-md:group-data-[layout=responsive]/card:pt-0 max-md:group-data-[layout=responsive]/card:pb-related',
-          className,
-        )}
-        {...props}>
+      <div data-slot='card-header' className={cn('px-[calc(var(--spacing-card)+1px)] py-group', className)} {...props}>
         {children}
       </div>
     );
@@ -96,7 +80,6 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
       data-slot='card-header'
       className={cn(
         'flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-group',
-        'max-md:group-data-[layout=responsive]/card:px-tight max-md:group-data-[layout=responsive]/card:pt-0 max-md:group-data-[layout=responsive]/card:pb-related',
         className,
       )}
       {...props}>
@@ -131,14 +114,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
           <div className='min-h-0 overflow-hidden'>
             {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
                 stalls before unmount. */}
-            <div
-              className={cn(
-                'mb-group px-[calc(var(--spacing-card)+1px)] pt-group',
-                // Phone layout: a line under the card, on the section title's edge.
-                'max-md:group-data-[layout=responsive]/card:mb-0 max-md:group-data-[layout=responsive]/card:px-tight max-md:group-data-[layout=responsive]/card:pt-related',
-                className,
-              )}
-              {...props}>
+            <div className={cn('mb-group px-[calc(var(--spacing-card)+1px)] pt-group', className)} {...props}>
               {children}
             </div>
           </div>
@@ -155,8 +131,6 @@ function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
       className={cn(
         // 14 / 20 semibold, the description 14 / 20 below it: a compact label for the strip, heavier than row titles.
         'text-body leading-5 font-semibold text-balance group-data-[intent=destructive]/card:text-destructive',
-        // Phone layout: a section title over the page.
-        'max-md:group-data-[layout=responsive]/card:text-heading max-md:group-data-[layout=responsive]/card:leading-(--text-heading--line-height) max-md:group-data-[layout=responsive]/card:font-medium',
         className,
       )}
       {...props}
