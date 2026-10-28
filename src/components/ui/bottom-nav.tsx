@@ -556,8 +556,12 @@ function BottomNavList({
         labels && 'max-w-full [--bar-height:calc(var(--bottom-nav-tab-height)+2*var(--spacing-popup-inset))]',
       )}
       onBlur={(event) => {
-        if (panelOpen && event.relatedTarget instanceof Node && !event.currentTarget.contains(event.relatedTarget))
-          setPanelOpen(false);
+        const to = event.relatedTarget;
+        // Safari doesn't focus a clicked button: focus goes to the nearest focusable ancestor (a `main tabindex=-1`).
+        // That is a click in the shell, not focus leaving it.
+        if (!panelOpen || !(to instanceof Node) || event.currentTarget.contains(to) || to.contains(event.currentTarget))
+          return;
+        setPanelOpen(false);
       }}>
       <nav
         ref={setTabs}
