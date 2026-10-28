@@ -201,7 +201,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 - Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop. A raised button is the exception: its edge is a border over its own fill, so on a saturated surface it still reads as the button's.
 - Fields and buttons draw their edge as a real border inside the box (a 36px field or button measures 36px, and so does its fill at every emphasis); a `::before` with `shadow-field-edge` lays the accent on it. Fields and popups weight the edge toward the light: heavier at the bottom in light mode, lit at the top in dark. Dark mode drops the shadow and keeps one white ring.
 - Borders are for structure (dividers, table rules, dashed drop zones) and state (focus, invalid), never for depth.
-- Quiet fills re-declare per `[data-surface]`, so the same class reads one step from its surface. Restyle a shell by setting its variable.
+- Quiet fills and the text below `foreground` (`muted-`, `faint-`, `disabled-foreground`) re-declare per `[data-surface]`, so the same class reads one step from its surface and muted text keeps 4.5:1 on a popup. A surface without its `data-surface` reads the page's. Restyle a shell by setting its variable.
 - `[data-surface=inverse]` re-declares every color token from the other mode (`brandingThemeCss`), so components inside it need no changes. `dark:` variants still follow the page, and so do the edges and drops.
 
 ## Motion

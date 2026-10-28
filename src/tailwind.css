@@ -42,11 +42,11 @@
   --chart-5: oklch(0.47 0.157 37.304);
 }
 
-/* The neutral intent, from the page's text colors. Re-declared where `--foreground` changes: `.dark` and the inverted
-   surface. */
+/* The neutral intent, from the text colors. Re-declared where they change: `.dark` and every `[data-surface]` (muted
+   text follows its surface; the inverted surface swaps all of them). */
 :root,
 .dark,
-[data-surface='inverse'] {
+[data-surface] {
   --neutral: var(--muted-foreground);
   --neutral-solid: var(--foreground);
   --neutral-solid-foreground: var(--background);
