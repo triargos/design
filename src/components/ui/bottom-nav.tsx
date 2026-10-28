@@ -1,7 +1,7 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { animate, motion, type Transition, useReducedMotion } from 'framer-motion';
-import { IconDots } from '@tabler/icons-react';
+import { IconArrowLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 
@@ -113,10 +113,13 @@ type BarContextValue = {
   readonly view: View;
   readonly panelOpen: boolean;
   readonly setPanelOpen: (open: boolean) => void;
-  /** The panel layer, where `BottomNavMore` puts its items. */
+  /** The panel layer, where `BottomNavMore` and each `BottomNavMoreGroup` put their page. */
   readonly panel: HTMLElement | null;
   readonly setPanel: (panel: HTMLElement | null) => void;
   readonly panelId: string;
+  /** The groups opened in the panel, outermost first; empty on the "More" list itself. */
+  readonly panelPath: readonly string[];
+  readonly setPanelPath: (path: readonly string[]) => void;
   /** The tab just tapped, shown as current until the page it opens moves `aria-current`. */
   readonly optimisticCurrent: string | null;
   readonly setOptimisticCurrent: (tab: string | null) => void;
@@ -128,6 +131,46 @@ function useBar(part: string) {
   const bar = React.use(BarContext);
   if (bar === null) throw new Error(`${part} must be used within a BottomNav.`);
   return bar;
+}
+
+/** The page `BottomNavMore` puts its children on, the first the panel shows. */
+const ROOT_PAGE = 'root';
+
+/** The page of the panel that shows. */
+function activePage(panel: HTMLElement) {
+  return panel.querySelector<HTMLElement>(':scope > [data-slot=bottom-nav-panel-page][data-active]');
+}
+
+function pageOf(panel: HTMLElement, page: string) {
+  return panel.querySelector<HTMLElement>(`:scope > [data-page="${CSS.escape(page)}"]`);
+}
+
+function rowsOf(parent: Element | null) {
+  return [...(parent?.children ?? [])].filter((el): el is HTMLElement => el instanceof HTMLElement);
+}
+
+/** Back a page from `path`; focus returns to the row that opened the page left. */
+function backFrom(path: readonly string[], setPath: (path: readonly string[]) => void, shell: HTMLElement | null) {
+  const left = path.at(-1);
+  setPath(path.slice(0, -1));
+  if (left !== undefined)
+    requestAnimationFrame(() =>
+      shell?.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(left)}"]`)?.focus({ preventScroll: true }),
+    );
+}
+
+/** Whether `element` holds the current page, or a group (`aria-current='true'`) that does. */
+function useHoldsCurrent(element: HTMLElement | null) {
+  const [holds, setHolds] = React.useState(false);
+  React.useEffect(() => {
+    if (element === null) return;
+    const check = () => setHolds(element.querySelector('[aria-current]') !== null);
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(element, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-current'] });
+    return () => observer.disconnect();
+  }, [element]);
+  return holds;
 }
 
 /** The id of the "More" tab, for its rows: a row tapped makes the tab current. */
@@ -173,6 +216,20 @@ const cascade = {
   panel: { y: 24, blur: 2, delay: 90, step: 15, duration: 260, easing: 'cubic-bezier(0.34, 1.3, 0.64, 1)' },
   dock: { y: 8, blur: 2, delay: 0, step: 15, duration: 250, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' },
 } as const;
+/**
+ * Between the panel's pages (a `BottomNavMoreGroup` opened, Back), as a `DrawerStack`: the rows that leave blur out
+ * toward the side they go, the next page's cascade in from the other, and the shell springs to its height
+ * (`useFitShell`'s `resizing`). Deeper comes from the right.
+ */
+const pageLeave = { x: 16, blur: 2, duration: 120, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' } as const;
+const pageEnter = {
+  x: 24,
+  blur: 4,
+  delay: 40,
+  step: 20,
+  duration: 300,
+  easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+} as const;
 /** The tabs coming back from the dock: at once, as the shell springs. */
 const dockReturnTransition: Transition = { duration: 0.2, ease: 'easeOut' };
 
@@ -191,6 +248,7 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
   const [panelOpen, setPanelOpen] = React.useState(false);
   const [panel, setPanel] = React.useState<HTMLElement | null>(null);
   const panelId = React.useId();
+  const [panelPath, setPanelPath] = React.useState<readonly string[]>([]);
   const [optimisticCurrent, setOptimisticCurrent] = React.useState<string | null>(null);
   // A docked bar wins: selecting closes the panel.
   React.useEffect(() => {
@@ -200,7 +258,18 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
 
   return (
     <BarContext
-      value={{ view, panelOpen, setPanelOpen, panel, setPanel, panelId, optimisticCurrent, setOptimisticCurrent }}>
+      value={{
+        view,
+        panelOpen,
+        setPanelOpen,
+        panel,
+        setPanel,
+        panelId,
+        panelPath,
+        setPanelPath,
+        optimisticCurrent,
+        setOptimisticCurrent,
+      }}>
       <div
         data-slot='bottom-nav'
         className={cn(
@@ -232,8 +301,21 @@ function BottomNavList({
   ...props
 }: React.ComponentProps<'nav'> & { labels?: boolean }) {
   const ariaLabel = ariaLabelProp ?? useLocale().labels.mainNavigation;
-  const { view, panelOpen, setPanelOpen, panel, setPanel, panelId, optimisticCurrent, setOptimisticCurrent } =
-    useBar('BottomNavList');
+  const {
+    view,
+    panelOpen,
+    setPanelOpen,
+    panel,
+    setPanel,
+    panelId,
+    panelPath,
+    setPanelPath,
+    optimisticCurrent,
+    setOptimisticCurrent,
+  } = useBar('BottomNavList');
+  // The panel's page that shows, and how deep it is: a deeper one comes in from the right.
+  const panelPage = view === 'panel' ? (panelPath.at(-1) ?? ROOT_PAGE) : null;
+  const depth = panelPath.length;
   const nav = useBottomNavDock();
   const setDock = nav?.setDock;
   // The docked bar: a new one while docked swaps in without the morph.
@@ -242,7 +324,12 @@ function BottomNavList({
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [tabs, setTabs] = React.useState<HTMLElement | null>(null);
   const [dock, setDockLayer] = React.useState<HTMLDivElement | null>(null);
-  const previous = React.useRef<{ view: View; bar: string | null }>({ view: 'tabs', bar: null });
+  const previous = React.useRef<{ view: View; bar: string | null; page: string | null; depth: number }>({
+    view: 'tabs',
+    bar: null,
+    page: null,
+    depth: 0,
+  });
   const morphing = React.useRef(false);
   const refit = React.useRef<() => void>(() => {});
 
@@ -268,7 +355,8 @@ function BottomNavList({
   }, [dock, setDock]);
 
   // An open panel closes on a tap outside the shell, and on Escape wherever focus is: a tap on "More" leaves focus on
-  // the trigger, which goes inert as the panel opens, so the key may never reach the shell.
+  // the trigger, which goes inert as the panel opens, so the key may never reach the shell. In a group, Escape goes
+  // back a page first.
   React.useEffect(() => {
     if (!panelOpen) return;
     const outside = (event: PointerEvent) => {
@@ -277,6 +365,10 @@ function BottomNavList({
     const escape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       event.preventDefault();
+      if (panelPath.length > 0) {
+        backFrom(panelPath, setPanelPath, shellRef.current);
+        return;
+      }
       setPanelOpen(false);
       // Next frame: the tabs are inert until the close commits.
       requestAnimationFrame(() =>
@@ -289,7 +381,7 @@ function BottomNavList({
       document.removeEventListener('pointerdown', outside);
       document.removeEventListener('keydown', escape);
     };
-  }, [panelOpen, setPanelOpen, panelId]);
+  }, [panelOpen, setPanelOpen, panelId, panelPath, setPanelPath]);
 
   // The morph between layers. Before `useFitShell`: it pauses the fit while the shell morphs.
   React.useLayoutEffect(() => {
@@ -297,7 +389,7 @@ function BottomNavList({
     const layers = { tabs, panel, dock };
     if (shell === null || layers.tabs === null || layers.panel === null || layers.dock === null) return;
     const from = previous.current;
-    previous.current = { view, bar: dockedBar };
+    previous.current = { view, bar: dockedBar, page: panelPage, depth };
     const shown = layers[view]!;
     const hidden = (Object.keys(layers) as View[]).filter((key) => key !== view).map((key) => layers[key]!);
     // The layer whose size the shell takes: with labels a docked bar fills the tabs' box, so the shell sizes to them.
@@ -321,9 +413,7 @@ function BottomNavList({
       const row = shown.querySelector(
         '[data-slot=action-bar]:not([data-exiting]) [data-slot=action-bar-content]:not([data-exiting])',
       );
-      const items = [...(kind === 'panel' ? shown.children : (row?.children ?? []))].filter(
-        (el): el is HTMLElement => el instanceof HTMLElement,
-      );
+      const items = rowsOf(kind === 'panel' ? activePage(shown) : row);
       const { y, blur, delay, step, duration, easing } = cascade[kind];
       for (const [index, item] of items.entries()) {
         const rise = item.animate(
@@ -337,6 +427,53 @@ function BottomNavList({
       }
     };
 
+    if (from.view === view && view === 'panel' && from.page !== panelPage) {
+      // Another page of the panel: the shell springs to it (`useFitShell`); the old page's rows blur out over it.
+      layers.panel.scrollTop = 0;
+      const outgoing = from.page === null ? null : pageOf(layers.panel, from.page);
+      const incoming = activePage(layers.panel);
+      if (reduced || incoming === null) return;
+      const side = depth > from.depth ? 1 : -1;
+      if (outgoing !== null) {
+        // Hidden by now: shown again, out of the flow, until its rows are gone.
+        Object.assign(outgoing.style, { display: 'flex', position: 'absolute', inset: '0 0 auto 0' });
+        outgoing.inert = true;
+        const { x, blur, duration, easing } = pageLeave;
+        const out = rowsOf(outgoing).map((row) =>
+          row.animate(
+            [
+              { opacity: 1, transform: 'none', filter: 'none' },
+              { opacity: 0, transform: `translateX(${-x * side}px)`, filter: `blur(${blur}px)` },
+            ],
+            { duration, easing, fill: 'forwards' },
+          ),
+        );
+        const reset = () => {
+          for (const animation of out) animation.cancel();
+          Object.assign(outgoing.style, { display: '', position: '', inset: '' });
+          outgoing.inert = false;
+        };
+        const timer = setTimeout(reset, duration);
+        running.push({
+          stop: () => {
+            clearTimeout(timer);
+            reset();
+          },
+        });
+      }
+      const { x, blur, delay, step, duration, easing } = pageEnter;
+      for (const [index, row] of rowsOf(incoming).entries()) {
+        const enter = row.animate(
+          [
+            { opacity: 0, transform: `translateX(${x * side}px)`, filter: `blur(${blur}px)` },
+            { opacity: 1, transform: 'none', filter: 'none' },
+          ],
+          { duration, delay: delay + index * step, easing, fill: 'backwards' },
+        );
+        running.push({ stop: () => enter.cancel() });
+      }
+      return cleanup;
+    }
     if (from.view === view && view === 'dock' && from.bar !== dockedBar) {
       // Another bar docked in place of the last: its items cascade in, the shell springs to it from where it is (a
       // morph this cut short included).
@@ -396,7 +533,7 @@ function BottomNavList({
       cascadeIn(view);
     }
     return cleanup;
-  }, [view, dockedBar, labels, reduced, tabs, panel, dock]);
+  }, [view, dockedBar, panelPage, depth, labels, reduced, tabs, panel, dock]);
 
   // The shell holds the size of the layer that shows, between morphs too: a tab added, a docked count growing a
   // digit, a docked bar swapped for another. With labels a docked bar takes the tabs' box.
@@ -412,7 +549,7 @@ function BottomNavList({
       data-slot='bottom-nav-shell'
       data-surface='popup'
       data-view={view}
-      // The outer corner for every layer (`bar-corners`): the tabs sit `popup-inset` in, the "More" panel
+      // The outer corner for every layer (`bar-corners`): the tabs sit `popup-inset` in, the panel's pages
       // `--spacing-list-inset`, a docked bar what brings its buttons to the bar's height.
       className={cn(
         'pointer-events-auto relative col-start-1 row-start-1 flex items-end justify-center justify-self-center overflow-hidden bg-popover text-popover-foreground shadow-popup bar-corners',
@@ -446,7 +583,7 @@ function BottomNavList({
         data-slot='bottom-nav-panel'
         inert={view !== 'panel'}
         style={{ opacity: 0 }}
-        className='absolute top-0 left-1/2 flex no-scrollbar max-h-[calc(100dvh-6rem)] w-[min(17rem,calc(100vw-2rem))] origin-bottom -translate-x-1/2 flex-col overflow-y-auto overscroll-contain p-list-inset [--outer-inset:var(--spacing-list-inset)]'
+        className='absolute top-0 left-1/2 flex no-scrollbar max-h-[calc(100dvh-6rem)] w-[min(17rem,calc(100vw-2rem))] origin-bottom -translate-x-1/2 flex-col overflow-y-auto overscroll-contain [--outer-inset:var(--spacing-list-inset)]'
       />
       <div
         ref={setDockLayer}
@@ -600,9 +737,10 @@ function BottomNavButton({
 }
 
 /**
- * The "More" tab: an ellipsis that morphs the bar into a list of the links that don't fit (`BottomNavMoreItem`s, its
- * children). It reads as current while its list holds the page. Opened from the keyboard, focus moves to the first row;
- * Escape returns it here.
+ * The "More" tab: an ellipsis that morphs the bar into a list of the links that don't fit, its children:
+ * `BottomNavMoreItem`s, and `BottomNavMoreGroup`s that open a page of their own. It reads as current while its list
+ * holds the page. It opens on the list, focus on its first row; Escape goes back a page, then closes it and returns
+ * focus here.
  */
 function BottomNavMore({
   label: labelProp,
@@ -614,18 +752,9 @@ function BottomNavMore({
   className?: string;
 }) {
   const label = labelProp ?? useLocale().labels.more;
-  const { panelOpen, setPanelOpen, panel, panelId, optimisticCurrent } = useBar('BottomNavMore');
+  const { panelOpen, setPanelOpen, setPanelPath, panel, panelId, optimisticCurrent } = useBar('BottomNavMore');
   const tab = React.useId();
-  const [holdsCurrent, setHoldsCurrent] = React.useState(false);
-
-  React.useEffect(() => {
-    if (panel === null) return;
-    const check = () => setHoldsCurrent(panel.querySelector('[aria-current=page]') !== null);
-    check();
-    const observer = new MutationObserver(check);
-    observer.observe(panel, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-current'] });
-    return () => observer.disconnect();
-  }, [panel]);
+  const holdsCurrent = useHoldsCurrent(panel);
 
   return (
     <>
@@ -636,23 +765,75 @@ function BottomNavMore({
         aria-controls={panelId}
         className={className}
         onClick={(event) => {
+          if (!panelOpen) setPanelPath([]);
           setPanelOpen(!panelOpen);
           // A keyboard click (`detail` 0): focus the first row once the panel is no longer inert.
           if (event.detail === 0)
-            requestAnimationFrame(() => panel?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true }));
+            requestAnimationFrame(() => {
+              const page = panel === null ? null : activePage(panel);
+              page?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true });
+            });
         }}>
         <IconDots />
         <span>{label}</span>
       </BottomNavButton>
-      {panel !== null && createPortal(<MoreTabContext value={tab}>{children}</MoreTabContext>, panel)}
+      {panel !== null &&
+        createPortal(
+          <MoreTabContext value={tab}>
+            <PanelPage id={ROOT_PAGE}>{children}</PanelPage>
+          </MoreTabContext>,
+          panel,
+        )}
     </>
   );
 }
 
 /**
- * A row in the "More" list: an icon and its label, an `<a>` or the router's link through `render`. `current` marks the
- * page. `--spacing-list-inset` in from the shell, with `rounded-inner` corners. At least 44px high, a finger's
- * target. Closes the list when chosen; the "More" tab looks current from the tap on.
+ * A page of the panel: the "More" list, or a group's. Only the page at the end of the path shows, in the flow, so the
+ * shell takes its size.
+ */
+function PanelPage({
+  id,
+  label,
+  ref,
+  children,
+}: {
+  id: string;
+  label?: string;
+  ref?: React.Ref<HTMLDivElement>;
+  children: React.ReactNode;
+}) {
+  const { panelPath } = useBar('BottomNavMore');
+  const active = (panelPath.at(-1) ?? ROOT_PAGE) === id;
+  return (
+    <div
+      ref={ref}
+      id={id === ROOT_PAGE ? undefined : id}
+      role={label === undefined ? undefined : 'group'}
+      aria-label={label}
+      data-slot='bottom-nav-panel-page'
+      data-page={id}
+      data-active={active || undefined}
+      className='flex w-full flex-col p-list-inset not-data-active:hidden'>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * A row of the panel: `--spacing-list-inset` in from the shell, with `rounded-inner` corners, at least 44px high, a
+ * finger's target. The icon is muted until its row is current.
+ */
+const moreRowClassName = cn(
+  'flex min-h-11 w-full shrink-0 items-center gap-(--bottom-nav-gap) rounded-inner px-row-pad-x py-row-pad-y text-start text-control font-medium text-popover-foreground outline-hidden select-none',
+  'transition-[background-color,scale] duration-feedback hover:bg-highlight active:scale-[0.96] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
+  '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>svg]:text-muted-foreground [&>span]:truncate',
+  'aria-[current=page]:bg-foreground/10 aria-[current]:[&>svg]:text-foreground',
+);
+
+/**
+ * A row in the "More" list or a group: an icon and its label, an `<a>` or the router's link through `render`.
+ * `current` marks the page. Closes the panel when chosen; the "More" tab looks current from the tap on.
  */
 function BottomNavMoreItem({
   className,
@@ -671,13 +852,7 @@ function BottomNavMoreItem({
     props: mergeProps<'a'>(
       {
         'aria-current': current ? 'page' : undefined,
-        className: cn(
-          'flex min-h-11 w-full shrink-0 items-center gap-(--bottom-nav-gap) rounded-inner px-row-pad-x py-row-pad-y text-control font-medium text-popover-foreground outline-hidden select-none',
-          'transition-[background-color,scale] duration-feedback hover:bg-highlight active:scale-[0.96] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
-          '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>svg]:text-muted-foreground [&>span]:truncate',
-          'aria-[current=page]:bg-foreground/10 aria-[current=page]:[&>svg]:text-foreground',
-          className,
-        ),
+        className: cn(moreRowClassName, className),
         onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
           onTap(event);
           setPanelOpen(false);
@@ -686,6 +861,69 @@ function BottomNavMoreItem({
       props,
     ),
   });
+}
+
+/**
+ * A row in the "More" list or a group that opens a page of its own: its children (`BottomNavMoreItem`s, more
+ * `BottomNavMoreGroup`s, nested as deep as needed) under a Back row. The bar springs to the page's height; its rows
+ * come in from the right, and from the left on the way back. Focus moves to Back, and returns to this row. Reads as
+ * current (`aria-current='true'`, its icon in the text color) while its page holds the page.
+ */
+function BottomNavMoreGroup({
+  label,
+  icon,
+  backLabel: backLabelProp,
+  className,
+  children,
+}: {
+  label: string;
+  icon?: React.ReactNode;
+  backLabel?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const backLabel = backLabelProp ?? useLocale().labels.back;
+  const { panel, panelPath, setPanelPath } = useBar('BottomNavMoreGroup');
+  const id = React.useId();
+  const [page, setPage] = React.useState<HTMLDivElement | null>(null);
+  const holdsCurrent = useHoldsCurrent(page);
+
+  return (
+    <>
+      <button
+        type='button'
+        data-slot='bottom-nav-more-group'
+        aria-expanded={panelPath.at(-1) === id}
+        aria-controls={id}
+        aria-current={holdsCurrent ? 'true' : undefined}
+        className={cn(moreRowClassName, className)}
+        onClick={() => {
+          setPanelPath([...panelPath, id]);
+          requestAnimationFrame(() => page?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true }));
+        }}>
+        {icon}
+        <span>{label}</span>
+        <IconChevronRight className='ms-auto size-icon! opacity-60' />
+      </button>
+      {panel !== null &&
+        createPortal(
+          <PanelPage ref={setPage} id={id} label={label}>
+            <button
+              type='button'
+              data-slot='bottom-nav-more-back'
+              className={moreRowClassName}
+              onClick={(event) =>
+                backFrom(panelPath, setPanelPath, event.currentTarget.closest('[data-slot=bottom-nav-shell]'))
+              }>
+              <IconArrowLeft />
+              <span>{backLabel}</span>
+            </button>
+            {children}
+          </PanelPage>,
+          panel,
+        )}
+    </>
+  );
 }
 
 /**
@@ -733,6 +971,7 @@ export {
   BottomNavLink,
   BottomNavList,
   BottomNavMore,
+  BottomNavMoreGroup,
   BottomNavMoreItem,
   BottomNavProvider,
   useBottomNavDock,
