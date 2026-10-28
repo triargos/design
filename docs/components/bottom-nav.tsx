@@ -1,5 +1,6 @@
 import { BottomNavDefault } from '../examples/bottom-nav/default';
 import { BottomNavLabels } from '../examples/bottom-nav/labels';
+import { BottomNavStackedBars } from '../examples/bottom-nav/stacked-bars';
 import { BottomNavWithSelection } from '../examples/bottom-nav/with-selection';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -19,7 +20,9 @@ export default defineDocs({
           <>
             <Code>BottomNavList</Code> holds a <Code>BottomNavLink current</Code> per page and{' '}
             <Code>BottomNavMore</Code>, which morphs the bar into a list of the rest, one <Code>BottomNavMoreItem</Code>{' '}
-            per link. <Code>BottomNavAction</Code> is the main action. Labels are for screen readers; a count is a{' '}
+            per link. A <Code>BottomNavMoreGroup</Code> opens a page of its own under a Back row, nested as deep as
+            needed (Settings, then Appearance): the bar springs to each page's height, rows come in from the side they
+            go. <Code>BottomNavAction</Code> is the main action. Labels are for screen readers; a count is a{' '}
             <Code>Badge</Code> in the tab. A tapped tab looks current at once (<Code>data-optimistic-current</Code>),
             before the router's next page sets <Code>aria-current</Code>. Open "More".
           </>
@@ -50,6 +53,20 @@ export default defineDocs({
         }
         bare>
         <BottomNavWithSelection />
+      </ExampleSection>
+      <ExampleSection
+        title='Stacked bars and radius'
+        description={
+          <>
+            Several <Code>ActionBar</Code>s may be open; one docks: the highest <Code>priority</Code>, of those the last
+            opened. The next takes its place when it closes. <Code>--bottom-nav-radius</Code> sets the bar's corner,
+            capped at half its height, so <Code>9999px</Code> makes a pill ("Pill bar"); off, it takes the Customize
+            radius preset. The tabs, the panel's rows and a docked bar's buttons follow, concentric. Rename the project,
+            then select a task.
+          </>
+        }
+        bare>
+        <BottomNavStackedBars />
       </ExampleSection>
     </FoundationPage>
   ),

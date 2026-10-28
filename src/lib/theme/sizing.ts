@@ -159,6 +159,11 @@ export const SIZING_TOKENS = {
   '--alert-radius': t('surfaces', '20px', 'Alert radius'),
   '--alert-action-inset': t('surfaces', '6px', 'Alert action inset from the corner'),
   '--alert-dialog-icon': t('surfaces', '24px', 'Alert dialog media icon'),
+  '--bottom-nav-radius': t(
+    'surfaces',
+    '16px',
+    'Bottom nav and action bar corner, capped at half the bar (9999px: pill)',
+  ),
   '--drawer-radius': t('surfaces', '32px', 'Drawer radius'),
   '--drawer-inset': t('surfaces', '8px', 'Drawer inset from the screen edge'),
   '--drawer-page-pad': t('surfaces', '10px', 'Drawer page padding and block gap'),
@@ -385,6 +390,7 @@ export const RADII = {
     '--radius-block': '0px',
     '--tabs-radius': '0px',
     '--alert-radius': '0px',
+    '--bottom-nav-radius': '0px',
     '--drawer-radius': '0px',
     '--drawer-menu-item-radius': '0px',
     '--drawer-option-radius': '0px',
@@ -415,6 +421,7 @@ export const RADII = {
     '--radius-block': '14px',
     '--tabs-radius': '12px',
     '--alert-radius': '24px',
+    '--bottom-nav-radius': '20px',
     '--drawer-radius': '38px',
     '--drawer-menu-item-radius': '17px',
     '--drawer-option-radius': '19px',
@@ -434,6 +441,7 @@ export const RADII = {
     '--radius-block': '16px',
     '--tabs-radius': '9999px',
     '--alert-radius': '24px',
+    '--bottom-nav-radius': '9999px',
   },
 } as const satisfies Record<string, SizingValues>;
 

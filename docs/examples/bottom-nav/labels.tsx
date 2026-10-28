@@ -1,8 +1,24 @@
-import { IconCalendarOff, IconFolder, IconId, IconMail, IconSpeakerphone } from '@tabler/icons-react';
+import {
+  IconCalendarOff,
+  IconClock,
+  IconFolder,
+  IconId,
+  IconMail,
+  IconSchool,
+  IconSpeakerphone,
+  IconUsers,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
-import { BottomNav, BottomNavLink, BottomNavList, BottomNavMore, BottomNavMoreItem } from '~/components/ui/bottom-nav';
+import {
+  BottomNav,
+  BottomNavLink,
+  BottomNavList,
+  BottomNavMore,
+  BottomNavMoreGroup,
+  BottomNavMoreItem,
+} from '~/components/ui/bottom-nav';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
 const TABS = [
@@ -14,6 +30,11 @@ const TABS = [
 const MORE = [
   { label: 'Announcements', icon: <IconSpeakerphone /> },
   { label: 'Absences', icon: <IconCalendarOff /> },
+] as const;
+
+const SCHOOL = [
+  { label: 'Timetable', icon: <IconClock /> },
+  { label: 'Teachers', icon: <IconUsers /> },
 ] as const;
 
 /**
@@ -62,6 +83,14 @@ export function BottomNavLabels() {
                 <span>{item.label}</span>
               </BottomNavMoreItem>
             ))}
+            <BottomNavMoreGroup label='School' icon={<IconSchool />}>
+              {SCHOOL.map((item) => (
+                <BottomNavMoreItem key={item.label} href='#' current={page === item.label} onClick={go(item.label)}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </BottomNavMoreItem>
+              ))}
+            </BottomNavMoreGroup>
           </BottomNavMore>
         </BottomNavList>
       </BottomNav>

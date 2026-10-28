@@ -630,6 +630,8 @@
   --bottom-nav-action-height: 2.75rem;
   /* `DrawerContent`: its corner and its inset from the screen edge; its pages' padding; a menu row, its corner and its
      padding; an option row's corner. */
+  /* `BottomNav` and `ActionBar`: the bar's corner, capped at half its height (`bar-corners`); `9999px` makes a pill. */
+  --bottom-nav-radius: 16px;
   --drawer-radius: 2rem;
   --drawer-inset: 0.5rem;
   --drawer-page-pad: 0.625rem;
@@ -728,6 +730,17 @@
       translate: -50% -50%;
     }
   }
+}
+
+/* A floating bar's corner (`BottomNav`, its main action, `ActionBar`): `--bottom-nav-radius`, capped at half the bar's
+   height (`--bar-height`, by default a `control-lg` tab + 2 × `popup-inset`), so a pill bar's "More" panel keeps the
+   pill's corner. Also the bar's `--outer-radius`: what sits in it takes `rounded-inner` and stays concentric. */
+@utility bar-corners {
+  --outer-radius: min(
+    var(--bottom-nav-radius),
+    calc(var(--bar-height, calc(var(--spacing-control-lg) + 2 * var(--spacing-popup-inset))) / 2)
+  );
+  border-radius: var(--outer-radius);
 }
 
 /* Scrolls without a scrollbar. */
