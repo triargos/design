@@ -1,8 +1,32 @@
-import { IconCheck, IconHome, IconInbox, IconSettings, IconSquareCheck, IconTrash, IconX } from '@tabler/icons-react';
+import {
+  IconBriefcase,
+  IconBulb,
+  IconCheck,
+  IconFolder,
+  IconHome,
+  IconInbox,
+  IconMail,
+  IconPalette,
+  IconSettings,
+  IconSquareCheck,
+  IconTextSize,
+  IconSun,
+  IconTrash,
+  IconUser,
+  IconX,
+} from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { ActionBar } from '~/components/ui/action-bar';
-import { BottomNav, BottomNavLink, BottomNavList, BottomNavProvider } from '~/components/ui/bottom-nav';
+import {
+  BottomNav,
+  BottomNavLink,
+  BottomNavList,
+  BottomNavMore,
+  BottomNavMoreGroup,
+  BottomNavMoreItem,
+  BottomNavProvider,
+} from '~/components/ui/bottom-nav';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Checkbox } from '~/components/ui/checkbox';
@@ -16,8 +40,38 @@ const TABS = [
   { label: 'Home', icon: <IconHome /> },
   { label: 'Inbox', icon: <IconInbox /> },
   { label: 'Tasks', icon: <IconSquareCheck /> },
-  { label: 'Settings', icon: <IconSettings /> },
 ] as const;
+
+type Entry = { readonly label: string; readonly icon: React.ReactNode; readonly children?: readonly Entry[] };
+
+/** "More": two groups, Settings with Appearance inside, three levels deep. */
+const MORE: readonly Entry[] = [
+  {
+    label: 'Projects',
+    icon: <IconFolder />,
+    children: [
+      { label: 'Website redesign', icon: <IconBriefcase /> },
+      { label: 'Mobile app', icon: <IconBriefcase /> },
+      { label: 'Ideas', icon: <IconBulb /> },
+    ],
+  },
+  {
+    label: 'Settings',
+    icon: <IconSettings />,
+    children: [
+      { label: 'Profile', icon: <IconUser /> },
+      {
+        label: 'Appearance',
+        icon: <IconPalette />,
+        children: [
+          { label: 'Theme', icon: <IconSun /> },
+          { label: 'Text size', icon: <IconTextSize /> },
+        ],
+      },
+      { label: 'Invite a friend', icon: <IconMail /> },
+    ],
+  },
+];
 
 const TASKS = [
   { id: '1', title: 'Update pricing page' },
@@ -26,7 +80,7 @@ const TASKS = [
 ] as const;
 
 /**
- * Two `ActionBar`s on one page. Rename the project: "Unsaved changes" docks (`priority={1}`). Select a task meanwhile:
+ * Two `ActionBar`s on one page, and "More" with nested groups. Rename the project: "Unsaved changes" docks (`priority={1}`). Select a task meanwhile:
  * the selection waits until the changes are saved or discarded. "Pill bar" sets `--bottom-nav-radius: 9999px`; off,
  * the bar takes the sizing theme's.
  */
@@ -142,6 +196,27 @@ export function BottomNavStackedBars() {
                 <span>{tab.label}</span>
               </BottomNavLink>
             ))}
+            <BottomNavMore>
+              {MORE.map(function entry(item: Entry): React.ReactNode {
+                return item.children ? (
+                  <BottomNavMoreGroup key={item.label} label={item.label} icon={item.icon}>
+                    {item.children.map(entry)}
+                  </BottomNavMoreGroup>
+                ) : (
+                  <BottomNavMoreItem
+                    key={item.label}
+                    href='#'
+                    current={page === item.label}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setPage(item.label);
+                    }}>
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </BottomNavMoreItem>
+                );
+              })}
+            </BottomNavMore>
           </BottomNavList>
         </BottomNav>
       </div>

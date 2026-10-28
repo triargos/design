@@ -1,6 +1,11 @@
 import {
+  IconBell,
   IconCalendar,
   IconFolder,
+  IconLanguage,
+  IconPalette,
+  IconSun,
+  IconUser,
   IconHome,
   IconInbox,
   IconPlus,
@@ -17,6 +22,7 @@ import {
   BottomNavLink,
   BottomNavList,
   BottomNavMore,
+  BottomNavMoreGroup,
   BottomNavMoreItem,
 } from '~/components/ui/bottom-nav';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -27,16 +33,34 @@ const TABS = [
   { label: 'Tasks', icon: <IconSquareCheck /> },
 ] as const;
 
-const MORE = [
+type Entry = { readonly label: string; readonly icon: React.ReactNode; readonly children?: readonly Entry[] };
+
+const MORE: readonly Entry[] = [
   { label: 'Calendar', icon: <IconCalendar /> },
   { label: 'Projects', icon: <IconFolder /> },
   { label: 'Members', icon: <IconUsers /> },
-  { label: 'Settings', icon: <IconSettings /> },
-] as const;
+  {
+    label: 'Settings',
+    icon: <IconSettings />,
+    children: [
+      { label: 'Profile', icon: <IconUser /> },
+      { label: 'Notifications', icon: <IconBell /> },
+      {
+        label: 'Appearance',
+        icon: <IconPalette />,
+        children: [
+          { label: 'Theme', icon: <IconSun /> },
+          { label: 'Language', icon: <IconLanguage /> },
+        ],
+      },
+    ],
+  },
+];
 
 /**
  * A phone frame: the nav floats over the scrolling panel, which keeps `pb-24` to clear it. Three tabs, the main action,
- * and "More": the bar morphs into a list of the rest, and "More" is current while that list holds the page. `absolute
+ * and "More": the bar morphs into a list of the rest, and "More" is current while that list holds the page. Settings
+ * is a `BottomNavMoreGroup`, Appearance one inside it: each opens a page with a Back row. `absolute
  * md:grid` keeps the nav in this frame at desktop width; an app leaves it `fixed` and hidden from `md` up.
  */
 export function BottomNavDefault() {
@@ -75,12 +99,18 @@ export function BottomNavDefault() {
             </BottomNavLink>
           ))}
           <BottomNavMore>
-            {MORE.map((item) => (
-              <BottomNavMoreItem key={item.label} href='#' current={page === item.label} onClick={go(item.label)}>
-                {item.icon}
-                <span>{item.label}</span>
-              </BottomNavMoreItem>
-            ))}
+            {MORE.map(function entry(item: Entry): React.ReactNode {
+              return item.children ? (
+                <BottomNavMoreGroup key={item.label} label={item.label} icon={item.icon}>
+                  {item.children.map(entry)}
+                </BottomNavMoreGroup>
+              ) : (
+                <BottomNavMoreItem key={item.label} href='#' current={page === item.label} onClick={go(item.label)}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </BottomNavMoreItem>
+              );
+            })}
           </BottomNavMore>
         </BottomNavList>
         <BottomNavAction aria-label='New task'>

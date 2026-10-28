@@ -20,7 +20,9 @@ export default defineDocs({
           <>
             <Code>BottomNavList</Code> holds a <Code>BottomNavLink current</Code> per page and{' '}
             <Code>BottomNavMore</Code>, which morphs the bar into a list of the rest, one <Code>BottomNavMoreItem</Code>{' '}
-            per link. <Code>BottomNavAction</Code> is the main action. Labels are for screen readers; a count is a{' '}
+            per link. A <Code>BottomNavMoreGroup</Code> opens a page of its own under a Back row, nested as deep as
+            needed (Settings, then Appearance): the bar springs to each page's height, rows come in from the side they
+            go. <Code>BottomNavAction</Code> is the main action. Labels are for screen readers; a count is a{' '}
             <Code>Badge</Code> in the tab. A tapped tab looks current at once (<Code>data-optimistic-current</Code>),
             before the router's next page sets <Code>aria-current</Code>. Open "More".
           </>
