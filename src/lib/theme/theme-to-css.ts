@@ -67,7 +67,8 @@ function surfaceThemes(page: Theme): { card: Theme; cardCard: Theme; popup: Them
  * The tokens that mean "one step relative to the surface I'm on". Each surface (`[data-surface]`) re-declares them
  * from its own theme, so `bg-muted` or `bg-field` keeps its step on the page, a card, or a popup. `--surface` is the
  * surface's own color. `--shell` is the tint wrapping a card (card shell, dialog shell, tab track). `--muted`,
- * `--shell` and `--field` add the `FillTint` to the surface's chroma and hue.
+ * `--shell` and `--field` add the `FillTint` to the surface's chroma and hue. The text levels below `--foreground`
+ * re-declare too: a dark popup sits 14 above the page, and the page's muted text reads under 4.5:1 on it.
  */
 function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
   const { color } = theme;
@@ -84,6 +85,7 @@ function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
     '--surface': color.bgBase,
     '--shell': step(SHELL_STEP[mode], tint),
     '--field': step(FIELD_STEP[mode], fieldTint),
+    ...textLevelVars(theme),
   };
 }
 
@@ -104,7 +106,6 @@ export function themeToCssVars(theme: Theme, tint: FillTint, destructive: Color)
     '--card-foreground': color.labelTitle,
     '--popover': surfaces.popup.color.bgBase,
     '--popover-foreground': color.labelTitle,
-    '--muted-foreground': color.labelMuted,
     // Status hues are fixed, not branded; destructive follows the brand, its solid the anchor itself.
     ...intentVars('info', INTENT_HUE.info, theme.isDark),
     ...intentVars('success', INTENT_HUE.success, theme.isDark),
@@ -113,7 +114,8 @@ export function themeToCssVars(theme: Theme, tint: FillTint, destructive: Color)
     '--destructive-solid': toCss('LCH', destructive),
     ...primaryVars(theme),
     ...categoryVars(theme.isDark),
-    ...textLevelVars(theme),
+    // Translucent title color, so the fill reads one step off any surface it sits on.
+    '--disabled': toCss(theme.colorFormat, adjustTo(fromCss(color.labelTitle), { a: theme.isDark ? 0.08 : 0.05 })),
     '--ring': color.focusColor,
     '--sidebar': sidebar.bgBase,
     '--sidebar-foreground': sidebar.labelTitle,
@@ -222,8 +224,8 @@ function primaryVars(theme: Theme): Record<string, string> {
 }
 
 /**
- * Text below `--muted-foreground`: `--faint-foreground` (placeholders, shortcuts, tertiary meta) and
- * `--disabled-foreground`, each a mix of muted text toward the page. `--disabled` is the disabled fill.
+ * Text below `--foreground` on a surface: `--muted-foreground`, then `--faint-foreground` (placeholders, shortcuts,
+ * tertiary meta) and `--disabled-foreground`, each a mix of muted text toward the surface.
  */
 function textLevelVars(theme: Theme): Record<string, string> {
   const { color } = theme;
@@ -231,10 +233,9 @@ function textLevelVars(theme: Theme): Record<string, string> {
   const base = fromCss(color.bgBase);
   const toward = (amount: number): Color => mix(muted, base, amount);
   return {
+    '--muted-foreground': color.labelMuted,
     '--faint-foreground': toCss(theme.colorFormat, toward(0.3)),
     '--disabled-foreground': toCss(theme.colorFormat, toward(0.5)),
-    // Translucent title color, so the fill reads one step off any surface it sits on.
-    '--disabled': toCss(theme.colorFormat, adjustTo(fromCss(color.labelTitle), { a: theme.isDark ? 0.08 : 0.05 })),
   };
 }
 

@@ -330,6 +330,7 @@ function BottomNavList({
     <div
       ref={shellRef}
       data-slot='bottom-nav-shell'
+      data-surface='popup'
       data-view={view}
       // The outer corner for every layer: the tabs sit `popup-inset` in, the "More" panel `--spacing-list-inset`.
       className={cn(
