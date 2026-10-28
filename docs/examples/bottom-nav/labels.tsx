@@ -39,7 +39,7 @@ const SCHOOL = [
 
 /**
  * `labels`: the label under each icon, a fill that springs to the tab. For an audience that does not
- * know the icons. Four tabs shrink to fit a phone.
+ * know the icons. Four tabs shrink to fit a phone; `fill` spans the bar across it.
  */
 export function BottomNavLabels() {
   const [page, setPage] = useState('Inbox');
@@ -64,7 +64,7 @@ export function BottomNavLabels() {
         </div>
       </div>
       <BottomNav className='absolute md:grid'>
-        <BottomNavList labels>
+        <BottomNavList labels fill>
           {TABS.map((tab) => (
             <BottomNavLink key={tab.label} href='#' current={page === tab.label} onClick={go(tab.label)}>
               {tab.icon}

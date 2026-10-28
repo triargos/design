@@ -36,8 +36,9 @@ export default defineDocs({
           <>
             <Code>BottomNavList labels</Code>: the label under each icon (<Code>--bottom-nav-tab-width</Code> ×{' '}
             <Code>--bottom-nav-tab-height</Code>) and a fill that springs to the tab (
-            <Code>duration-indicator ease-spring-bounce</Code>). Tabs shrink to fit four or five on a phone. The page
-            keeps <Code>pb-36</Code>.
+            <Code>duration-indicator ease-spring-bounce</Code>). Tabs shrink to fit four or five on a phone.{' '}
+            <Code>fill</Code> spans the bar across the nav, in line with the page's content, the tabs sharing it evenly.
+            The page keeps <Code>pb-36</Code>.
           </>
         }
         bare>
