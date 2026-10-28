@@ -1,5 +1,6 @@
 import { BottomNavDefault } from '../examples/bottom-nav/default';
 import { BottomNavLabels } from '../examples/bottom-nav/labels';
+import { BottomNavStackedBars } from '../examples/bottom-nav/stacked-bars';
 import { BottomNavWithSelection } from '../examples/bottom-nav/with-selection';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -50,6 +51,20 @@ export default defineDocs({
         }
         bare>
         <BottomNavWithSelection />
+      </ExampleSection>
+      <ExampleSection
+        title='Stacked bars and radius'
+        description={
+          <>
+            Several <Code>ActionBar</Code>s may be open; one docks: the highest <Code>priority</Code>, of those the last
+            opened. The next takes its place when it closes. <Code>--bottom-nav-radius</Code> sets the bar's corner,
+            capped at half its height, so <Code>9999px</Code> makes a pill ("Pill bar"); off, it takes the Customize
+            radius preset. The tabs, the panel's rows and a docked bar's buttons follow, concentric. Rename the project,
+            then select a task.
+          </>
+        }
+        bare>
+        <BottomNavStackedBars />
       </ExampleSection>
     </FoundationPage>
   ),
