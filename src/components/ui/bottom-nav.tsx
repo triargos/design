@@ -292,14 +292,17 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
  * `labels`: each tab shows its label under the icon (`--bottom-nav-tab-width` × `--bottom-nav-tab-height`) and the
  * fill springs to the current tab. Tabs shrink to fit 4–5 on a phone. A docked `ActionBar` takes the tabs' box, so
  * docking morphs only the content. For an app whose tabs are not recognisable by icon alone.
+ *
+ * `fill`: the bar spans the `BottomNav`'s width, its edges in line with the page's content; the tabs share it evenly.
  */
 function BottomNavList({
   className,
   children,
   labels = false,
+  fill = false,
   'aria-label': ariaLabelProp,
   ...props
-}: React.ComponentProps<'nav'> & { labels?: boolean }) {
+}: React.ComponentProps<'nav'> & { labels?: boolean; fill?: boolean }) {
   const ariaLabel = ariaLabelProp ?? useLocale().labels.mainNavigation;
   const {
     view,
@@ -569,12 +572,14 @@ function BottomNavList({
         aria-label={ariaLabel}
         inert={view !== 'tabs'}
         data-labels={labels || undefined}
+        data-fill={fill || undefined}
         data-optimistic={optimisticCurrent !== null || undefined}
         className={cn(
           'group/bottom-nav relative flex w-max shrink-0 origin-bottom items-center gap-related p-popup-inset [--outer-inset:var(--spacing-popup-inset)]',
           // Capped by the `BottomNav`'s width (`cqw`), not the shell's: the morph back from the panel measures the tabs
           // while the shell still has the panel's width.
           labels && 'max-w-[100cqw] gap-0',
+          fill && 'w-[100cqw]',
           className,
         )}
         {...props}>
@@ -683,6 +688,7 @@ const bottomNavItemClassName = cn(
   'transition-[color,scale] duration-feedback hover:text-foreground active:scale-[0.92] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
   '[&>svg]:pointer-events-none [&>svg]:size-icon-lg [&>svg]:shrink-0 [&>span:not([data-slot=badge])]:sr-only',
   '[&>[data-slot=badge]]:absolute [&>[data-slot=badge]]:top-0.5 [&>[data-slot=badge]]:left-[calc(50%+4px)] [&>[data-slot=badge]]:min-w-(--badge-height-sm) [&>[data-slot=badge]]:tabular-nums',
+  'group-data-fill/bottom-nav:grow',
   // `labels`: the label under the icon, the tab shrinking to fit; the badge on the icon's corner, ringed in the bar.
   'group-data-labels/bottom-nav:h-(--bottom-nav-tab-height) group-data-labels/bottom-nav:w-(--bottom-nav-tab-width) group-data-labels/bottom-nav:min-w-0 group-data-labels/bottom-nav:shrink group-data-labels/bottom-nav:flex-col group-data-labels/bottom-nav:gap-0.5',
   'group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:not-sr-only group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:max-w-full group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:truncate group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:px-tight group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:text-caption group-data-labels/bottom-nav:[&>span:not([data-slot=badge])]:font-medium',
