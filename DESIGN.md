@@ -220,12 +220,12 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | `ease-move`                             | `cubic-bezier(0.645, 0.045, 0.355, 1)` | Moving what is already on screen                                  |
 | `duration-drawer`                       | 560ms                                  | A drawer entering and leaving; its pages morph on Motion springs  |
 | `duration-indicator` · `duration-press` | 400 · 300ms                            | A springing tab fill; a press release or a check popping in       |
-| `duration-fold`                         | 400ms                                  | A height fold on `ease-spring`: list rows coming and going        |
+| `duration-fold` · `duration-fold-sm`    | 400 · 150ms                            | A height fold: list rows, a card footer; a fold closing, a field  |
 | `ease-spring`                           | `linear(…)`, ζ 0.82, ~1% overshoot     | Drawers, pages, arriving content (CSS)                            |
 | `ease-spring-bounce`                    | `linear(…)`, ζ 0.62, ~8% overshoot     | An indicator, a press release, a check (CSS); never under text    |
 
-- Hover and color changes use the default `ease`, never `linear` or `ease-in`. Interruptible motion is a spring in code (`CardFooter`).
-- CSS first. A swap between two states that stay mounted is a CSS transition (`Button` pending, `IconSwap`): it reverses from where it is and does not play on the first render. Motion only for what CSS cannot do: an exit before unmount, a height to `auto`, a spring that follows a value.
+- Hover and color changes use the default `ease`, never `linear` or `ease-in`. Interruptible motion is a CSS transition (it retargets from where it is) or a spring in code.
+- CSS first. A swap between two states that stay mounted is a CSS transition (`Button` pending, `IconSwap`): it reverses from where it is and does not play on the first render. A fold to `auto` is `grid-template-rows` 0fr ↔ 1fr, entering on `starting:`; an exit before unmount holds the element with `usePresence` until its transitions end (`CardFooter`). Motion only for what CSS cannot do: a presence with staggered children or `popLayout` (`ActionBar`, `IntegerInput`, `Empty`), a spring that follows a value.
 - Motion is `m.*` inside `<LazyMotion features={loadMotionFeatures}>` (`lib/motion`), never `motion.*`: the animation code loads in its own chunk after the first render (`pnpm bundle-size`).
 - Text never rides an overshooting transform: a fractional offset snaps it a device pixel, so it ticks as it settles. Animate the whole `transform` string (Motion runs it on the compositor) and put the bounce in a size (`ActionBar`).
 - Reduced motion keeps fades and color changes and drops movement (zoom, slide, press scale, a travelling indicator, a height fold, springs): popups, dialogs and sheets fade in place. `motion-reduce:` in CSS (`motion-reduce:data-open:zoom-in-100`), `useReducedMotion()` in code.

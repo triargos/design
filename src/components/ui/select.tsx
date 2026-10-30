@@ -1,12 +1,11 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select';
-import { AnimatePresence, LazyMotion, m, useReducedMotion } from 'framer-motion';
 import { IconCheck, IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { Input, inputSurfaceVariants } from '~/components/ui/input';
 
 import { useLocale } from '~/components/ui/locale';
-import { loadMotionFeatures } from '~/lib/motion/load';
+import { usePresence } from '~/hooks/use-presence';
 import { cn } from '~/lib/utils';
 
 /** An option of `Select` and `Combobox`: `value` is what `onValueChange` reports, `label` what the field shows. */
@@ -293,59 +292,49 @@ function SelectCustomItem({ className, children }: { className?: string; childre
 }
 
 /**
- * The fold of `SelectCustomInput`: grid rows 0fr ↔ 1fr, not height 0 ↔ auto, which ends on a swap back to `auto` that
- * stutters. A short critically damped spring, interruptible when the choice flips mid-fold, settled finely
- * (`restDelta`) because the value only spans 0–1fr. Reduced motion: no fold, the field fades in and out in place.
- */
-const customFold = { type: 'spring', duration: 0.15, bounce: 0, restDelta: 0.001, restSpeed: 0.01 } as const;
-const folded = { gridTemplateRows: '0fr', opacity: 0 } as const;
-const unfolded = { gridTemplateRows: '1fr', opacity: 1 } as const;
-
-/**
  * The text field of a `Select allowCustom`: folds open below the trigger while the custom row is chosen, the `related`
  * gap with it. A line hangs it off the trigger: from under the trigger's text (`--spacing-field-pad` in) to the middle
- * of the field, which is indented to make room. Put the trigger and it in one element.
+ * of the field, which is indented to make room. Put the trigger and it in one element. Reduced motion: no fold, the
+ * field fades in and out in place.
  */
 function SelectCustomInput({
   className,
   ...props
 }: Omit<React.ComponentProps<typeof Input>, 'value' | 'onChange' | 'ref' | 'disabled'>) {
   const custom = useSelectCustom('SelectCustomInput');
-  const reduceMotion = useReducedMotion();
+  const presence = usePresence<HTMLDivElement>(custom.chosen);
+  if (!presence.mounted) return null;
   return (
-    <LazyMotion features={loadMotionFeatures}>
-      <AnimatePresence initial={false}>
-        {custom.chosen && (
-          <m.div
-            data-slot='select-custom-reveal'
-            initial={reduceMotion ? { ...unfolded, opacity: 0 } : folded}
-            animate={{ ...unfolded, transition: customFold }}
-            exit={reduceMotion ? { opacity: 0 } : { ...folded, transition: customFold }}
-            // -mx-1/-mb-1 + px-1/pb-1: room for the focus ring inside the clip.
-            className='-mx-1 -mb-1 grid overflow-hidden'>
-            {/* min-h-0: a grid item refuses to shrink below its content as the row folds to 0fr. */}
-            <div className='min-h-0 overflow-hidden px-1 pb-1'>
-              <div className={cn('relative pt-related pl-[calc(var(--spacing-field-pad)+1rem)]', className)}>
-                <span
-                  aria-hidden
-                  className='absolute top-0 left-[calc(var(--spacing-field-pad)+3px)] h-[calc(var(--spacing-related)+var(--spacing-control)/2+2px)] w-2.5 rounded-bl-[min(var(--radius-lg),var(--radius-control-sm))] border-b border-l border-border'
-                />
-                <Input
-                  data-slot='select-custom-input'
-                  ref={custom.inputRef}
-                  aria-label={custom.label}
-                  aria-invalid={(custom.invalid && custom.chosen) || undefined}
-                  disabled={custom.disabled}
-                  {...props}
-                  value={custom.value}
-                  onChange={(event) => custom.onType(event.target.value)}
-                />
-              </div>
-            </div>
-          </m.div>
-        )}
-      </AnimatePresence>
-    </LazyMotion>
+    <div
+      ref={presence.ref}
+      data-slot='select-custom-reveal'
+      data-leaving={presence.leaving || undefined}
+      // -mx-1/-mb-1 + px-1/pb-1: room for the focus ring inside the clip.
+      className={cn(
+        '-mx-1 -mb-1 grid grid-rows-[1fr] overflow-hidden transition-[grid-template-rows,opacity] duration-fold-sm ease-spring',
+        'data-leaving:opacity-0 motion-safe:data-leaving:grid-rows-[0fr] motion-reduce:ease-enter',
+        presence.entering && 'starting:opacity-0 motion-safe:starting:grid-rows-[0fr]',
+      )}>
+      {/* min-h-0: a grid item refuses to shrink below its content as the row folds to 0fr. */}
+      <div className='min-h-0 overflow-hidden px-1 pb-1'>
+        <div className={cn('relative pt-related pl-[calc(var(--spacing-field-pad)+1rem)]', className)}>
+          <span
+            aria-hidden
+            className='absolute top-0 left-[calc(var(--spacing-field-pad)+3px)] h-[calc(var(--spacing-related)+var(--spacing-control)/2+2px)] w-2.5 rounded-bl-[min(var(--radius-lg),var(--radius-control-sm))] border-b border-l border-border'
+          />
+          <Input
+            data-slot='select-custom-input'
+            ref={custom.inputRef}
+            aria-label={custom.label}
+            aria-invalid={(custom.invalid && custom.chosen) || undefined}
+            disabled={custom.disabled}
+            {...props}
+            value={custom.value}
+            onChange={(event) => custom.onType(event.target.value)}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 

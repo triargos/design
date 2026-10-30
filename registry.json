@@ -141,6 +141,16 @@
       ]
     },
     {
+      "name": "use-presence",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "src/hooks/use-presence.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "use-virtual-rows",
       "type": "registry:hook",
       "dependencies": [
@@ -372,12 +382,11 @@
       "name": "card",
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react@1.8.0",
-        "framer-motion@13.4.4"
+        "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@pavo/motion",
         "@pavo/theme",
+        "@pavo/use-presence",
         "@pavo/utils"
       ],
       "files": [
@@ -971,14 +980,13 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "@tabler/icons-react@3.49.0",
-        "framer-motion@13.4.4"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@pavo/input",
         "@pavo/locale",
-        "@pavo/motion",
         "@pavo/theme",
+        "@pavo/use-presence",
         "@pavo/utils"
       ],
       "files": [

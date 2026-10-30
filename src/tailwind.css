@@ -407,6 +407,7 @@
   --transition-duration-indicator: 400ms;
   --transition-duration-press: 300ms;
   --transition-duration-fold: 400ms;
+  --transition-duration-fold-sm: 150ms;
 
   --text-*: initial;
 
