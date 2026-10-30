@@ -51,7 +51,7 @@ import { defineDocs } from '../kit/docs';
 import { PaintCheck, PaintCheckGroup } from '../kit/paint-check';
 
 const STYLES: ReadonlyArray<{ name: SizingStyle; label: string; description: string }> = [
-  { name: 'triargos', label: 'Triargos', description: 'The default: 36px controls, 10px corners, 20px cards.' },
+  { name: 'pavo', label: 'Pavo', description: 'The default: 36px controls, 10px corners, 20px cards.' },
   {
     name: 'coss',
     label: 'Coss',
@@ -633,7 +633,7 @@ export default defineDocs({
         title='Style values'
         description='Each style’s values on top of its density and radius, then its touch values on a phone, below 768px.'>
         <ValueTable
-          columns={STYLES.filter((style) => style.name !== 'triargos').flatMap((style) => {
+          columns={STYLES.filter((style) => style.name !== 'pavo').flatMap((style) => {
             const values = sizingValues(SIZING_STYLES[style.name]);
             return Object.keys(values.touch).length > 0
               ? [

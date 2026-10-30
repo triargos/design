@@ -80,8 +80,8 @@ export function Install({ name, title }: { name: string; title: string }) {
   const origin = useOrigin();
   const [setupOpen, setSetupOpen] = useState(false);
   const setupId = useId();
-  const add = `${runner} add @triargos/${name}`;
-  const setup = `${runner} registry add @triargos=${origin}/r/{name}.json`;
+  const add = `${runner} add @pavo/${name}`;
+  const setup = `${runner} registry add @pavo=${origin}/r/{name}.json`;
   return (
     <Section title='Installation'>
       {/* The setup card sits 4px inside the 1px border: `rounded-inner` keeps its corners concentric. */}
@@ -126,7 +126,7 @@ export function Install({ name, title }: { name: string; title: string }) {
               id={setupId}
               className='flex flex-col gap-related rounded-inner border border-(--edge) bg-card py-related pr-related pl-group'>
               <p className='text-caption text-muted-foreground'>
-                Once per project: puts <span className='font-mono'>@triargos</span> in components.json.
+                Once per project: puts <span className='font-mono'>@pavo</span> in components.json.
               </p>
               <div className='flex items-start gap-related'>
                 <Command command={setup} label='Add the registry' className='py-1' />

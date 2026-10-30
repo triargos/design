@@ -7,7 +7,7 @@ import { Root } from './root';
 /** Every route the build writes: `/` → `index.html`, `/button` → `button.html`, `/404` → `404.html`. */
 export const paths: ReadonlyArray<string> = ['/', ...pages.map(pathOf), '/404'];
 
-const TITLE = 'Triargos Design';
+const TITLE = 'Pavo';
 
 /** Renders a route to HTML once its page has loaded; the build puts it into `index.html`'s `#root`. */
 export async function render(pathname: string): Promise<{ html: string; title: string }> {

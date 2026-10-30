@@ -461,7 +461,7 @@ export interface SizingTheme {
 
 export const SIZING_STYLES = {
   /** The design system's own: `tailwind.css` as is. */
-  triargos: { density: 'default', radius: 'default' },
+  pavo: { density: 'default', radius: 'default' },
   /**
    * coss ui (coss.com/ui): 32px controls and 28px menu rows on a desktop, one step bigger on a phone; 10px controls and
    * popups, 8px tabs, 18px cards and dialogs, 16px popover padding; badge, switch, slider, checkbox and alert as coss.
@@ -629,7 +629,7 @@ export const SIZING_STYLES = {
 
 export type SizingStyle = keyof typeof SIZING_STYLES;
 
-export const DEFAULT_SIZING_THEME: SizingTheme = SIZING_STYLES.triargos;
+export const DEFAULT_SIZING_THEME: SizingTheme = SIZING_STYLES.pavo;
 
 /** A theme's overrides: density, then radius, then its own tokens; `touch` separately. */
 export function sizingValues(theme: SizingTheme): { readonly base: SizingValues; readonly touch: SizingValues } {

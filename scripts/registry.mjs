@@ -55,7 +55,7 @@ const item = (name, type, files, extra = {}) => {
   const local = [...new Set(imports.filter((s) => s.startsWith('~/')).map(localItem))].filter((dep) => dep !== name);
   const registryDependencies = [...new Set([...local, ...(extra.registryDependencies ?? [])])]
     .sort()
-    .map((dep) => `@triargos/${dep}`);
+    .map((dep) => `@pavo/${dep}`);
   return {
     name,
     type,
@@ -68,14 +68,14 @@ const item = (name, type, files, extra = {}) => {
 
 const items = [
   // The tokens land next to the generator, in the app's `lib` alias (`@lib/…` resolves through components.json), so
-  // `src/` and `app/` layouts both get `<lib>/theme/triargos.css`. The app's own entry imports it after Tailwind and
+  // `src/` and `app/` layouts both get `<lib>/theme/pavo.css`. The app's own entry imports it after Tailwind and
   // tw-animate-css (README, Use the registry); the components' `animate-in` classes need the latter.
   item(
     'theme',
     'registry:lib',
     [
       ...sourceFiles('src/lib/theme').map((path) => ({ path, type: 'registry:lib' })),
-      { path: 'src/tailwind.css', type: 'registry:file', target: '@lib/theme/triargos.css' },
+      { path: 'src/tailwind.css', type: 'registry:file', target: '@lib/theme/pavo.css' },
     ],
     { dependencies: ['tw-animate-css'] },
   ),
@@ -100,7 +100,7 @@ const items = [
   ),
 ];
 
-// Each component docs page shows `shadcn add @triargos/<slug>` (`site/install.tsx`), so its slug must name an item.
+// Each component docs page shows `shadcn add @pavo/<slug>` (`site/install.tsx`), so its slug must name an item.
 for (const file of readdirSync(join(root, 'docs/components'))) {
   const slug = basename(file, extname(file));
   if (!items.some((entry) => entry.name === slug)) throw new Error(`docs/components/${file}: no registry item ${slug}`);
@@ -108,7 +108,7 @@ for (const file of readdirSync(join(root, 'docs/components'))) {
 
 const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
-  name: 'triargos',
+  name: 'pavo',
   homepage: 'https://design.a-np.de',
   items,
 };
