@@ -3,6 +3,7 @@ import { cva } from 'class-variance-authority';
 import { IconMinus } from '@tabler/icons-react';
 
 import { DrawnCheck, IconSwap } from '~/components/ui/icon-swap';
+import { useAccessibleNameCheck } from '~/hooks/use-accessible-name-check';
 import { cn } from '~/lib/utils';
 
 /**
@@ -57,9 +58,11 @@ function CheckboxMark({ checked, indeterminate }: { checked: boolean; indetermin
 }
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
+  const nameCheck = useAccessibleNameCheck('Checkbox');
   return (
     <CheckboxPrimitive.Root
       data-slot='checkbox'
+      {...nameCheck}
       className={cn(selectionControlVariants({ shape: 'square' }), className)}
       {...props}>
       {/* Kept mounted so the marks inside can transition out. */}

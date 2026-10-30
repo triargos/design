@@ -1,5 +1,6 @@
 import { Switch as SwitchPrimitive } from '@base-ui/react/switch';
 
+import { useAccessibleNameCheck } from '~/hooks/use-accessible-name-check';
 import { cn } from '~/lib/utils';
 
 /**
@@ -15,9 +16,11 @@ function Switch({
 }: SwitchPrimitive.Root.Props & {
   size?: 'sm' | 'default';
 }) {
+  const nameCheck = useAccessibleNameCheck('Switch');
   return (
     <SwitchPrimitive.Root
       data-slot='switch'
+      {...nameCheck}
       data-size={size}
       className={cn(
         'peer group/switch relative inline-flex shrink-0 items-center rounded-track bg-foreground/14 p-(--switch-inset) outline-none',

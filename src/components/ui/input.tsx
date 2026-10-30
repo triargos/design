@@ -2,6 +2,7 @@ import { Input as InputPrimitive } from '@base-ui/react/input';
 import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
+import { useAccessibleNameCheck } from '~/hooks/use-accessible-name-check';
 import { cn } from '~/lib/utils';
 
 /**
@@ -75,6 +76,7 @@ const inputSurfaceVariants = cva(
  * name, or the empty note, is muted.
  */
 function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
+  const nameCheck = useAccessibleNameCheck('Input', props.type !== 'hidden');
   return (
     <span
       data-slot='input'
@@ -94,6 +96,7 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
       {/* Below `sm` the field renders 16px (`max-md:text-[1rem]`), so iOS does not zoom on focus; the input inherits it. */}
       <InputPrimitive
         data-slot='input-control'
+        {...nameCheck}
         className={cn(
           'h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
           '[&[type=file]]:h-auto [&[type=file]]:p-px [&[type=file]]:cursor-pointer [&[type=file]]:text-muted-foreground [&[type=file]]:[--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)]',

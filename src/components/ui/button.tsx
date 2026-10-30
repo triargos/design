@@ -5,6 +5,7 @@ import * as React from 'react';
 import { type Emphasis, type Intent, intentVariants } from '~/components/ui/intent-variants';
 import { Spinner } from '~/components/ui/spinner';
 
+import { useAccessibleNameCheck } from '~/hooks/use-accessible-name-check';
 import { cn } from '~/lib/utils';
 
 /**
@@ -191,6 +192,7 @@ function Button({
   ...props
 }: ButtonProps) {
   const pending = useMinimumPending(isLoading === true);
+  const nameCheck = useAccessibleNameCheck('Button', size.startsWith('icon'));
   // A router `<Link to>` or an `<a href>` stays a link for assistive tech; Base UI would announce it as a button.
   const renderProps = React.isValidElement(props.render) ? (props.render.props as Record<string, unknown>) : undefined;
   const isLink = renderProps !== undefined && ('to' in renderProps || 'href' in renderProps);
@@ -216,6 +218,7 @@ function Button({
       aria-busy={pending || undefined}
       // Spread, not `role={undefined}`: Base UI's `mergeProps` copies `undefined` over its own `role='button'`.
       {...(isLink && { role: 'link' })}
+      {...nameCheck}
       {...props}>
       {/* Only a button that can go pending wraps its label, so every other button keeps its children as they are. */}
       {isLoading === undefined ? (
