@@ -14,7 +14,8 @@
     "sizing:check": "node scripts/check-sizing.mjs",
     "typecheck": "tsc",
     "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "format:check": "oxfmt --check",
+    "bundle-size": "node scripts/bundle-size.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",
