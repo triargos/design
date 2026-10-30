@@ -817,11 +817,9 @@
         "@base-ui/react@1.8.0",
         "@tabler/icons-react@3.49.0",
         "class-variance-authority@^0.7.1",
-        "framer-motion@13.4.4",
         "react-use-measure@^2.1.7"
       ],
       "registryDependencies": [
-        "@pavo/motion",
         "@pavo/skeleton",
         "@pavo/theme",
         "@pavo/use-virtual-rows",

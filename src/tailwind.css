@@ -401,10 +401,12 @@
     0.9995,
     1
   );
-  /* A drawer entering and leaving; a bouncing indicator; a press release. Its pages morph on Motion springs. */
+  /* A drawer entering and leaving; a bouncing indicator; a press release; a height fold. Its pages morph on Motion
+     springs. */
   --transition-duration-drawer: 560ms;
   --transition-duration-indicator: 400ms;
   --transition-duration-press: 300ms;
+  --transition-duration-fold: 400ms;
 
   --text-*: initial;
 

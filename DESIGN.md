@@ -220,6 +220,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | `ease-move`                             | `cubic-bezier(0.645, 0.045, 0.355, 1)` | Moving what is already on screen                                  |
 | `duration-drawer`                       | 560ms                                  | A drawer entering and leaving; its pages morph on Motion springs  |
 | `duration-indicator` · `duration-press` | 400 · 300ms                            | A springing tab fill; a press release or a check popping in       |
+| `duration-fold`                         | 400ms                                  | A height fold on `ease-spring`: list rows coming and going        |
 | `ease-spring`                           | `linear(…)`, ζ 0.82, ~1% overshoot     | Drawers, pages, arriving content (CSS)                            |
 | `ease-spring-bounce`                    | `linear(…)`, ζ 0.62, ~8% overshoot     | An indicator, a press release, a check (CSS); never under text    |
 

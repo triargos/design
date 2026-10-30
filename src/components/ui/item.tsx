@@ -2,14 +2,12 @@ import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { IconChevronRight } from '@tabler/icons-react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { LazyMotion, m, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import useMeasure from 'react-use-measure';
 
 import { Skeleton } from '~/components/ui/skeleton';
 
 import { LoadMore, useVirtualRows } from '~/hooks/use-virtual-rows';
-import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /**
@@ -34,10 +32,7 @@ function ItemListRow({ last, ...props }: React.ComponentProps<'div'> & { last: b
 }
 
 /** The list's own element; `aria-label` and `aria-labelledby` name the list inside it. */
-type ItemListElementProps = Omit<
-  React.ComponentProps<'div'>,
-  'children' | 'role' | 'onAnimationStart' | 'onDrag' | 'onDragStart' | 'onDragEnd'
->;
+type ItemListElementProps = Omit<React.ComponentProps<'div'>, 'children' | 'role'>;
 
 type ItemListProps<T> = ItemListElementProps &
   (
@@ -84,9 +79,6 @@ function ItemList<T>(props: ItemListProps<T>) {
   return <StaticItemList {...rest} />;
 }
 
-/** Firm and quick, no visible overshoot: a row arriving or leaving pushes the card edge. */
-const heightSpring: Transition = { type: 'spring', stiffness: 800, damping: 55, mass: 0.4 };
-
 function StaticItemList({
   className,
   children,
@@ -96,28 +88,24 @@ function StaticItemList({
   ...props
 }: ItemListElementProps & { children?: React.ReactNode }) {
   const [measureRef, bounds] = useMeasure();
-  const reduced = useReducedMotion() ?? false;
   const rows = React.Children.toArray(children);
   return (
-    <LazyMotion features={loadMotionFeatures}>
-      <m.div
-        data-slot='item-list'
-        className={cn('overflow-hidden', className)}
-        initial={false}
-        animate={{ height: bounds.height > 0 ? bounds.height : 'auto' }}
-        transition={reduced ? { duration: 0 } : heightSpring}
-        // React's `CSSProperties` allows `undefined` values, `MotionStyle` does not: a plain style object is a valid one.
-        {...(style && { style: style as MotionStyle })}
-        {...props}>
-        <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
-          {rows.map((row, index) => (
-            <ItemListRow key={React.isValidElement(row) ? row.key : index} last={index === rows.length - 1}>
-              {row}
-            </ItemListRow>
-          ))}
-        </div>
-      </m.div>
-    </LazyMotion>
+    <div
+      data-slot='item-list'
+      className={cn(
+        'overflow-hidden transition-[height] duration-fold ease-spring motion-reduce:transition-none',
+        className,
+      )}
+      style={bounds.height > 0 ? { ...style, height: bounds.height } : style}
+      {...props}>
+      <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
+        {rows.map((row, index) => (
+          <ItemListRow key={React.isValidElement(row) ? row.key : index} last={index === rows.length - 1}>
+            {row}
+          </ItemListRow>
+        ))}
+      </div>
+    </div>
   );
 }
 
