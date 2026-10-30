@@ -423,6 +423,11 @@
   /* Buttons, fields, menus, tables. Below `sm` fields render 16px instead, so iOS does not zoom on focus. */
   --text-control: 0.875rem;
   --text-control--line-height: 1.25rem;
+  /* Form labels, legends, a progress label. 14px at every width: below `md` fields go 16px, labels do not, so the
+     value reads first. A line box 2px taller than the text, 1px of air above and below. */
+  --text-label: 0.875rem;
+  --text-label--line-height: 1rem;
+  --text-label--font-weight: 500;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
 

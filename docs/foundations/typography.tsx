@@ -39,8 +39,14 @@ const roles = [
   {
     className: 'text-control',
     role: 'control',
-    use: 'Buttons, fields, menus, tabs, tables. Fields render 16px below sm',
+    use: 'Buttons, fields, menus, tabs, tables. Fields render 16px below md',
     owner: 'Button, Input, Select, MenuItem, TabsTrigger',
+  },
+  {
+    className: 'text-label',
+    role: 'label',
+    use: 'Form labels and legends, a progress label. 14px at every width',
+    owner: 'FieldLabel, FieldTitle, FieldLegend, ProgressLabel',
   },
   { className: 'text-caption', role: 'caption', use: 'Meta, timestamps, badges, tooltips', owner: 'Badge, Tooltip' },
 ] as const;
@@ -69,7 +75,7 @@ export default defineDocs({
         description='Six roles. Each fixes size, line height, tracking and weight. Emphasis is font-medium, tone is a text level; neither is a new size. A text-* size outside these roles does not compile.'>
         <FoundationSection
           title='Roles'
-          description='The whole scale. Titles are applied by their owner component; body, control and caption are written directly.'>
+          description='The whole scale. Titles are applied by their owner component; body, control, label and caption are written directly.'>
           <SpecimenList>
             {roles.map(({ className, role, use, owner }) => (
               <SpecimenRow

@@ -110,6 +110,8 @@ export const SIZING_TOKENS = {
   '--text-body--line-height': t('type', '21px', 'Body line height'),
   '--text-control': t('type', '14px', 'Buttons, fields, menus, tabs, tables'),
   '--text-control--line-height': t('type', '20px', 'Control line height: menu rows center on it'),
+  '--text-label': t('type', '14px', 'Form labels and legends, at every width'),
+  '--text-label--line-height': t('type', '16px', 'Label line height'),
   '--text-caption': t('type', '12px', 'Meta, badges, tooltips'),
   '--text-caption--line-height': t('type', '16px', 'Caption line height'),
   // Component sizing: controls.

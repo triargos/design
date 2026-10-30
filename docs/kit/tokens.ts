@@ -24,6 +24,7 @@ export const TYPE_ROLES = [
   { name: 'heading', px: 18, lineHeight: 24, tracking: '−0.01em', weight: 500 },
   { name: 'body', px: 14, lineHeight: 21, tracking: undefined, weight: 400 },
   { name: 'control', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
+  { name: 'label', px: 14, lineHeight: 16, tracking: undefined, weight: 500 },
   { name: 'caption', px: 12, lineHeight: 16, tracking: undefined, weight: 400 },
 ] as const;
 

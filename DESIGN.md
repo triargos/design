@@ -83,16 +83,17 @@ Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), whic
 
 Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other t-shirt sizes do not compile. Emphasis is `font-medium` and tone is a text level; neither one is a new size.
 
-| Role           | px · weight            | Use                                                                                                            | Owner                                                   |
-| -------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `text-title`   | 28 / 36 · 500, −0.02em | Page title; a big number (`tabular-nums`)                                                                      | Page pattern, `StatValue`                               |
-| `text-heading` | 18 / 24 · 500, −0.01em | Section, dialog, sheet, empty titles                                                                           | Page pattern, `DialogTitle`, `SheetTitle`, `EmptyTitle` |
-| `text-body`    | 14 / 21 · 400          | Reading text; descriptions (muted); row titles (medium). The card header sets 20px leading, its title semibold | `CardTitle`, `ItemTitle`, `*Description`                |
-| `text-control` | 14 / 20 · 400          | Buttons, fields, menus, tabs, tables                                                                           | `Button`, `Input`, `SelectTrigger`, menu items, tabs    |
-| `text-caption` | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                                             | `Badge`, `TooltipContent`                               |
+| Role           | px · weight            | Use                                                                                                            | Owner                                                      |
+| -------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `text-title`   | 28 / 36 · 500, −0.02em | Page title; a big number (`tabular-nums`)                                                                      | Page pattern, `StatValue`                                  |
+| `text-heading` | 18 / 24 · 500, −0.01em | Section, dialog, sheet, empty titles                                                                           | Page pattern, `DialogTitle`, `SheetTitle`, `EmptyTitle`    |
+| `text-body`    | 14 / 21 · 400          | Reading text; descriptions (muted); row titles (medium). The card header sets 20px leading, its title semibold | `CardTitle`, `ItemTitle`, `*Description`                   |
+| `text-control` | 14 / 20 · 400          | Buttons, fields, menus, tabs, tables                                                                           | `Button`, `Input`, `SelectTrigger`, menu items, tabs       |
+| `text-label`   | 14 / 16 · 500          | Form labels and legends, a progress label; 14px at every width                                                 | `FieldLabel`, `FieldTitle`, `FieldLegend`, `ProgressLabel` |
+| `text-caption` | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                                             | `Badge`, `TooltipContent`                                  |
 
 - Icons (Tabler, `@tabler/icons-react`) draw a 1.25px stroke at every size, the weight of their label (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
-- A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`) and `FieldLabel` 16 / 18 (a `Drawer`'s rows 16 / 24), so iOS does not zoom on focus, and a sizing theme's `touch` values apply. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
+- A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`, a `Drawer`'s rows 16 / 24), so iOS does not zoom on focus; labels stay 14 (`text-label`), so the value reads before its label, and a sizing theme's `touch` values apply. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
 - A new role goes in `tailwind.css` **and** in `cn` (`lib/utils.ts`). Otherwise `cn` drops the text color next to it.
 
 ## Spacing
