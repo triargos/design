@@ -1,6 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import { type HTMLMotionProps, type Variants, motion, useReducedMotion } from 'framer-motion';
-import type * as React from 'react';
 
 import { cn } from '~/lib/utils';
 

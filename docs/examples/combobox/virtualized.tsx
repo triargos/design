@@ -123,7 +123,7 @@ const members = (count: number): ReadonlyArray<SelectOption> =>
     return {
       value: String(index),
       label: round === 0 ? name : `${name} ${round + 1}`,
-      description: TEAMS[index % TEAMS.length],
+      description: TEAMS[index % TEAMS.length] ?? '',
     };
   });
 
