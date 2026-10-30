@@ -1,6 +1,7 @@
 import { build } from 'esbuild';
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { gzipSync } from 'node:zlib';
 
@@ -58,37 +59,65 @@ const packageOf = (input) => {
   return match ? match[1] : 'own';
 };
 
+const fixtureDir = mkdtempSync(join(tmpdir(), 'bundle-size-'));
+
+const gzipSize = (contents) => gzipSync(contents, { level: 9 }).length;
+
 const measure = async ({ name, group, code }) => {
+  const entry = join(fixtureDir, `${name.replaceAll(' ', '-')}.tsx`);
+  writeFileSync(entry, code);
   const result = await build({
-    stdin: { contents: code, resolveDir: root, loader: 'tsx', sourcefile: `${name}.tsx` },
+    entryPoints: [entry],
     bundle: true,
+    splitting: true,
+    outdir: join(fixtureDir, 'out'),
     minify: true,
     write: false,
     format: 'esm',
     platform: 'browser',
     jsx: 'automatic',
     external: ['react', 'react-dom', 'react/jsx-runtime'],
+    nodePaths: [join(root, 'node_modules')],
     alias: { '~': join(root, 'src') },
     define: { 'process.env.NODE_ENV': '"production"' },
     metafile: true,
     logLevel: 'silent',
   });
-  const output = result.outputFiles[0].contents;
-  const [meta] = Object.values(result.metafile.outputs);
+  const contentsOf = new Map(result.outputFiles.map((file) => [relative(process.cwd(), file.path), file.contents]));
+  const outputs = result.metafile.outputs;
+  const entryOutput = Object.keys(outputs).find((path) => outputs[path].entryPoint);
+  const initial = new Set();
+  const visit = (path) => {
+    if (initial.has(path)) return;
+    initial.add(path);
+    for (const imported of outputs[path].imports)
+      if (imported.kind === 'import-statement' && !imported.external) visit(imported.path);
+  };
+  visit(entryOutput);
   const packages = {};
-  for (const [input, { bytesInOutput }] of Object.entries(meta.inputs)) {
-    const name = packageOf(input);
-    packages[name] = (packages[name] ?? 0) + bytesInOutput;
+  let gzip = 0;
+  let lazyGzip = 0;
+  for (const [path, output] of Object.entries(outputs)) {
+    if (!path.endsWith('.js')) continue;
+    const size = gzipSize(contentsOf.get(path));
+    if (initial.has(path)) gzip += size;
+    else lazyGzip += size;
+    if (!initial.has(path)) continue;
+    for (const [input, { bytesInOutput }] of Object.entries(output.inputs)) {
+      const name = packageOf(input);
+      packages[name] = (packages[name] ?? 0) + bytesInOutput;
+    }
   }
   const largest = Object.entries(packages)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3)
     .map(([name]) => name);
-  return { name, group, minified: output.length, gzip: gzipSync(output, { level: 9 }).length, largest };
+  return { name, group, gzip, lazyGzip, largest };
 };
 
 const results = [];
 for (const fixture of fixtures) results.push(await measure(fixture));
+rmSync(fixtureDir, { recursive: true, force: true });
 
 const kilobytes = (bytes) => `${(bytes / 1024).toFixed(1)} kB`;
 const signedKilobytes = (bytes) =>
@@ -98,12 +127,13 @@ const noticeableBytes = 102;
 const table = (rows, base) => {
   const byName = new Map(base?.map((row) => [row.name, row]));
   const header = base
-    ? ['| Import | gzip | Δ | Largest parts |', '| --- | ---: | ---: | --- |']
-    : ['| Import | gzip | Largest parts |', '| --- | ---: | --- |'];
+    ? ['| Import | gzip | Δ | Lazy | Largest parts |', '| --- | ---: | ---: | ---: | --- |']
+    : ['| Import | gzip | Lazy | Largest parts |', '| --- | ---: | ---: | --- |'];
   const lines = rows.map((row) => {
     const before = byName.get(row.name);
     const delta = before ? signedKilobytes(row.gzip - before.gzip) : 'new';
-    const cells = [`\`${row.name}\``, kilobytes(row.gzip), ...(base ? [delta] : []), row.largest.join(', ')];
+    const lazy = row.lazyGzip ? kilobytes(row.lazyGzip) : '–';
+    const cells = [`\`${row.name}\``, kilobytes(row.gzip), ...(base ? [delta] : []), lazy, row.largest.join(', ')];
     return `| ${cells.join(' | ')} |`;
   });
   return [...header, ...lines].join('\n');
@@ -140,7 +170,7 @@ const report = (rows, base) => {
     '',
     '</details>',
     '',
-    'Each import bundled alone by esbuild, minified, React external, gzip level 9 (`pnpm bundle-size`).',
+    'Each import bundled alone by esbuild, minified, React external, gzip level 9 (`pnpm bundle-size`). gzip: what loads with the import. Lazy: chunks it loads later through `import()`.',
   );
   return sections.join('\n');
 };
