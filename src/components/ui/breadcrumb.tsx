@@ -4,6 +4,7 @@ import { IconChevronRight, IconDots } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { useLocale } from '~/components/ui/locale';
+import { useLinkRender } from '~/components/ui/link';
 import { cn } from '~/lib/utils';
 
 function Breadcrumb({ 'aria-label': ariaLabel, ...props }: React.ComponentProps<'nav'>) {
@@ -35,9 +36,10 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
 }
 
 function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProps<'a'>) {
+  const linkRender = useLinkRender(render);
   return useRender({
     defaultTagName: 'a',
-    render,
+    render: linkRender,
     state: { slot: 'breadcrumb-link' },
     props: mergeProps<'a'>({ className: cn('transition-colors hover:text-foreground', className) }, props),
   });
