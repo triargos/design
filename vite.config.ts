@@ -20,6 +20,7 @@ const shadcnRegistry = (): Plugin => {
   const build = async () => {
     await exec('node', ['scripts/registry.mjs']);
     await exec('pnpm', ['exec', 'shadcn', 'build', '--output', 'public/r']);
+    await exec('node', ['scripts/llms.mjs']);
   };
   const isSource = (file: string) => /\/src\/(components\/ui|lib|hooks)\/|\/src\/tailwind\.css$/.test(file);
   return {
