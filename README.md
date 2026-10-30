@@ -54,6 +54,12 @@ const RouterLink = ({ href = '', ...props }: React.ComponentPropsWithRef<'a'>) =
   </PavoProvider>;
   ```
 
+- On a route change, call `closeOverlays()` (`hooks/use-overlay.ts`): open dialogs, sheets and drawers close, except one marked `sensitive`. Before leaving, `hasSensitiveOverlay()` says whether to ask first.
+
+  ```ts
+  router.subscribe('onBeforeNavigate', closeOverlays);
+  ```
+
 - Sizing (`lib/theme/sizing.ts`): pick a style, or a density and a radius, and render `sizingThemeCss` next to the colors. It writes only what differs from `pavo.css`, and a style's phone values under `@media (width < 40rem)`:
 
   ```tsx
