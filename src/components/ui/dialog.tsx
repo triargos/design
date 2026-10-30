@@ -5,10 +5,31 @@ import * as React from 'react';
 import { Button } from '~/components/ui/button';
 
 import { useLocale } from '~/components/ui/locale';
+import { OverlayOpenContext, useOverlayRoot, usePreservedContent } from '~/hooks/use-overlay';
 import { cn } from '~/lib/utils';
 
-function Dialog(props: DialogPrimitive.Root.Props) {
-  return <DialogPrimitive.Root data-slot='dialog' {...props} />;
+/** `sensitive`: it holds input the user would lose, so `closeOverlays` leaves it open and `hasSensitiveOverlay` is true. */
+function Dialog({
+  open,
+  defaultOpen,
+  onOpenChange,
+  actionsRef,
+  sensitive = false,
+  ...props
+}: DialogPrimitive.Root.Props & { sensitive?: boolean }) {
+  const overlay = useOverlayRoot({ open, defaultOpen, onOpenChange, actionsRef, sensitive });
+  return (
+    <OverlayOpenContext value={overlay.open}>
+      <DialogPrimitive.Root
+        data-slot='dialog'
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={overlay.onOpenChange}
+        actionsRef={overlay.actionsRef}
+        {...props}
+      />
+    </OverlayOpenContext>
+  );
 }
 
 function DialogTrigger(props: DialogPrimitive.Trigger.Props) {
@@ -45,6 +66,7 @@ function DialogContent({
   ...props
 }: DialogContentProps) {
   const { labels } = useLocale();
+  const content = usePreservedContent(children);
   return (
     <DialogPrimitive.Portal data-slot='dialog-portal' container={container}>
       <DialogPrimitive.Backdrop
@@ -66,7 +88,7 @@ function DialogContent({
           className,
         )}
         {...props}>
-        {children}
+        {content}
         {showCloseButton && (
           <DialogClose
             aria-label={closeLabel ?? labels.close}

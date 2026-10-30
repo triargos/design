@@ -8,10 +8,31 @@ import * as React from 'react';
 import { Button } from '~/components/ui/button';
 
 import { useLocale } from '~/components/ui/locale';
+import { OverlayOpenContext, useOverlayRoot, usePreservedContent } from '~/hooks/use-overlay';
 import { cn } from '~/lib/utils';
 
-function Drawer(props: DrawerPrimitive.Root.Props) {
-  return <DrawerPrimitive.Root data-slot='drawer' {...props} />;
+/** `sensitive`: it holds input the user would lose, so `closeOverlays` leaves it open and `hasSensitiveOverlay` is true. */
+function Drawer({
+  open,
+  defaultOpen,
+  onOpenChange,
+  actionsRef,
+  sensitive = false,
+  ...props
+}: DrawerPrimitive.Root.Props & { sensitive?: boolean }) {
+  const overlay = useOverlayRoot({ open, defaultOpen, onOpenChange, actionsRef, sensitive });
+  return (
+    <OverlayOpenContext value={overlay.open}>
+      <DrawerPrimitive.Root
+        data-slot='drawer'
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={overlay.onOpenChange}
+        actionsRef={overlay.actionsRef}
+        {...props}
+      />
+    </OverlayOpenContext>
+  );
 }
 
 function DrawerTrigger(props: DrawerPrimitive.Trigger.Props) {
@@ -33,6 +54,7 @@ function DrawerContent({
   container,
   ...props
 }: DrawerPrimitive.Popup.Props & Pick<DrawerPrimitive.Portal.Props, 'container'>) {
+  const content = usePreservedContent(children);
   return (
     <DrawerPrimitive.Portal data-slot='drawer-portal' container={container}>
       <DrawerPrimitive.Backdrop
@@ -68,7 +90,7 @@ function DrawerContent({
             className='flex shrink-0 justify-center pt-related pb-(--drawer-page-pad)'>
             <div className='h-1 w-9 rounded-full bg-border' />
           </div>
-          {children}
+          {content}
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>

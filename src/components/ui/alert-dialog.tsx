@@ -3,10 +3,31 @@ import * as React from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
 
+import { OverlayOpenContext, useOverlayRoot, usePreservedContent } from '~/hooks/use-overlay';
 import { cn } from '~/lib/utils';
 
-function AlertDialog(props: AlertDialogPrimitive.Root.Props) {
-  return <AlertDialogPrimitive.Root data-slot='alert-dialog' {...props} />;
+/** `sensitive`: it holds input the user would lose, so `closeOverlays` leaves it open and `hasSensitiveOverlay` is true. */
+function AlertDialog({
+  open,
+  defaultOpen,
+  onOpenChange,
+  actionsRef,
+  sensitive = false,
+  ...props
+}: AlertDialogPrimitive.Root.Props & { sensitive?: boolean }) {
+  const overlay = useOverlayRoot({ open, defaultOpen, onOpenChange, actionsRef, sensitive });
+  return (
+    <OverlayOpenContext value={overlay.open}>
+      <AlertDialogPrimitive.Root
+        data-slot='alert-dialog'
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={overlay.onOpenChange}
+        actionsRef={overlay.actionsRef}
+        {...props}
+      />
+    </OverlayOpenContext>
+  );
 }
 
 function AlertDialogTrigger(props: AlertDialogPrimitive.Trigger.Props) {
@@ -21,12 +42,14 @@ function AlertDialogContent({
   className,
   size = 'default',
   container,
+  children,
   ...props
 }: AlertDialogPrimitive.Popup.Props &
   Pick<AlertDialogPrimitive.Portal.Props, 'container'> & {
     /** `sm`: narrower and centered, the two actions in equal columns. */
     size?: 'default' | 'sm';
   }) {
+  const content = usePreservedContent(children);
   return (
     <AlertDialogPrimitive.Portal data-slot='alert-dialog-portal' container={container}>
       <AlertDialogPrimitive.Backdrop
@@ -46,8 +69,9 @@ function AlertDialogContent({
           'group/alert-dialog-content max-w-xs data-[size=default]:sm:max-w-sm',
           className,
         )}
-        {...props}
-      />
+        {...props}>
+        {content}
+      </AlertDialogPrimitive.Popup>
     </AlertDialogPrimitive.Portal>
   );
 }
