@@ -14,7 +14,7 @@ type Virtualizer = ReturnType<typeof useVirtualizer<HTMLDivElement, Element>>;
 
 // A list entry is one of three: an item (the caller's `SelectOption`), a custom value, or the proposal. The last two
 // carry `KIND`; a registered symbol, so the mark survives a spread and a second copy of this file.
-const KIND: unique symbol = Symbol.for('@triargos/design/combobox-entry');
+const KIND: unique symbol = Symbol.for('@pavo/combobox-entry');
 
 /** A value of a `Combobox allowCustom` that names no item: its text is the value and the label. */
 interface CustomValue extends SelectOption {

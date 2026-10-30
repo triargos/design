@@ -16,7 +16,7 @@ import { DocsSidebar, Wordmark } from './nav';
 import { DocsPage, pageAt, pathOf, prefetchPage } from './page';
 import { Link, useRouter } from './router';
 
-const TITLE = 'Triargos Design';
+const TITLE = 'Pavo';
 
 function PageLink({ page, rel }: { page: DocsPageEntry; rel: 'prev' | 'next' }) {
   const Icon = rel === 'prev' ? IconArrowLeft : IconArrowRight;

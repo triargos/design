@@ -53,9 +53,9 @@ export function Home() {
       <header className='flex flex-col gap-group'>
         <TriargosLogo className='h-10 self-start' />
         <div className='flex flex-col gap-tight'>
-          <h1 className='text-title text-balance'>Triargos Design</h1>
+          <h1 className='text-title text-balance'>Pavo</h1>
           <p className='max-w-prose text-body text-pretty text-muted-foreground'>
-            The components behind Triargos products, live and with their code.
+            The design system behind Triargos products: every component live, with its code.
           </p>
         </div>
       </header>

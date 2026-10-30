@@ -86,7 +86,7 @@ const FONT_FAMILIES: Record<Font, { readonly label: string; readonly family: str
 const SIZING_STYLE_NAMES = Object.keys(SIZING_STYLES) as ReadonlyArray<SizingStyle>;
 const DENSITY_NAMES = Object.keys(DENSITIES) as ReadonlyArray<Density>;
 const RADIUS_NAMES = Object.keys(RADII) as ReadonlyArray<Radius>;
-const STYLE_LABELS: Record<SizingStyle, string> = { triargos: 'Triargos', coss: 'Coss', dense: 'Dense', soft: 'Soft' };
+const STYLE_LABELS: Record<SizingStyle, string> = { pavo: 'Pavo', coss: 'Coss', dense: 'Dense', soft: 'Soft' };
 
 /** A named style as a choice: its density and radius. */
 const styleChoice = (style: SizingStyle): SizingChoice => ({
@@ -95,9 +95,9 @@ const styleChoice = (style: SizingStyle): SizingChoice => ({
   radius: SIZING_STYLES[style].radius,
 });
 
-/** Density and radius alone: `triargos` when both are the default, else no style. */
+/** Density and radius alone: `pavo` when both are the default, else no style. */
 const axesChoice = (density: Density | number, radius: Radius): SizingChoice =>
-  density === 'default' && radius === 'default' ? styleChoice('triargos') : { style: null, density, radius };
+  density === 'default' && radius === 'default' ? styleChoice('pavo') : { style: null, density, radius };
 
 const sizingTheme = ({ style, density, radius }: SizingChoice): SizingTheme =>
   style === null
@@ -127,7 +127,7 @@ export const tokenGlobals = (customization: Customization): Record<string, numbe
 
 const DEFAULT: Customization = {
   branding: DEFAULT_BRANDING_THEME,
-  sizing: styleChoice('triargos'),
+  sizing: styleChoice('pavo'),
   tokens: {},
   surface: 'page',
   font: 'inter',
@@ -156,7 +156,7 @@ const read = (): Customization => {
   } catch {
     // A broken entry falls back to the defaults.
   }
-  const style = stored.sizing?.style === null ? null : oneOf(SIZING_STYLE_NAMES, stored.sizing?.style, 'triargos');
+  const style = stored.sizing?.style === null ? null : oneOf(SIZING_STYLE_NAMES, stored.sizing?.style, 'pavo');
   const sizing =
     style === null
       ? axesChoice(densityOf(stored.sizing?.density), oneOf(RADIUS_NAMES, stored.sizing?.radius, 'default'))
@@ -498,7 +498,7 @@ export function CustomizeMenu() {
               aria-labelledby='sizing-style'
               value={sizing.style ?? ''}
               onValueChange={(style) => {
-                setSizing(styleChoice(oneOf(SIZING_STYLE_NAMES, style, 'triargos')));
+                setSizing(styleChoice(oneOf(SIZING_STYLE_NAMES, style, 'pavo')));
               }}
               className='w-full'>
               {SIZING_STYLE_NAMES.map((style) => (

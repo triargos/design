@@ -1,4 +1,4 @@
-# Triargos Design
+# Pavo
 
 The guide to this design system. Each design question has one axis. Every token and every component prop comes from one of these axes.
 
@@ -175,7 +175,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 
 | Style (`SIZING_STYLES`) | Density · radius   | Its own                                                                                                                                                               |
 | ----------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `triargos`              | default · default  | Nothing: `tailwind.css` as is                                                                                                                                         |
+| `pavo`                  | default · default  | Nothing: `tailwind.css` as is                                                                                                                                         |
 | `coss`                  | compact · default  | coss ui: controls 32, menu rows 28, popups and controls 10, tabs 8, cards 18, popover padding 16; touch: controls 36, rows 32, icons 18, checkbox 18, switch thumb 20 |
 | `dense`                 | compact · default  | shadcn mira/nova: controls 28, control text 13, checkbox 14, smaller corners; touch: controls 32                                                                      |
 | `soft`                  | comfortable · pill | shadcn maia: rounder surfaces (card 28, popup 24)                                                                                                                     |

@@ -1,7 +1,7 @@
 {
-  "name": "@triargos/design",
+  "name": "pavo",
   "private": true,
-  "description": "The Triargos design system: React components, tokens and patterns, shipped as a shadcn registry.",
+  "description": "Pavo, the Triargos design system: React components, tokens and patterns, shipped as a shadcn registry.",
   "homepage": "https://design.a-np.de",
   "license": "MIT",
   "repository": "github:triargos/design",

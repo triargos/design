@@ -1,6 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "triargos",
+  "name": "pavo",
   "homepage": "https://design.a-np.de",
   "items": [
     {
@@ -41,7 +41,7 @@
         {
           "path": "src/tailwind.css",
           "type": "registry:file",
-          "target": "@lib/theme/triargos.css"
+          "target": "@lib/theme/pavo.css"
         }
       ]
     },
@@ -103,8 +103,8 @@
         "@tanstack/react-virtual@3.14.13"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/spinner"
+        "@pavo/locale",
+        "@pavo/spinner"
       ],
       "files": [
         {
@@ -121,8 +121,8 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -138,10 +138,10 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/bottom-nav",
-        "@triargos/motion",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/bottom-nav",
+        "@pavo/motion",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -157,9 +157,9 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -172,9 +172,9 @@
       "name": "alert",
       "type": "registry:ui",
       "registryDependencies": [
-        "@triargos/intent-variants",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/intent-variants",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -191,8 +191,8 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -209,9 +209,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/intent-variants",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/intent-variants",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -229,10 +229,10 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/motion",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/locale",
+        "@pavo/motion",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -249,9 +249,9 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -267,9 +267,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/separator",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/separator",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -286,10 +286,10 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/intent-variants",
-        "@triargos/spinner",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/intent-variants",
+        "@pavo/spinner",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -308,10 +308,10 @@
         "react-aria-components@1.21.1"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -328,9 +328,9 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/motion",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/motion",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -346,9 +346,9 @@
         "recharts@^3.10.1"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -366,9 +366,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/icon-swap",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/icon-swap",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -386,13 +386,13 @@
         "react-colorful@^5.8.1"
       ],
       "registryDependencies": [
-        "@triargos/input-group",
-        "@triargos/locale",
-        "@triargos/motion",
-        "@triargos/popover",
-        "@triargos/radio-group",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/input-group",
+        "@pavo/locale",
+        "@pavo/motion",
+        "@pavo/popover",
+        "@pavo/radio-group",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -410,12 +410,12 @@
         "@tanstack/react-virtual@3.14.13"
       ],
       "registryDependencies": [
-        "@triargos/input",
-        "@triargos/input-group",
-        "@triargos/locale",
-        "@triargos/select",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/input",
+        "@pavo/input-group",
+        "@pavo/locale",
+        "@pavo/select",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -432,9 +432,9 @@
         "cmdk@^1.1.1"
       ],
       "registryDependencies": [
-        "@triargos/dialog",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/dialog",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -450,9 +450,9 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/dropdown-menu",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/dropdown-menu",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -468,10 +468,10 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/icon-swap",
-        "@triargos/locale",
-        "@triargos/theme"
+        "@pavo/button",
+        "@pavo/icon-swap",
+        "@pavo/locale",
+        "@pavo/theme"
       ],
       "files": [
         {
@@ -489,13 +489,13 @@
         "react-aria-components@1.21.1"
       ],
       "registryDependencies": [
-        "@triargos/calendar",
-        "@triargos/input",
-        "@triargos/input-group",
-        "@triargos/locale",
-        "@triargos/popover",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/calendar",
+        "@pavo/input",
+        "@pavo/input-group",
+        "@pavo/locale",
+        "@pavo/popover",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -512,10 +512,10 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -533,10 +533,10 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -554,8 +554,8 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -572,9 +572,9 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/motion",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/motion",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -590,8 +590,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -607,9 +607,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/separator",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/separator",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -625,9 +625,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/input",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/input",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -640,8 +640,8 @@
       "name": "icon-swap",
       "type": "registry:ui",
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -658,10 +658,10 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/input",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/input",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -677,10 +677,10 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/input",
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/input",
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -697,8 +697,8 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -715,12 +715,12 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/input",
-        "@triargos/locale",
-        "@triargos/motion",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/input",
+        "@pavo/locale",
+        "@pavo/motion",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -736,7 +736,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/theme"
+        "@pavo/theme"
       ],
       "files": [
         {
@@ -749,9 +749,9 @@
       "name": "intl-date",
       "type": "registry:ui",
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/tooltip"
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/tooltip"
       ],
       "files": [
         {
@@ -771,11 +771,11 @@
         "react-use-measure@^2.1.7"
       ],
       "registryDependencies": [
-        "@triargos/motion",
-        "@triargos/skeleton",
-        "@triargos/theme",
-        "@triargos/use-virtual-rows",
-        "@triargos/utils"
+        "@pavo/motion",
+        "@pavo/skeleton",
+        "@pavo/theme",
+        "@pavo/use-virtual-rows",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -788,8 +788,8 @@
       "name": "kbd",
       "type": "registry:ui",
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -805,7 +805,7 @@
         "react-aria-components@1.21.1"
       ],
       "registryDependencies": [
-        "@triargos/theme"
+        "@pavo/theme"
       ],
       "files": [
         {
@@ -821,8 +821,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -838,9 +838,9 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -856,8 +856,8 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -874,9 +874,9 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
-        "@triargos/checkbox",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/checkbox",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -894,11 +894,11 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/input",
-        "@triargos/locale",
-        "@triargos/motion",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/input",
+        "@pavo/locale",
+        "@pavo/motion",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -914,8 +914,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -932,10 +932,10 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -948,12 +948,12 @@
       "name": "shortcut-tooltip",
       "type": "registry:ui",
       "registryDependencies": [
-        "@triargos/kbd",
-        "@triargos/locale",
-        "@triargos/shortcut",
-        "@triargos/theme",
-        "@triargos/tooltip",
-        "@triargos/utils"
+        "@pavo/kbd",
+        "@pavo/locale",
+        "@pavo/shortcut",
+        "@pavo/theme",
+        "@pavo/tooltip",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -971,12 +971,12 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/locale",
-        "@triargos/sheet",
-        "@triargos/theme",
-        "@triargos/use-mobile",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/locale",
+        "@pavo/sheet",
+        "@pavo/theme",
+        "@pavo/use-mobile",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -992,8 +992,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1009,8 +1009,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1029,9 +1029,9 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1047,8 +1047,8 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1061,8 +1061,8 @@
       "name": "stat",
       "type": "registry:ui",
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1078,9 +1078,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/intent-variants",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/intent-variants",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1096,9 +1096,9 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
-        "@triargos/spinner",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/spinner",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1114,8 +1114,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1133,9 +1133,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/use-virtual-rows",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/use-virtual-rows",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1152,9 +1152,9 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/locale",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1167,9 +1167,9 @@
       "name": "textarea",
       "type": "registry:ui",
       "registryDependencies": [
-        "@triargos/input",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/input",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1185,8 +1185,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1204,10 +1204,10 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/spinner",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/spinner",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1223,9 +1223,9 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/button",
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/button",
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {
@@ -1241,8 +1241,8 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
-        "@triargos/theme",
-        "@triargos/utils"
+        "@pavo/theme",
+        "@pavo/utils"
       ],
       "files": [
         {

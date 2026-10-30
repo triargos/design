@@ -1,6 +1,8 @@
-# Triargos Design
+# Pavo
 
 The design system behind Triargos products: React components, tokens and patterns, shipped as a [shadcn](https://ui.shadcn.com) registry.
+
+Pavo is Latin for peacock: Hera set the hundred eyes of Argos into its tail. Here one brand color fans out into a whole palette.
 
 **[design.a-np.de](https://design.a-np.de)**: every component live, with its code.
 
@@ -14,8 +16,8 @@ The design system behind Triargos products: React components, tokens and pattern
 Add the registry once per project, then add components by name:
 
 ```sh
-pnpm dlx shadcn@latest registry add @triargos=https://design.a-np.de/r/{name}.json
-pnpm dlx shadcn@latest add @triargos/button
+pnpm dlx shadcn@latest registry add @pavo=https://design.a-np.de/r/{name}.json
+pnpm dlx shadcn@latest add @pavo/button
 ```
 
 The code is copied into your project; `add` again to update it. Each component page on the site shows its install command.
@@ -25,17 +27,17 @@ The code is copied into your project; `add` again to update it. Each component p
 
 The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib` or `app/lib`).
 
-- `theme` writes the generator to `lib/theme/*.ts` and the tokens to `lib/theme/triargos.css`. The tokens hold no Tailwind: import them in the app's own stylesheet, after Tailwind and tw-animate-css:
+- `theme` writes the generator to `lib/theme/*.ts` and the tokens to `lib/theme/pavo.css`. The tokens hold no Tailwind: import them in the app's own stylesheet, after Tailwind and tw-animate-css:
 
   ```css
   @import 'tailwindcss';
   @import 'tw-animate-css';
-  @import './lib/theme/triargos.css'; /* from app/tailwind.css or src/index.css */
+  @import './lib/theme/pavo.css'; /* from app/tailwind.css or src/index.css */
   ```
 
   Render `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`) into a `<style>` for the colors.
 
-- Sizing (`lib/theme/sizing.ts`): pick a style, or a density and a radius, and render `sizingThemeCss` next to the colors. It writes only what differs from `triargos.css`, and a style's phone values under `@media (width < 40rem)`:
+- Sizing (`lib/theme/sizing.ts`): pick a style, or a density and a radius, and render `sizingThemeCss` next to the colors. It writes only what differs from `pavo.css`, and a style's phone values under `@media (width < 40rem)`:
 
   ```tsx
   import { scaleDensity, SIZING_STYLES, sizingThemeCss } from '~/lib/theme/sizing';
@@ -50,7 +52,7 @@ The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib`
   <div data-sizing='dense'>…</div>
   ```
 
-  Styles: `triargos` (default), `coss`, `dense`, `soft`. Densities: `compact`, `default`, `comfortable`. Radii: `sharp`, `default`, `soft`, `pill`. A density of your own: `scaleDensity(factor)` or any map of token to px; `SIZING_TOKENS` lists every token with what it tunes. A theme's `tokens` add any token on top (DESIGN.md, Sizing).
+  Styles: `pavo` (default), `coss`, `dense`, `soft`. Densities: `compact`, `default`, `comfortable`. Radii: `sharp`, `default`, `soft`, `pill`. A density of your own: `scaleDensity(factor)` or any map of token to px; `SIZING_TOKENS` lists every token with what it tunes. A theme's `tokens` add any token on top (DESIGN.md, Sizing).
 
 - The registry owns `lib/utils.ts` (`utils`, imported as `~/lib/utils` by every component), `lib/theme/*` with its CSS (`theme`), `hooks/use-mobile.ts` and `components/ui/*`. `add` overwrites them. Keep the app's own helpers, hooks and styles in other files.
 
