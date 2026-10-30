@@ -1,9 +1,8 @@
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
 import { cva } from 'class-variance-authority';
-import { AnimatePresence, motion } from 'framer-motion';
 import { IconMinus } from '@tabler/icons-react';
 
-import { DrawnCheck, useIconSwap } from '~/components/ui/icon-swap';
+import { DrawnCheck, IconSwap } from '~/components/ui/icon-swap';
 import { cn } from '~/lib/utils';
 
 /**
@@ -47,17 +46,13 @@ const selectionControlVariants = cva(
 
 /** The check or dash, swapped in one grid cell. */
 function CheckboxMark({ checked, indeterminate }: { checked: boolean; indeterminate: boolean }) {
-  const swap = useIconSwap();
   return (
-    <AnimatePresence initial={false}>
-      {indeterminate ? (
-        <motion.span key='minus' className='grid' {...swap}>
-          <IconMinus />
-        </motion.span>
-      ) : checked ? (
-        <DrawnCheck key='check' />
-      ) : null}
-    </AnimatePresence>
+    <>
+      <IconSwap shown={indeterminate}>
+        <IconMinus />
+      </IconSwap>
+      <DrawnCheck shown={checked && !indeterminate} />
+    </>
   );
 }
 
@@ -67,7 +62,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
       data-slot='checkbox'
       className={cn(selectionControlVariants({ shape: 'square' }), className)}
       {...props}>
-      {/* Kept mounted so `AnimatePresence` inside can play the exit. */}
+      {/* Kept mounted so the marks inside can transition out. */}
       <CheckboxPrimitive.Indicator
         keepMounted
         data-slot='checkbox-indicator'

@@ -36,6 +36,7 @@ const localItem = (specifier) => {
   if (specifier.startsWith('~/components/ui/')) return basename(specifier);
   if (specifier.startsWith('~/hooks/')) return basename(specifier);
   if (specifier.startsWith('~/lib/theme/')) return 'theme';
+  if (specifier.startsWith('~/lib/motion/')) return 'motion';
   if (specifier.startsWith('~/lib/')) return basename(specifier);
   throw new Error(`No registry item for ${specifier}`);
 };
@@ -77,6 +78,12 @@ const items = [
       { path: 'src/tailwind.css', type: 'registry:file', target: '@lib/theme/triargos.css' },
     ],
     { dependencies: ['tw-animate-css'] },
+  ),
+  item(
+    'motion',
+    'registry:lib',
+    sourceFiles('src/lib/motion').map((path) => ({ path, type: 'registry:lib' })),
+    { dependencies: ['framer-motion'] },
   ),
   // `utils` and each other helper in `src/lib`, one item per file.
   ...sourceFiles('src/lib').map((path) =>

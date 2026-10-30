@@ -1,10 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { IconCopy } from '@tabler/icons-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
-import { DrawnCheck, useIconSwap } from '~/components/ui/icon-swap';
-
+import { DrawnCheck, IconSwap } from '~/components/ui/icon-swap';
 import { useLocale } from '~/components/ui/locale';
 
 /** How long the check stays after a copy. */
@@ -28,18 +26,12 @@ interface CopyButtonProps extends Omit<ButtonProps, 'onClick' | 'children' | 'va
  * 2s the copy icon comes back.
  */
 function CopyIconSwap({ copied }: { copied: boolean }) {
-  const swap = useIconSwap();
   return (
     <span aria-hidden='true' className='grid *:col-start-1 *:row-start-1'>
-      <AnimatePresence initial={false}>
-        {copied ? (
-          <DrawnCheck key='check' className='text-success' />
-        ) : (
-          <motion.span key='copy' className='grid' {...swap}>
-            <IconCopy />
-          </motion.span>
-        )}
-      </AnimatePresence>
+      <IconSwap shown={!copied}>
+        <IconCopy />
+      </IconSwap>
+      <DrawnCheck shown={copied} className='text-success' />
     </span>
   );
 }

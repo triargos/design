@@ -1,6 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import { type HTMLMotionProps, type Variants, motion, useReducedMotion } from 'framer-motion';
+import { type HTMLMotionProps, type Variants, LazyMotion, m, useReducedMotion } from 'framer-motion';
 
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 // Entry only: no bounce. Four parts 100ms apart, so the last (the action) settles at ~0.6s and is usable almost at
@@ -45,14 +46,16 @@ const emptyVariants = cva('group/empty flex min-w-0 flex-1 flex-col items-center
 function Empty({ className, bordered, size, ...props }: VariantProps<typeof emptyVariants> & HTMLMotionProps<'div'>) {
   const reduceMotion = useReducedMotion();
   return (
-    <motion.div
-      data-slot='empty'
-      variants={containerMotion}
-      initial={reduceMotion ? false : 'initial'}
-      animate='animate'
-      className={cn(emptyVariants({ size, bordered }), className)}
-      {...props}
-    />
+    <LazyMotion features={loadMotionFeatures}>
+      <m.div
+        data-slot='empty'
+        variants={containerMotion}
+        initial={reduceMotion ? false : 'initial'}
+        animate='animate'
+        className={cn(emptyVariants({ size, bordered }), className)}
+        {...props}
+      />
+    </LazyMotion>
   );
 }
 
@@ -75,7 +78,7 @@ function EmptyMedia({
   ...props
 }: VariantProps<typeof emptyMediaVariants> & HTMLMotionProps<'div'>) {
   return (
-    <motion.div
+    <m.div
       aria-hidden
       data-slot='empty-media'
       data-variant={variant}
@@ -83,7 +86,7 @@ function EmptyMedia({
       className={cn(emptyMediaVariants({ variant }), className)}
       {...props}>
       {variant === 'skeleton' ? <SkeletonStack /> : children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -93,11 +96,11 @@ function EmptyMedia({
 function SkeletonStack() {
   return (
     <div className='relative h-18 w-40'>
-      <motion.div
+      <m.div
         variants={layerMotion(-16)}
         className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.84] rounded-block border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_9%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-2 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_4%)]'
       />
-      <motion.div
+      <m.div
         variants={layerMotion(-8)}
         className='absolute inset-x-0 bottom-0 h-14 scale-x-[0.92] rounded-block border border-(--edge-field) bg-clip-padding bg-[color-mix(in_oklch,var(--card),var(--foreground)_4.5%)] shadow-field transition-transform duration-move ease-move group-hover/empty:-translate-y-1 motion-reduce:transition-none dark:bg-[color-mix(in_oklch,var(--card),var(--foreground)_7%)]'
       />
@@ -114,7 +117,7 @@ function SkeletonStack() {
 
 function EmptyTitle({ className, ...props }: HTMLMotionProps<'div'>) {
   return (
-    <motion.div
+    <m.div
       data-slot='empty-title'
       variants={itemMotion}
       className={cn('text-heading text-balance', className)}
@@ -125,7 +128,7 @@ function EmptyTitle({ className, ...props }: HTMLMotionProps<'div'>) {
 
 function EmptyDescription({ className, ...props }: HTMLMotionProps<'p'>) {
   return (
-    <motion.p
+    <m.p
       data-slot='empty-description'
       variants={itemMotion}
       className={cn(
@@ -141,7 +144,7 @@ function EmptyDescription({ className, ...props }: HTMLMotionProps<'p'>) {
 /** The next step: one or two buttons. Every failure offers at least one. */
 function EmptyContent({ className, ...props }: HTMLMotionProps<'div'>) {
   return (
-    <motion.div
+    <m.div
       data-slot='empty-content'
       variants={itemMotion}
       className={cn('mt-group flex min-w-0 flex-wrap items-center justify-center gap-related', className)}

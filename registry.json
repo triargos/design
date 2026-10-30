@@ -46,6 +46,23 @@
       ]
     },
     {
+      "name": "motion",
+      "type": "registry:lib",
+      "dependencies": [
+        "framer-motion@13.4.4"
+      ],
+      "files": [
+        {
+          "path": "src/lib/motion/features.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "src/lib/motion/load.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "shortcut",
       "type": "registry:lib",
       "files": [
@@ -122,6 +139,7 @@
       ],
       "registryDependencies": [
         "@triargos/bottom-nav",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -212,6 +230,7 @@
       ],
       "registryDependencies": [
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -264,8 +283,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1",
-        "framer-motion@13.4.4"
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/intent-variants",
@@ -310,6 +328,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -344,8 +363,7 @@
       "dependencies": [
         "@base-ui/react@1.8.0",
         "@tabler/icons-react@3.49.0",
-        "class-variance-authority@^0.7.1",
-        "framer-motion@13.4.4"
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/icon-swap",
@@ -370,6 +388,7 @@
       "registryDependencies": [
         "@triargos/input-group",
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/popover",
         "@triargos/radio-group",
         "@triargos/theme",
@@ -446,8 +465,7 @@
       "name": "copy-button",
       "type": "registry:ui",
       "dependencies": [
-        "@tabler/icons-react@3.49.0",
-        "framer-motion@13.4.4"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/button",
@@ -554,6 +572,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -620,9 +639,6 @@
     {
       "name": "icon-swap",
       "type": "registry:ui",
-      "dependencies": [
-        "framer-motion@13.4.4"
-      ],
       "registryDependencies": [
         "@triargos/theme",
         "@triargos/utils"
@@ -702,6 +718,7 @@
         "@triargos/button",
         "@triargos/input",
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -754,6 +771,7 @@
         "react-use-measure@^2.1.7"
       ],
       "registryDependencies": [
+        "@triargos/motion",
         "@triargos/skeleton",
         "@triargos/theme",
         "@triargos/use-virtual-rows",
@@ -878,6 +896,7 @@
       "registryDependencies": [
         "@triargos/input",
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],

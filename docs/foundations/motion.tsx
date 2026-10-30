@@ -163,7 +163,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Springs in CSS'
-        description='A damped spring sampled into linear(), for motion that CSS runs: a drawer, a page, an indicator. Interruptible motion in code stays a Motion spring.'>
+        description='A damped spring sampled into linear(), for motion that CSS runs: a drawer, a page, an indicator. A swap between two mounted states is a CSS transition too; Motion springs only what CSS cannot do.'>
         <SpecimenList>
           {springs.map((spring) => (
             <SpecimenRow key={spring.className} name={spring.className} meta={spring.use}>
