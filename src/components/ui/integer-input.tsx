@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, type Transition, useAnimate, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m, type Transition, useReducedMotion } from 'framer-motion';
 import { IconMinus, IconPlus } from '@tabler/icons-react';
 import * as React from 'react';
 
@@ -6,6 +6,7 @@ import { Button } from '~/components/ui/button';
 import { inputSurfaceVariants } from '~/components/ui/input';
 
 import { useLocale } from '~/components/ui/locale';
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 interface IntegerInputProps extends Omit<
@@ -52,7 +53,7 @@ function RollingNumber({ text, direction, transition }: { text: string; directio
     <span aria-hidden className='pointer-events-none absolute inset-0 flex flex-row-reverse items-center justify-start'>
       <AnimatePresence initial={false} custom={direction} mode='popLayout'>
         {places.map((digit, place) => (
-          <motion.span
+          <m.span
             key={place}
             custom={direction}
             variants={digitVariants}
@@ -62,7 +63,7 @@ function RollingNumber({ text, direction, transition }: { text: string; directio
             transition={transition}
             className='grid'>
             <AnimatePresence initial={false} custom={direction}>
-              <motion.span
+              <m.span
                 key={digit}
                 custom={direction}
                 variants={digitVariants}
@@ -72,9 +73,9 @@ function RollingNumber({ text, direction, transition }: { text: string; directio
                 transition={transition}
                 className='col-start-1 row-start-1'>
                 {digit}
-              </motion.span>
+              </m.span>
             </AnimatePresence>
-          </motion.span>
+          </m.span>
         ))}
       </AnimatePresence>
     </span>
@@ -153,7 +154,7 @@ function IntegerInput({
   const incrementLabel = incrementLabelProp ?? labels.increase;
   const reduced = useReducedMotion() ?? false;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [shakeScope, animate] = useAnimate<HTMLSpanElement>();
+  const shakeRef = React.useRef<HTMLSpanElement>(null);
 
   // The text while the field has focus: it may be empty, or the caret may sit inside it.
   const [draft, setDraft] = React.useState<string | null>(null);
@@ -175,8 +176,11 @@ function IntegerInput({
 
   /** A refused step or digit: the number shakes once. */
   const reject = () => {
-    if (reduced || !shakeScope.current) return;
-    void animate(shakeScope.current, { x: [0, -3, 3, 0] }, { duration: 0.2, ease: [0.23, 1, 0.32, 1] });
+    if (reduced) return;
+    shakeRef.current?.animate(
+      { translate: ['0', '-3px', '3px', '0'] },
+      { duration: 200, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' },
+    );
   };
 
   /** Steps by `delta`; false at the limit, which ends a hold. */
@@ -200,129 +204,131 @@ function IntegerInput({
   const atMax = max !== undefined && value >= max;
 
   return (
-    <div
-      data-slot='integer-input'
-      role='group'
-      className={cn('flex w-full min-w-0 items-center gap-control-gap', className)}>
-      {/* At a limit the stepper stays pressable, its icon dimmed, so a press there can shake the number. */}
-      <Button
-        size='icon'
-        aria-label={decrementLabel}
-        disabled={disabled}
-        aria-disabled={(!disabled && atMin) || undefined}
-        className='[-webkit-touch-callout:none] aria-disabled:text-disabled-foreground'
-        {...decrement}>
-        <IconMinus />
-      </Button>
+    <LazyMotion features={loadMotionFeatures}>
       <div
-        data-slot='integer-input-field'
-        // A press anywhere on the field (the unit, the space around the number) focuses the number.
-        onPointerDown={(event) => {
-          if (event.target === inputRef.current) return;
-          event.preventDefault();
-          inputRef.current?.focus();
-        }}
-        className={cn(
-          inputSurfaceVariants({ scope: 'group' }),
-          'flex h-control min-w-0 flex-1 cursor-text items-center justify-center gap-control-gap px-field-pad text-control max-md:text-[1rem]',
-        )}>
-        <span ref={shakeScope} className='flex h-full items-center gap-control-gap'>
-          {/* As wide as its digits, so number and unit center together as one line of text. Clipped top and bottom at
+        data-slot='integer-input'
+        role='group'
+        className={cn('flex w-full min-w-0 items-center gap-control-gap', className)}>
+        {/* At a limit the stepper stays pressable, its icon dimmed, so a press there can shake the number. */}
+        <Button
+          size='icon'
+          aria-label={decrementLabel}
+          disabled={disabled}
+          aria-disabled={(!disabled && atMin) || undefined}
+          className='[-webkit-touch-callout:none] aria-disabled:text-disabled-foreground'
+          {...decrement}>
+          <IconMinus />
+        </Button>
+        <div
+          data-slot='integer-input-field'
+          // A press anywhere on the field (the unit, the space around the number) focuses the number.
+          onPointerDown={(event) => {
+            if (event.target === inputRef.current) return;
+            event.preventDefault();
+            inputRef.current?.focus();
+          }}
+          className={cn(
+            inputSurfaceVariants({ scope: 'group' }),
+            'flex h-control min-w-0 flex-1 cursor-text items-center justify-center gap-control-gap px-field-pad text-control max-md:text-[1rem]',
+          )}>
+          <span ref={shakeRef} className='flex h-full items-center gap-control-gap'>
+            {/* As wide as its digits, so number and unit center together as one line of text. Clipped top and bottom at
               the field's edge, where the rolling digits come and go. */}
-          <motion.span
-            className='relative h-full overflow-clip font-medium tabular-nums'
-            initial={false}
-            animate={{ width: `${Math.max(1, text.length)}ch` }}
-            transition={editing || reduced ? instant : roll}>
-            <input
-              ref={inputRef}
-              data-slot='input-group-control'
-              // Text, not number: React leaves a number input alone while its text parses to the same value, so
-              // typing 1 after 0 would stay "01".
-              type='text'
-              inputMode='numeric'
-              pattern='[0-9]*'
-              autoComplete='off'
-              role='spinbutton'
-              aria-valuenow={value}
-              aria-valuemin={0}
-              aria-valuemax={max}
-              aria-valuetext={unit ? `${value} ${unit}` : undefined}
-              value={text}
-              disabled={disabled}
-              onFocus={(event) => {
-                setDraft(String(value));
-                replaceNext.current = true;
-                // After the tap has placed its caret: iOS drops a selection made during focus.
-                const input = event.currentTarget;
-                setTimeout(() => {
-                  if (document.activeElement === input) input.setSelectionRange(0, input.value.length);
-                });
-                onFocus?.(event);
-              }}
-              onBlur={(event) => {
-                setDraft(null);
-                replaceNext.current = false;
-                onBlur?.(event);
-              }}
-              // A second tap places the caret on purpose: keys then edit in place.
-              onPointerDown={(event) => {
-                if (document.activeElement === event.currentTarget) replaceNext.current = false;
-              }}
-              onKeyDown={(event) => {
-                onKeyDown?.(event);
-                if (event.defaultPrevented) return;
-                if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
-                event.preventDefault();
-                replaceNext.current = false;
-                const before = valueRef.current;
-                step(event.key === 'ArrowUp' ? 1 : -1);
-                if (valueRef.current !== before) setDraft(String(valueRef.current));
-              }}
-              onChange={(event) => {
-                const { inputType, data } = event.nativeEvent as InputEvent;
-                let typed = event.target.value;
-                // The first key after focus replaces the number, selected or not.
-                if (replaceNext.current) {
-                  if (inputType === 'insertText' && data) typed = data;
-                  else if (inputType.startsWith('delete')) typed = '';
-                }
-                replaceNext.current = false;
-                const digits = typed.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
-                if (digits === '') {
-                  setDraft('');
-                  // Never `undefined`: a form library may answer that with the default value, so the last digit
-                  // could not be deleted.
-                  if (value !== 0) onValueChange(0);
-                  return;
-                }
-                const next = clamp(Number(digits));
-                if (next !== Number(digits)) reject();
-                setDraft(String(next));
-                if (next !== value) onValueChange(next);
-              }}
-              className={cn(
-                'h-full w-full bg-transparent p-0 text-right outline-none disabled:cursor-not-allowed',
-                // Not editing, the rolling copy draws the digits on top; the input keeps the place and the caret.
-                !editing && 'text-transparent',
-              )}
-              {...props}
-            />
-            {!editing && <RollingNumber text={text} direction={direction} transition={reduced ? instant : roll} />}
-          </motion.span>
-          {unit && <span className='text-muted-foreground select-none'>{unit}</span>}
-        </span>
+            <m.span
+              className='relative h-full overflow-clip font-medium tabular-nums'
+              initial={false}
+              animate={{ width: `${Math.max(1, text.length)}ch` }}
+              transition={editing || reduced ? instant : roll}>
+              <input
+                ref={inputRef}
+                data-slot='input-group-control'
+                // Text, not number: React leaves a number input alone while its text parses to the same value, so
+                // typing 1 after 0 would stay "01".
+                type='text'
+                inputMode='numeric'
+                pattern='[0-9]*'
+                autoComplete='off'
+                role='spinbutton'
+                aria-valuenow={value}
+                aria-valuemin={0}
+                aria-valuemax={max}
+                aria-valuetext={unit ? `${value} ${unit}` : undefined}
+                value={text}
+                disabled={disabled}
+                onFocus={(event) => {
+                  setDraft(String(value));
+                  replaceNext.current = true;
+                  // After the tap has placed its caret: iOS drops a selection made during focus.
+                  const input = event.currentTarget;
+                  setTimeout(() => {
+                    if (document.activeElement === input) input.setSelectionRange(0, input.value.length);
+                  });
+                  onFocus?.(event);
+                }}
+                onBlur={(event) => {
+                  setDraft(null);
+                  replaceNext.current = false;
+                  onBlur?.(event);
+                }}
+                // A second tap places the caret on purpose: keys then edit in place.
+                onPointerDown={(event) => {
+                  if (document.activeElement === event.currentTarget) replaceNext.current = false;
+                }}
+                onKeyDown={(event) => {
+                  onKeyDown?.(event);
+                  if (event.defaultPrevented) return;
+                  if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+                  event.preventDefault();
+                  replaceNext.current = false;
+                  const before = valueRef.current;
+                  step(event.key === 'ArrowUp' ? 1 : -1);
+                  if (valueRef.current !== before) setDraft(String(valueRef.current));
+                }}
+                onChange={(event) => {
+                  const { inputType, data } = event.nativeEvent as InputEvent;
+                  let typed = event.target.value;
+                  // The first key after focus replaces the number, selected or not.
+                  if (replaceNext.current) {
+                    if (inputType === 'insertText' && data) typed = data;
+                    else if (inputType.startsWith('delete')) typed = '';
+                  }
+                  replaceNext.current = false;
+                  const digits = typed.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                  if (digits === '') {
+                    setDraft('');
+                    // Never `undefined`: a form library may answer that with the default value, so the last digit
+                    // could not be deleted.
+                    if (value !== 0) onValueChange(0);
+                    return;
+                  }
+                  const next = clamp(Number(digits));
+                  if (next !== Number(digits)) reject();
+                  setDraft(String(next));
+                  if (next !== value) onValueChange(next);
+                }}
+                className={cn(
+                  'h-full w-full bg-transparent p-0 text-right outline-none disabled:cursor-not-allowed',
+                  // Not editing, the rolling copy draws the digits on top; the input keeps the place and the caret.
+                  !editing && 'text-transparent',
+                )}
+                {...props}
+              />
+              {!editing && <RollingNumber text={text} direction={direction} transition={reduced ? instant : roll} />}
+            </m.span>
+            {unit && <span className='text-muted-foreground select-none'>{unit}</span>}
+          </span>
+        </div>
+        <Button
+          size='icon'
+          aria-label={incrementLabel}
+          disabled={disabled}
+          aria-disabled={(!disabled && atMax) || undefined}
+          className='[-webkit-touch-callout:none] aria-disabled:text-disabled-foreground'
+          {...increment}>
+          <IconPlus />
+        </Button>
       </div>
-      <Button
-        size='icon'
-        aria-label={incrementLabel}
-        disabled={disabled}
-        aria-disabled={(!disabled && atMax) || undefined}
-        className='[-webkit-touch-callout:none] aria-disabled:text-disabled-foreground'
-        {...increment}>
-        <IconPlus />
-      </Button>
-    </div>
+    </LazyMotion>
   );
 }
 

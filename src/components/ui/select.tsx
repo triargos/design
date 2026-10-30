@@ -1,11 +1,12 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m, useReducedMotion } from 'framer-motion';
 import { IconCheck, IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { Input, inputSurfaceVariants } from '~/components/ui/input';
 
 import { useLocale } from '~/components/ui/locale';
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /** An option of `Select` and `Combobox`: `value` is what `onValueChange` reports, `label` what the field shows. */
@@ -312,37 +313,39 @@ function SelectCustomInput({
   const custom = useSelectCustom('SelectCustomInput');
   const reduceMotion = useReducedMotion();
   return (
-    <AnimatePresence initial={false}>
-      {custom.chosen && (
-        <motion.div
-          data-slot='select-custom-reveal'
-          initial={reduceMotion ? { ...unfolded, opacity: 0 } : folded}
-          animate={{ ...unfolded, transition: customFold }}
-          exit={reduceMotion ? { opacity: 0 } : { ...folded, transition: customFold }}
-          // -mx-1/-mb-1 + px-1/pb-1: room for the focus ring inside the clip.
-          className='-mx-1 -mb-1 grid overflow-hidden'>
-          {/* min-h-0: a grid item refuses to shrink below its content as the row folds to 0fr. */}
-          <div className='min-h-0 overflow-hidden px-1 pb-1'>
-            <div className={cn('relative pt-related pl-[calc(var(--spacing-field-pad)+1rem)]', className)}>
-              <span
-                aria-hidden
-                className='absolute top-0 left-[calc(var(--spacing-field-pad)+3px)] h-[calc(var(--spacing-related)+var(--spacing-control)/2+2px)] w-2.5 rounded-bl-[min(var(--radius-lg),var(--radius-control-sm))] border-b border-l border-border'
-              />
-              <Input
-                data-slot='select-custom-input'
-                ref={custom.inputRef}
-                aria-label={custom.label}
-                aria-invalid={(custom.invalid && custom.chosen) || undefined}
-                disabled={custom.disabled}
-                {...props}
-                value={custom.value}
-                onChange={(event) => custom.onType(event.target.value)}
-              />
+    <LazyMotion features={loadMotionFeatures}>
+      <AnimatePresence initial={false}>
+        {custom.chosen && (
+          <m.div
+            data-slot='select-custom-reveal'
+            initial={reduceMotion ? { ...unfolded, opacity: 0 } : folded}
+            animate={{ ...unfolded, transition: customFold }}
+            exit={reduceMotion ? { opacity: 0 } : { ...folded, transition: customFold }}
+            // -mx-1/-mb-1 + px-1/pb-1: room for the focus ring inside the clip.
+            className='-mx-1 -mb-1 grid overflow-hidden'>
+            {/* min-h-0: a grid item refuses to shrink below its content as the row folds to 0fr. */}
+            <div className='min-h-0 overflow-hidden px-1 pb-1'>
+              <div className={cn('relative pt-related pl-[calc(var(--spacing-field-pad)+1rem)]', className)}>
+                <span
+                  aria-hidden
+                  className='absolute top-0 left-[calc(var(--spacing-field-pad)+3px)] h-[calc(var(--spacing-related)+var(--spacing-control)/2+2px)] w-2.5 rounded-bl-[min(var(--radius-lg),var(--radius-control-sm))] border-b border-l border-border'
+                />
+                <Input
+                  data-slot='select-custom-input'
+                  ref={custom.inputRef}
+                  aria-label={custom.label}
+                  aria-invalid={(custom.invalid && custom.chosen) || undefined}
+                  disabled={custom.disabled}
+                  {...props}
+                  value={custom.value}
+                  onChange={(event) => custom.onType(event.target.value)}
+                />
+              </div>
             </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </m.div>
+        )}
+      </AnimatePresence>
+    </LazyMotion>
   );
 }
 

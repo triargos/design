@@ -1,9 +1,10 @@
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
 import { cva } from 'class-variance-authority';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m } from 'framer-motion';
 import { IconMinus } from '@tabler/icons-react';
 
 import { DrawnCheck, useIconSwap } from '~/components/ui/icon-swap';
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /**
@@ -49,15 +50,17 @@ const selectionControlVariants = cva(
 function CheckboxMark({ checked, indeterminate }: { checked: boolean; indeterminate: boolean }) {
   const swap = useIconSwap();
   return (
-    <AnimatePresence initial={false}>
-      {indeterminate ? (
-        <motion.span key='minus' className='grid' {...swap}>
-          <IconMinus />
-        </motion.span>
-      ) : checked ? (
-        <DrawnCheck key='check' />
-      ) : null}
-    </AnimatePresence>
+    <LazyMotion features={loadMotionFeatures}>
+      <AnimatePresence initial={false}>
+        {indeterminate ? (
+          <m.span key='minus' className='grid' {...swap}>
+            <IconMinus />
+          </m.span>
+        ) : checked ? (
+          <DrawnCheck key='check' />
+        ) : null}
+      </AnimatePresence>
+    </LazyMotion>
   );
 }
 

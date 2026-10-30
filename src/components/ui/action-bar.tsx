@@ -1,8 +1,9 @@
-import { AnimatePresence, motion, type Transition, useIsPresent, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m, type Transition, useIsPresent, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 
 import { useBottomNavDock, useFitShell } from '~/components/ui/bottom-nav';
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 type ActionBarProps = {
@@ -52,11 +53,11 @@ const shownRow = {
  * One row of the bar: the actions or the status. A row on its way out leaves the flow and stays centered while it
  * fades, so the row coming in sizes the shell.
  */
-function ActionBarRow({ className, ...props }: React.ComponentProps<typeof motion.div>) {
+function ActionBarRow({ className, ...props }: React.ComponentProps<typeof m.div>) {
   const present = useIsPresent();
   const reduced = useReducedMotion() ?? false;
   return (
-    <motion.div
+    <m.div
       data-slot='action-bar-content'
       data-exiting={present ? undefined : ''}
       inert={!present}
@@ -77,10 +78,10 @@ function ActionBarRow({ className, ...props }: React.ComponentProps<typeof motio
  * The toolbar: its shell, in the page or in the nav's dock. Docked, one on its way out (another bar took its place)
  * leaves the flow and stays centered while it fades, so the one coming in sizes the dock.
  */
-function Toolbar({ docked, className, ...props }: React.ComponentProps<typeof motion.div> & { docked: boolean }) {
+function Toolbar({ docked, className, ...props }: React.ComponentProps<typeof m.div> & { docked: boolean }) {
   const present = useIsPresent();
   return (
-    <motion.div
+    <m.div
       role='toolbar'
       data-slot='action-bar'
       data-exiting={present ? undefined : ''}
@@ -124,7 +125,7 @@ function ActionBar({ open, priority = 0, status, className, children, 'aria-labe
   // In the page the shell holds an explicit size and springs to the row that shows. Docked, the nav's shell does.
   useFitShell(shellRef, dock === null ? layer : null, { reduced });
 
-  const toolbar = (key: string, docked: boolean, motionProps: React.ComponentProps<typeof motion.div>) => (
+  const toolbar = (key: string, docked: boolean, motionProps: React.ComponentProps<typeof m.div>) => (
     <Toolbar
       key={key}
       ref={docked ? undefined : shellRef}
@@ -163,25 +164,29 @@ function ActionBar({ open, priority = 0, status, className, children, 'aria-labe
   if (dock !== null) {
     // The nav animates the morph and the cascade; the bar only stays for its way out.
     return createPortal(
-      <AnimatePresence initial={false}>
-        {shown && toolbar('docked', true, { initial: false, exit: leave })}
-      </AnimatePresence>,
+      <LazyMotion features={loadMotionFeatures}>
+        <AnimatePresence initial={false}>
+          {shown && toolbar('docked', true, { initial: false, exit: leave })}
+        </AnimatePresence>
+      </LazyMotion>,
       dock,
     );
   }
 
   const hidden = { opacity: 0, transform: reduced ? rest : 'translateY(8px) scale(0.95)' };
   return (
-    <AnimatePresence initial={false}>
-      {shown &&
-        toolbar('inline', false, {
-          'data-surface': 'inverse',
-          initial: hidden,
-          animate: { opacity: 1, transform: rest },
-          exit: hidden,
-          transition: inlineTransition,
-        } as React.ComponentProps<typeof motion.div>)}
-    </AnimatePresence>
+    <LazyMotion features={loadMotionFeatures}>
+      <AnimatePresence initial={false}>
+        {shown &&
+          toolbar('inline', false, {
+            'data-surface': 'inverse',
+            initial: hidden,
+            animate: { opacity: 1, transform: rest },
+            exit: hidden,
+            transition: inlineTransition,
+          } as React.ComponentProps<typeof m.div>)}
+      </AnimatePresence>
+    </LazyMotion>
   );
 }
 

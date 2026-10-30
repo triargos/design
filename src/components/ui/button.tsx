@@ -1,11 +1,12 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { cva } from 'class-variance-authority';
-import { AnimatePresence, motion, type Transition, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 
 import { type Emphasis, type Intent, intentVariants } from '~/components/ui/intent-variants';
 import { Spinner } from '~/components/ui/spinner';
 
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /**
@@ -158,24 +159,24 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
   const above = reduced ? { opacity: 0 } : { opacity: 0, y: '-100%' };
   const below = reduced ? { opacity: 0 } : { opacity: 0, y: '100%' };
   return (
-    <>
+    <LazyMotion features={loadMotionFeatures}>
       {/* The label's window: in flow for the width, the button's full height, clipped top and bottom.
           `gap-[inherit]`: the label's parts keep the button's gap. */}
       <span className='inline-flex gap-[inherit] self-stretch overflow-y-clip'>
         {/* Hidden by motion only: the label stays the button's accessible name while it is pending (`aria-busy`). */}
-        <motion.span
+        <m.span
           data-slot='button-label'
           className='inline-flex items-center justify-center gap-[inherit]'
           initial={false}
           animate={pending ? above : { opacity: 1, y: 0 }}
           transition={pendingSwap}>
           {children}
-        </motion.span>
+        </m.span>
       </span>
       <span className='pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]'>
         <AnimatePresence initial={false}>
           {pending && (
-            <motion.span
+            <m.span
               key='spinner'
               className='absolute inset-0 flex items-center justify-center'
               initial={below}
@@ -184,11 +185,11 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
               transition={pendingSwap}>
               {/* The CSS size wins over `size`. */}
               <Spinner className={SPINNER_SIZE[size]} />
-            </motion.span>
+            </m.span>
           )}
         </AnimatePresence>
       </span>
-    </>
+    </LazyMotion>
   );
 }
 

@@ -1,5 +1,5 @@
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
-import { motion, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
+import { LazyMotion, m, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
 import { type CSSProperties, type PointerEvent, useState } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 
@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover
 import { RadioGroup } from '~/components/ui/radio-group';
 
 import { useLocale } from '~/components/ui/locale';
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /** A swatch: a CSS color and its name. */
@@ -85,15 +86,17 @@ function SwatchFill({
         ? FILL_SCALE.hover
         : FILL_SCALE.rest;
   return (
-    <motion.span
-      aria-hidden
-      // A faint ring, so a light color still reads on a light surface.
-      className='size-full rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
-      style={style}
-      initial={false}
-      animate={{ scale }}
-      transition={reduceMotion ? { duration: 0 } : fillSpring}
-    />
+    <LazyMotion features={loadMotionFeatures}>
+      <m.span
+        aria-hidden
+        // A faint ring, so a light color still reads on a light surface.
+        className='size-full rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
+        style={style}
+        initial={false}
+        animate={{ scale }}
+        transition={reduceMotion ? { duration: 0 } : fillSpring}
+      />
+    </LazyMotion>
   );
 }
 

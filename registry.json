@@ -46,6 +46,23 @@
       ]
     },
     {
+      "name": "motion",
+      "type": "registry:lib",
+      "dependencies": [
+        "framer-motion@13.4.4"
+      ],
+      "files": [
+        {
+          "path": "src/lib/motion/features.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "src/lib/motion/load.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "shortcut",
       "type": "registry:lib",
       "files": [
@@ -122,6 +139,7 @@
       ],
       "registryDependencies": [
         "@triargos/bottom-nav",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -212,6 +230,7 @@
       ],
       "registryDependencies": [
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -269,6 +288,7 @@
       ],
       "registryDependencies": [
         "@triargos/intent-variants",
+        "@triargos/motion",
         "@triargos/spinner",
         "@triargos/theme",
         "@triargos/utils"
@@ -310,6 +330,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -349,6 +370,7 @@
       ],
       "registryDependencies": [
         "@triargos/icon-swap",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -370,6 +392,7 @@
       "registryDependencies": [
         "@triargos/input-group",
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/popover",
         "@triargos/radio-group",
         "@triargos/theme",
@@ -453,6 +476,7 @@
         "@triargos/button",
         "@triargos/icon-swap",
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/theme"
       ],
       "files": [
@@ -554,6 +578,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -624,6 +649,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -702,6 +728,7 @@
         "@triargos/button",
         "@triargos/input",
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -754,6 +781,7 @@
         "react-use-measure@^2.1.7"
       ],
       "registryDependencies": [
+        "@triargos/motion",
         "@triargos/skeleton",
         "@triargos/theme",
         "@triargos/use-virtual-rows",
@@ -878,6 +906,7 @@
       "registryDependencies": [
         "@triargos/input",
         "@triargos/locale",
+        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],

@@ -1,5 +1,6 @@
-import { motion, type Transition, useReducedMotion } from 'framer-motion';
+import { LazyMotion, m, type Transition, useReducedMotion } from 'framer-motion';
 
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /** Icon swaps: in from 25% and blurred, out the same way, on one spring with no bounce. Reduced motion: a cross-fade. */
@@ -22,21 +23,23 @@ function useIconSwap() {
 function DrawnCheck({ className }: { className?: string }) {
   const reduced = useReducedMotion() ?? false;
   return (
-    <motion.svg
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      className={cn('tabler-icon', className)}
-      {...useIconSwap()}>
-      <motion.path
-        d='M4 12l5 5L20 6'
-        initial={{ pathLength: reduced ? 1 : 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ type: 'spring', duration: 0.3, bounce: 0, delay: 0.06 }}
-      />
-    </motion.svg>
+    <LazyMotion features={loadMotionFeatures}>
+      <m.svg
+        viewBox='0 0 24 24'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        className={cn('tabler-icon', className)}
+        {...useIconSwap()}>
+        <m.path
+          d='M4 12l5 5L20 6'
+          initial={{ pathLength: reduced ? 1 : 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ type: 'spring', duration: 0.3, bounce: 0, delay: 0.06 }}
+        />
+      </m.svg>
+    </LazyMotion>
   );
 }
 

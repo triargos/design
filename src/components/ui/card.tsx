@@ -1,8 +1,9 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m, useReducedMotion } from 'framer-motion';
 import type { ComponentProps, ReactNode } from 'react';
 
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 // Springs, not fixed durations: `show` can flip rapidly, and a spring keeps its velocity through an interrupted
@@ -102,25 +103,27 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <AnimatePresence initial={false}>
-      {show && (
-        <motion.div
-          data-slot='card-footer'
-          initial={shouldReduceMotion ? false : gridCollapsed}
-          animate={{ ...gridExpanded, transition: cardRevealTransition }}
-          exit={shouldReduceMotion ? { opacity: 0 } : { ...gridCollapsed, transition: cardCollapseTransition }}
-          className='grid overflow-hidden'>
-          {/* min-h-0: grid items default to min-height:auto and would refuse to collapse to 0fr. */}
-          <div className='min-h-0 overflow-hidden'>
-            {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
+    <LazyMotion features={loadMotionFeatures}>
+      <AnimatePresence initial={false}>
+        {show && (
+          <m.div
+            data-slot='card-footer'
+            initial={shouldReduceMotion ? false : gridCollapsed}
+            animate={{ ...gridExpanded, transition: cardRevealTransition }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { ...gridCollapsed, transition: cardCollapseTransition }}
+            className='grid overflow-hidden'>
+            {/* min-h-0: grid items default to min-height:auto and would refuse to collapse to 0fr. */}
+            <div className='min-h-0 overflow-hidden'>
+              {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
                 stalls before unmount. */}
-            <div className={cn('mb-group px-[calc(var(--spacing-card)+1px)] pt-group', className)} {...props}>
-              {children}
+              <div className={cn('mb-group px-[calc(var(--spacing-card)+1px)] pt-group', className)} {...props}>
+                {children}
+              </div>
             </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </m.div>
+        )}
+      </AnimatePresence>
+    </LazyMotion>
   );
 }
 

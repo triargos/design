@@ -1,11 +1,12 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
-import { animate, motion, type Transition, useReducedMotion } from 'framer-motion';
+import { animate, LazyMotion, m, type Transition, useReducedMotion } from 'framer-motion';
 import { IconArrowLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 
 import { useLocale } from '~/components/ui/locale';
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 type BottomNavContextValue = {
@@ -962,15 +963,17 @@ function BottomNavAction({ className, render, ...props }: useRender.ComponentPro
     ),
   });
   return (
-    <motion.div
-      className='pointer-events-auto col-start-1 row-start-1 origin-bottom justify-self-end'
-      initial={false}
-      animate={away ? (reduced ? { opacity: 0 } : leave) : rest}
-      // Back at once, with the shell, rather than after the tabs.
-      transition={away ? leaveTransition : dockReturnTransition}
-      inert={away}>
-      {button}
-    </motion.div>
+    <LazyMotion features={loadMotionFeatures}>
+      <m.div
+        className='pointer-events-auto col-start-1 row-start-1 origin-bottom justify-self-end'
+        initial={false}
+        animate={away ? (reduced ? { opacity: 0 } : leave) : rest}
+        // Back at once, with the shell, rather than after the tabs.
+        transition={away ? leaveTransition : dockReturnTransition}
+        inert={away}>
+        {button}
+      </m.div>
+    </LazyMotion>
   );
 }
 

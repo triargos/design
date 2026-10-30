@@ -1,11 +1,12 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m } from 'framer-motion';
 import { IconCopy } from '@tabler/icons-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Button, type ButtonProps } from '~/components/ui/button';
 import { DrawnCheck, useIconSwap } from '~/components/ui/icon-swap';
-
 import { useLocale } from '~/components/ui/locale';
+
+import { loadMotionFeatures } from '~/lib/motion/load';
 
 /** How long the check stays after a copy. */
 const COPIED_MS = 2000;
@@ -31,15 +32,17 @@ function CopyIconSwap({ copied }: { copied: boolean }) {
   const swap = useIconSwap();
   return (
     <span aria-hidden='true' className='grid *:col-start-1 *:row-start-1'>
-      <AnimatePresence initial={false}>
-        {copied ? (
-          <DrawnCheck key='check' className='text-success' />
-        ) : (
-          <motion.span key='copy' className='grid' {...swap}>
-            <IconCopy />
-          </motion.span>
-        )}
-      </AnimatePresence>
+      <LazyMotion features={loadMotionFeatures}>
+        <AnimatePresence initial={false}>
+          {copied ? (
+            <DrawnCheck key='check' className='text-success' />
+          ) : (
+            <m.span key='copy' className='grid' {...swap}>
+              <IconCopy />
+            </m.span>
+          )}
+        </AnimatePresence>
+      </LazyMotion>
     </span>
   );
 }

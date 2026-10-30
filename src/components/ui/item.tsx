@@ -2,13 +2,14 @@ import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { IconChevronRight } from '@tabler/icons-react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { motion, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
+import { LazyMotion, m, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import useMeasure from 'react-use-measure';
 
 import { Skeleton } from '~/components/ui/skeleton';
 
 import { LoadMore, useVirtualRows } from '~/hooks/use-virtual-rows';
+import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /**
@@ -98,23 +99,25 @@ function StaticItemList({
   const reduced = useReducedMotion() ?? false;
   const rows = React.Children.toArray(children);
   return (
-    <motion.div
-      data-slot='item-list'
-      className={cn('overflow-hidden', className)}
-      initial={false}
-      animate={{ height: bounds.height > 0 ? bounds.height : 'auto' }}
-      transition={reduced ? { duration: 0 } : heightSpring}
-      // React's `CSSProperties` allows `undefined` values, `MotionStyle` does not: a plain style object is a valid one.
-      {...(style && { style: style as MotionStyle })}
-      {...props}>
-      <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
-        {rows.map((row, index) => (
-          <ItemListRow key={React.isValidElement(row) ? row.key : index} last={index === rows.length - 1}>
-            {row}
-          </ItemListRow>
-        ))}
-      </div>
-    </motion.div>
+    <LazyMotion features={loadMotionFeatures}>
+      <m.div
+        data-slot='item-list'
+        className={cn('overflow-hidden', className)}
+        initial={false}
+        animate={{ height: bounds.height > 0 ? bounds.height : 'auto' }}
+        transition={reduced ? { duration: 0 } : heightSpring}
+        // React's `CSSProperties` allows `undefined` values, `MotionStyle` does not: a plain style object is a valid one.
+        {...(style && { style: style as MotionStyle })}
+        {...props}>
+        <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
+          {rows.map((row, index) => (
+            <ItemListRow key={React.isValidElement(row) ? row.key : index} last={index === rows.length - 1}>
+              {row}
+            </ItemListRow>
+          ))}
+        </div>
+      </m.div>
+    </LazyMotion>
   );
 }
 
