@@ -276,6 +276,8 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 
 ## Do / don't
 
+`pnpm lint` (`lint/pavo-plugin.js`) enforces three of these on `docs/examples`, the code apps copy: no raw palette or literal colors, no `dark:`, no off-scale spacing or radius.
+
 - Pick an intent and an emphasis, not a color. Never Tailwind's palette (`text-green-700`) or a literal color.
 - Pair each fill with its foreground. Don't use a bare intent as a fill (`bg-success`), and don't use a `/10` tint for status.
 - Dim with `disabled` / `disabled-foreground`, not `opacity-50`. Field surfaces fade to `opacity-64` (no lift, no accent).
