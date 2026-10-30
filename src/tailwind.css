@@ -258,11 +258,11 @@
      a chart and its legend, stacked toasts. */
   --spacing-part: 0.75rem;
   /* Peer blocks; a heading and its content. */
-  --spacing-group: 1rem;
+  --spacing-group: 1.5rem;
   /* Inside a card: the content's padding, and the header, footer and flush rows on the same edge. */
-  --spacing-card: 1.25rem;
-  --spacing-page: 2rem;
-  --spacing-section: 3rem;
+  --spacing-card: 1.5rem;
+  --spacing-page: 3rem;
+  --spacing-section: 4rem;
 
   /* Controls: what is clicked or typed into on one line. Heights (`h-control`, `size-control-sm`), inline padding
      (`px-control-pad`), icon to label (`gap-control-gap`), icons (`size-icon`). */
@@ -423,6 +423,11 @@
   /* Buttons, fields, menus, tables. Below `sm` fields render 16px instead, so iOS does not zoom on focus. */
   --text-control: 0.875rem;
   --text-control--line-height: 1.25rem;
+  /* Form labels, legends, a progress label. 14px at every width: below `md` fields go 16px, labels do not, so the
+     value reads first. A line box 2px taller than the text, 1px of air above and below. */
+  --text-label: 0.875rem;
+  --text-label--line-height: 1rem;
+  --text-label--font-weight: 500;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
 
@@ -660,7 +665,7 @@
   /* Surfaces. */
   /* `Alert`: padding (the block padding is also the stacked alert's text-to-action gap), radius (also its
      `--outer-radius`), the action's inset from the corner. */
-  --alert-pad-x: 1.25rem;
+  --alert-pad-x: 1.75rem;
   --alert-pad-y: 0.625rem;
   --alert-radius: 20px;
   --alert-action-inset: 0.375rem;

@@ -51,7 +51,7 @@ import { defineDocs } from '../kit/docs';
 import { PaintCheck, PaintCheckGroup } from '../kit/paint-check';
 
 const STYLES: ReadonlyArray<{ name: SizingStyle; label: string; description: string }> = [
-  { name: 'pavo', label: 'Pavo', description: 'The default: 36px controls, 10px corners, 20px cards.' },
+  { name: 'pavo', label: 'Pavo', description: 'The default: 36px controls, 10px corners, 24px cards.' },
   {
     name: 'coss',
     label: 'Coss',

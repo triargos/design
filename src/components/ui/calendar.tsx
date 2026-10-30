@@ -82,7 +82,7 @@ const calendarDayVariants = cva(
 function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
   return (
     <>
-      <header className='mb-group flex h-(--cell-size) items-center justify-between gap-control-gap-sm'>
+      <header className='mb-part flex h-(--cell-size) items-center justify-between gap-control-gap-sm'>
         <AriaCalendarButton
           slot='previous'
           className={cn(

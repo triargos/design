@@ -9,10 +9,10 @@ export const SPACING_STEPS = [
   { name: 'tight', px: 4 },
   { name: 'related', px: 8 },
   { name: 'part', px: 12 },
-  { name: 'group', px: 16 },
-  { name: 'card', px: 20 },
-  { name: 'page', px: 32 },
-  { name: 'section', px: 48 },
+  { name: 'group', px: 24 },
+  { name: 'card', px: 24 },
+  { name: 'page', px: 48 },
+  { name: 'section', px: 64 },
 ] as const;
 
 export type SpacingStep = (typeof SPACING_STEPS)[number];
@@ -24,6 +24,7 @@ export const TYPE_ROLES = [
   { name: 'heading', px: 18, lineHeight: 24, tracking: '−0.01em', weight: 500 },
   { name: 'body', px: 14, lineHeight: 21, tracking: undefined, weight: 400 },
   { name: 'control', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
+  { name: 'label', px: 14, lineHeight: 16, tracking: undefined, weight: 500 },
   { name: 'caption', px: 12, lineHeight: 16, tracking: undefined, weight: 400 },
 ] as const;
 
