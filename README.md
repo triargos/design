@@ -24,6 +24,7 @@ The code is copied into your project; `add` again to update it. Each component p
 
 - Catalog: [`/r/registry.json`](https://pavo.proschule.de/r/registry.json)
 - Item: `/r/{name}.json`, with `meta.commit`: the commit it was built from
+- For agents: [`/llms.txt`](https://pavo.proschule.de/llms.txt) indexes a markdown page per component (`/llms/{name}.md`: install, every example's source) and DESIGN.md; [`/llms-full.txt`](https://pavo.proschule.de/llms-full.txt) is all of it in one file. The registry also works with `shadcn mcp`.
 
 The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib` or `app/lib`).
 

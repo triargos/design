@@ -10,7 +10,7 @@
     "dev": "alchemy dev",
     "deploy": "alchemy deploy",
     "destroy": "alchemy destroy",
-    "registry:build": "node scripts/registry.mjs && shadcn build --output public/r",
+    "registry:build": "node scripts/registry.mjs && shadcn build --output public/r && node scripts/llms.mjs",
     "sizing:check": "node scripts/check-sizing.mjs",
     "typecheck": "tsc",
     "format": "oxfmt",
