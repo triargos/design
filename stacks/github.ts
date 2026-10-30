@@ -34,7 +34,7 @@ export default Alchemy.Stack(
           ],
           resources: { [`com.cloudflare.api.account.${accountId}`]: '*' },
         },
-        // Custom domain (design.a-np.de): zone lookup + Worker custom-domain attach.
+        // Custom domain (pavo.proschule.de): zone lookup + Worker custom-domain attach.
         {
           effect: 'allow',
           permissionGroups: ['Zone Read', 'Workers Routes Write'],

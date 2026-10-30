@@ -4,7 +4,7 @@ The design system behind Triargos products: React components, tokens and pattern
 
 Pavo is Latin for peacock: Hera set the hundred eyes of Argos into its tail. Here one brand color fans out into a whole palette.
 
-**[design.a-np.de](https://design.a-np.de)**: every component live, with its code.
+**[pavo.proschule.de](https://pavo.proschule.de)**: every component live, with its code.
 
 - 50+ components on [Base UI](https://base-ui.com) and [React Aria](https://react-spectrum.adobe.com/react-aria/), styled with Tailwind CSS v4.
 - One vocabulary for every prop: `intent` × `emphasis`, `size`, surfaces, type roles, spacing, radius, elevation and motion. See [DESIGN.md](DESIGN.md).
@@ -16,13 +16,13 @@ Pavo is Latin for peacock: Hera set the hundred eyes of Argos into its tail. Her
 Add the registry once per project, then add components by name:
 
 ```sh
-pnpm dlx shadcn@latest registry add @pavo=https://design.a-np.de/r/{name}.json
+pnpm dlx shadcn@latest registry add @pavo=https://pavo.proschule.de/r/{name}.json
 pnpm dlx shadcn@latest add @pavo/button
 ```
 
 The code is copied into your project; `add` again to update it. Each component page on the site shows its install command.
 
-- Catalog: [`/r/registry.json`](https://design.a-np.de/r/registry.json)
+- Catalog: [`/r/registry.json`](https://pavo.proschule.de/r/registry.json)
 - Item: `/r/{name}.json`, with `meta.commit`: the commit it was built from
 
 The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib` or `app/lib`).
@@ -119,7 +119,7 @@ Pages are found by directory: no index to update. `<c>` must match the registry 
 
 Cloudflare, as one assets-only Worker (`alchemy.run.ts`). GitHub Actions (`.github/workflows/deploy.yml`):
 
-- push to `main` → stage `prod` at design.a-np.de
+- push to `main` → stage `prod` at pavo.proschule.de
 - pull request → stage `pr-<n>`, URL posted as a PR comment, destroyed on close
 
 `vite.config.ts` regenerates `registry.json` and runs `shadcn build` into `public/r` before every build, so deploys always ship fresh JSON. `stacks/github.ts` mints the CI's Cloudflare token.
