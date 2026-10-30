@@ -37,15 +37,19 @@ The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib`
 
   Render `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`) into a `<style>` for the colors.
 
+- Language packs: `locale-de` writes `lib/locales/de.tsx`, every built-in label in German. Pass it as `labels={de}`.
 - `pavo-provider` goes once at the app's root, around the router: the locale, time zone and labels, the router's link for every `href`, one tooltip delay group and the toast stack.
 
   ```tsx
   import { Link } from '@tanstack/react-router';
   import { PavoProvider } from '~/components/ui/pavo-provider';
+  ```
 
-  const RouterLink = ({ href = '', ...props }: React.ComponentPropsWithRef<'a'>) => <Link to={href} {...props} />;
+import { de } from '~/lib/locales/de';
 
-  <PavoProvider locale='de-DE' timeZone='Europe/Berlin' link={RouterLink}>
+const RouterLink = ({ href = '', ...props }: React.ComponentPropsWithRef<'a'>) => <Link to={href} {...props} />;
+
+  <PavoProvider locale='de-DE' timeZone='Europe/Berlin' labels={de} link={RouterLink}>
     <App />
   </PavoProvider>;
   ```
