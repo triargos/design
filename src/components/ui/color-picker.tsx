@@ -1,5 +1,4 @@
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
-import { LazyMotion, m, type MotionStyle, type Transition, useReducedMotion } from 'framer-motion';
 import { type CSSProperties, type PointerEvent, useState } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 
@@ -8,7 +7,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover
 import { RadioGroup } from '~/components/ui/radio-group';
 
 import { useLocale } from '~/components/ui/locale';
-import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /** A swatch: a CSS color and its name. */
@@ -40,10 +38,7 @@ const swatchStyle = (color: string): CSSProperties => ({ '--swatch': color }) as
 /** Fill scale per state; selected leaves a gap inside the 2px ring (4px on a 32px swatch). */
 const FILL_SCALE = { rest: 1, hover: 0.92, press: 0.84, checked: 0.625, checkedPress: 0.58 } as const;
 
-/** Interruptible: hover in and out mid-flight retargets from the current scale. A small overshoot on settle. */
-const fillSpring: Transition = { type: 'spring', visualDuration: 0.22, bounce: 0.35, restDelta: 0.001 };
-
-/** Mouse hover and press for the fill's spring; touch skips hover, so a tap does not leave it shrunk. */
+/** Mouse hover and press for the fill's scale; touch skips hover, so a tap does not leave it shrunk. */
 function useSwatchPointer() {
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
@@ -73,9 +68,8 @@ function SwatchFill({
   checked: boolean;
   hovered: boolean;
   pressed: boolean;
-  style: MotionStyle;
+  style: CSSProperties;
 }) {
-  const reduceMotion = useReducedMotion();
   const scale = checked
     ? pressed
       ? FILL_SCALE.checkedPress
@@ -86,17 +80,12 @@ function SwatchFill({
         ? FILL_SCALE.hover
         : FILL_SCALE.rest;
   return (
-    <LazyMotion features={loadMotionFeatures}>
-      <m.span
-        aria-hidden
-        // A faint ring, so a light color still reads on a light surface.
-        className='size-full rounded-full inset-ring inset-ring-black/10 dark:inset-ring-white/12'
-        style={style}
-        initial={false}
-        animate={{ scale }}
-        transition={reduceMotion ? { duration: 0 } : fillSpring}
-      />
-    </LazyMotion>
+    <span
+      aria-hidden
+      // A faint ring, so a light color still reads on a light surface.
+      className='size-full rounded-full inset-ring inset-ring-black/10 transition-[scale] duration-indicator ease-spring-bounce motion-reduce:transition-none dark:inset-ring-white/12'
+      style={{ ...style, scale: String(scale) }}
+    />
   );
 }
 

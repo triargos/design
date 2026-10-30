@@ -431,13 +431,11 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "framer-motion@13.4.4",
         "react-colorful@^5.8.1"
       ],
       "registryDependencies": [
         "@pavo/input-group",
         "@pavo/locale",
-        "@pavo/motion",
         "@pavo/popover",
         "@pavo/radio-group",
         "@pavo/theme",
