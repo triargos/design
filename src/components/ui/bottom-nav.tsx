@@ -6,6 +6,7 @@ import * as React from 'react';
 import { createPortal } from 'react-dom';
 
 import { useLocale } from '~/components/ui/locale';
+import { useLinkRender } from '~/components/ui/link';
 import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
@@ -711,9 +712,10 @@ function BottomNavLink({
   ...props
 }: useRender.ComponentProps<'a'> & { current?: boolean }) {
   const { isOptimisticCurrent, onTap } = useOptimisticCurrent('BottomNavLink', React.useId());
+  const linkRender = useLinkRender(render);
   return useRender({
     defaultTagName: 'a',
-    render,
+    render: linkRender,
     state: { slot: 'bottom-nav-link' },
     props: mergeProps<'a'>(
       {
@@ -856,9 +858,10 @@ function BottomNavMoreItem({
   const moreTab = React.use(MoreTabContext);
   if (moreTab === null) throw new Error('BottomNavMoreItem must be used within a BottomNavMore.');
   const { onTap } = useOptimisticCurrent('BottomNavMoreItem', moreTab);
+  const linkRender = useLinkRender(render);
   return useRender({
     defaultTagName: 'a',
-    render,
+    render: linkRender,
     state: { slot: 'bottom-nav-more-item' },
     props: mergeProps<'a'>(
       {

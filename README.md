@@ -37,6 +37,19 @@ The paths below follow the app's `components.json` aliases (`~/lib` is `src/lib`
 
   Render `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`) into a `<style>` for the colors.
 
+- `pavo-provider` goes once at the app's root, around the router: the locale, time zone and labels, the router's link for every `href`, one tooltip delay group and the toast stack.
+
+  ```tsx
+  import { Link } from '@tanstack/react-router';
+  import { PavoProvider } from '~/components/ui/pavo-provider';
+
+  const RouterLink = ({ href = '', ...props }: React.ComponentPropsWithRef<'a'>) => <Link to={href} {...props} />;
+
+  <PavoProvider locale='de-DE' timeZone='Europe/Berlin' link={RouterLink}>
+    <App />
+  </PavoProvider>;
+  ```
+
 - Sizing (`lib/theme/sizing.ts`): pick a style, or a density and a radius, and render `sizingThemeCss` next to the colors. It writes only what differs from `pavo.css`, and a style's phone values under `@media (width < 40rem)`:
 
   ```tsx

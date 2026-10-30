@@ -40,9 +40,10 @@ How does it move?             → motion      enter · feedback · move · drawe
 - **shadcn-shaped.** One file per component, on Base UI; every part sets `data-slot` and takes `className` (merged with `cn`). Compose `<X><XTitle/>…</X>`, parts over flags. For polymorphism, use Base UI `render` / `useRender`.
 - **Classes inline.** A part writes its classes in its own `className`. No class-string constants, shared or local, and no files of shared classes: repeat the classes in each component, as shadcn does. A style with variants is a `cva` (`buttonVariants`, `inputSurfaceVariants`), exported only when another component composes it.
 - **Library, not app.** No page layout, app frame, routing or app copy in `src/components/ui`; compositions of parts are docs examples and patterns (blocks), which an app copies.
+- **Links** that default to an `<a>` (`BreadcrumbLink`, `TabsLink`, `TableRowLink`, `SidebarMenuSubButton`, `BottomNavLink`, `BottomNavMoreItem`) render `render`, else the `LinkProvider` link (`useLinkRender`), else an `<a>`. A new linking part does the same.
 - **Value controls** take `value` + `onValueChange`. Dates are `YYYY-MM-DD` strings, times are `HH:mm`, options are `SelectOption { value, label, description? }`.
 - **Copy belongs to the caller.** Empty text, status text and placeholders come from `children` or a prop. Labels of a component's own controls (`closeLabel`, `clearLabel`, `chooseDateLabel`, `slotLabel`, a landmark's `aria-label`, …) come from the prop, else from `LocaleProvider` `labels`, else English. A new built-in label goes in `Labels` (`components/ui/locale.tsx`) with its English default; never a literal in a component.
-- **Formatting** (`IntlDate`, `Calendar`, `DateInput`, `TimeInput`, `Progress`, `ChartTooltipContent`) takes `locale` (BCP 47) and, for a moment, `timeZone`; unset, they come from `LocaleProvider`, else `en-US` and the runtime's zone (deterministic for prerendering). One `LocaleProvider` sits at the app's root; it also sets React Aria's locale.
+- **Formatting** (`IntlDate`, `Calendar`, `DateInput`, `TimeInput`, `Progress`, `ChartTooltipContent`) takes `locale` (BCP 47) and, for a moment, `timeZone`; unset, they come from `LocaleProvider`, else `en-US` and the runtime's zone (deterministic for prerendering). One `PavoProvider` sits at the app's root: `LocaleProvider` (it also sets React Aria's locale), `LinkProvider`, `TooltipProvider` and `ToastProvider`.
 - **One way to do each thing.** Delete an old API in the same change that migrates its callers. No deprecated aliases.
 
 ## Color
@@ -299,6 +300,7 @@ block         Card > CardHeader > CardContent [> ItemList [virtualized]]
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
 motion        duration-enter 100 · feedback 150 · move 200 · modal 150 · drawer 560 · indicator 400 · press 300 · ease-enter · ease-move · ease-spring · ease-spring-bounce
 values        value + onValueChange · dates YYYY-MM-DD · options SelectOption
+root          PavoProvider locale timeZone labels link · each part alone: LocaleProvider, LinkProvider, TooltipProvider, ToastProvider
 locale        LocaleProvider locale timeZone labels (root) · a prop wins · else en-US, English
 data color    Badge color · StatusDot color (exclusive with intent) · var(--category-1 … 8)
 new color     themeToCssVars + @theme inline, never a literal

@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 
-import { LocaleProvider } from '~/components/ui/locale';
-import { ToastProvider } from '~/components/ui/toast';
+import { PavoProvider } from '~/components/ui/pavo-provider';
 
 import { App } from './app';
 import { RouterProvider } from './router';
@@ -10,12 +9,11 @@ import { RouterProvider } from './router';
 export function Root({ pathname }: { pathname: string }) {
   return (
     <StrictMode>
-      <LocaleProvider locale='en-US'>
+      <PavoProvider locale='en-US'>
         <RouterProvider initialPathname={pathname}>
           <App />
         </RouterProvider>
-        <ToastProvider />
-      </LocaleProvider>
+      </PavoProvider>
     </StrictMode>
   );
 }

@@ -229,6 +229,7 @@
         "framer-motion@13.4.4"
       ],
       "registryDependencies": [
+        "@pavo/link",
         "@pavo/locale",
         "@pavo/motion",
         "@pavo/theme",
@@ -249,6 +250,7 @@
         "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
+        "@pavo/link",
         "@pavo/locale",
         "@pavo/theme",
         "@pavo/utils"
@@ -799,6 +801,22 @@
       ]
     },
     {
+      "name": "link",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react@1.8.0"
+      ],
+      "registryDependencies": [
+        "@pavo/theme"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/link.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "locale",
       "type": "registry:ui",
       "dependencies": [
@@ -810,6 +828,23 @@
       "files": [
         {
           "path": "src/components/ui/locale.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "pavo-provider",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@pavo/link",
+        "@pavo/locale",
+        "@pavo/theme",
+        "@pavo/toast",
+        "@pavo/tooltip"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/pavo-provider.tsx",
           "type": "registry:ui"
         }
       ]
@@ -972,6 +1007,7 @@
       ],
       "registryDependencies": [
         "@pavo/button",
+        "@pavo/link",
         "@pavo/locale",
         "@pavo/sheet",
         "@pavo/theme",
@@ -1133,6 +1169,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "@pavo/link",
         "@pavo/theme",
         "@pavo/use-virtual-rows",
         "@pavo/utils"
@@ -1152,6 +1189,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "@pavo/link",
         "@pavo/locale",
         "@pavo/theme",
         "@pavo/utils"

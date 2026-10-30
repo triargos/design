@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTitle } from '~/components/ui/sheet';
 
 import { useIsMobile } from '~/hooks/use-mobile';
 import { useLocale } from '~/components/ui/locale';
+import { useLinkRender } from '~/components/ui/link';
 import { cn } from '~/lib/utils';
 
 type SidebarContextValue = {
@@ -315,9 +316,10 @@ function SidebarMenuSubButton({
   ...props
 }: useRender.ComponentProps<'a'> & { current?: boolean }) {
   const { setOpenMobile } = useSidebar();
+  const linkRender = useLinkRender(render);
   return useRender({
     defaultTagName: 'a',
-    render,
+    render: linkRender,
     state: { slot: 'sidebar-menu-sub-button' },
     props: mergeProps<'a'>(
       {

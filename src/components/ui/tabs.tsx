@@ -5,6 +5,7 @@ import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
 import { useLocale } from '~/components/ui/locale';
+import { useLinkRender } from '~/components/ui/link';
 import { cn } from '~/lib/utils';
 
 /**
@@ -160,9 +161,10 @@ function TabsNav({
  */
 function TabsLink({ className, render, current, ...props }: useRender.ComponentProps<'a'> & { current?: boolean }) {
   const variant = React.use(TabsVariantContext);
+  const linkRender = useLinkRender(render);
   return useRender({
     defaultTagName: 'a',
-    render,
+    render: linkRender,
     state: { slot: 'tabs-trigger' },
     props: mergeProps<'a'>(
       {

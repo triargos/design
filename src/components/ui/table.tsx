@@ -14,6 +14,8 @@ import {
 } from 'react';
 
 import { LoadMore, useVirtualRows } from '~/hooks/use-virtual-rows';
+import { useLinkRender } from '~/components/ui/link';
+
 import { cn } from '~/lib/utils';
 
 // Markup for a TanStack Table (`useTable`, `table.FlexRender`) or a static table. Three variants:
@@ -529,9 +531,10 @@ function TableGroupRow({
  * other controls (buttons, checkboxes, links) sit above it.
  */
 function TableRowLink({ className, render, ...props }: useRender.ComponentProps<'a'>) {
+  const linkRender = useLinkRender(render);
   return useRender({
     defaultTagName: 'a',
-    render,
+    render: linkRender,
     state: { slot: 'table-row-link' },
     props: mergeProps<'a'>(
       {
