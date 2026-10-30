@@ -1,10 +1,3 @@
-/**
- * The color math `generateTheme` and the branding use, based on Linear's color converter.
- *
- * Colors are CIE LCH tuples `[L, C, H, A?]` against the D50 white point (CSS `lch()`).
- * Conversions run LCH → Lab → XYZ(D50) → Bradford D50→D65 → linear sRGB / Display-P3 → gamma.
- */
-
 export type Color = [L: number, C: number, H: number, A?: number];
 export type ColorFormat = 'LCH' | 'P3' | 'RGB';
 export type ColorAdjustment = {
@@ -48,30 +41,30 @@ export function toCss(format: ColorFormat, color: Color): string {
 }
 
 export function fromCss(css: string): Color {
-  let hex = HEX_REGEX.exec(css);
-  if (hex === null) {
-    hex = HEX_REGEX_SMALL.exec(css);
-    if (hex) {
-      hex[1] += hex[1];
-      hex[2] += hex[2];
-      hex[3] += hex[3];
-    }
-  }
+  const hex = HEX_REGEX.exec(css);
   if (hex) {
-    const color = rgbToLch([parseInt(hex[1], 16), parseInt(hex[2], 16), parseInt(hex[3], 16)]);
-    if (hex[4] && !/ff/i.test(hex[4])) color[3] = parseInt(hex[4], 16) / 255;
+    const [, red = '', green = '', blue = '', alpha] = hex;
+    const color = rgbToLch([parseInt(red, 16), parseInt(green, 16), parseInt(blue, 16)]);
+    if (alpha && !/ff/i.test(alpha)) color[3] = parseInt(alpha, 16) / 255;
     return color;
+  }
+  const shortHex = HEX_REGEX_SMALL.exec(css);
+  if (shortHex) {
+    const [, red = '', green = '', blue = ''] = shortHex;
+    return rgbToLch([parseInt(red + red, 16), parseInt(green + green, 16), parseInt(blue + blue, 16)]);
   }
   const lch = LCH_REGEX.exec(css);
   if (lch) {
-    const color: Color = [parseFloat(lch[1]), parseFloat(lch[2]), parseFloat(lch[3])];
-    if (lch[4] && lch[4] !== '1') color[3] = parseFloat(lch[4]);
+    const [, lightness = '', chroma = '', hue = '', alpha] = lch;
+    const color: Color = [parseFloat(lightness), parseFloat(chroma), parseFloat(hue)];
+    if (alpha && alpha !== '1') color[3] = parseFloat(alpha);
     return color;
   }
   const p3 = P3_REGEX.exec(css);
   if (p3) {
-    const color = p3ToLch([parseFloat(p3[1]), parseFloat(p3[2]), parseFloat(p3[3])]);
-    if (p3[4] && p3[4] !== '1') color[3] = parseFloat(p3[4]);
+    const [, red = '', green = '', blue = '', alpha] = p3;
+    const color = p3ToLch([parseFloat(red), parseFloat(green), parseFloat(blue)]);
+    if (alpha && alpha !== '1') color[3] = parseFloat(alpha);
     return color;
   }
   return [0, 0, 0];
@@ -152,9 +145,10 @@ export function mix(from: Color, to: Color, amount: number): Color {
 
 function lchToRgbString(color: Color): string {
   const [r, g, b] = lchToRgb(color)
-    .map((channel) => channel.toString(16).split('.')[0])
+    .map((channel) => channel.toString(16).split('.')[0] ?? '')
     .map((channel) => (channel.length === 1 ? '0' + channel : channel));
-  const alpha = color[3] !== undefined && color[3] !== 1 ? padHex((color[3] * 255).toString(16).split('.')[0]) : '';
+  const alpha =
+    color[3] !== undefined && color[3] !== 1 ? padHex((color[3] * 255).toString(16).split('.')[0] ?? '') : '';
   return `#${r}${g}${b}${alpha}`;
 }
 
@@ -275,10 +269,10 @@ function bradfordD65ToD50(xyz: Vec3): Vec3 {
 }
 
 function xyzToLab(xyz: Vec3): Vec3 {
-  const f = xyz
-    .map((value, index) => value / D50[index])
-    .map((value) => (value > 0.008856451679035631 ? Math.cbrt(value) : (903.2962962962963 * value + 16) / 116));
-  return [116 * f[1] - 16, 500 * (f[0] - f[1]), 200 * (f[1] - f[2])];
+  const [fx, fy, fz] = [xyz[0] / D50[0], xyz[1] / D50[1], xyz[2] / D50[2]].map((value) =>
+    value > 0.008856451679035631 ? Math.cbrt(value) : (903.2962962962963 * value + 16) / 116,
+  ) as Vec3;
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
 }
 
 function labToXyz(lab: Vec3): Vec3 {
@@ -288,10 +282,10 @@ function labToXyz(lab: Vec3): Vec3 {
   const fx = lab[1] / 500 + fy;
   const fz = fy - lab[2] / 200;
   return [
-    fx ** 3 > epsilon ? fx ** 3 : (116 * fx - 16) / kappa,
-    lab[0] > kappa * epsilon ? ((lab[0] + 16) / 116) ** 3 : lab[0] / kappa,
-    fz ** 3 > epsilon ? fz ** 3 : (116 * fz - 16) / kappa,
-  ].map((value, index) => value * D50[index]) as Vec3;
+    (fx ** 3 > epsilon ? fx ** 3 : (116 * fx - 16) / kappa) * D50[0],
+    (lab[0] > kappa * epsilon ? ((lab[0] + 16) / 116) ** 3 : lab[0] / kappa) * D50[1],
+    (fz ** 3 > epsilon ? fz ** 3 : (116 * fz - 16) / kappa) * D50[2],
+  ];
 }
 
 function labToLch(lab: Vec3): Color {

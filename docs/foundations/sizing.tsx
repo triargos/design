@@ -342,7 +342,7 @@ const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 /** What finds a token in a source: the variable itself (`var(--x)`, `(--x)`), and its utility form. */
 const tokenPattern = (token: SizingToken): RegExp => {
   const forms = [`${escape(token)}(?![\\w-])`];
-  const [, namespace, name] = /^--(spacing|radius|text)-(.+)$/.exec(token) ?? [];
+  const [, namespace, name = ''] = /^--(spacing|radius|text)-(.+)$/.exec(token) ?? [];
   if (namespace === 'spacing') forms.push(`(?<![\\w-])-?(?:${SPACING_UTILITIES})-${escape(name)}(?![\\w-])`);
   if (namespace === 'radius') forms.push(`(?<![\\w-])rounded(?:-[trblse]{1,2})?-${escape(name)}(?![\\w-])`);
   if (namespace === 'text' && !name.includes('--')) forms.push(`(?<![\\w-])text-${escape(name)}(?![\\w-])`);
