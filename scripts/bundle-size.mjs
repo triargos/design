@@ -1,7 +1,6 @@
-import { build } from 'esbuild';
+import { build } from 'vite';
 import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join, relative, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { gzipSync } from 'node:zlib';
 
@@ -59,53 +58,55 @@ const packageOf = (input) => {
   return match ? match[1] : 'own';
 };
 
-const fixtureDir = mkdtempSync(join(tmpdir(), 'bundle-size-'));
+const fixtureDir = mkdtempSync(join(root, 'node_modules/.bundle-size-'));
 
 const gzipSize = (contents) => gzipSync(contents, { level: 9 }).length;
 
 const measure = async ({ name, group, code }) => {
   const entry = join(fixtureDir, `${name.replaceAll(' ', '-')}.tsx`);
   writeFileSync(entry, code);
-  const result = await build({
-    entryPoints: [entry],
-    bundle: true,
-    splitting: true,
-    outdir: join(fixtureDir, 'out'),
-    minify: true,
-    write: false,
-    format: 'esm',
-    platform: 'browser',
-    jsx: 'automatic',
-    external: ['react', 'react-dom', 'react/jsx-runtime'],
-    nodePaths: [join(root, 'node_modules')],
-    alias: { '~': join(root, 'src') },
-    define: { 'process.env.NODE_ENV': '"production"' },
-    metafile: true,
+  const output = await build({
+    configFile: false,
+    root,
     logLevel: 'silent',
+    resolve: { alias: { '~': join(root, 'src') } },
+    define: { 'process.env.NODE_ENV': '"production"' },
+    build: {
+      write: false,
+      minify: true,
+      modulePreload: false,
+      rolldownOptions: {
+        input: entry,
+        external: ['react', 'react-dom', 'react/jsx-runtime'],
+        preserveEntrySignatures: 'exports-only',
+      },
+    },
   });
-  const contentsOf = new Map(result.outputFiles.map((file) => [relative(process.cwd(), file.path), file.contents]));
-  const outputs = result.metafile.outputs;
-  const entryOutput = Object.keys(outputs).find((path) => outputs[path].entryPoint);
+  const chunks = [output]
+    .flat()
+    .flatMap((result) => result.output)
+    .filter((file) => file.type === 'chunk');
+  const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
   const initial = new Set();
-  const visit = (path) => {
-    if (initial.has(path)) return;
-    initial.add(path);
-    for (const imported of outputs[path].imports)
-      if (imported.kind === 'import-statement' && !imported.external) visit(imported.path);
+  const visit = (fileName) => {
+    if (initial.has(fileName) || !byName.has(fileName)) return;
+    initial.add(fileName);
+    for (const imported of byName.get(fileName).imports) visit(imported);
   };
-  visit(entryOutput);
+  visit(chunks.find((chunk) => chunk.isEntry).fileName);
   const packages = {};
   let gzip = 0;
   let lazyGzip = 0;
-  for (const [path, output] of Object.entries(outputs)) {
-    if (!path.endsWith('.js')) continue;
-    const size = gzipSize(contentsOf.get(path));
-    if (initial.has(path)) gzip += size;
-    else lazyGzip += size;
-    if (!initial.has(path)) continue;
-    for (const [input, { bytesInOutput }] of Object.entries(output.inputs)) {
-      const name = packageOf(input);
-      packages[name] = (packages[name] ?? 0) + bytesInOutput;
+  for (const chunk of chunks) {
+    const size = gzipSize(chunk.code);
+    if (!initial.has(chunk.fileName)) {
+      lazyGzip += size;
+      continue;
+    }
+    gzip += size;
+    for (const [id, module] of Object.entries(chunk.modules)) {
+      const name = packageOf(id);
+      packages[name] = (packages[name] ?? 0) + module.renderedLength;
     }
   }
   const largest = Object.entries(packages)
@@ -170,7 +171,7 @@ const report = (rows, base) => {
     '',
     '</details>',
     '',
-    'Each import bundled alone by esbuild, minified, React external, gzip level 9 (`pnpm bundle-size`). gzip: what loads with the import. Lazy: chunks it loads later through `import()`.',
+    'Each import bundled alone by Vite, minified, React external, gzip level 9 (`pnpm bundle-size`). gzip: what loads with the import. Lazy: chunks it loads later through `import()`.',
   );
   return sections.join('\n');
 };
