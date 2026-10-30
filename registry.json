@@ -87,6 +87,16 @@
       ]
     },
     {
+      "name": "animate",
+      "type": "registry:lib",
+      "files": [
+        {
+          "path": "src/lib/animate.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "shortcut",
       "type": "registry:lib",
       "files": [
@@ -146,6 +156,16 @@
       "files": [
         {
           "path": "src/hooks/use-presence.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-reduced-motion",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "src/hooks/use-reduced-motion.ts",
           "type": "registry:hook"
         }
       ]
@@ -280,14 +300,14 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "@tabler/icons-react@3.49.0",
-        "framer-motion@13.4.4"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
+        "@pavo/animate",
         "@pavo/link",
         "@pavo/locale",
-        "@pavo/motion",
         "@pavo/theme",
+        "@pavo/use-reduced-motion",
         "@pavo/utils"
       ],
       "files": [
@@ -586,14 +606,15 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "@tabler/icons-react@3.49.0",
-        "framer-motion@13.4.4"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
+        "@pavo/animate",
         "@pavo/button",
         "@pavo/locale",
         "@pavo/theme",
         "@pavo/use-overlay",
+        "@pavo/use-reduced-motion",
         "@pavo/utils"
       ],
       "files": [

@@ -2,13 +2,14 @@ import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { IconCheck, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
-import { animate, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
 
 import { useLocale } from '~/components/ui/locale';
 import { OverlayOpenContext, useOverlayRoot, usePreservedContent } from '~/hooks/use-overlay';
+import { useReducedMotion } from '~/hooks/use-reduced-motion';
+import { animateTo, springEasing } from '~/lib/animate';
 import { cn } from '~/lib/utils';
 
 /** `sensitive`: it holds input the user would lose, so `closeOverlays` leaves it open and `hasSensitiveOverlay` is true. */
@@ -119,13 +120,11 @@ const PAGE_ROWS =
 
 // The morph, after Danny Williams's morphing menu (as `BottomNav`): the rows of the page that leaves blur out fast, the
 // next page's rows cascade in from the side they come from, and the drawer springs to the new height. On open the rows
-// rise into the drawer as it comes up. Motion springs, so a quick push and pop turns around from where it is.
-const heightSpring = { type: 'spring', duration: 0.35, bounce: 0.12 } as const;
-const rowsOpen = { type: 'spring', duration: 0.5, bounce: 0.25 } as const;
-const rowsEnter = { type: 'spring', duration: 0.4, bounce: 0.1 } as const;
-const rowsLeave = { duration: 0.12, ease: [0.4, 0, 0.2, 1] } as const;
-const fade = { duration: 0.15 } as const;
-const ROW_STEP = 0.02;
+// rise into the drawer as it comes up. The height is a CSS transition and the rows end in inline styles, so a quick
+// push and pop turns around from where it is.
+const rowsSpring = { duration: 440, step: 20 } as const;
+const rowsLeave = { duration: 120, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' } as const;
+const fade = { duration: 150, easing: 'ease-out' } as const;
 
 /**
  * Pages in a drawer: `DrawerPage`s, `initial` first. `push` morphs to the next page, `pop` back: the rows of the page
@@ -140,7 +139,7 @@ function DrawerStack({ initial, className, children, ...props }: React.Component
   const previous = React.useRef<string | null>(null);
   /** 1 while pushing (rows come from the right), -1 while popping. */
   const direction = React.useRef<1 | -1>(1);
-  const reduced = useReducedMotion() ?? false;
+  const reduced = useReducedMotion();
   const current = history[history.length - 1]!;
 
   const value = React.useMemo<DrawerStackValue>(
@@ -176,42 +175,39 @@ function DrawerStack({ initial, className, children, ...props }: React.Component
     const rows = (page: HTMLElement) =>
       [...page.querySelectorAll(PAGE_ROWS)].filter((row): row is HTMLElement => row instanceof HTMLElement);
     const running: Array<{ stop: () => void }> = [];
+    const play = (...args: Parameters<typeof animateTo>) => running.push(animateTo(...args));
+    const easing = springEasing();
 
     for (const page of stack.querySelectorAll<HTMLElement>(':scope > [data-slot=drawer-page]'))
       if (page !== incoming && page !== outgoing) page.style.opacity = '0';
     incoming.style.opacity = '1';
 
     const height = incoming.offsetHeight;
-    if (outgoing === null || reduced) stack.style.height = `${height}px`;
-    else running.push(animate(stack, { height: [stack.offsetHeight, height] }, heightSpring));
+    stack.style.height = `${height}px`;
 
     if (reduced) {
       for (const row of rows(incoming)) Object.assign(row.style, { opacity: '', transform: '', filter: '' });
       if (outgoing !== null) {
-        running.push(animate(incoming, { opacity: [0, 1] }, fade));
-        running.push(animate(outgoing, { opacity: [1, 0] }, fade));
+        play(incoming, { opacity: [0, 1] }, fade);
+        play(outgoing, { opacity: [1, 0] }, fade);
       }
     } else if (outgoing === null) {
       for (const [index, row] of rows(incoming).entries())
-        running.push(
-          animate(
-            row,
-            { opacity: [0, 1], y: [24, 0], filter: ['blur(4px)', 'blur(0px)'] },
-            { ...rowsOpen, delay: 0.06 + index * ROW_STEP },
-          ),
+        play(
+          row,
+          { opacity: [0, 1], transform: ['translateY(24px)', 'none'], filter: ['blur(4px)', 'blur(0px)'] },
+          { duration: rowsSpring.duration, easing, delay: 60 + index * rowsSpring.step },
         );
     } else {
       const side = direction.current;
       for (const row of rows(outgoing))
-        running.push(animate(row, { opacity: 0, x: -16 * side, filter: 'blur(2px)' }, rowsLeave));
-      running.push(animate(outgoing, { opacity: 0 }, { ...rowsLeave, delay: rowsLeave.duration }));
+        play(row, { opacity: 0, transform: `translateX(${-16 * side}px)`, filter: 'blur(2px)' }, rowsLeave);
+      play(outgoing, { opacity: 0 }, { ...rowsLeave, delay: rowsLeave.duration });
       for (const [index, row] of rows(incoming).entries())
-        running.push(
-          animate(
-            row,
-            { opacity: [0, 1], x: [24 * side, 0], filter: ['blur(4px)', 'blur(0px)'] },
-            { ...rowsEnter, delay: 0.04 + index * ROW_STEP },
-          ),
+        play(
+          row,
+          { opacity: [0, 1], transform: [`translateX(${24 * side}px)`, 'none'], filter: ['blur(4px)', 'blur(0px)'] },
+          { duration: rowsSpring.duration, easing, delay: 40 + index * rowsSpring.step },
         );
     }
 
@@ -221,8 +217,7 @@ function DrawerStack({ initial, className, children, ...props }: React.Component
       const next = incoming.offsetHeight;
       if (next === last) return;
       last = next;
-      if (reduced) stack.style.height = `${next}px`;
-      else running.push(animate(stack, { height: [stack.offsetHeight, next] }, heightSpring));
+      stack.style.height = `${next}px`;
     });
     observer.observe(incoming);
     return () => {
@@ -236,7 +231,10 @@ function DrawerStack({ initial, className, children, ...props }: React.Component
       <div
         ref={ref}
         data-slot='drawer-stack'
-        className={cn('relative min-h-0 shrink overflow-hidden', className)}
+        className={cn(
+          'relative min-h-0 shrink overflow-hidden transition-[height] duration-fold ease-spring motion-reduce:transition-none',
+          className,
+        )}
         {...props}>
         {children}
       </div>
