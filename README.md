@@ -1,6 +1,6 @@
 # Pavo
 
-The design system behind Triargos products: React components, tokens and patterns, shipped as a [shadcn](https://ui.shadcn.com) registry.
+The design system behind ProSchule products: React components, tokens and patterns, shipped as a [shadcn](https://ui.shadcn.com) registry.
 
 Pavo is Latin for peacock: Hera set the hundred eyes of Argos into its tail. Here one brand color fans out into a whole palette.
 

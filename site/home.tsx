@@ -55,7 +55,7 @@ export function Home() {
         <div className='flex flex-col gap-tight'>
           <h1 className='text-title text-balance'>Pavo</h1>
           <p className='max-w-prose text-body text-pretty text-muted-foreground'>
-            The design system behind Triargos products: every component live, with its code.
+            The design system behind ProSchule products: every component live, with its code.
           </p>
         </div>
       </header>
