@@ -2,7 +2,7 @@
   "name": "pavo",
   "private": true,
   "description": "Pavo, the Triargos design system: React components, tokens and patterns, shipped as a shadcn registry.",
-  "homepage": "https://design.a-np.de",
+  "homepage": "https://pavo.proschule.de",
   "license": "MIT",
   "repository": "github:triargos/design",
   "type": "module",

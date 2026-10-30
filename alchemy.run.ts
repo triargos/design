@@ -20,7 +20,7 @@ export default Alchemy.Stack(
     const site = yield* Cloudflare.Website.Vite('Website', {
       assets: { notFoundHandling: '404-page' },
       // Custom domain on prod only; PR previews stay on workers.dev.
-      ...(stage === 'prod' && { domain: 'design.a-np.de' }),
+      ...(stage === 'prod' && { domain: 'pavo.proschule.de' }),
     });
 
     const github = yield* GitHub.GitHubEnv;

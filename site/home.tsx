@@ -16,7 +16,7 @@ import { InputOTPFourDigits } from '../docs/examples/input-otp/four-digits';
 import { SliderWithLabelAndValue } from '../docs/examples/slider/with-label-and-value';
 import { SwitchWithLabel } from '../docs/examples/switch/with-label';
 import { TabsDefault } from '../docs/examples/tabs/default';
-import { TriargosLogo } from './logo';
+import { ProschuleLogo } from './logo';
 import { pathOf, prefetchPage } from './page';
 import { Link } from './router';
 
@@ -51,7 +51,7 @@ export function Home() {
   return (
     <div className='mx-auto flex w-full max-w-5xl flex-col gap-section'>
       <header className='flex flex-col gap-group'>
-        <TriargosLogo className='h-10 self-start' />
+        <ProschuleLogo className='h-10 self-start' />
         <div className='flex flex-col gap-tight'>
           <h1 className='text-title text-balance'>Pavo</h1>
           <p className='max-w-prose text-body text-pretty text-muted-foreground'>

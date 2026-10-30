@@ -114,7 +114,7 @@ for (const file of readdirSync(join(root, 'docs/components'))) {
 const registry = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
   name: 'pavo',
-  homepage: 'https://design.a-np.de',
+  homepage: 'https://pavo.proschule.de',
   items,
 };
 
