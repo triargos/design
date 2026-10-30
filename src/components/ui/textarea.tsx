@@ -2,6 +2,7 @@ import type * as React from 'react';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
 
+import { useAccessibleNameCheck } from '~/hooks/use-accessible-name-check';
 import { cn } from '~/lib/utils';
 
 /**
@@ -9,9 +10,11 @@ import { cn } from '~/lib/utils';
  * so iOS does not zoom. Inside an `InputGroup`, use `InputGroupTextarea`.
  */
 function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
+  const nameCheck = useAccessibleNameCheck('Textarea');
   return (
     <textarea
       data-slot='textarea'
+      {...nameCheck}
       className={cn(
         inputSurfaceVariants(),
         '[--field-radius:var(--radius-area)]',

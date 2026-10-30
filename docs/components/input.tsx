@@ -187,7 +187,7 @@ export default defineDocs({
   group: 'Components',
   playground: {
     component: Input,
-    args: { placeholder: 'Maya Chen' },
+    args: { placeholder: 'Maya Chen', 'aria-label': 'Name' },
   },
   Page: () => (
     <FoundationPage

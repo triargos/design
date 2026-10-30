@@ -100,6 +100,16 @@
       ]
     },
     {
+      "name": "use-accessible-name-check",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "src/hooks/use-accessible-name-check.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "use-mobile",
       "type": "registry:hook",
       "files": [
@@ -315,6 +325,7 @@
         "@pavo/intent-variants",
         "@pavo/spinner",
         "@pavo/theme",
+        "@pavo/use-accessible-name-check",
         "@pavo/utils"
       ],
       "files": [
@@ -394,6 +405,7 @@
       "registryDependencies": [
         "@pavo/icon-swap",
         "@pavo/theme",
+        "@pavo/use-accessible-name-check",
         "@pavo/utils"
       ],
       "files": [
@@ -726,6 +738,7 @@
       ],
       "registryDependencies": [
         "@pavo/theme",
+        "@pavo/use-accessible-name-check",
         "@pavo/utils"
       ],
       "files": [
@@ -1178,6 +1191,7 @@
       ],
       "registryDependencies": [
         "@pavo/theme",
+        "@pavo/use-accessible-name-check",
         "@pavo/utils"
       ],
       "files": [
@@ -1234,6 +1248,7 @@
       "registryDependencies": [
         "@pavo/input",
         "@pavo/theme",
+        "@pavo/use-accessible-name-check",
         "@pavo/utils"
       ],
       "files": [
