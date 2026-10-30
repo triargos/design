@@ -1,0 +1,55 @@
+name: Bundle size
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: bundle-size-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: head
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+      - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: head/package.json
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: |
+            head/pnpm-lock.yaml
+            base/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: head
+      - run: pnpm install --frozen-lockfile
+        working-directory: base
+      - run: node scripts/bundle-size.mjs --root ../base --json ../base.json
+        working-directory: head
+      - run: node scripts/bundle-size.mjs --compare ../base.json --markdown ../bundle-size.md
+        working-directory: head
+      - run: cat bundle-size.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Post or update the PR comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq '[.[] | select(.body | startswith("<!-- bundle-size -->"))][0].id // empty')
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@bundle-size.md > /dev/null
+          else
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@bundle-size.md > /dev/null
+          fi
