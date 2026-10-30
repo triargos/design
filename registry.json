@@ -76,6 +76,17 @@
       ]
     },
     {
+      "name": "lint",
+      "type": "registry:file",
+      "files": [
+        {
+          "path": "lint/pavo-plugin.js",
+          "type": "registry:file",
+          "target": "~/lint/pavo-plugin.js"
+        }
+      ]
+    },
+    {
       "name": "shortcut",
       "type": "registry:lib",
       "files": [

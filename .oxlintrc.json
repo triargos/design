@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["./lint/pavo-plugin.js"],
+  "plugins": [],
+  "categories": {
+    "correctness": "off"
+  },
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["docs/examples/**/*.tsx"],
+      "rules": {
+        "pavo/no-raw-color": "error",
+        "pavo/no-dark-variant": "error",
+        "pavo/no-arbitrary-size": "warn"
+      }
+    }
+  ]
+}

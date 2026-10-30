@@ -90,6 +90,10 @@ const items = [
   ...sourceFiles('src/lib/locales').map((path) =>
     item(`locale-${basename(path, extname(path))}`, 'registry:lib', [{ path, type: 'registry:lib' }]),
   ),
+  // Lint rules for the app's own code: raw colors, `dark:`, off-scale lengths. Lands at the project root.
+  item('lint', 'registry:file', [
+    { path: 'lint/pavo-plugin.js', type: 'registry:file', target: '~/lint/pavo-plugin.js' },
+  ]),
   // `utils` and each other helper in `src/lib`, one item per file.
   ...sourceFiles('src/lib').map((path) =>
     item(basename(path, extname(path)), 'registry:lib', [{ path, type: 'registry:lib' }]),

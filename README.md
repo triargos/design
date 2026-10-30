@@ -60,6 +60,17 @@ const RouterLink = ({ href = '', ...props }: React.ComponentPropsWithRef<'a'>) =
   router.subscribe('onBeforeNavigate', closeOverlays);
   ```
 
+- `lint` writes `lint/pavo-plugin.js`, rules for the app's own markup: `pavo/no-raw-color` (`bg-gray-100`, `text-[#3b82f6]`), `pavo/no-dark-variant` (the tokens already follow the color mode) and `pavo/no-arbitrary-size` (`p-[17px]`, `rounded-[7px]`). They read `className` and `cn`/`clsx`/`cva` strings. An oxlint JS plugin, in ESLint's plugin format:
+
+  ```json
+  {
+    "jsPlugins": ["./lint/pavo-plugin.js"],
+    "rules": { "pavo/no-raw-color": "error", "pavo/no-dark-variant": "error", "pavo/no-arbitrary-size": "warn" }
+  }
+  ```
+
+  Lint the app's code, not `components/ui`: the components are where the tokens become colors.
+
 - Sizing (`lib/theme/sizing.ts`): pick a style, or a density and a radius, and render `sizingThemeCss` next to the colors. It writes only what differs from `pavo.css`, and a style's phone values under `@media (width < 40rem)`:
 
   ```tsx
