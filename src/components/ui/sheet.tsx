@@ -5,10 +5,31 @@ import * as React from 'react';
 import { Button } from '~/components/ui/button';
 
 import { useLocale } from '~/components/ui/locale';
+import { OverlayOpenContext, useOverlayRoot, usePreservedContent } from '~/hooks/use-overlay';
 import { cn } from '~/lib/utils';
 
-function Sheet(props: SheetPrimitive.Root.Props) {
-  return <SheetPrimitive.Root data-slot='sheet' {...props} />;
+/** `sensitive`: it holds input the user would lose, so `closeOverlays` leaves it open and `hasSensitiveOverlay` is true. */
+function Sheet({
+  open,
+  defaultOpen,
+  onOpenChange,
+  actionsRef,
+  sensitive = false,
+  ...props
+}: SheetPrimitive.Root.Props & { sensitive?: boolean }) {
+  const overlay = useOverlayRoot({ open, defaultOpen, onOpenChange, actionsRef, sensitive });
+  return (
+    <OverlayOpenContext value={overlay.open}>
+      <SheetPrimitive.Root
+        data-slot='sheet'
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={overlay.onOpenChange}
+        actionsRef={overlay.actionsRef}
+        {...props}
+      />
+    </OverlayOpenContext>
+  );
 }
 
 function SheetTrigger(props: SheetPrimitive.Trigger.Props) {
@@ -44,6 +65,7 @@ function SheetContent({
     size?: 'default' | 'lg';
   }) {
   const { labels } = useLocale();
+  const content = usePreservedContent(children);
   return (
     <SheetPrimitive.Portal data-slot='sheet-portal' container={container}>
       <SheetPrimitive.Backdrop
@@ -66,7 +88,7 @@ function SheetContent({
           className,
         )}
         {...props}>
-        {children}
+        {content}
         {showCloseButton && (
           <SheetClose
             aria-label={closeLabel ?? labels.close}

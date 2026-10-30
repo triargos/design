@@ -38,6 +38,7 @@ import { Textarea } from '~/components/ui/textarea';
 
 import { cn } from '~/lib/utils';
 
+import { DialogCloseOnNavigation } from '../examples/dialog/close-on-navigation';
 import { DialogDefault } from '../examples/dialog/default';
 import { DialogNested } from '../examples/dialog/nested';
 import { DialogNoFooter } from '../examples/dialog/no-footer';
@@ -137,6 +138,16 @@ export default defineDocs({
         title='Opened from a menu'
         description='The menu item sets the dialog’s open; the dialog lives outside the menu.'>
         <DialogOpenedFromAMenu />
+      </ExampleSection>
+      <ExampleSection
+        title='Close on navigation'
+        description={
+          <>
+            <Code>closeOverlays()</Code> on a route change closes every dialog, sheet and drawer but a{' '}
+            <Code>sensitive</Code> one; <Code>hasSensitiveOverlay()</Code> asks first
+          </>
+        }>
+        <DialogCloseOnNavigation />
       </ExampleSection>
 
       <FoundationSection

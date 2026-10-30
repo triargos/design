@@ -110,6 +110,16 @@
       ]
     },
     {
+      "name": "use-overlay",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "src/hooks/use-overlay.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "use-virtual-rows",
       "type": "registry:hook",
       "dependencies": [
@@ -172,6 +182,7 @@
       "registryDependencies": [
         "@pavo/button",
         "@pavo/theme",
+        "@pavo/use-overlay",
         "@pavo/utils"
       ],
       "files": [
@@ -530,6 +541,7 @@
         "@pavo/button",
         "@pavo/locale",
         "@pavo/theme",
+        "@pavo/use-overlay",
         "@pavo/utils"
       ],
       "files": [
@@ -551,6 +563,7 @@
         "@pavo/button",
         "@pavo/locale",
         "@pavo/theme",
+        "@pavo/use-overlay",
         "@pavo/utils"
       ],
       "files": [
@@ -983,6 +996,7 @@
         "@pavo/button",
         "@pavo/locale",
         "@pavo/theme",
+        "@pavo/use-overlay",
         "@pavo/utils"
       ],
       "files": [
