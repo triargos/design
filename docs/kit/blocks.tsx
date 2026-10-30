@@ -260,7 +260,7 @@ export function ExampleSection({
         <Preview
           className={cn(
             className,
-            docs && 'min-h-36 px-page py-page',
+            docs && 'min-h-36 p-card md:p-page',
             // A bare example is block content (a page stage, a capped card): block layout lets a stage fill the width
             // and centers a capped card on its auto margins. The rest is a row of controls, centered.
             docs && (bare ? 'block *:mx-auto' : 'justify-center'),

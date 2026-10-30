@@ -17,8 +17,8 @@ interface PageContentProps extends ComponentProps<'div'> {
 }
 
 /**
- * Page layout: the header, then the content `page` (32px) below it. Blocks sit `group` (16px) apart; a `PageSection`
- * that is a direct child sits `section` (48px) from its neighbours.
+ * Page layout: the header, then the content `page` (48px) below it. Blocks sit `group` (24px) apart; a `PageSection`
+ * that is a direct child sits `section` (64px) from its neighbours.
  */
 export const PageContent = ({ header, children, className, ...props }: PageContentProps) => (
   <div className={cn('flex flex-col gap-page', className)} {...props}>

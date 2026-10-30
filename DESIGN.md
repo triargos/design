@@ -105,10 +105,10 @@ Seven steps, named by relationship. Components own the gaps inside them; the pag
 | `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty`  |
 | `related` | 8   | Items that work together                                       | `Field` (label → control), page header actions, `ItemActions`                           |
 | `part`    | 12  | The parts of one component                                     | `Alert` text → action, horizontal `Field`, `Stepper`, `Progress`, `Empty` media, toasts |
-| `group`   | 16  | Peer blocks; a heading → its content; padding inside a surface | Page header stack, sections, `FieldGroup`, `DialogBody`, `SheetBody`                    |
-| `card`    | 20  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges    |
-| `page`    | 32  | Page header → content                                          | Page pattern                                                                            |
-| `section` | 48  | Section ↔ section                                              | Page pattern                                                                            |
+| `group`   | 24  | Peer blocks; a heading → its content; padding inside a surface | Page header stack, sections, `FieldGroup`, `DialogBody`, `SheetBody`                    |
+| `card`    | 24  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges    |
+| `page`    | 48  | Page header → content                                          | Page pattern                                                                            |
+| `section` | 64  | Section ↔ section                                              | Page pattern                                                                            |
 
 - A gap derived from two steps is a `calc` of their variables.
 - A section title sits indented to the card text: `px-[calc(--spacing(1)+1px+var(--spacing-card))]` (shell 4px + edge 1px + `card`). A section holds `Card`s.

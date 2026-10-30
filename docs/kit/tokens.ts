@@ -9,10 +9,10 @@ export const SPACING_STEPS = [
   { name: 'tight', px: 4 },
   { name: 'related', px: 8 },
   { name: 'part', px: 12 },
-  { name: 'group', px: 16 },
-  { name: 'card', px: 20 },
-  { name: 'page', px: 32 },
-  { name: 'section', px: 48 },
+  { name: 'group', px: 24 },
+  { name: 'card', px: 24 },
+  { name: 'page', px: 48 },
+  { name: 'section', px: 64 },
 ] as const;
 
 export type SpacingStep = (typeof SPACING_STEPS)[number];

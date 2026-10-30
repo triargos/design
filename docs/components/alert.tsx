@@ -67,7 +67,7 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='In a section'
-        description='An alert sits between cards, one group step apart. Its text starts 20px in, on the edge of the section title and the card headers.'
+        description='An alert sits between cards, one group step apart. Its text starts 28px in, on the edge of the section title and the card headers.'
         bare>
         <AlertInASection />
       </ExampleSection>
