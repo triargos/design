@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
 } from '~/components/ui/sidebar';
 
-import { TriargosLogo } from './logo';
+import { ProschuleLogo } from './logo';
 import { pathOf, prefetchPage } from './page';
 import { Link, useRouter } from './router';
 import { Search } from './search';
@@ -28,11 +28,11 @@ const THEMES: ReadonlyArray<{ value: ThemePreference; label: string }> = [
   { value: 'dark', label: 'Dark' },
 ];
 
-/** The wordmark: the Triargos mark and the system's name, linking home. */
+/** The wordmark: the proschule mark and the system's name, linking home. */
 export function Wordmark() {
   return (
     <Link href='/' className='flex items-center gap-2 rounded-control-sm text-body font-medium text-sidebar-foreground'>
-      <TriargosLogo />
+      <ProschuleLogo />
       Pavo
     </Link>
   );
