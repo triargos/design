@@ -283,12 +283,10 @@
       "type": "registry:ui",
       "dependencies": [
         "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1",
-        "framer-motion@13.4.4"
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/intent-variants",
-        "@triargos/motion",
         "@triargos/spinner",
         "@triargos/theme",
         "@triargos/utils"
@@ -365,12 +363,10 @@
       "dependencies": [
         "@base-ui/react@1.8.0",
         "@tabler/icons-react@3.49.0",
-        "class-variance-authority@^0.7.1",
-        "framer-motion@13.4.4"
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
         "@triargos/icon-swap",
-        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],
@@ -469,14 +465,12 @@
       "name": "copy-button",
       "type": "registry:ui",
       "dependencies": [
-        "@tabler/icons-react@3.49.0",
-        "framer-motion@13.4.4"
+        "@tabler/icons-react@3.49.0"
       ],
       "registryDependencies": [
         "@triargos/button",
         "@triargos/icon-swap",
         "@triargos/locale",
-        "@triargos/motion",
         "@triargos/theme"
       ],
       "files": [
@@ -645,11 +639,7 @@
     {
       "name": "icon-swap",
       "type": "registry:ui",
-      "dependencies": [
-        "framer-motion@13.4.4"
-      ],
       "registryDependencies": [
-        "@triargos/motion",
         "@triargos/theme",
         "@triargos/utils"
       ],

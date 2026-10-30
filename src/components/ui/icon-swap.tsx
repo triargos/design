@@ -1,46 +1,51 @@
-import { LazyMotion, m, type Transition, useReducedMotion } from 'framer-motion';
+import * as React from 'react';
 
-import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
-/** Icon swaps: in from 25% and blurred, out the same way, on one spring with no bounce. Reduced motion: a cross-fade. */
-const iconSwap: Transition = { type: 'spring', duration: 0.3, bounce: 0 };
-const iconFade: Transition = { duration: 0.1 };
-
-/** Motion props for an icon that enters and leaves inside `AnimatePresence`. */
-function useIconSwap() {
-  const reduced = useReducedMotion() ?? false;
-  const hidden = reduced ? { opacity: 0 } : { opacity: 0, scale: 0.25, filter: 'blur(4px)' };
-  return {
-    initial: hidden,
-    animate: reduced ? { opacity: 1 } : { opacity: 1, scale: 1, filter: 'blur(0px)' },
-    exit: hidden,
-    transition: reduced ? iconFade : iconSwap,
-  };
+/**
+ * One icon of a swap: icons share a grid cell, the one that shows is `shown`. In from 25% and blurred, out the same way,
+ * on the `spring` ease; CSS transitions, so a quick toggle reverses from where it is and the first render does not
+ * animate. Reduced motion: a cross-fade.
+ */
+function IconSwap({ shown, className, ...props }: React.ComponentProps<'span'> & { shown: boolean }) {
+  return (
+    <span
+      data-slot='icon-swap'
+      className={cn(
+        'grid transition-[opacity,scale,filter,visibility] duration-press ease-spring motion-reduce:duration-enter motion-reduce:ease-enter',
+        !shown && 'invisible scale-25 opacity-0 blur-xs motion-reduce:scale-100 motion-reduce:blur-none',
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
-/** A check that swaps in like any icon and draws its stroke from the short arm to the long one, just behind the pop. */
-function DrawnCheck({ className }: { className?: string }) {
-  const reduced = useReducedMotion() ?? false;
+/**
+ * A check that swaps in like any icon and draws its stroke from the short arm to the long one, just behind the pop. It
+ * stays drawn on its way out and resets once it is gone.
+ */
+function DrawnCheck({ shown, className }: { shown: boolean; className?: string }) {
   return (
-    <LazyMotion features={loadMotionFeatures}>
-      <m.svg
+    <IconSwap shown={shown} className={className}>
+      <svg
         viewBox='0 0 24 24'
         fill='none'
         stroke='currentColor'
         strokeLinecap='round'
         strokeLinejoin='round'
-        className={cn('tabler-icon', className)}
-        {...useIconSwap()}>
-        <m.path
+        className='tabler-icon'>
+        <path
           d='M4 12l5 5L20 6'
-          initial={{ pathLength: reduced ? 1 : 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ type: 'spring', duration: 0.3, bounce: 0, delay: 0.06 }}
+          pathLength={1}
+          className={cn(
+            'transition-[stroke-dashoffset] [stroke-dasharray:1] motion-reduce:[stroke-dashoffset:0]',
+            shown ? 'delay-60 duration-press ease-enter' : 'delay-300 duration-0 [stroke-dashoffset:1]',
+          )}
         />
-      </m.svg>
-    </LazyMotion>
+      </svg>
+    </IconSwap>
   );
 }
 
-export { DrawnCheck, useIconSwap };
+export { DrawnCheck, IconSwap };

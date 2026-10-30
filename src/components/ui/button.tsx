@@ -1,12 +1,10 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { cva } from 'class-variance-authority';
-import { AnimatePresence, LazyMotion, m, type Transition, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 
 import { type Emphasis, type Intent, intentVariants } from '~/components/ui/intent-variants';
 import { Spinner } from '~/components/ui/spinner';
 
-import { loadMotionFeatures } from '~/lib/motion/load';
 import { cn } from '~/lib/utils';
 
 /**
@@ -141,55 +139,39 @@ function useMinimumPending(pending: boolean): boolean {
   return pending || shown;
 }
 
-/** One spring for both sides, so a quick toggle reverses from where it is. The roll arrives in 180ms, no overshoot. */
-const pendingSwap: Transition = {
-  type: 'spring',
-  visualDuration: 0.18,
-  bounce: 0,
-  opacity: { type: 'spring', visualDuration: 0.12, bounce: 0 },
-};
-
 /**
  * The label and the spinner roll through the button's box: pending, the label leaves through the top edge while the
- * spinner comes in through the bottom; done, the reverse. Each side is the box's full height, so `y: ±100%` takes it
- * all the way out. The label keeps the width. Reduced motion: only the fades.
+ * spinner comes in through the bottom; done, the reverse. Each side is the box's full height, so a full translate takes
+ * it all the way out. The label keeps the width. CSS transitions, so a quick toggle reverses from where it is and the
+ * first render does not animate. Reduced motion: only the fades.
  */
 function PendingSwap({ pending, size, children }: { pending: boolean; size: ButtonSize; children: React.ReactNode }) {
-  const reduced = useReducedMotion() ?? false;
-  const above = reduced ? { opacity: 0 } : { opacity: 0, y: '-100%' };
-  const below = reduced ? { opacity: 0 } : { opacity: 0, y: '100%' };
   return (
-    <LazyMotion features={loadMotionFeatures}>
+    <>
       {/* The label's window: in flow for the width, the button's full height, clipped top and bottom.
           `gap-[inherit]`: the label's parts keep the button's gap. */}
       <span className='inline-flex gap-[inherit] self-stretch overflow-y-clip'>
-        {/* Hidden by motion only: the label stays the button's accessible name while it is pending (`aria-busy`). */}
-        <m.span
+        {/* Hidden by a transform only: the label stays the button's accessible name while it is pending (`aria-busy`). */}
+        <span
           data-slot='button-label'
-          className='inline-flex items-center justify-center gap-[inherit]'
-          initial={false}
-          animate={pending ? above : { opacity: 1, y: 0 }}
-          transition={pendingSwap}>
+          className={cn(
+            'inline-flex items-center justify-center gap-[inherit] transition-[translate,opacity] duration-move ease-enter',
+            pending && '-translate-y-full opacity-0 motion-reduce:translate-y-0',
+          )}>
           {children}
-        </m.span>
+        </span>
       </span>
       <span className='pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]'>
-        <AnimatePresence initial={false}>
-          {pending && (
-            <m.span
-              key='spinner'
-              className='absolute inset-0 flex items-center justify-center'
-              initial={below}
-              animate={{ opacity: 1, y: 0 }}
-              exit={below}
-              transition={pendingSwap}>
-              {/* The CSS size wins over `size`. */}
-              <Spinner className={SPINNER_SIZE[size]} />
-            </m.span>
-          )}
-        </AnimatePresence>
+        <span
+          className={cn(
+            'absolute inset-0 flex items-center justify-center transition-[translate,opacity,visibility] duration-move ease-enter',
+            !pending && 'invisible translate-y-full opacity-0 motion-reduce:translate-y-0',
+          )}>
+          {/* The CSS size wins over `size`. */}
+          <Spinner className={SPINNER_SIZE[size]} />
+        </span>
       </span>
-    </LazyMotion>
+    </>
   );
 }
 
