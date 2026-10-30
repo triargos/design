@@ -1130,9 +1130,6 @@
     {
       "name": "spinner",
       "type": "registry:ui",
-      "dependencies": [
-        "framer-motion@13.4.4"
-      ],
       "registryDependencies": [
         "@pavo/theme",
         "@pavo/utils"
