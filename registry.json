@@ -63,6 +63,19 @@
       ]
     },
     {
+      "name": "locale-de",
+      "type": "registry:lib",
+      "registryDependencies": [
+        "@pavo/locale"
+      ],
+      "files": [
+        {
+          "path": "src/lib/locales/de.tsx",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "shortcut",
       "type": "registry:lib",
       "files": [

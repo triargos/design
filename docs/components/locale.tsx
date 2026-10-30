@@ -15,7 +15,8 @@ export default defineDocs({
         title='Default'
         description={
           <>
-            <Code>locale</Code> · <Code>timeZone</Code> · <Code>labels</Code> (merged over the English defaults)
+            <Code>locale</Code> · <Code>timeZone</Code> · <Code>labels</Code> (merged over the English defaults; a full
+            pack: <Code>@pavo/locale-de</Code>)
           </>
         }>
         <LocaleDefault />

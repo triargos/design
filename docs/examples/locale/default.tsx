@@ -5,22 +5,14 @@ import { DateInput } from '~/components/ui/date-input';
 import { IntegerInput } from '~/components/ui/integer-input';
 import { IntlDate } from '~/components/ui/intl-date';
 import { LocaleProvider } from '~/components/ui/locale';
+import { de } from '~/lib/locales/de';
 
-/** One provider sets the locale, the time zone and the labels of every control below it. */
+/** One provider sets the locale, the time zone and the labels of every control below it; `de` is the `locale-de` pack. */
 export function LocaleDefault() {
   const [date, setDate] = useState('2025-03-14');
   const [seats, setSeats] = useState(4);
   return (
-    <LocaleProvider
-      locale='de-DE'
-      timeZone='Europe/Berlin'
-      labels={{
-        chooseDate: 'Datum wählen',
-        decrease: 'Weniger',
-        increase: 'Mehr',
-        copy: 'Kopieren',
-        copied: 'Kopiert',
-      }}>
+    <LocaleProvider locale='de-DE' timeZone='Europe/Berlin' labels={de}>
       <div className='flex flex-col gap-group'>
         <DateInput aria-label='Fällig am' value={date} onValueChange={setDate} />
         <IntegerInput aria-label='Plätze' value={seats} onValueChange={setSeats} />
