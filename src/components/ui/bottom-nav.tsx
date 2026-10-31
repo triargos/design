@@ -1,13 +1,13 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
-import { animate, LazyMotion, m, type Transition, useReducedMotion } from 'framer-motion';
 import { IconArrowLeft, IconChevronRight, IconDots } from '@tabler/icons-react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 
 import { useLocale } from '~/components/ui/locale';
 import { useLinkRender } from '~/components/ui/link';
-import { loadMotionFeatures } from '~/lib/motion/load';
+import { useReducedMotion } from '~/hooks/use-reduced-motion';
+import { animateTo, springEasing } from '~/lib/animate';
 import { cn } from '~/lib/utils';
 
 type BottomNavContextValue = {
@@ -48,9 +48,9 @@ function BottomNavProvider({ children }: { children: React.ReactNode }) {
 }
 
 /** A swap: a row on its way out (`data-exiting`) beside the one coming in. Springs past a little, as the morph does. */
-const swapping = { type: 'spring', duration: 0.45, bounce: 0.25 } as const;
+const swapping = { duration: 400 } as const;
 /** A size change in place (a count grows a digit, a row wraps): no overshoot. */
-const resizing = { type: 'spring', duration: 0.25, bounce: 0 } as const;
+const resizing = { duration: 280 } as const;
 
 /**
  * Holds a shell (`BottomNavList`'s, an `ActionBar`'s in the page) at the size of `layer`, what it shows: the first
@@ -90,10 +90,13 @@ function useFitShell(
       }
       const swap = layer.querySelector('[data-exiting]') !== null;
       // Explicit keyframes: the inline size is set behind Motion's back.
-      running = animate(
+      running = animateTo(
         element,
-        { width: [element.offsetWidth, width], height: [element.offsetHeight, height] },
-        swap ? swapping : resizing,
+        {
+          width: [`${element.offsetWidth}px`, `${width}px`],
+          height: [`${element.offsetHeight}px`, `${height}px`],
+        },
+        { ...(swap ? swapping : resizing), easing: springEasing() },
       );
     };
     fit(false);
@@ -201,13 +204,14 @@ function useOptimisticCurrent(part: string, tab: string) {
 // it squeezes; the new content cascades in, rising and sharpening, as the shell opens. The shell springs, so a quick
 // open-close turns around from where it is.
 // A tab bar is tapped all day: the whole morph settles in under 400ms.
-const squeeze = { duration: 0.07, ease: [0.4, 0, 0.2, 1] } as const;
-const opening = { type: 'spring', duration: 0.3, bounce: 0.2 } as const;
-const closing = { type: 'spring', duration: 0.28, bounce: 0.12 } as const;
-const leave = { opacity: 0, scale: 0.8, filter: 'blur(8px)' } as const;
-const rest = { opacity: 1, scale: 1, filter: 'blur(0px)' } as const;
-const leaveTransition: Transition = { duration: 0.1 };
-const returnTransition: Transition = { duration: 0.18, delay: 0.05, ease: 'easeOut' };
+const squeeze = { duration: 70, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' } as const;
+const opening = { duration: 290 } as const;
+const closing = { duration: 300 } as const;
+const leave = { opacity: '0', transform: 'scale(0.8)', filter: 'blur(8px)' } as const;
+const rest = { opacity: '1', transform: 'none', filter: 'blur(0px)' } as const;
+const leaveTransition = { duration: 100, easing: 'ease-out' } as const;
+const fade = { duration: 150, easing: 'ease-out' } as const;
+const returnTransition = { duration: 180, delay: 50, easing: 'ease-out' } as const;
 /**
  * How each layer's items cascade in (ms). The panel's rows wait for the squeeze and rise, with a little overshoot,
  * into a shell growing several rows tall. The dock swaps with the tabs at the same height and about the same width: no
@@ -233,7 +237,7 @@ const pageEnter = {
   easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
 } as const;
 /** The tabs coming back from the dock: at once, as the shell springs. */
-const dockReturnTransition: Transition = { duration: 0.2, ease: 'easeOut' };
+const dockReturnTransition = { duration: 200, easing: 'ease-out' } as const;
 
 /**
  * The app navigation on a phone, floating over the page on the popup surface: a bar of icon tabs (`BottomNavList`)
@@ -325,7 +329,7 @@ function BottomNavList({
   const setDock = nav?.setDock;
   // The docked bar: a new one while docked swaps in without the morph.
   const dockedBar = view === 'dock' ? (nav?.top ?? null) : null;
-  const reduced = useReducedMotion() ?? false;
+  const reduced = useReducedMotion();
   const shellRef = React.useRef<HTMLDivElement>(null);
   const [tabs, setTabs] = React.useState<HTMLElement | null>(null);
   const [dock, setDockLayer] = React.useState<HTMLDivElement | null>(null);
@@ -410,10 +414,9 @@ function BottomNavList({
       for (const animation of running) animation.stop();
     };
     // The layer's items rise in one after another, blurred, as the shell opens: the panel's rows, or the docked
-    // toolbar's row (not one on its way out). Plain Web Animations, not Motion: `fill: 'backwards'` holds the start
-    // through the stagger, and when one ends the item is simply its own style again. Motion swaps its finished
-    // animation for inline styles a frame apart, which flickers as the buttons settle; and inline styles would set off
-    // a `Button`'s own transitions.
+    // toolbar's row (not one on its way out). `fill: 'backwards'`, not `animateTo`: it holds the start through the
+    // stagger, and when one ends the item is simply its own style again; inline styles would set off a `Button`'s own
+    // transitions.
     const cascadeIn = (kind: 'panel' | 'dock') => {
       const row = shown.querySelector(
         '[data-slot=action-bar]:not([data-exiting]) [data-slot=action-bar-content]:not([data-exiting])',
@@ -487,15 +490,15 @@ function BottomNavList({
       return cleanup;
     }
     if (from.view === view) {
-      for (const layer of hidden) animate(layer, { opacity: 0 }, { duration: 0 });
-      animate(shown, { opacity: 1 }, { duration: 0 });
+      for (const layer of hidden) layer.style.opacity = '0';
+      shown.style.opacity = '1';
       return;
     }
     if (reduced) {
       // No squeeze, no blur, no cascade: the layers fade, the fit jumps.
-      for (const layer of hidden) animate(layer, { opacity: 0 }, { duration: 0.15 });
-      animate(shown, { opacity: 1 }, { duration: 0.15 });
-      return;
+      for (const layer of hidden) track(animateTo(layer, { opacity: '0' }, fade));
+      track(animateTo(shown, { opacity: '1' }, fade));
+      return cleanup;
     }
 
     morphing.current = true;
@@ -504,15 +507,14 @@ function BottomNavList({
     const start = { width: shell.offsetWidth, height: shell.offsetHeight };
     Object.assign(shell.style, { width: `${start.width}px`, height: `${start.height}px` });
 
-    // Explicit keyframes throughout: Motion remembers the values it last animated on an element, and the inline styles
-    // set here and by `useFitShell` happen behind its back.
     const docking = from.view === 'dock' || view === 'dock';
+    const easing = springEasing();
     const spring = () => {
       const target = {
-        width: [shell.offsetWidth, sizedBy.offsetWidth],
-        height: [shell.offsetHeight, sizedBy.offsetHeight],
+        width: [`${shell.offsetWidth}px`, `${sizedBy.offsetWidth}px`],
+        height: [`${shell.offsetHeight}px`, `${sizedBy.offsetHeight}px`],
       };
-      void track(animate(shell, target, view === 'tabs' ? closing : opening)).then(() => {
+      void track(animateTo(shell, target, { ...(view === 'tabs' ? closing : opening), easing })).finished.then(() => {
         if (cancelled) return;
         morphing.current = false;
         layers.panel!.style.overflowY = '';
@@ -523,18 +525,17 @@ function BottomNavList({
     if (docking) spring();
     else {
       const squeezed = { width: Math.min(start.width * 0.75, 200), height: 32 };
-      void track(
-        animate(shell, { width: [start.width, squeezed.width], height: [start.height, squeezed.height] }, squeeze),
-      ).then(() => {
+      const size = (box: { width: number; height: number }) => ({ width: `${box.width}px`, height: `${box.height}px` });
+      void track(animateTo(shell, [size(start), size(squeezed)], squeeze)).finished.then(() => {
         if (!cancelled) spring();
       });
     }
 
-    for (const layer of hidden) track(animate(layer, leave, leaveTransition));
-    if (view === 'tabs') track(animate(shown, rest, docking ? dockReturnTransition : returnTransition));
+    for (const layer of hidden) track(animateTo(layer, leave, leaveTransition));
+    if (view === 'tabs') track(animateTo(shown, rest, docking ? dockReturnTransition : returnTransition));
     else {
       // The layer shows at once; its items cascade in.
-      track(animate(shown, rest, { duration: 0 }));
+      Object.assign(shown.style, rest);
       cascadeIn(view);
     }
     return cleanup;
@@ -946,7 +947,6 @@ function BottomNavMoreGroup({
  */
 function BottomNavAction({ className, render, ...props }: useRender.ComponentProps<'button'>) {
   const { view } = useBar('BottomNavAction');
-  const reduced = useReducedMotion() ?? false;
   const away = view !== 'tabs';
   const button = useRender({
     defaultTagName: 'button',
@@ -966,17 +966,16 @@ function BottomNavAction({ className, render, ...props }: useRender.ComponentPro
     ),
   });
   return (
-    <LazyMotion features={loadMotionFeatures}>
-      <m.div
-        className='pointer-events-auto col-start-1 row-start-1 origin-bottom justify-self-end'
-        initial={false}
-        animate={away ? (reduced ? { opacity: 0 } : leave) : rest}
-        // Back at once, with the shell, rather than after the tabs.
-        transition={away ? leaveTransition : dockReturnTransition}
-        inert={away}>
-        {button}
-      </m.div>
-    </LazyMotion>
+    <div
+      data-away={away || undefined}
+      // Back at once, with the shell, rather than after the tabs.
+      className={cn(
+        'pointer-events-auto col-start-1 row-start-1 origin-bottom justify-self-end transition-[opacity,scale,filter] duration-move ease-[ease-out]',
+        'data-away:opacity-0 data-away:duration-enter data-away:ease-[ease-out] motion-safe:data-away:scale-80 motion-safe:data-away:blur-[8px]',
+      )}
+      inert={away}>
+      {button}
+    </div>
   );
 }
 

@@ -1,34 +1,9 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
-import { AnimatePresence, LazyMotion, m, useReducedMotion } from 'framer-motion';
 import type { ComponentProps, ReactNode } from 'react';
 
-import { loadMotionFeatures } from '~/lib/motion/load';
+import { usePresence } from '~/hooks/use-presence';
 import { cn } from '~/lib/utils';
-
-// Springs, not fixed durations: `show` can flip rapidly, and a spring keeps its velocity through an interrupted
-// animation. restDelta/restSpeed sit below Motion's pixel-tuned defaults because gridTemplateRows only spans 0–1fr;
-// the defaults stop ~1% off target and the final snap reads as a stutter.
-const cardRevealTransition = {
-  type: 'spring',
-  duration: 0.3,
-  bounce: 0.25,
-  restDelta: 0.001,
-  restSpeed: 0.01,
-} as const;
-const cardCollapseTransition = {
-  type: 'spring',
-  duration: 0.15,
-  bounce: 0,
-  restDelta: 0.001,
-  restSpeed: 0.01,
-} as const;
-
-// grid-template-rows (0fr ↔ 1fr), not height (0 ↔ auto): animating to/from "auto" makes Motion spring a px value, then
-// swap the inline style back to `height: auto`; that swap is a stutter on the last frame. fr values interpolate
-// directly.
-const gridCollapsed = { gridTemplateRows: '0fr', opacity: 0 } as const;
-const gridExpanded = { gridTemplateRows: '1fr', opacity: 1 } as const;
 
 // Geometry: the shell is `rounded-card` and sets `--outer-radius` / `--outer-inset` (`p-card-inset`); the content takes
 // `rounded-inner`, so it stays concentric at any tuned card radius or inset. Without a shell it falls back to
@@ -100,30 +75,29 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
  * the edge; the sides on the content's text edge.
  */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
-  const shouldReduceMotion = useReducedMotion();
-
+  const presence = usePresence<HTMLDivElement>(show);
+  if (!presence.mounted) return null;
   return (
-    <LazyMotion features={loadMotionFeatures}>
-      <AnimatePresence initial={false}>
-        {show && (
-          <m.div
-            data-slot='card-footer'
-            initial={shouldReduceMotion ? false : gridCollapsed}
-            animate={{ ...gridExpanded, transition: cardRevealTransition }}
-            exit={shouldReduceMotion ? { opacity: 0 } : { ...gridCollapsed, transition: cardCollapseTransition }}
-            className='grid overflow-hidden'>
-            {/* min-h-0: grid items default to min-height:auto and would refuse to collapse to 0fr. */}
-            <div className='min-h-0 overflow-hidden'>
-              {/* A margin on the child, not padding on the grid item: padding floors the grid track and the exit spring
-                stalls before unmount. */}
-              <div className={cn('mb-group px-[calc(var(--spacing-card)+1px)] pt-group', className)} {...props}>
-                {children}
-              </div>
-            </div>
-          </m.div>
-        )}
-      </AnimatePresence>
-    </LazyMotion>
+    // grid-template-rows (0fr ↔ 1fr), not height: a fold to `auto` without measuring.
+    <div
+      ref={presence.ref}
+      data-slot='card-footer'
+      data-leaving={presence.leaving || undefined}
+      className={cn(
+        'grid grid-rows-[1fr] overflow-hidden transition-[grid-template-rows,opacity] duration-fold ease-spring-bounce',
+        'data-leaving:opacity-0 data-leaving:duration-fold-sm data-leaving:ease-spring motion-safe:data-leaving:grid-rows-[0fr]',
+        'motion-reduce:duration-fold-sm motion-reduce:ease-enter',
+        presence.entering && 'starting:opacity-0 motion-safe:starting:grid-rows-[0fr]',
+      )}>
+      {/* min-h-0: grid items default to min-height:auto and would refuse to collapse to 0fr. */}
+      <div className='min-h-0 overflow-hidden'>
+        {/* A margin on the child, not padding on the grid item: padding floors the grid track and the fold stalls
+          before unmount. */}
+        <div className={cn('mb-group px-[calc(var(--spacing-card)+1px)] pt-group', className)} {...props}>
+          {children}
+        </div>
+      </div>
+    </div>
   );
 }
 

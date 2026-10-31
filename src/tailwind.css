@@ -314,7 +314,7 @@
   --ease-move: cubic-bezier(0.645, 0.045, 0.355, 1);
   /* Springs for CSS: a damped spring sampled into `linear()`. `spring` (ζ 0.82, ~1% overshoot) carries drawers and
      pages; `spring-bounce` (ζ 0.62, ~8% overshoot) a press release, an indicator, a check. Never on a transform that
-     carries text (Motion, below). Interruptible motion in code stays a Motion spring. */
+     carries text (Motion, below). Web Animations in code read `--ease-spring` (`lib/animate`). */
   --ease-spring: linear(
     0,
     0.0214,
@@ -401,10 +401,12 @@
     0.9995,
     1
   );
-  /* A drawer entering and leaving; a bouncing indicator; a press release. Its pages morph on Motion springs. */
+  /* A drawer entering and leaving; a bouncing indicator; a press release; a height fold. */
   --transition-duration-drawer: 560ms;
   --transition-duration-indicator: 400ms;
   --transition-duration-press: 300ms;
+  --transition-duration-fold: 400ms;
+  --transition-duration-fold-sm: 150ms;
 
   --text-*: initial;
 
