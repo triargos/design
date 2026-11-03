@@ -8,24 +8,244 @@ import { modifyFields } from 'foldkit/struct';
 
 import { homeView, notFoundView } from './home.ts';
 import type { PageContext } from './pageContext.ts';
+import * as AccordionPage from './pages/accordion.ts';
+import * as AlertPage from './pages/alert.ts';
+import * as AlertDialogPage from './pages/alert-dialog.ts';
+import * as AvatarPage from './pages/avatar.ts';
+import * as BadgePage from './pages/badge.ts';
+import * as BottomNavPage from './pages/bottom-nav.ts';
+import * as BreadcrumbPage from './pages/breadcrumb.ts';
 import * as ButtonPage from './pages/button.ts';
+import * as ButtonGroupPage from './pages/button-group.ts';
+import * as CalendarPage from './pages/calendar.ts';
+import * as CardPage from './pages/card.ts';
+import * as ChartPage from './pages/chart.ts';
+import * as CheckboxPage from './pages/checkbox.ts';
+import * as ColorPickerPage from './pages/color-picker.ts';
+import * as ComboboxPage from './pages/combobox.ts';
+import * as CommandPage from './pages/command.ts';
+import * as ContextMenuPage from './pages/context-menu.ts';
+import * as CopyButtonPage from './pages/copy-button.ts';
+import * as DateInputPage from './pages/date-input.ts';
 import * as DialogPage from './pages/dialog.ts';
+import * as DrawerPage from './pages/drawer.ts';
+import * as DropdownMenuPage from './pages/dropdown-menu.ts';
+import * as EmptyPage from './pages/empty.ts';
+import * as FadeInPage from './pages/fade-in.ts';
+import * as FieldPage from './pages/field.ts';
+import * as FileDropZonePage from './pages/file-drop-zone.ts';
+import * as InputPage from './pages/input.ts';
+import * as InputGroupPage from './pages/input-group.ts';
+import * as InputOtpPage from './pages/input-otp.ts';
+import * as IntegerInputPage from './pages/integer-input.ts';
+import * as IntlDatePage from './pages/intl-date.ts';
+import * as ItemPage from './pages/item.ts';
+import * as KbdPage from './pages/kbd.ts';
+import * as PopoverPage from './pages/popover.ts';
+import * as ProgressPage from './pages/progress.ts';
+import * as ProsePage from './pages/prose.ts';
+import * as RadioGroupPage from './pages/radio-group.ts';
+import * as SelectPage from './pages/select.ts';
+import * as SeparatorPage from './pages/separator.ts';
+import * as SheetPage from './pages/sheet.ts';
+import * as ShortcutTooltipPage from './pages/shortcut-tooltip.ts';
+import * as SidebarPage from './pages/sidebar.ts';
+import * as SkeletonPage from './pages/skeleton.ts';
+import * as SliderPage from './pages/slider.ts';
+import * as SortablePage from './pages/sortable.ts';
+import * as SpinnerPage from './pages/spinner.ts';
+import * as StatPage from './pages/stat.ts';
+import * as StatusDotPage from './pages/status-dot.ts';
+import * as StepperPage from './pages/stepper.ts';
+import * as SwitchPage from './pages/switch.ts';
+import * as TablePage from './pages/table.ts';
+import * as TabsPage from './pages/tabs.ts';
+import * as TextareaPage from './pages/textarea.ts';
+import * as TimelinePage from './pages/timeline.ts';
+import * as ToastPage from './pages/toast.ts';
+import * as TogglePage from './pages/toggle.ts';
+import * as TooltipPage from './pages/tooltip.ts';
 
 export const AppRoute = defineRouteUnion({
   Home: {},
+  Accordion: {},
+  Alert: {},
+  AlertDialog: {},
+  Avatar: {},
+  Badge: {},
+  BottomNav: {},
+  Breadcrumb: {},
   Button: {},
+  ButtonGroup: {},
+  Calendar: {},
+  Card: {},
+  Chart: {},
+  Checkbox: {},
+  ColorPicker: {},
+  Combobox: {},
+  Command: {},
+  ContextMenu: {},
+  CopyButton: {},
+  DateInput: {},
   Dialog: {},
+  Drawer: {},
+  DropdownMenu: {},
+  Empty: {},
+  FadeIn: {},
+  Field: {},
+  FileDropZone: {},
+  Input: {},
+  InputGroup: {},
+  InputOtp: {},
+  IntegerInput: {},
+  IntlDate: {},
+  Item: {},
+  Kbd: {},
+  Popover: {},
+  Progress: {},
+  Prose: {},
+  RadioGroup: {},
+  Select: {},
+  Separator: {},
+  Sheet: {},
+  ShortcutTooltip: {},
+  Sidebar: {},
+  Skeleton: {},
+  Slider: {},
+  Sortable: {},
+  Spinner: {},
+  Stat: {},
+  StatusDot: {},
+  Stepper: {},
+  Switch: {},
+  Table: {},
+  Tabs: {},
+  Textarea: {},
+  Timeline: {},
+  Toast: {},
+  Toggle: {},
+  Tooltip: {},
   NotFound: { path: Schema.String },
 });
 export type AppRoute = typeof AppRoute.Type;
 
 const homeRouter = pipe(Route.root, Route.mapTo(AppRoute.Home));
+const accordionRouter = pipe(literal('accordion'), Route.mapTo(AppRoute.Accordion));
+const alertRouter = pipe(literal('alert'), Route.mapTo(AppRoute.Alert));
+const alertDialogRouter = pipe(literal('alert-dialog'), Route.mapTo(AppRoute.AlertDialog));
+const avatarRouter = pipe(literal('avatar'), Route.mapTo(AppRoute.Avatar));
+const badgeRouter = pipe(literal('badge'), Route.mapTo(AppRoute.Badge));
+const bottomNavRouter = pipe(literal('bottom-nav'), Route.mapTo(AppRoute.BottomNav));
+const breadcrumbRouter = pipe(literal('breadcrumb'), Route.mapTo(AppRoute.Breadcrumb));
 const buttonRouter = pipe(literal('button'), Route.mapTo(AppRoute.Button));
+const buttonGroupRouter = pipe(literal('button-group'), Route.mapTo(AppRoute.ButtonGroup));
+const calendarRouter = pipe(literal('calendar'), Route.mapTo(AppRoute.Calendar));
+const cardRouter = pipe(literal('card'), Route.mapTo(AppRoute.Card));
+const chartRouter = pipe(literal('chart'), Route.mapTo(AppRoute.Chart));
+const checkboxRouter = pipe(literal('checkbox'), Route.mapTo(AppRoute.Checkbox));
+const colorPickerRouter = pipe(literal('color-picker'), Route.mapTo(AppRoute.ColorPicker));
+const comboboxRouter = pipe(literal('combobox'), Route.mapTo(AppRoute.Combobox));
+const commandRouter = pipe(literal('command'), Route.mapTo(AppRoute.Command));
+const contextMenuRouter = pipe(literal('context-menu'), Route.mapTo(AppRoute.ContextMenu));
+const copyButtonRouter = pipe(literal('copy-button'), Route.mapTo(AppRoute.CopyButton));
+const dateInputRouter = pipe(literal('date-input'), Route.mapTo(AppRoute.DateInput));
 const dialogRouter = pipe(literal('dialog'), Route.mapTo(AppRoute.Dialog));
+const drawerRouter = pipe(literal('drawer'), Route.mapTo(AppRoute.Drawer));
+const dropdownMenuRouter = pipe(literal('dropdown-menu'), Route.mapTo(AppRoute.DropdownMenu));
+const emptyRouter = pipe(literal('empty'), Route.mapTo(AppRoute.Empty));
+const fadeInRouter = pipe(literal('fade-in'), Route.mapTo(AppRoute.FadeIn));
+const fieldRouter = pipe(literal('field'), Route.mapTo(AppRoute.Field));
+const fileDropZoneRouter = pipe(literal('file-drop-zone'), Route.mapTo(AppRoute.FileDropZone));
+const inputRouter = pipe(literal('input'), Route.mapTo(AppRoute.Input));
+const inputGroupRouter = pipe(literal('input-group'), Route.mapTo(AppRoute.InputGroup));
+const inputOtpRouter = pipe(literal('input-otp'), Route.mapTo(AppRoute.InputOtp));
+const integerInputRouter = pipe(literal('integer-input'), Route.mapTo(AppRoute.IntegerInput));
+const intlDateRouter = pipe(literal('intl-date'), Route.mapTo(AppRoute.IntlDate));
+const itemRouter = pipe(literal('item'), Route.mapTo(AppRoute.Item));
+const kbdRouter = pipe(literal('kbd'), Route.mapTo(AppRoute.Kbd));
+const popoverRouter = pipe(literal('popover'), Route.mapTo(AppRoute.Popover));
+const progressRouter = pipe(literal('progress'), Route.mapTo(AppRoute.Progress));
+const proseRouter = pipe(literal('prose'), Route.mapTo(AppRoute.Prose));
+const radioGroupRouter = pipe(literal('radio-group'), Route.mapTo(AppRoute.RadioGroup));
+const selectRouter = pipe(literal('select'), Route.mapTo(AppRoute.Select));
+const separatorRouter = pipe(literal('separator'), Route.mapTo(AppRoute.Separator));
+const sheetRouter = pipe(literal('sheet'), Route.mapTo(AppRoute.Sheet));
+const shortcutTooltipRouter = pipe(literal('shortcut-tooltip'), Route.mapTo(AppRoute.ShortcutTooltip));
+const sidebarRouter = pipe(literal('sidebar'), Route.mapTo(AppRoute.Sidebar));
+const skeletonRouter = pipe(literal('skeleton'), Route.mapTo(AppRoute.Skeleton));
+const sliderRouter = pipe(literal('slider'), Route.mapTo(AppRoute.Slider));
+const sortableRouter = pipe(literal('sortable'), Route.mapTo(AppRoute.Sortable));
+const spinnerRouter = pipe(literal('spinner'), Route.mapTo(AppRoute.Spinner));
+const statRouter = pipe(literal('stat'), Route.mapTo(AppRoute.Stat));
+const statusDotRouter = pipe(literal('status-dot'), Route.mapTo(AppRoute.StatusDot));
+const stepperRouter = pipe(literal('stepper'), Route.mapTo(AppRoute.Stepper));
+const switchRouter = pipe(literal('switch'), Route.mapTo(AppRoute.Switch));
+const tableRouter = pipe(literal('table'), Route.mapTo(AppRoute.Table));
+const tabsRouter = pipe(literal('tabs'), Route.mapTo(AppRoute.Tabs));
+const textareaRouter = pipe(literal('textarea'), Route.mapTo(AppRoute.Textarea));
+const timelineRouter = pipe(literal('timeline'), Route.mapTo(AppRoute.Timeline));
+const toastRouter = pipe(literal('toast'), Route.mapTo(AppRoute.Toast));
+const toggleRouter = pipe(literal('toggle'), Route.mapTo(AppRoute.Toggle));
+const tooltipRouter = pipe(literal('tooltip'), Route.mapTo(AppRoute.Tooltip));
 
 const routeParser = Route.oneOf(
+  accordionRouter,
+  alertRouter,
+  alertDialogRouter,
+  avatarRouter,
+  badgeRouter,
+  bottomNavRouter,
+  breadcrumbRouter,
   buttonRouter,
+  buttonGroupRouter,
+  calendarRouter,
+  cardRouter,
+  chartRouter,
+  checkboxRouter,
+  colorPickerRouter,
+  comboboxRouter,
+  commandRouter,
+  contextMenuRouter,
+  copyButtonRouter,
+  dateInputRouter,
   dialogRouter,
+  drawerRouter,
+  dropdownMenuRouter,
+  emptyRouter,
+  fadeInRouter,
+  fieldRouter,
+  fileDropZoneRouter,
+  inputRouter,
+  inputGroupRouter,
+  inputOtpRouter,
+  integerInputRouter,
+  intlDateRouter,
+  itemRouter,
+  kbdRouter,
+  popoverRouter,
+  progressRouter,
+  proseRouter,
+  radioGroupRouter,
+  selectRouter,
+  separatorRouter,
+  sheetRouter,
+  shortcutTooltipRouter,
+  sidebarRouter,
+  skeletonRouter,
+  sliderRouter,
+  sortableRouter,
+  spinnerRouter,
+  statRouter,
+  statusDotRouter,
+  stepperRouter,
+  switchRouter,
+  tableRouter,
+  tabsRouter,
+  textareaRouter,
+  timelineRouter,
+  toastRouter,
+  toggleRouter,
+  tooltipRouter,
   homeRouter,
 );
 
@@ -34,44 +254,445 @@ export const urlToAppRoute = Route.parseUrlWithFallback(routeParser, AppRoute.No
 export type NavItem = Readonly<{ title: string; description: string; href: string; routeTag: AppRoute["_tag"] }>;
 
 export const NAV_ITEMS: ReadonlyArray<NavItem> = [
+  { title: AccordionPage.title, description: AccordionPage.description, href: accordionRouter(), routeTag: 'Accordion' },
+  { title: AlertPage.title, description: AlertPage.description, href: alertRouter(), routeTag: 'Alert' },
+  { title: AlertDialogPage.title, description: AlertDialogPage.description, href: alertDialogRouter(), routeTag: 'AlertDialog' },
+  { title: AvatarPage.title, description: AvatarPage.description, href: avatarRouter(), routeTag: 'Avatar' },
+  { title: BadgePage.title, description: BadgePage.description, href: badgeRouter(), routeTag: 'Badge' },
+  { title: BottomNavPage.title, description: BottomNavPage.description, href: bottomNavRouter(), routeTag: 'BottomNav' },
+  { title: BreadcrumbPage.title, description: BreadcrumbPage.description, href: breadcrumbRouter(), routeTag: 'Breadcrumb' },
   { title: ButtonPage.title, description: ButtonPage.description, href: buttonRouter(), routeTag: 'Button' },
+  { title: ButtonGroupPage.title, description: ButtonGroupPage.description, href: buttonGroupRouter(), routeTag: 'ButtonGroup' },
+  { title: CalendarPage.title, description: CalendarPage.description, href: calendarRouter(), routeTag: 'Calendar' },
+  { title: CardPage.title, description: CardPage.description, href: cardRouter(), routeTag: 'Card' },
+  { title: ChartPage.title, description: ChartPage.description, href: chartRouter(), routeTag: 'Chart' },
+  { title: CheckboxPage.title, description: CheckboxPage.description, href: checkboxRouter(), routeTag: 'Checkbox' },
+  { title: ColorPickerPage.title, description: ColorPickerPage.description, href: colorPickerRouter(), routeTag: 'ColorPicker' },
+  { title: ComboboxPage.title, description: ComboboxPage.description, href: comboboxRouter(), routeTag: 'Combobox' },
+  { title: CommandPage.title, description: CommandPage.description, href: commandRouter(), routeTag: 'Command' },
+  { title: ContextMenuPage.title, description: ContextMenuPage.description, href: contextMenuRouter(), routeTag: 'ContextMenu' },
+  { title: CopyButtonPage.title, description: CopyButtonPage.description, href: copyButtonRouter(), routeTag: 'CopyButton' },
+  { title: DateInputPage.title, description: DateInputPage.description, href: dateInputRouter(), routeTag: 'DateInput' },
   { title: DialogPage.title, description: DialogPage.description, href: dialogRouter(), routeTag: 'Dialog' },
+  { title: DrawerPage.title, description: DrawerPage.description, href: drawerRouter(), routeTag: 'Drawer' },
+  { title: DropdownMenuPage.title, description: DropdownMenuPage.description, href: dropdownMenuRouter(), routeTag: 'DropdownMenu' },
+  { title: EmptyPage.title, description: EmptyPage.description, href: emptyRouter(), routeTag: 'Empty' },
+  { title: FadeInPage.title, description: FadeInPage.description, href: fadeInRouter(), routeTag: 'FadeIn' },
+  { title: FieldPage.title, description: FieldPage.description, href: fieldRouter(), routeTag: 'Field' },
+  { title: FileDropZonePage.title, description: FileDropZonePage.description, href: fileDropZoneRouter(), routeTag: 'FileDropZone' },
+  { title: InputPage.title, description: InputPage.description, href: inputRouter(), routeTag: 'Input' },
+  { title: InputGroupPage.title, description: InputGroupPage.description, href: inputGroupRouter(), routeTag: 'InputGroup' },
+  { title: InputOtpPage.title, description: InputOtpPage.description, href: inputOtpRouter(), routeTag: 'InputOtp' },
+  { title: IntegerInputPage.title, description: IntegerInputPage.description, href: integerInputRouter(), routeTag: 'IntegerInput' },
+  { title: IntlDatePage.title, description: IntlDatePage.description, href: intlDateRouter(), routeTag: 'IntlDate' },
+  { title: ItemPage.title, description: ItemPage.description, href: itemRouter(), routeTag: 'Item' },
+  { title: KbdPage.title, description: KbdPage.description, href: kbdRouter(), routeTag: 'Kbd' },
+  { title: PopoverPage.title, description: PopoverPage.description, href: popoverRouter(), routeTag: 'Popover' },
+  { title: ProgressPage.title, description: ProgressPage.description, href: progressRouter(), routeTag: 'Progress' },
+  { title: ProsePage.title, description: ProsePage.description, href: proseRouter(), routeTag: 'Prose' },
+  { title: RadioGroupPage.title, description: RadioGroupPage.description, href: radioGroupRouter(), routeTag: 'RadioGroup' },
+  { title: SelectPage.title, description: SelectPage.description, href: selectRouter(), routeTag: 'Select' },
+  { title: SeparatorPage.title, description: SeparatorPage.description, href: separatorRouter(), routeTag: 'Separator' },
+  { title: SheetPage.title, description: SheetPage.description, href: sheetRouter(), routeTag: 'Sheet' },
+  { title: ShortcutTooltipPage.title, description: ShortcutTooltipPage.description, href: shortcutTooltipRouter(), routeTag: 'ShortcutTooltip' },
+  { title: SidebarPage.title, description: SidebarPage.description, href: sidebarRouter(), routeTag: 'Sidebar' },
+  { title: SkeletonPage.title, description: SkeletonPage.description, href: skeletonRouter(), routeTag: 'Skeleton' },
+  { title: SliderPage.title, description: SliderPage.description, href: sliderRouter(), routeTag: 'Slider' },
+  { title: SortablePage.title, description: SortablePage.description, href: sortableRouter(), routeTag: 'Sortable' },
+  { title: SpinnerPage.title, description: SpinnerPage.description, href: spinnerRouter(), routeTag: 'Spinner' },
+  { title: StatPage.title, description: StatPage.description, href: statRouter(), routeTag: 'Stat' },
+  { title: StatusDotPage.title, description: StatusDotPage.description, href: statusDotRouter(), routeTag: 'StatusDot' },
+  { title: StepperPage.title, description: StepperPage.description, href: stepperRouter(), routeTag: 'Stepper' },
+  { title: SwitchPage.title, description: SwitchPage.description, href: switchRouter(), routeTag: 'Switch' },
+  { title: TablePage.title, description: TablePage.description, href: tableRouter(), routeTag: 'Table' },
+  { title: TabsPage.title, description: TabsPage.description, href: tabsRouter(), routeTag: 'Tabs' },
+  { title: TextareaPage.title, description: TextareaPage.description, href: textareaRouter(), routeTag: 'Textarea' },
+  { title: TimelinePage.title, description: TimelinePage.description, href: timelineRouter(), routeTag: 'Timeline' },
+  { title: ToastPage.title, description: ToastPage.description, href: toastRouter(), routeTag: 'Toast' },
+  { title: TogglePage.title, description: TogglePage.description, href: toggleRouter(), routeTag: 'Toggle' },
+  { title: TooltipPage.title, description: TooltipPage.description, href: tooltipRouter(), routeTag: 'Tooltip' },
 ];
 
 export const homeHref = homeRouter();
 
 export const Model = Schema.Struct({
+  accordion: AccordionPage.Model,
+  alert: AlertPage.Model,
+  alertDialog: AlertDialogPage.Model,
+  avatar: AvatarPage.Model,
+  badge: BadgePage.Model,
+  bottomNav: BottomNavPage.Model,
+  breadcrumb: BreadcrumbPage.Model,
   button: ButtonPage.Model,
+  buttonGroup: ButtonGroupPage.Model,
+  calendar: CalendarPage.Model,
+  card: CardPage.Model,
+  chart: ChartPage.Model,
+  checkbox: CheckboxPage.Model,
+  colorPicker: ColorPickerPage.Model,
+  combobox: ComboboxPage.Model,
+  command: CommandPage.Model,
+  contextMenu: ContextMenuPage.Model,
+  copyButton: CopyButtonPage.Model,
+  dateInput: DateInputPage.Model,
   dialog: DialogPage.Model,
+  drawer: DrawerPage.Model,
+  dropdownMenu: DropdownMenuPage.Model,
+  empty: EmptyPage.Model,
+  fadeIn: FadeInPage.Model,
+  field: FieldPage.Model,
+  fileDropZone: FileDropZonePage.Model,
+  input: InputPage.Model,
+  inputGroup: InputGroupPage.Model,
+  inputOtp: InputOtpPage.Model,
+  integerInput: IntegerInputPage.Model,
+  intlDate: IntlDatePage.Model,
+  item: ItemPage.Model,
+  kbd: KbdPage.Model,
+  popover: PopoverPage.Model,
+  progress: ProgressPage.Model,
+  prose: ProsePage.Model,
+  radioGroup: RadioGroupPage.Model,
+  select: SelectPage.Model,
+  separator: SeparatorPage.Model,
+  sheet: SheetPage.Model,
+  shortcutTooltip: ShortcutTooltipPage.Model,
+  sidebar: SidebarPage.Model,
+  skeleton: SkeletonPage.Model,
+  slider: SliderPage.Model,
+  sortable: SortablePage.Model,
+  spinner: SpinnerPage.Model,
+  stat: StatPage.Model,
+  statusDot: StatusDotPage.Model,
+  stepper: StepperPage.Model,
+  switch: SwitchPage.Model,
+  table: TablePage.Model,
+  tabs: TabsPage.Model,
+  textarea: TextareaPage.Model,
+  timeline: TimelinePage.Model,
+  toast: ToastPage.Model,
+  toggle: TogglePage.Model,
+  tooltip: TooltipPage.Model,
 });
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
+  GotAccordionPageMessage: { message: AccordionPage.Message },
+  GotAlertPageMessage: { message: AlertPage.Message },
+  GotAlertDialogPageMessage: { message: AlertDialogPage.Message },
+  GotAvatarPageMessage: { message: AvatarPage.Message },
+  GotBadgePageMessage: { message: BadgePage.Message },
+  GotBottomNavPageMessage: { message: BottomNavPage.Message },
+  GotBreadcrumbPageMessage: { message: BreadcrumbPage.Message },
   GotButtonPageMessage: { message: ButtonPage.Message },
+  GotButtonGroupPageMessage: { message: ButtonGroupPage.Message },
+  GotCalendarPageMessage: { message: CalendarPage.Message },
+  GotCardPageMessage: { message: CardPage.Message },
+  GotChartPageMessage: { message: ChartPage.Message },
+  GotCheckboxPageMessage: { message: CheckboxPage.Message },
+  GotColorPickerPageMessage: { message: ColorPickerPage.Message },
+  GotComboboxPageMessage: { message: ComboboxPage.Message },
+  GotCommandPageMessage: { message: CommandPage.Message },
+  GotContextMenuPageMessage: { message: ContextMenuPage.Message },
+  GotCopyButtonPageMessage: { message: CopyButtonPage.Message },
+  GotDateInputPageMessage: { message: DateInputPage.Message },
   GotDialogPageMessage: { message: DialogPage.Message },
+  GotDrawerPageMessage: { message: DrawerPage.Message },
+  GotDropdownMenuPageMessage: { message: DropdownMenuPage.Message },
+  GotEmptyPageMessage: { message: EmptyPage.Message },
+  GotFadeInPageMessage: { message: FadeInPage.Message },
+  GotFieldPageMessage: { message: FieldPage.Message },
+  GotFileDropZonePageMessage: { message: FileDropZonePage.Message },
+  GotInputPageMessage: { message: InputPage.Message },
+  GotInputGroupPageMessage: { message: InputGroupPage.Message },
+  GotInputOtpPageMessage: { message: InputOtpPage.Message },
+  GotIntegerInputPageMessage: { message: IntegerInputPage.Message },
+  GotIntlDatePageMessage: { message: IntlDatePage.Message },
+  GotItemPageMessage: { message: ItemPage.Message },
+  GotKbdPageMessage: { message: KbdPage.Message },
+  GotPopoverPageMessage: { message: PopoverPage.Message },
+  GotProgressPageMessage: { message: ProgressPage.Message },
+  GotProsePageMessage: { message: ProsePage.Message },
+  GotRadioGroupPageMessage: { message: RadioGroupPage.Message },
+  GotSelectPageMessage: { message: SelectPage.Message },
+  GotSeparatorPageMessage: { message: SeparatorPage.Message },
+  GotSheetPageMessage: { message: SheetPage.Message },
+  GotShortcutTooltipPageMessage: { message: ShortcutTooltipPage.Message },
+  GotSidebarPageMessage: { message: SidebarPage.Message },
+  GotSkeletonPageMessage: { message: SkeletonPage.Message },
+  GotSliderPageMessage: { message: SliderPage.Message },
+  GotSortablePageMessage: { message: SortablePage.Message },
+  GotSpinnerPageMessage: { message: SpinnerPage.Message },
+  GotStatPageMessage: { message: StatPage.Message },
+  GotStatusDotPageMessage: { message: StatusDotPage.Message },
+  GotStepperPageMessage: { message: StepperPage.Message },
+  GotSwitchPageMessage: { message: SwitchPage.Message },
+  GotTablePageMessage: { message: TablePage.Message },
+  GotTabsPageMessage: { message: TabsPage.Message },
+  GotTextareaPageMessage: { message: TextareaPage.Message },
+  GotTimelinePageMessage: { message: TimelinePage.Message },
+  GotToastPageMessage: { message: ToastPage.Message },
+  GotTogglePageMessage: { message: TogglePage.Message },
+  GotTooltipPageMessage: { message: TooltipPage.Message },
 });
 export type Message = typeof Message.Type;
 
 export const init = (context: PageContext): Update.Return<Model, Message> =>
   Update.foldChildInits(
     {
+      accordion: AccordionPage.init(context),
+      alert: AlertPage.init(context),
+      alertDialog: AlertDialogPage.init(context),
+      avatar: AvatarPage.init(context),
+      badge: BadgePage.init(context),
+      bottomNav: BottomNavPage.init(context),
+      breadcrumb: BreadcrumbPage.init(context),
       button: ButtonPage.init(context),
+      buttonGroup: ButtonGroupPage.init(context),
+      calendar: CalendarPage.init(context),
+      card: CardPage.init(context),
+      chart: ChartPage.init(context),
+      checkbox: CheckboxPage.init(context),
+      colorPicker: ColorPickerPage.init(context),
+      combobox: ComboboxPage.init(context),
+      command: CommandPage.init(context),
+      contextMenu: ContextMenuPage.init(context),
+      copyButton: CopyButtonPage.init(context),
+      dateInput: DateInputPage.init(context),
       dialog: DialogPage.init(context),
+      drawer: DrawerPage.init(context),
+      dropdownMenu: DropdownMenuPage.init(context),
+      empty: EmptyPage.init(context),
+      fadeIn: FadeInPage.init(context),
+      field: FieldPage.init(context),
+      fileDropZone: FileDropZonePage.init(context),
+      input: InputPage.init(context),
+      inputGroup: InputGroupPage.init(context),
+      inputOtp: InputOtpPage.init(context),
+      integerInput: IntegerInputPage.init(context),
+      intlDate: IntlDatePage.init(context),
+      item: ItemPage.init(context),
+      kbd: KbdPage.init(context),
+      popover: PopoverPage.init(context),
+      progress: ProgressPage.init(context),
+      prose: ProsePage.init(context),
+      radioGroup: RadioGroupPage.init(context),
+      select: SelectPage.init(context),
+      separator: SeparatorPage.init(context),
+      sheet: SheetPage.init(context),
+      shortcutTooltip: ShortcutTooltipPage.init(context),
+      sidebar: SidebarPage.init(context),
+      skeleton: SkeletonPage.init(context),
+      slider: SliderPage.init(context),
+      sortable: SortablePage.init(context),
+      spinner: SpinnerPage.init(context),
+      stat: StatPage.init(context),
+      statusDot: StatusDotPage.init(context),
+      stepper: StepperPage.init(context),
+      switch: SwitchPage.init(context),
+      table: TablePage.init(context),
+      tabs: TabsPage.init(context),
+      textarea: TextareaPage.init(context),
+      timeline: TimelinePage.init(context),
+      toast: ToastPage.init(context),
+      toggle: TogglePage.init(context),
+      tooltip: TooltipPage.init(context),
     },
     {
       toParentModel: (models) => models,
       folds: {
+        accordion: { toParentMessage: (message) => Message.GotAccordionPageMessage({ message }) },
+        alert: { toParentMessage: (message) => Message.GotAlertPageMessage({ message }) },
+        alertDialog: { toParentMessage: (message) => Message.GotAlertDialogPageMessage({ message }) },
+        avatar: { toParentMessage: (message) => Message.GotAvatarPageMessage({ message }) },
+        badge: { toParentMessage: (message) => Message.GotBadgePageMessage({ message }) },
+        bottomNav: { toParentMessage: (message) => Message.GotBottomNavPageMessage({ message }) },
+        breadcrumb: { toParentMessage: (message) => Message.GotBreadcrumbPageMessage({ message }) },
         button: { toParentMessage: (message) => Message.GotButtonPageMessage({ message }) },
+        buttonGroup: { toParentMessage: (message) => Message.GotButtonGroupPageMessage({ message }) },
+        calendar: { toParentMessage: (message) => Message.GotCalendarPageMessage({ message }) },
+        card: { toParentMessage: (message) => Message.GotCardPageMessage({ message }) },
+        chart: { toParentMessage: (message) => Message.GotChartPageMessage({ message }) },
+        checkbox: { toParentMessage: (message) => Message.GotCheckboxPageMessage({ message }) },
+        colorPicker: { toParentMessage: (message) => Message.GotColorPickerPageMessage({ message }) },
+        combobox: { toParentMessage: (message) => Message.GotComboboxPageMessage({ message }) },
+        command: { toParentMessage: (message) => Message.GotCommandPageMessage({ message }) },
+        contextMenu: { toParentMessage: (message) => Message.GotContextMenuPageMessage({ message }) },
+        copyButton: { toParentMessage: (message) => Message.GotCopyButtonPageMessage({ message }) },
+        dateInput: { toParentMessage: (message) => Message.GotDateInputPageMessage({ message }) },
         dialog: { toParentMessage: (message) => Message.GotDialogPageMessage({ message }) },
+        drawer: { toParentMessage: (message) => Message.GotDrawerPageMessage({ message }) },
+        dropdownMenu: { toParentMessage: (message) => Message.GotDropdownMenuPageMessage({ message }) },
+        empty: { toParentMessage: (message) => Message.GotEmptyPageMessage({ message }) },
+        fadeIn: { toParentMessage: (message) => Message.GotFadeInPageMessage({ message }) },
+        field: { toParentMessage: (message) => Message.GotFieldPageMessage({ message }) },
+        fileDropZone: { toParentMessage: (message) => Message.GotFileDropZonePageMessage({ message }) },
+        input: { toParentMessage: (message) => Message.GotInputPageMessage({ message }) },
+        inputGroup: { toParentMessage: (message) => Message.GotInputGroupPageMessage({ message }) },
+        inputOtp: { toParentMessage: (message) => Message.GotInputOtpPageMessage({ message }) },
+        integerInput: { toParentMessage: (message) => Message.GotIntegerInputPageMessage({ message }) },
+        intlDate: { toParentMessage: (message) => Message.GotIntlDatePageMessage({ message }) },
+        item: { toParentMessage: (message) => Message.GotItemPageMessage({ message }) },
+        kbd: { toParentMessage: (message) => Message.GotKbdPageMessage({ message }) },
+        popover: { toParentMessage: (message) => Message.GotPopoverPageMessage({ message }) },
+        progress: { toParentMessage: (message) => Message.GotProgressPageMessage({ message }) },
+        prose: { toParentMessage: (message) => Message.GotProsePageMessage({ message }) },
+        radioGroup: { toParentMessage: (message) => Message.GotRadioGroupPageMessage({ message }) },
+        select: { toParentMessage: (message) => Message.GotSelectPageMessage({ message }) },
+        separator: { toParentMessage: (message) => Message.GotSeparatorPageMessage({ message }) },
+        sheet: { toParentMessage: (message) => Message.GotSheetPageMessage({ message }) },
+        shortcutTooltip: { toParentMessage: (message) => Message.GotShortcutTooltipPageMessage({ message }) },
+        sidebar: { toParentMessage: (message) => Message.GotSidebarPageMessage({ message }) },
+        skeleton: { toParentMessage: (message) => Message.GotSkeletonPageMessage({ message }) },
+        slider: { toParentMessage: (message) => Message.GotSliderPageMessage({ message }) },
+        sortable: { toParentMessage: (message) => Message.GotSortablePageMessage({ message }) },
+        spinner: { toParentMessage: (message) => Message.GotSpinnerPageMessage({ message }) },
+        stat: { toParentMessage: (message) => Message.GotStatPageMessage({ message }) },
+        statusDot: { toParentMessage: (message) => Message.GotStatusDotPageMessage({ message }) },
+        stepper: { toParentMessage: (message) => Message.GotStepperPageMessage({ message }) },
+        switch: { toParentMessage: (message) => Message.GotSwitchPageMessage({ message }) },
+        table: { toParentMessage: (message) => Message.GotTablePageMessage({ message }) },
+        tabs: { toParentMessage: (message) => Message.GotTabsPageMessage({ message }) },
+        textarea: { toParentMessage: (message) => Message.GotTextareaPageMessage({ message }) },
+        timeline: { toParentMessage: (message) => Message.GotTimelinePageMessage({ message }) },
+        toast: { toParentMessage: (message) => Message.GotToastPageMessage({ message }) },
+        toggle: { toParentMessage: (message) => Message.GotTogglePageMessage({ message }) },
+        tooltip: { toParentMessage: (message) => Message.GotTooltipPageMessage({ message }) },
       },
     },
   );
+
+const foldAccordionPage = Update.foldChild({
+  update: AccordionPage.update,
+  read: (model: Model) => Option.some(model.accordion),
+  write: (model, nextAccordion) => modifyFields(model, { accordion: () => nextAccordion }),
+  toParentMessage: (message) => Message.GotAccordionPageMessage({ message }),
+});
+
+const foldAlertPage = Update.foldChild({
+  update: AlertPage.update,
+  read: (model: Model) => Option.some(model.alert),
+  write: (model, nextAlert) => modifyFields(model, { alert: () => nextAlert }),
+  toParentMessage: (message) => Message.GotAlertPageMessage({ message }),
+});
+
+const foldAlertDialogPage = Update.foldChild({
+  update: AlertDialogPage.update,
+  read: (model: Model) => Option.some(model.alertDialog),
+  write: (model, nextAlertDialog) => modifyFields(model, { alertDialog: () => nextAlertDialog }),
+  toParentMessage: (message) => Message.GotAlertDialogPageMessage({ message }),
+});
+
+const foldAvatarPage = Update.foldChild({
+  update: AvatarPage.update,
+  read: (model: Model) => Option.some(model.avatar),
+  write: (model, nextAvatar) => modifyFields(model, { avatar: () => nextAvatar }),
+  toParentMessage: (message) => Message.GotAvatarPageMessage({ message }),
+});
+
+const foldBadgePage = Update.foldChild({
+  update: BadgePage.update,
+  read: (model: Model) => Option.some(model.badge),
+  write: (model, nextBadge) => modifyFields(model, { badge: () => nextBadge }),
+  toParentMessage: (message) => Message.GotBadgePageMessage({ message }),
+});
+
+const foldBottomNavPage = Update.foldChild({
+  update: BottomNavPage.update,
+  read: (model: Model) => Option.some(model.bottomNav),
+  write: (model, nextBottomNav) => modifyFields(model, { bottomNav: () => nextBottomNav }),
+  toParentMessage: (message) => Message.GotBottomNavPageMessage({ message }),
+});
+
+const foldBreadcrumbPage = Update.foldChild({
+  update: BreadcrumbPage.update,
+  read: (model: Model) => Option.some(model.breadcrumb),
+  write: (model, nextBreadcrumb) => modifyFields(model, { breadcrumb: () => nextBreadcrumb }),
+  toParentMessage: (message) => Message.GotBreadcrumbPageMessage({ message }),
+});
 
 const foldButtonPage = Update.foldChild({
   update: ButtonPage.update,
   read: (model: Model) => Option.some(model.button),
   write: (model, nextButton) => modifyFields(model, { button: () => nextButton }),
   toParentMessage: (message) => Message.GotButtonPageMessage({ message }),
+});
+
+const foldButtonGroupPage = Update.foldChild({
+  update: ButtonGroupPage.update,
+  read: (model: Model) => Option.some(model.buttonGroup),
+  write: (model, nextButtonGroup) => modifyFields(model, { buttonGroup: () => nextButtonGroup }),
+  toParentMessage: (message) => Message.GotButtonGroupPageMessage({ message }),
+});
+
+const foldCalendarPage = Update.foldChild({
+  update: CalendarPage.update,
+  read: (model: Model) => Option.some(model.calendar),
+  write: (model, nextCalendar) => modifyFields(model, { calendar: () => nextCalendar }),
+  toParentMessage: (message) => Message.GotCalendarPageMessage({ message }),
+});
+
+const foldCardPage = Update.foldChild({
+  update: CardPage.update,
+  read: (model: Model) => Option.some(model.card),
+  write: (model, nextCard) => modifyFields(model, { card: () => nextCard }),
+  toParentMessage: (message) => Message.GotCardPageMessage({ message }),
+});
+
+const foldChartPage = Update.foldChild({
+  update: ChartPage.update,
+  read: (model: Model) => Option.some(model.chart),
+  write: (model, nextChart) => modifyFields(model, { chart: () => nextChart }),
+  toParentMessage: (message) => Message.GotChartPageMessage({ message }),
+});
+
+const foldCheckboxPage = Update.foldChild({
+  update: CheckboxPage.update,
+  read: (model: Model) => Option.some(model.checkbox),
+  write: (model, nextCheckbox) => modifyFields(model, { checkbox: () => nextCheckbox }),
+  toParentMessage: (message) => Message.GotCheckboxPageMessage({ message }),
+});
+
+const foldColorPickerPage = Update.foldChild({
+  update: ColorPickerPage.update,
+  read: (model: Model) => Option.some(model.colorPicker),
+  write: (model, nextColorPicker) => modifyFields(model, { colorPicker: () => nextColorPicker }),
+  toParentMessage: (message) => Message.GotColorPickerPageMessage({ message }),
+});
+
+const foldComboboxPage = Update.foldChild({
+  update: ComboboxPage.update,
+  read: (model: Model) => Option.some(model.combobox),
+  write: (model, nextCombobox) => modifyFields(model, { combobox: () => nextCombobox }),
+  toParentMessage: (message) => Message.GotComboboxPageMessage({ message }),
+});
+
+const foldCommandPage = Update.foldChild({
+  update: CommandPage.update,
+  read: (model: Model) => Option.some(model.command),
+  write: (model, nextCommand) => modifyFields(model, { command: () => nextCommand }),
+  toParentMessage: (message) => Message.GotCommandPageMessage({ message }),
+});
+
+const foldContextMenuPage = Update.foldChild({
+  update: ContextMenuPage.update,
+  read: (model: Model) => Option.some(model.contextMenu),
+  write: (model, nextContextMenu) => modifyFields(model, { contextMenu: () => nextContextMenu }),
+  toParentMessage: (message) => Message.GotContextMenuPageMessage({ message }),
+});
+
+const foldCopyButtonPage = Update.foldChild({
+  update: CopyButtonPage.update,
+  read: (model: Model) => Option.some(model.copyButton),
+  write: (model, nextCopyButton) => modifyFields(model, { copyButton: () => nextCopyButton }),
+  toParentMessage: (message) => Message.GotCopyButtonPageMessage({ message }),
+});
+
+const foldDateInputPage = Update.foldChild({
+  update: DateInputPage.update,
+  read: (model: Model) => Option.some(model.dateInput),
+  write: (model, nextDateInput) => modifyFields(model, { dateInput: () => nextDateInput }),
+  toParentMessage: (message) => Message.GotDateInputPageMessage({ message }),
 });
 
 const foldDialogPage = Update.foldChild({
@@ -81,10 +702,324 @@ const foldDialogPage = Update.foldChild({
   toParentMessage: (message) => Message.GotDialogPageMessage({ message }),
 });
 
+const foldDrawerPage = Update.foldChild({
+  update: DrawerPage.update,
+  read: (model: Model) => Option.some(model.drawer),
+  write: (model, nextDrawer) => modifyFields(model, { drawer: () => nextDrawer }),
+  toParentMessage: (message) => Message.GotDrawerPageMessage({ message }),
+});
+
+const foldDropdownMenuPage = Update.foldChild({
+  update: DropdownMenuPage.update,
+  read: (model: Model) => Option.some(model.dropdownMenu),
+  write: (model, nextDropdownMenu) => modifyFields(model, { dropdownMenu: () => nextDropdownMenu }),
+  toParentMessage: (message) => Message.GotDropdownMenuPageMessage({ message }),
+});
+
+const foldEmptyPage = Update.foldChild({
+  update: EmptyPage.update,
+  read: (model: Model) => Option.some(model.empty),
+  write: (model, nextEmpty) => modifyFields(model, { empty: () => nextEmpty }),
+  toParentMessage: (message) => Message.GotEmptyPageMessage({ message }),
+});
+
+const foldFadeInPage = Update.foldChild({
+  update: FadeInPage.update,
+  read: (model: Model) => Option.some(model.fadeIn),
+  write: (model, nextFadeIn) => modifyFields(model, { fadeIn: () => nextFadeIn }),
+  toParentMessage: (message) => Message.GotFadeInPageMessage({ message }),
+});
+
+const foldFieldPage = Update.foldChild({
+  update: FieldPage.update,
+  read: (model: Model) => Option.some(model.field),
+  write: (model, nextField) => modifyFields(model, { field: () => nextField }),
+  toParentMessage: (message) => Message.GotFieldPageMessage({ message }),
+});
+
+const foldFileDropZonePage = Update.foldChild({
+  update: FileDropZonePage.update,
+  read: (model: Model) => Option.some(model.fileDropZone),
+  write: (model, nextFileDropZone) => modifyFields(model, { fileDropZone: () => nextFileDropZone }),
+  toParentMessage: (message) => Message.GotFileDropZonePageMessage({ message }),
+});
+
+const foldInputPage = Update.foldChild({
+  update: InputPage.update,
+  read: (model: Model) => Option.some(model.input),
+  write: (model, nextInput) => modifyFields(model, { input: () => nextInput }),
+  toParentMessage: (message) => Message.GotInputPageMessage({ message }),
+});
+
+const foldInputGroupPage = Update.foldChild({
+  update: InputGroupPage.update,
+  read: (model: Model) => Option.some(model.inputGroup),
+  write: (model, nextInputGroup) => modifyFields(model, { inputGroup: () => nextInputGroup }),
+  toParentMessage: (message) => Message.GotInputGroupPageMessage({ message }),
+});
+
+const foldInputOtpPage = Update.foldChild({
+  update: InputOtpPage.update,
+  read: (model: Model) => Option.some(model.inputOtp),
+  write: (model, nextInputOtp) => modifyFields(model, { inputOtp: () => nextInputOtp }),
+  toParentMessage: (message) => Message.GotInputOtpPageMessage({ message }),
+});
+
+const foldIntegerInputPage = Update.foldChild({
+  update: IntegerInputPage.update,
+  read: (model: Model) => Option.some(model.integerInput),
+  write: (model, nextIntegerInput) => modifyFields(model, { integerInput: () => nextIntegerInput }),
+  toParentMessage: (message) => Message.GotIntegerInputPageMessage({ message }),
+});
+
+const foldIntlDatePage = Update.foldChild({
+  update: IntlDatePage.update,
+  read: (model: Model) => Option.some(model.intlDate),
+  write: (model, nextIntlDate) => modifyFields(model, { intlDate: () => nextIntlDate }),
+  toParentMessage: (message) => Message.GotIntlDatePageMessage({ message }),
+});
+
+const foldItemPage = Update.foldChild({
+  update: ItemPage.update,
+  read: (model: Model) => Option.some(model.item),
+  write: (model, nextItem) => modifyFields(model, { item: () => nextItem }),
+  toParentMessage: (message) => Message.GotItemPageMessage({ message }),
+});
+
+const foldKbdPage = Update.foldChild({
+  update: KbdPage.update,
+  read: (model: Model) => Option.some(model.kbd),
+  write: (model, nextKbd) => modifyFields(model, { kbd: () => nextKbd }),
+  toParentMessage: (message) => Message.GotKbdPageMessage({ message }),
+});
+
+const foldPopoverPage = Update.foldChild({
+  update: PopoverPage.update,
+  read: (model: Model) => Option.some(model.popover),
+  write: (model, nextPopover) => modifyFields(model, { popover: () => nextPopover }),
+  toParentMessage: (message) => Message.GotPopoverPageMessage({ message }),
+});
+
+const foldProgressPage = Update.foldChild({
+  update: ProgressPage.update,
+  read: (model: Model) => Option.some(model.progress),
+  write: (model, nextProgress) => modifyFields(model, { progress: () => nextProgress }),
+  toParentMessage: (message) => Message.GotProgressPageMessage({ message }),
+});
+
+const foldProsePage = Update.foldChild({
+  update: ProsePage.update,
+  read: (model: Model) => Option.some(model.prose),
+  write: (model, nextProse) => modifyFields(model, { prose: () => nextProse }),
+  toParentMessage: (message) => Message.GotProsePageMessage({ message }),
+});
+
+const foldRadioGroupPage = Update.foldChild({
+  update: RadioGroupPage.update,
+  read: (model: Model) => Option.some(model.radioGroup),
+  write: (model, nextRadioGroup) => modifyFields(model, { radioGroup: () => nextRadioGroup }),
+  toParentMessage: (message) => Message.GotRadioGroupPageMessage({ message }),
+});
+
+const foldSelectPage = Update.foldChild({
+  update: SelectPage.update,
+  read: (model: Model) => Option.some(model.select),
+  write: (model, nextSelect) => modifyFields(model, { select: () => nextSelect }),
+  toParentMessage: (message) => Message.GotSelectPageMessage({ message }),
+});
+
+const foldSeparatorPage = Update.foldChild({
+  update: SeparatorPage.update,
+  read: (model: Model) => Option.some(model.separator),
+  write: (model, nextSeparator) => modifyFields(model, { separator: () => nextSeparator }),
+  toParentMessage: (message) => Message.GotSeparatorPageMessage({ message }),
+});
+
+const foldSheetPage = Update.foldChild({
+  update: SheetPage.update,
+  read: (model: Model) => Option.some(model.sheet),
+  write: (model, nextSheet) => modifyFields(model, { sheet: () => nextSheet }),
+  toParentMessage: (message) => Message.GotSheetPageMessage({ message }),
+});
+
+const foldShortcutTooltipPage = Update.foldChild({
+  update: ShortcutTooltipPage.update,
+  read: (model: Model) => Option.some(model.shortcutTooltip),
+  write: (model, nextShortcutTooltip) => modifyFields(model, { shortcutTooltip: () => nextShortcutTooltip }),
+  toParentMessage: (message) => Message.GotShortcutTooltipPageMessage({ message }),
+});
+
+const foldSidebarPage = Update.foldChild({
+  update: SidebarPage.update,
+  read: (model: Model) => Option.some(model.sidebar),
+  write: (model, nextSidebar) => modifyFields(model, { sidebar: () => nextSidebar }),
+  toParentMessage: (message) => Message.GotSidebarPageMessage({ message }),
+});
+
+const foldSkeletonPage = Update.foldChild({
+  update: SkeletonPage.update,
+  read: (model: Model) => Option.some(model.skeleton),
+  write: (model, nextSkeleton) => modifyFields(model, { skeleton: () => nextSkeleton }),
+  toParentMessage: (message) => Message.GotSkeletonPageMessage({ message }),
+});
+
+const foldSliderPage = Update.foldChild({
+  update: SliderPage.update,
+  read: (model: Model) => Option.some(model.slider),
+  write: (model, nextSlider) => modifyFields(model, { slider: () => nextSlider }),
+  toParentMessage: (message) => Message.GotSliderPageMessage({ message }),
+});
+
+const foldSortablePage = Update.foldChild({
+  update: SortablePage.update,
+  read: (model: Model) => Option.some(model.sortable),
+  write: (model, nextSortable) => modifyFields(model, { sortable: () => nextSortable }),
+  toParentMessage: (message) => Message.GotSortablePageMessage({ message }),
+});
+
+const foldSpinnerPage = Update.foldChild({
+  update: SpinnerPage.update,
+  read: (model: Model) => Option.some(model.spinner),
+  write: (model, nextSpinner) => modifyFields(model, { spinner: () => nextSpinner }),
+  toParentMessage: (message) => Message.GotSpinnerPageMessage({ message }),
+});
+
+const foldStatPage = Update.foldChild({
+  update: StatPage.update,
+  read: (model: Model) => Option.some(model.stat),
+  write: (model, nextStat) => modifyFields(model, { stat: () => nextStat }),
+  toParentMessage: (message) => Message.GotStatPageMessage({ message }),
+});
+
+const foldStatusDotPage = Update.foldChild({
+  update: StatusDotPage.update,
+  read: (model: Model) => Option.some(model.statusDot),
+  write: (model, nextStatusDot) => modifyFields(model, { statusDot: () => nextStatusDot }),
+  toParentMessage: (message) => Message.GotStatusDotPageMessage({ message }),
+});
+
+const foldStepperPage = Update.foldChild({
+  update: StepperPage.update,
+  read: (model: Model) => Option.some(model.stepper),
+  write: (model, nextStepper) => modifyFields(model, { stepper: () => nextStepper }),
+  toParentMessage: (message) => Message.GotStepperPageMessage({ message }),
+});
+
+const foldSwitchPage = Update.foldChild({
+  update: SwitchPage.update,
+  read: (model: Model) => Option.some(model.switch),
+  write: (model, nextSwitch) => modifyFields(model, { switch: () => nextSwitch }),
+  toParentMessage: (message) => Message.GotSwitchPageMessage({ message }),
+});
+
+const foldTablePage = Update.foldChild({
+  update: TablePage.update,
+  read: (model: Model) => Option.some(model.table),
+  write: (model, nextTable) => modifyFields(model, { table: () => nextTable }),
+  toParentMessage: (message) => Message.GotTablePageMessage({ message }),
+});
+
+const foldTabsPage = Update.foldChild({
+  update: TabsPage.update,
+  read: (model: Model) => Option.some(model.tabs),
+  write: (model, nextTabs) => modifyFields(model, { tabs: () => nextTabs }),
+  toParentMessage: (message) => Message.GotTabsPageMessage({ message }),
+});
+
+const foldTextareaPage = Update.foldChild({
+  update: TextareaPage.update,
+  read: (model: Model) => Option.some(model.textarea),
+  write: (model, nextTextarea) => modifyFields(model, { textarea: () => nextTextarea }),
+  toParentMessage: (message) => Message.GotTextareaPageMessage({ message }),
+});
+
+const foldTimelinePage = Update.foldChild({
+  update: TimelinePage.update,
+  read: (model: Model) => Option.some(model.timeline),
+  write: (model, nextTimeline) => modifyFields(model, { timeline: () => nextTimeline }),
+  toParentMessage: (message) => Message.GotTimelinePageMessage({ message }),
+});
+
+const foldToastPage = Update.foldChild({
+  update: ToastPage.update,
+  read: (model: Model) => Option.some(model.toast),
+  write: (model, nextToast) => modifyFields(model, { toast: () => nextToast }),
+  toParentMessage: (message) => Message.GotToastPageMessage({ message }),
+});
+
+const foldTogglePage = Update.foldChild({
+  update: TogglePage.update,
+  read: (model: Model) => Option.some(model.toggle),
+  write: (model, nextToggle) => modifyFields(model, { toggle: () => nextToggle }),
+  toParentMessage: (message) => Message.GotTogglePageMessage({ message }),
+});
+
+const foldTooltipPage = Update.foldChild({
+  update: TooltipPage.update,
+  read: (model: Model) => Option.some(model.tooltip),
+  write: (model, nextTooltip) => modifyFields(model, { tooltip: () => nextTooltip }),
+  toParentMessage: (message) => Message.GotTooltipPageMessage({ message }),
+});
+
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
+    GotAccordionPageMessage: ({ message }) => foldAccordionPage(model, message),
+    GotAlertPageMessage: ({ message }) => foldAlertPage(model, message),
+    GotAlertDialogPageMessage: ({ message }) => foldAlertDialogPage(model, message),
+    GotAvatarPageMessage: ({ message }) => foldAvatarPage(model, message),
+    GotBadgePageMessage: ({ message }) => foldBadgePage(model, message),
+    GotBottomNavPageMessage: ({ message }) => foldBottomNavPage(model, message),
+    GotBreadcrumbPageMessage: ({ message }) => foldBreadcrumbPage(model, message),
     GotButtonPageMessage: ({ message }) => foldButtonPage(model, message),
+    GotButtonGroupPageMessage: ({ message }) => foldButtonGroupPage(model, message),
+    GotCalendarPageMessage: ({ message }) => foldCalendarPage(model, message),
+    GotCardPageMessage: ({ message }) => foldCardPage(model, message),
+    GotChartPageMessage: ({ message }) => foldChartPage(model, message),
+    GotCheckboxPageMessage: ({ message }) => foldCheckboxPage(model, message),
+    GotColorPickerPageMessage: ({ message }) => foldColorPickerPage(model, message),
+    GotComboboxPageMessage: ({ message }) => foldComboboxPage(model, message),
+    GotCommandPageMessage: ({ message }) => foldCommandPage(model, message),
+    GotContextMenuPageMessage: ({ message }) => foldContextMenuPage(model, message),
+    GotCopyButtonPageMessage: ({ message }) => foldCopyButtonPage(model, message),
+    GotDateInputPageMessage: ({ message }) => foldDateInputPage(model, message),
     GotDialogPageMessage: ({ message }) => foldDialogPage(model, message),
+    GotDrawerPageMessage: ({ message }) => foldDrawerPage(model, message),
+    GotDropdownMenuPageMessage: ({ message }) => foldDropdownMenuPage(model, message),
+    GotEmptyPageMessage: ({ message }) => foldEmptyPage(model, message),
+    GotFadeInPageMessage: ({ message }) => foldFadeInPage(model, message),
+    GotFieldPageMessage: ({ message }) => foldFieldPage(model, message),
+    GotFileDropZonePageMessage: ({ message }) => foldFileDropZonePage(model, message),
+    GotInputPageMessage: ({ message }) => foldInputPage(model, message),
+    GotInputGroupPageMessage: ({ message }) => foldInputGroupPage(model, message),
+    GotInputOtpPageMessage: ({ message }) => foldInputOtpPage(model, message),
+    GotIntegerInputPageMessage: ({ message }) => foldIntegerInputPage(model, message),
+    GotIntlDatePageMessage: ({ message }) => foldIntlDatePage(model, message),
+    GotItemPageMessage: ({ message }) => foldItemPage(model, message),
+    GotKbdPageMessage: ({ message }) => foldKbdPage(model, message),
+    GotPopoverPageMessage: ({ message }) => foldPopoverPage(model, message),
+    GotProgressPageMessage: ({ message }) => foldProgressPage(model, message),
+    GotProsePageMessage: ({ message }) => foldProsePage(model, message),
+    GotRadioGroupPageMessage: ({ message }) => foldRadioGroupPage(model, message),
+    GotSelectPageMessage: ({ message }) => foldSelectPage(model, message),
+    GotSeparatorPageMessage: ({ message }) => foldSeparatorPage(model, message),
+    GotSheetPageMessage: ({ message }) => foldSheetPage(model, message),
+    GotShortcutTooltipPageMessage: ({ message }) => foldShortcutTooltipPage(model, message),
+    GotSidebarPageMessage: ({ message }) => foldSidebarPage(model, message),
+    GotSkeletonPageMessage: ({ message }) => foldSkeletonPage(model, message),
+    GotSliderPageMessage: ({ message }) => foldSliderPage(model, message),
+    GotSortablePageMessage: ({ message }) => foldSortablePage(model, message),
+    GotSpinnerPageMessage: ({ message }) => foldSpinnerPage(model, message),
+    GotStatPageMessage: ({ message }) => foldStatPage(model, message),
+    GotStatusDotPageMessage: ({ message }) => foldStatusDotPage(model, message),
+    GotStepperPageMessage: ({ message }) => foldStepperPage(model, message),
+    GotSwitchPageMessage: ({ message }) => foldSwitchPage(model, message),
+    GotTablePageMessage: ({ message }) => foldTablePage(model, message),
+    GotTabsPageMessage: ({ message }) => foldTabsPage(model, message),
+    GotTextareaPageMessage: ({ message }) => foldTextareaPage(model, message),
+    GotTimelinePageMessage: ({ message }) => foldTimelinePage(model, message),
+    GotToastPageMessage: ({ message }) => foldToastPage(model, message),
+    GotTogglePageMessage: ({ message }) => foldTogglePage(model, message),
+    GotTooltipPageMessage: ({ message }) => foldTooltipPage(model, message),
   });
 
 export const view = Submodel.defineView<Model, Message, Readonly<{ route: AppRoute }>>(
@@ -92,12 +1027,138 @@ export const view = Submodel.defineView<Model, Message, Readonly<{ route: AppRou
     AppRoute.match<Html>(route, {
       Home: () => homeView(NAV_ITEMS, h),
       NotFound: ({ path }) => notFoundView(path, h),
+      Accordion: () =>
+        h.submodel({
+          slotId: 'accordion',
+          model: model.accordion,
+          view: AccordionPage.view,
+          toParentMessage: (message) => Message.GotAccordionPageMessage({ message }),
+        }),
+      Alert: () =>
+        h.submodel({
+          slotId: 'alert',
+          model: model.alert,
+          view: AlertPage.view,
+          toParentMessage: (message) => Message.GotAlertPageMessage({ message }),
+        }),
+      AlertDialog: () =>
+        h.submodel({
+          slotId: 'alert-dialog',
+          model: model.alertDialog,
+          view: AlertDialogPage.view,
+          toParentMessage: (message) => Message.GotAlertDialogPageMessage({ message }),
+        }),
+      Avatar: () =>
+        h.submodel({
+          slotId: 'avatar',
+          model: model.avatar,
+          view: AvatarPage.view,
+          toParentMessage: (message) => Message.GotAvatarPageMessage({ message }),
+        }),
+      Badge: () =>
+        h.submodel({
+          slotId: 'badge',
+          model: model.badge,
+          view: BadgePage.view,
+          toParentMessage: (message) => Message.GotBadgePageMessage({ message }),
+        }),
+      BottomNav: () =>
+        h.submodel({
+          slotId: 'bottom-nav',
+          model: model.bottomNav,
+          view: BottomNavPage.view,
+          toParentMessage: (message) => Message.GotBottomNavPageMessage({ message }),
+        }),
+      Breadcrumb: () =>
+        h.submodel({
+          slotId: 'breadcrumb',
+          model: model.breadcrumb,
+          view: BreadcrumbPage.view,
+          toParentMessage: (message) => Message.GotBreadcrumbPageMessage({ message }),
+        }),
       Button: () =>
         h.submodel({
           slotId: 'button',
           model: model.button,
           view: ButtonPage.view,
           toParentMessage: (message) => Message.GotButtonPageMessage({ message }),
+        }),
+      ButtonGroup: () =>
+        h.submodel({
+          slotId: 'button-group',
+          model: model.buttonGroup,
+          view: ButtonGroupPage.view,
+          toParentMessage: (message) => Message.GotButtonGroupPageMessage({ message }),
+        }),
+      Calendar: () =>
+        h.submodel({
+          slotId: 'calendar',
+          model: model.calendar,
+          view: CalendarPage.view,
+          toParentMessage: (message) => Message.GotCalendarPageMessage({ message }),
+        }),
+      Card: () =>
+        h.submodel({
+          slotId: 'card',
+          model: model.card,
+          view: CardPage.view,
+          toParentMessage: (message) => Message.GotCardPageMessage({ message }),
+        }),
+      Chart: () =>
+        h.submodel({
+          slotId: 'chart',
+          model: model.chart,
+          view: ChartPage.view,
+          toParentMessage: (message) => Message.GotChartPageMessage({ message }),
+        }),
+      Checkbox: () =>
+        h.submodel({
+          slotId: 'checkbox',
+          model: model.checkbox,
+          view: CheckboxPage.view,
+          toParentMessage: (message) => Message.GotCheckboxPageMessage({ message }),
+        }),
+      ColorPicker: () =>
+        h.submodel({
+          slotId: 'color-picker',
+          model: model.colorPicker,
+          view: ColorPickerPage.view,
+          toParentMessage: (message) => Message.GotColorPickerPageMessage({ message }),
+        }),
+      Combobox: () =>
+        h.submodel({
+          slotId: 'combobox',
+          model: model.combobox,
+          view: ComboboxPage.view,
+          toParentMessage: (message) => Message.GotComboboxPageMessage({ message }),
+        }),
+      Command: () =>
+        h.submodel({
+          slotId: 'command',
+          model: model.command,
+          view: CommandPage.view,
+          toParentMessage: (message) => Message.GotCommandPageMessage({ message }),
+        }),
+      ContextMenu: () =>
+        h.submodel({
+          slotId: 'context-menu',
+          model: model.contextMenu,
+          view: ContextMenuPage.view,
+          toParentMessage: (message) => Message.GotContextMenuPageMessage({ message }),
+        }),
+      CopyButton: () =>
+        h.submodel({
+          slotId: 'copy-button',
+          model: model.copyButton,
+          view: CopyButtonPage.view,
+          toParentMessage: (message) => Message.GotCopyButtonPageMessage({ message }),
+        }),
+      DateInput: () =>
+        h.submodel({
+          slotId: 'date-input',
+          model: model.dateInput,
+          view: DateInputPage.view,
+          toParentMessage: (message) => Message.GotDateInputPageMessage({ message }),
         }),
       Dialog: () =>
         h.submodel({
@@ -106,7 +1167,291 @@ export const view = Submodel.defineView<Model, Message, Readonly<{ route: AppRou
           view: DialogPage.view,
           toParentMessage: (message) => Message.GotDialogPageMessage({ message }),
         }),
+      Drawer: () =>
+        h.submodel({
+          slotId: 'drawer',
+          model: model.drawer,
+          view: DrawerPage.view,
+          toParentMessage: (message) => Message.GotDrawerPageMessage({ message }),
+        }),
+      DropdownMenu: () =>
+        h.submodel({
+          slotId: 'dropdown-menu',
+          model: model.dropdownMenu,
+          view: DropdownMenuPage.view,
+          toParentMessage: (message) => Message.GotDropdownMenuPageMessage({ message }),
+        }),
+      Empty: () =>
+        h.submodel({
+          slotId: 'empty',
+          model: model.empty,
+          view: EmptyPage.view,
+          toParentMessage: (message) => Message.GotEmptyPageMessage({ message }),
+        }),
+      FadeIn: () =>
+        h.submodel({
+          slotId: 'fade-in',
+          model: model.fadeIn,
+          view: FadeInPage.view,
+          toParentMessage: (message) => Message.GotFadeInPageMessage({ message }),
+        }),
+      Field: () =>
+        h.submodel({
+          slotId: 'field',
+          model: model.field,
+          view: FieldPage.view,
+          toParentMessage: (message) => Message.GotFieldPageMessage({ message }),
+        }),
+      FileDropZone: () =>
+        h.submodel({
+          slotId: 'file-drop-zone',
+          model: model.fileDropZone,
+          view: FileDropZonePage.view,
+          toParentMessage: (message) => Message.GotFileDropZonePageMessage({ message }),
+        }),
+      Input: () =>
+        h.submodel({
+          slotId: 'input',
+          model: model.input,
+          view: InputPage.view,
+          toParentMessage: (message) => Message.GotInputPageMessage({ message }),
+        }),
+      InputGroup: () =>
+        h.submodel({
+          slotId: 'input-group',
+          model: model.inputGroup,
+          view: InputGroupPage.view,
+          toParentMessage: (message) => Message.GotInputGroupPageMessage({ message }),
+        }),
+      InputOtp: () =>
+        h.submodel({
+          slotId: 'input-otp',
+          model: model.inputOtp,
+          view: InputOtpPage.view,
+          toParentMessage: (message) => Message.GotInputOtpPageMessage({ message }),
+        }),
+      IntegerInput: () =>
+        h.submodel({
+          slotId: 'integer-input',
+          model: model.integerInput,
+          view: IntegerInputPage.view,
+          toParentMessage: (message) => Message.GotIntegerInputPageMessage({ message }),
+        }),
+      IntlDate: () =>
+        h.submodel({
+          slotId: 'intl-date',
+          model: model.intlDate,
+          view: IntlDatePage.view,
+          toParentMessage: (message) => Message.GotIntlDatePageMessage({ message }),
+        }),
+      Item: () =>
+        h.submodel({
+          slotId: 'item',
+          model: model.item,
+          view: ItemPage.view,
+          toParentMessage: (message) => Message.GotItemPageMessage({ message }),
+        }),
+      Kbd: () =>
+        h.submodel({
+          slotId: 'kbd',
+          model: model.kbd,
+          view: KbdPage.view,
+          toParentMessage: (message) => Message.GotKbdPageMessage({ message }),
+        }),
+      Popover: () =>
+        h.submodel({
+          slotId: 'popover',
+          model: model.popover,
+          view: PopoverPage.view,
+          toParentMessage: (message) => Message.GotPopoverPageMessage({ message }),
+        }),
+      Progress: () =>
+        h.submodel({
+          slotId: 'progress',
+          model: model.progress,
+          view: ProgressPage.view,
+          toParentMessage: (message) => Message.GotProgressPageMessage({ message }),
+        }),
+      Prose: () =>
+        h.submodel({
+          slotId: 'prose',
+          model: model.prose,
+          view: ProsePage.view,
+          toParentMessage: (message) => Message.GotProsePageMessage({ message }),
+        }),
+      RadioGroup: () =>
+        h.submodel({
+          slotId: 'radio-group',
+          model: model.radioGroup,
+          view: RadioGroupPage.view,
+          toParentMessage: (message) => Message.GotRadioGroupPageMessage({ message }),
+        }),
+      Select: () =>
+        h.submodel({
+          slotId: 'select',
+          model: model.select,
+          view: SelectPage.view,
+          toParentMessage: (message) => Message.GotSelectPageMessage({ message }),
+        }),
+      Separator: () =>
+        h.submodel({
+          slotId: 'separator',
+          model: model.separator,
+          view: SeparatorPage.view,
+          toParentMessage: (message) => Message.GotSeparatorPageMessage({ message }),
+        }),
+      Sheet: () =>
+        h.submodel({
+          slotId: 'sheet',
+          model: model.sheet,
+          view: SheetPage.view,
+          toParentMessage: (message) => Message.GotSheetPageMessage({ message }),
+        }),
+      ShortcutTooltip: () =>
+        h.submodel({
+          slotId: 'shortcut-tooltip',
+          model: model.shortcutTooltip,
+          view: ShortcutTooltipPage.view,
+          toParentMessage: (message) => Message.GotShortcutTooltipPageMessage({ message }),
+        }),
+      Sidebar: () =>
+        h.submodel({
+          slotId: 'sidebar',
+          model: model.sidebar,
+          view: SidebarPage.view,
+          toParentMessage: (message) => Message.GotSidebarPageMessage({ message }),
+        }),
+      Skeleton: () =>
+        h.submodel({
+          slotId: 'skeleton',
+          model: model.skeleton,
+          view: SkeletonPage.view,
+          toParentMessage: (message) => Message.GotSkeletonPageMessage({ message }),
+        }),
+      Slider: () =>
+        h.submodel({
+          slotId: 'slider',
+          model: model.slider,
+          view: SliderPage.view,
+          toParentMessage: (message) => Message.GotSliderPageMessage({ message }),
+        }),
+      Sortable: () =>
+        h.submodel({
+          slotId: 'sortable',
+          model: model.sortable,
+          view: SortablePage.view,
+          toParentMessage: (message) => Message.GotSortablePageMessage({ message }),
+        }),
+      Spinner: () =>
+        h.submodel({
+          slotId: 'spinner',
+          model: model.spinner,
+          view: SpinnerPage.view,
+          toParentMessage: (message) => Message.GotSpinnerPageMessage({ message }),
+        }),
+      Stat: () =>
+        h.submodel({
+          slotId: 'stat',
+          model: model.stat,
+          view: StatPage.view,
+          toParentMessage: (message) => Message.GotStatPageMessage({ message }),
+        }),
+      StatusDot: () =>
+        h.submodel({
+          slotId: 'status-dot',
+          model: model.statusDot,
+          view: StatusDotPage.view,
+          toParentMessage: (message) => Message.GotStatusDotPageMessage({ message }),
+        }),
+      Stepper: () =>
+        h.submodel({
+          slotId: 'stepper',
+          model: model.stepper,
+          view: StepperPage.view,
+          toParentMessage: (message) => Message.GotStepperPageMessage({ message }),
+        }),
+      Switch: () =>
+        h.submodel({
+          slotId: 'switch',
+          model: model.switch,
+          view: SwitchPage.view,
+          toParentMessage: (message) => Message.GotSwitchPageMessage({ message }),
+        }),
+      Table: () =>
+        h.submodel({
+          slotId: 'table',
+          model: model.table,
+          view: TablePage.view,
+          toParentMessage: (message) => Message.GotTablePageMessage({ message }),
+        }),
+      Tabs: () =>
+        h.submodel({
+          slotId: 'tabs',
+          model: model.tabs,
+          view: TabsPage.view,
+          toParentMessage: (message) => Message.GotTabsPageMessage({ message }),
+        }),
+      Textarea: () =>
+        h.submodel({
+          slotId: 'textarea',
+          model: model.textarea,
+          view: TextareaPage.view,
+          toParentMessage: (message) => Message.GotTextareaPageMessage({ message }),
+        }),
+      Timeline: () =>
+        h.submodel({
+          slotId: 'timeline',
+          model: model.timeline,
+          view: TimelinePage.view,
+          toParentMessage: (message) => Message.GotTimelinePageMessage({ message }),
+        }),
+      Toast: () =>
+        h.submodel({
+          slotId: 'toast',
+          model: model.toast,
+          view: ToastPage.view,
+          toParentMessage: (message) => Message.GotToastPageMessage({ message }),
+        }),
+      Toggle: () =>
+        h.submodel({
+          slotId: 'toggle',
+          model: model.toggle,
+          view: TogglePage.view,
+          toParentMessage: (message) => Message.GotTogglePageMessage({ message }),
+        }),
+      Tooltip: () =>
+        h.submodel({
+          slotId: 'tooltip',
+          model: model.tooltip,
+          view: TooltipPage.view,
+          toParentMessage: (message) => Message.GotTooltipPageMessage({ message }),
+        }),
     }),
 );
 
-export const subscriptions = Subscription.aggregate<Model, Message>()();
+export const subscriptions = Subscription.aggregate(
+  Subscription.lift(BottomNavPage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.bottomNav),
+    toParentMessage: (message) => Message.GotBottomNavPageMessage({ message }),
+  }),
+  Subscription.lift(ColorPickerPage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.colorPicker),
+    toParentMessage: (message) => Message.GotColorPickerPageMessage({ message }),
+  }),
+  Subscription.lift(SidebarPage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.sidebar),
+    toParentMessage: (message) => Message.GotSidebarPageMessage({ message }),
+  }),
+  Subscription.lift(SliderPage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.slider),
+    toParentMessage: (message) => Message.GotSliderPageMessage({ message }),
+  }),
+  Subscription.lift(SortablePage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.sortable),
+    toParentMessage: (message) => Message.GotSortablePageMessage({ message }),
+  }),
+  Subscription.lift(ToastPage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.toast),
+    toParentMessage: (message) => Message.GotToastPageMessage({ message }),
+  }),
+);
