@@ -7,6 +7,7 @@ import { cn } from './cn.ts';
 import { icon } from './icon.ts';
 import type { Emphasis, Intent } from './intent.ts';
 import type { Child, PartConfig } from './part.ts';
+import { type Align, type Side, toPlacement } from './placement.ts';
 
 export const { Model, Message, OutMessage, init, buttonId } = MenuPrimitive;
 export type Model = MenuPrimitive.Model;
@@ -63,17 +64,6 @@ export type ItemConfig = Readonly<{
 }>;
 
 export type ItemContext = Readonly<{ isActive: boolean; isDisabled: boolean }>;
-
-export type Side = 'top' | 'right' | 'bottom' | 'left';
-export type Align = 'start' | 'center' | 'end';
-
-export const toPlacement = (side: Side, align: Align): NonNullable<AnchorConfig['placement']> => {
-  if (align === 'center') {
-    return side;
-  } else {
-    return `${side}-${align}`;
-  }
-};
 
 export type TriggerConfig = Readonly<{
   intent?: Intent;

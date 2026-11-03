@@ -37,15 +37,20 @@ pnpm typecheck          # runs pnpm generate first
 - Stateful components wrap a `@foldkit/ui` Submodel (Dialog, Menu, Listbox, Combobox, Popover, Tooltip, Tabs, RadioGroup, Slider, Calendar, DatePicker, Toast, FileDrop, DragAndDrop). The Pavo module re-exports `Model`, `Message`, `OutMessage`, `init`, `update` and the entry points (`open`, `close`, …), and adds a styled `view(config, h)` that calls `h.submodel` with a `toView`. `dialog.ts` is the reference.
 - The parent owns the state: it stores the child Model, wraps its Messages (`Got<X>Message`), folds with `Update.foldChild` and `foldOutMessage`, opens and closes through `foldChildStep` (`pages/dialog.ts`).
 - Built-in labels (`closeLabel`, `clearLabel`, …) are config fields with the English default as a constant. There is no locale context; formatting components take `locale` (default `'en-US'`) and `timeZone`.
-- Icons: `icon('x', { className, dataIcon })` from `src/pavo/icon.ts`, Tabler names. `pnpm generate` collects the names used in `src`.
+- Icons: `icon('x', { className, dataIcon, dataSlot })` from `src/pavo/icon.ts`, Tabler names. `pnpm generate` collects the names in `icon('…')` calls and in `icon: '…'` fields of data.
+- No portals: Foldkit renders a popup where it is called. Modal content must not sit under a `hidden` or `display: none` ancestor (a `<dialog>` there never shows); render one branch or the other instead.
 - No comments. Foldkit's conventions apply (`/tmp/foldkit/AGENTS.md`): Messages are past-tense facts, Commands imperatives, `Option` for absence, `Schema` types, no `switch`, no `T[]`.
 
 ## Page contract
 
-`src/pages/<slug>.ts` exports `title`, `description`, `Model`, `Message`, `init(context: PageContext)`, `update`, `view` (`Submodel.defineView<Model, Message>`), and optionally `subscriptions` (a record for `Subscription.lift`; prefix each key with the page name, `sliderVolumePointer`). `pnpm generate` wires it into routes, the sidebar, init, update and subscriptions. The page ports the React docs page's example sections (`docs/components/<slug>.tsx`, `docs/examples/<slug>/*.tsx`) in the same order and copy.
+`src/pages/<slug>.ts` exports `title`, `description`, `Model`, `Message`, `init(context: PageContext)`, `update`, `view` (`Submodel.defineView<Model, Message>`), and optionally `subscriptions` (a record for `Subscription.lift`; prefix each key with the page name, `sliderVolumePointer`). `pnpm generate` wires it into routes, the sidebar, init, update and subscriptions. A page without state uses `Message = Schema.Never`. The page ports the React docs page's example sections (`docs/components/<slug>.tsx`, `docs/examples/<slug>/*.tsx`) in the same order and copy.
 
 ## Not ported
 
 - `locale.tsx`, `pavo-provider.tsx`: React context. Foldkit passes values explicitly.
 - `hooks/use-overlay.ts` (`closeOverlays` on navigation): the app closes its Dialog Models in the route-change update.
 - `hooks/use-accessible-name-check.ts`: development warning only.
+
+## Dev server
+
+`@foldkit/vite-plugin` keeps the Model across a hot reload, the route included, and serves it to the next page that loads. After an edit, a fresh tab can open on the previous page until it navigates.

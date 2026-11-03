@@ -2,7 +2,7 @@ import { Schema } from 'effect';
 import { Submodel, type Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 
-import { exampleSection, foundationSection, page } from '../kit.ts';
+import { exampleSection, foundationSection, page, specimenRow } from '../kit.ts';
 import type { PageContext } from '../pageContext.ts';
 import * as Alert from '../pavo/alert.ts';
 import * as Button from '../pavo/button.ts';
@@ -135,25 +135,6 @@ const inASection = (h: HtmlBuilder<Message>): Html =>
     ],
   );
 
-const specimenRow = (name: string, meta: string, child: Html, h: HtmlBuilder<Message>): Html =>
-  h.div(
-    [
-      h.Class(
-        'grid gap-related border-t border-border p-group first:border-t-0 md:grid-cols-[11rem_1fr] md:items-center md:gap-group',
-      ),
-    ],
-    [
-      h.div(
-        [h.Class('flex flex-col')],
-        [
-          h.span([h.Class('text-body font-medium')], [name]),
-          h.span([h.Class('text-caption text-muted-foreground')], [meta]),
-        ],
-      ),
-      h.div([h.Class('min-w-0')], [child]),
-    ],
-  );
-
 const whenToUse = (h: HtmlBuilder<Message>): Html =>
   Card.view(
     {
@@ -162,7 +143,14 @@ const whenToUse = (h: HtmlBuilder<Message>): Html =>
           {
             className: 'flex flex-col overflow-hidden',
             children: INTENTS.map(({ intent, use, title: alertTitle, body }) =>
-              specimenRow(intent, use, Alert.view({ intent, children: [titledContent(alertTitle, body, h)] }, h), h),
+              specimenRow(
+                {
+                  name: intent,
+                  meta: use,
+                  child: Alert.view({ intent, children: [titledContent(alertTitle, body, h)] }, h),
+                },
+                h,
+              ),
             ),
           },
           h,

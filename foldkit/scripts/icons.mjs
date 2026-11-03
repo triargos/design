@@ -15,14 +15,21 @@ const sourceFiles = (dir) =>
   });
 
 const names = new Set();
+const dataNames = new Set();
 for (const file of sourceFiles(srcDir)) {
-  for (const match of readFileSync(file, 'utf8').matchAll(/\bicon\(\s*'([a-z0-9-]+)'/g)) names.add(match[1]);
+  const source = readFileSync(file, 'utf8');
+  for (const match of source.matchAll(/\bicon\(\s*'([a-z0-9-]+)'/g)) names.add(match[1]);
+  for (const match of source.matchAll(/\bicon:\s*'([a-z0-9-]+)'/g)) {
+    if (match[1] in nodes) dataNames.add(match[1]);
+  }
 }
 
 const unknown = [...names].filter((name) => !(name in nodes));
 if (unknown.length > 0) throw new Error(`Unknown Tabler icons: ${unknown.join(', ')}`);
 
-const entries = [...names].sort().map((name) => `  '${name}': ${JSON.stringify(nodes[name])},`);
+const entries = [...new Set([...names, ...dataNames])]
+  .sort()
+  .map((name) => `  '${name}': ${JSON.stringify(nodes[name])},`);
 writeFileSync(
   outFile,
   [
@@ -33,4 +40,4 @@ writeFileSync(
     '',
   ].join('\n'),
 );
-console.log(`Wrote ${names.size} icons to src/pavo/icons.generated.ts`);
+console.log(`Wrote ${entries.length} icons to src/pavo/icons.generated.ts`);

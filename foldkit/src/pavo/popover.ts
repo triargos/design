@@ -3,7 +3,7 @@ import type { Html, HtmlBuilder } from 'foldkit/html';
 
 import { type ButtonSize, buttonVariants } from './button.ts';
 import { cn } from './cn.ts';
-import { type Align, type Side, toPlacement } from './dropdown-menu.ts';
+import { type Align, type Side, toPlacement } from './placement.ts';
 import type { Emphasis, Intent } from './intent.ts';
 import type { Child, PartConfig } from './part.ts';
 

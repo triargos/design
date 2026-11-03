@@ -1,6 +1,7 @@
 import { Predicate } from 'effect';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 
+import * as Card from './pavo/card.ts';
 import { cn } from './pavo/cn.ts';
 import type { Child } from './pavo/part.ts';
 
@@ -101,3 +102,83 @@ export const code = <Message>(text: string, h: HtmlBuilder<Message>): Html =>
 
 export const row = <Message>(children: ReadonlyArray<Child>, h: HtmlBuilder<Message>, className?: string): Html =>
   h.div([h.Class(cn('flex flex-wrap items-center gap-2', className))], children);
+
+export type MatrixRow = Readonly<{ name: string; meta?: Html; cells: ReadonlyArray<Html> }>;
+
+export const matrix = <Message>(
+  columns: ReadonlyArray<string>,
+  rows: ReadonlyArray<MatrixRow>,
+  h: HtmlBuilder<Message>,
+): Html =>
+  Card.view(
+    {
+      children: [
+        Card.content(
+          {
+            className: 'overflow-x-auto',
+            children: [
+              h.div(
+                [
+                  h.Class('grid min-w-fit items-center gap-x-related'),
+                  h.Style({ 'grid-template-columns': `8rem repeat(${columns.length}, minmax(7.5rem, 1fr))` }),
+                ],
+                [
+                  h.span([], []),
+                  ...columns.map((column) =>
+                    h.span(
+                      [h.Class('px-1 pt-group pb-related font-mono text-caption text-muted-foreground')],
+                      [column],
+                    ),
+                  ),
+                  ...rows.flatMap((matrixRow) => [
+                    h.div(
+                      [h.Class('flex flex-col border-t border-border-subtle py-related pl-group')],
+                      [
+                        h.span([h.Class('text-body font-medium')], [matrixRow.name]),
+                        ...(matrixRow.meta === undefined
+                          ? []
+                          : [h.span([h.Class('text-caption text-muted-foreground')], [matrixRow.meta])]),
+                      ],
+                    ),
+                    ...matrixRow.cells.map((cell) =>
+                      h.div(
+                        [
+                          h.Class(
+                            'flex min-w-0 items-center border-t border-border-subtle px-1 py-related last:pr-group',
+                          ),
+                        ],
+                        [cell],
+                      ),
+                    ),
+                  ]),
+                ],
+              ),
+            ],
+          },
+          h,
+        ),
+      ],
+    },
+    h,
+  );
+
+export type SpecimenRowConfig = Readonly<{ name: string; meta: string; child: Html }>;
+
+export const specimenRow = <Message>({ name, meta, child }: SpecimenRowConfig, h: HtmlBuilder<Message>): Html =>
+  h.div(
+    [
+      h.Class(
+        'grid gap-related border-t border-border p-group first:border-t-0 md:grid-cols-[11rem_1fr] md:items-center md:gap-group',
+      ),
+    ],
+    [
+      h.div(
+        [h.Class('flex flex-col')],
+        [
+          h.span([h.Class('text-body font-medium')], [name]),
+          h.span([h.Class('text-caption text-muted-foreground')], [meta]),
+        ],
+      ),
+      h.div([h.Class('min-w-0')], [child]),
+    ],
+  );

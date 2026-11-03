@@ -7,7 +7,7 @@ import { modifyFields } from 'foldkit/struct';
 import { code, exampleSection, page } from '../kit.ts';
 import type { PageContext } from '../pageContext.ts';
 import * as Button from '../pavo/button.ts';
-import type { Side } from '../pavo/dropdown-menu.ts';
+import type { Side } from '../pavo/placement.ts';
 import * as Popover from '../pavo/popover.ts';
 
 export const title = 'Popover';

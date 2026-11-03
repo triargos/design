@@ -7,7 +7,7 @@ import { modifyFields } from 'foldkit/struct';
 
 import * as Button from './button.ts';
 import { cn } from './cn.ts';
-import { type Align, type Side, toPlacement } from './dropdown-menu.ts';
+import { type Align, type Side, toPlacement } from './placement.ts';
 import type { Child } from './part.ts';
 
 export const { Model, Message, OutMessage, update, reflectShowDelay, triggerId } = TooltipPrimitive;

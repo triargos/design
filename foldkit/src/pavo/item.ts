@@ -266,6 +266,7 @@ export const actions = <Message>(
 
 export const chevron = (className?: string): Html =>
   icon('chevron-right', {
+    dataSlot: 'item-chevron',
     className: cn(
       'size-icon shrink-0 text-faint-foreground transition-[color,translate] duration-feedback',
       'group-hover/item:text-muted-foreground group-focus-visible/item:text-muted-foreground',

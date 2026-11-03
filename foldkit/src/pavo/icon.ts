@@ -27,11 +27,12 @@ const iconChild = ([tag, attributes]: IconNode): Html =>
 export type IconConfig = Readonly<{
   className?: string;
   dataIcon?: 'inline-start' | 'inline-end';
+  dataSlot?: string;
   ariaLabel?: string;
 }>;
 
 export const icon = (name: IconName, config: IconConfig = {}): Html => {
-  const { className, dataIcon, ariaLabel } = config;
+  const { className, dataIcon, dataSlot, ariaLabel } = config;
   const nodes: ReadonlyArray<IconNode> = ICON_NODES[name];
   return ih.svg(
     [
@@ -46,6 +47,7 @@ export const icon = (name: IconName, config: IconConfig = {}): Html => {
       ih.Attribute('stroke-width', '2'),
       ih.Class(cn('tabler-icon', `tabler-icon-${String(name)}`, className)),
       ...(dataIcon === undefined ? [] : [ih.DataAttribute('icon', dataIcon)]),
+      ...(dataSlot === undefined ? [] : [ih.DataAttribute('slot', dataSlot)]),
       ...(ariaLabel === undefined ? [ih.AriaHidden(true)] : [ih.Role('img'), ih.AriaLabel(ariaLabel)]),
     ],
     nodes.map(iconChild),

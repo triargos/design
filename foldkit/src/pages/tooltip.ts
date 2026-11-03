@@ -7,7 +7,7 @@ import { modifyFields } from 'foldkit/struct';
 import { exampleSection, foundationSection, page } from '../kit.ts';
 import type { PageContext } from '../pageContext.ts';
 import type * as Button from '../pavo/button.ts';
-import type { Align, Side } from '../pavo/dropdown-menu.ts';
+import type { Align, Side } from '../pavo/placement.ts';
 import { icon } from '../pavo/icon.ts';
 import * as Tooltip from '../pavo/tooltip.ts';
 

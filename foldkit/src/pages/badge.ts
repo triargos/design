@@ -2,7 +2,7 @@ import { Schema } from 'effect';
 import { Submodel, type Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 
-import { code, exampleSection, foundationSection, page, row } from '../kit.ts';
+import { code, exampleSection, foundationSection, matrix, page, row } from '../kit.ts';
 import type { PageContext } from '../pageContext.ts';
 import * as Badge from '../pavo/badge.ts';
 import * as Card from '../pavo/card.ts';
@@ -55,61 +55,6 @@ const TASK_LABELS = [
 ] as const;
 
 const PROJECT_TYPES = ['Client work', 'Internal', 'Research', 'Hiring', 'Events', 'Support', 'Finance', 'Training'];
-
-type MatrixRow = Readonly<{ name: string; meta?: Html; cells: ReadonlyArray<Html> }>;
-
-const matrix = (columns: ReadonlyArray<string>, rows: ReadonlyArray<MatrixRow>, h: HtmlBuilder<Message>): Html =>
-  Card.view(
-    {
-      children: [
-        Card.content(
-          {
-            className: 'overflow-x-auto',
-            children: [
-              h.div(
-                [
-                  h.Class('grid min-w-fit items-center gap-x-related'),
-                  h.Style({ 'grid-template-columns': `8rem repeat(${columns.length}, minmax(7.5rem, 1fr))` }),
-                ],
-                [
-                  h.span([], []),
-                  ...columns.map((column) =>
-                    h.span(
-                      [h.Class('px-1 pt-group pb-related font-mono text-caption text-muted-foreground')],
-                      [column],
-                    ),
-                  ),
-                  ...rows.flatMap((matrixRow) => [
-                    h.div(
-                      [h.Class('flex flex-col border-t border-border-subtle py-related pl-group')],
-                      [
-                        h.span([h.Class('text-body font-medium')], [matrixRow.name]),
-                        ...(matrixRow.meta === undefined
-                          ? []
-                          : [h.span([h.Class('text-caption text-muted-foreground')], [matrixRow.meta])]),
-                      ],
-                    ),
-                    ...matrixRow.cells.map((cell) =>
-                      h.div(
-                        [
-                          h.Class(
-                            'flex min-w-0 items-center border-t border-border-subtle px-1 py-related last:pr-group',
-                          ),
-                        ],
-                        [cell],
-                      ),
-                    ),
-                  ]),
-                ],
-              ),
-            ],
-          },
-          h,
-        ),
-      ],
-    },
-    h,
-  );
 
 const badge = (config: Badge.ViewConfig<Message>, h: HtmlBuilder<Message>): Html => Badge.view(config, h);
 
