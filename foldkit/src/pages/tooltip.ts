@@ -42,7 +42,7 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  GotTooltipMessage: { key: TooltipKey, message: Tooltip.Message },
+  GotTooltipMessage: { tooltipId: TooltipKey, message: Tooltip.Message },
   GotToolbarGroupMessage: { message: Tooltip.DelayGroupMessage },
 });
 export type Message = typeof Message.Type;
@@ -73,7 +73,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const toTooltipMessage = (key: TooltipKey, message: Tooltip.Message): Message =>
-  Message.GotTooltipMessage({ key, message });
+  Message.GotTooltipMessage({ tooltipId: key, message });
 
 const toToolbarGroupMessage = (message: Tooltip.DelayGroupMessage): Message =>
   Message.GotToolbarGroupMessage({ message });
@@ -119,7 +119,7 @@ const cutOtherGroupLeaves = (model: Model, shownKey: TooltipKey): Model =>
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    GotTooltipMessage: ({ key, message }) => {
+    GotTooltipMessage: ({ tooltipId: key, message }) => {
       if (key === 'Open') {
         return { model };
       } else if (isInGroup(key) && Tooltip.isEnteredTrigger(message)) {

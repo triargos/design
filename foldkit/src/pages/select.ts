@@ -69,9 +69,9 @@ export const Message = defineMessageUnion({
   GotProjectMessage: { message: Select.Message },
   GotSourceMessage: { message: Select.Message },
   GotFieldSourceMessage: { message: Select.Message },
-  GotRoleStateMessage: { index: Schema.Number, message: Select.Message },
-  ChangedSourceText: { text: Schema.String },
-  ChangedFieldSourceText: { text: Schema.String },
+  GotRoleStateMessage: { roleStateId: Schema.Number, message: Select.Message },
+  UpdatedSourceText: { text: Schema.String },
+  UpdatedFieldSourceText: { text: Schema.String },
 });
 export type Message = typeof Message.Type;
 
@@ -155,7 +155,8 @@ const foldRoleState = Update.foldChildAt({
       roleStates: () =>
         Array.map(model.roleStates, (select, selectIndex) => (selectIndex === index ? nextSelect : select)),
     }),
-  toParentMessage: (index: number, message: Select.Message) => Message.GotRoleStateMessage({ index, message }),
+  toParentMessage: (index: number, message: Select.Message) =>
+    Message.GotRoleStateMessage({ roleStateId: index, message }),
   foldOutMessage: () =>
     Select.OutMessage.match<Update.Step<Model, Message>>({
       Selected: () => (stepModel) => ({ model: stepModel }),
@@ -169,14 +170,14 @@ export const update = (model: Model, message: Message) =>
     GotProjectMessage: ({ message }) => foldProject(model, message),
     GotSourceMessage: ({ message }) => foldSource(model, message),
     GotFieldSourceMessage: ({ message }) => foldFieldSource(model, message),
-    GotRoleStateMessage: ({ index, message }) => foldRoleState(model, index, message),
-    ChangedSourceText: ({ text }) => ({
+    GotRoleStateMessage: ({ roleStateId: index, message }) => foldRoleState(model, index, message),
+    UpdatedSourceText: ({ text }) => ({
       model: writeCustom(model, 'source', {
         ...model.source,
         maybeChoice: Option.some(Select.Choice.Custom({ text })),
       }),
     }),
-    ChangedFieldSourceText: ({ text }) => ({
+    UpdatedFieldSourceText: ({ text }) => ({
       model: writeCustom(model, 'fieldSource', {
         ...model.fieldSource,
         maybeChoice: Option.some(Select.Choice.Custom({ text })),
@@ -211,7 +212,7 @@ const customSelect = (
           options: SOURCES,
           maybeValue: listedValue(maybeChoice),
           isCustomChosen,
-          allowCustom: true,
+          isCustomAllowed: true,
           customLabel: SOURCE_CUSTOM_LABEL,
           placeholder: 'Choose a source',
           isInvalid: isInvalid && !isCustomChosen,
@@ -254,7 +255,7 @@ const states = (model: Model, h: HtmlBuilder<Message>): Html =>
       Select.view(
         {
           model: select,
-          toParentMessage: (message) => Message.GotRoleStateMessage({ index, message }),
+          toParentMessage: (message) => Message.GotRoleStateMessage({ roleStateId: index, message }),
           options: ROLES,
           maybeValue: state.maybeValue,
           placeholder: 'Choose a role',
@@ -320,7 +321,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
           {
             title: 'Allow custom',
             description: [
-              code('allowCustom', h),
+              code('isCustomAllowed', h),
               ': the value is a ',
               code('Choice', h),
               ', an option’s value or the typed text. The custom row ends the list; picking it emits ',
@@ -341,7 +342,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
                     customSelect(
                       model.source,
                       toSourceMessage,
-                      (text) => Message.ChangedSourceText({ text }),
+                      (text) => Message.UpdatedSourceText({ text }),
                       false,
                       h,
                     ),
@@ -374,7 +375,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
                     customSelect(
                       model.fieldSource,
                       toFieldSourceMessage,
-                      (text) => Message.ChangedFieldSourceText({ text }),
+                      (text) => Message.UpdatedFieldSourceText({ text }),
                       isFieldSourceInvalid,
                       h,
                     ),

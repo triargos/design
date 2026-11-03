@@ -24,8 +24,7 @@ export type Model = typeof Model.Type;
 export const Message = defineMessageUnion({
   ClickedTrigger: {},
   PressedToggleShortcut: {},
-  ChangedViewport: { isMobile: Schema.Boolean },
-  ClickedMenuLink: {},
+  UpdatedViewport: { isMobile: Schema.Boolean },
   GotSheetMessage: { message: Sheet.Message },
 });
 export type Message = typeof Message.Type;
@@ -65,6 +64,8 @@ const foldSheetClose = Update.foldChildStep({ update: Sheet.close, ...sheetFold 
 const closeSheet = (model: Model): Update.Return<Model, Message> =>
   model.sheet.isOpen ? foldSheetClose(model) : { model };
 
+export const closeMobile = closeSheet;
+
 const toggle = (model: Model): Update.Return<Model, Message> => {
   if (!model.isMobile) {
     return { model: modifyFields(model, { isOpen: (isOpen) => !isOpen }) };
@@ -79,8 +80,7 @@ export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     ClickedTrigger: () => toggle(model),
     PressedToggleShortcut: () => toggle(model),
-    ChangedViewport: ({ isMobile }) => closeSheet(modifyFields(model, { isMobile: () => isMobile })),
-    ClickedMenuLink: () => closeSheet(model),
+    UpdatedViewport: ({ isMobile }) => closeSheet(modifyFields(model, { isMobile: () => isMobile })),
     GotSheetMessage: ({ message }) => foldSheet(model, message),
   });
 
@@ -90,7 +90,7 @@ const viewportChanges: Stream.Stream<Message> = Stream.callback<Message>((queue)
   Effect.acquireRelease(
     Effect.sync(() => {
       const query = window.matchMedia(MOBILE_QUERY);
-      const emit = () => Queue.offerUnsafe(queue, Message.ChangedViewport({ isMobile: query.matches }));
+      const emit = () => Queue.offerUnsafe(queue, Message.UpdatedViewport({ isMobile: query.matches }));
       emit();
       query.addEventListener('change', emit);
       return () => query.removeEventListener('change', emit);

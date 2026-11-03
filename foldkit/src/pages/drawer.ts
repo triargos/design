@@ -37,9 +37,10 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   ClickedAccountMenu: {},
+  ClickedPushWorkspace: {},
   ClickedSignOut: {},
   PickedWorkspace: { workspace: Workspace },
-  ChangedTheme: { theme: Theme },
+  UpdatedTheme: { theme: Theme },
   CompletedWaitAfterPick: {},
   GotAccountMenuMessage: { message: Drawer.Message },
 });
@@ -69,16 +70,21 @@ const accountMenuFold = {
 const foldAccountMenu = Update.foldChild({ update: Drawer.update, ...accountMenuFold });
 const foldAccountMenuOpen = Update.foldChildStep({ update: Drawer.open, ...accountMenuFold });
 const foldAccountMenuClose = Update.foldChildStep({ update: Drawer.close, ...accountMenuFold });
+const foldAccountMenuPushWorkspace = Update.foldChildStep({
+  update: (accountMenu: Drawer.Model) => Drawer.push(accountMenu, 'workspace'),
+  ...accountMenuFold,
+});
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     ClickedAccountMenu: () => foldAccountMenuOpen(model),
+    ClickedPushWorkspace: () => foldAccountMenuPushWorkspace(model),
     ClickedSignOut: () => foldAccountMenuClose(model),
     PickedWorkspace: ({ workspace }) => ({
       model: modifyFields(model, { workspace: () => workspace }),
       commands: [WaitAfterPick()],
     }),
-    ChangedTheme: ({ theme }) => ({ model: modifyFields(model, { theme: () => theme }) }),
+    UpdatedTheme: ({ theme }) => ({ model: modifyFields(model, { theme: () => theme }) }),
     CompletedWaitAfterPick: () => foldAccountMenuClose(model),
     GotAccountMenuMessage: ({ message }) => foldAccountMenu(model, message),
   });
@@ -121,7 +127,7 @@ const rootPage = (model: Model, h: HtmlBuilder<Message>): Drawer.PageConfig => (
           Drawer.menuItem(
             {
               isPush: true,
-              onClick: toAccountMenuMessage(Drawer.Message.ClickedPush({ page: 'workspace' })),
+              onClick: Message.ClickedPushWorkspace(),
               attributes: [h.Id(Drawer.pushTriggerId(model.accountMenu, 'workspace'))],
               children: [
                 icon('device-desktop'),
@@ -141,7 +147,7 @@ const rootPage = (model: Model, h: HtmlBuilder<Message>): Drawer.PageConfig => (
                     variant: 'inline',
                     ariaLabelledBy: 'drawer-account-theme',
                     value: model.theme,
-                    onValueChange: (value) => Message.ChangedTheme({ theme: toTheme(value) }),
+                    onValueChange: (value) => Message.UpdatedTheme({ theme: toTheme(value) }),
                     radios: [
                       { value: 'light', ariaLabel: 'Light', children: [icon('sun')] },
                       { value: 'dark', ariaLabel: 'Dark', children: [icon('moon')] },
@@ -244,7 +250,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html =>
             description: [
               code('Drawer.Model', h),
               ' holds the page history: ',
-              code('ClickedPush', h),
+              code('Drawer.push', h),
               ' morphs to the next page: its rows blur out, the next page’s cascade in from the side, the drawer springs to its height. The page’s back button pops it; on open the rows rise in. ',
               code('Drawer.menuGroup', h),
               's part with a hairline; ',

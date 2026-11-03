@@ -28,7 +28,7 @@ export const DEFAULT_CLOSE_LABEL = 'Close';
 export const overlayClassName =
   'fixed inset-0 isolate z-50 bg-black/32 transition-opacity duration-modal ease-enter data-closed:opacity-0 supports-backdrop-filter:backdrop-blur-sm';
 
-export const nestedOverlayClassName = 'fixed inset-0 isolate z-50';
+const nestedOverlayClassName = 'fixed inset-0 isolate z-50';
 
 export const popupClassName =
   'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none';

@@ -41,7 +41,7 @@ export const Message = defineMessageUnion({
 export type Message = typeof Message.Type;
 
 export const OutMessage = defineMessageUnion({
-  ChangedValue: { value: Schema.String, isComplete: Schema.Boolean },
+  UpdatedValue: { value: Schema.String, isComplete: Schema.Boolean },
 });
 export type OutMessage = typeof OutMessage.Type;
 
@@ -69,7 +69,7 @@ const focusSlot = (model: Model, index: number) =>
 type UpdateReturn = Update.ReturnWithOutMessage<Model, Message, OutMessage>;
 
 const changedValue = (model: Model, nextValue: string): OutMessage =>
-  OutMessage.ChangedValue({ value: nextValue, isComplete: nextValue.length === model.length });
+  OutMessage.UpdatedValue({ value: nextValue, isComplete: nextValue.length === model.length });
 
 const insertAt = (model: Model, index: number, text: string): UpdateReturn => {
   const position = Math.min(index, model.value.length);
@@ -150,7 +150,7 @@ export const focus = (model: Model): Update.Return<Model, Message> => ({
   commands: [focusSlot(model, model.value.length)],
 });
 
-export const DEFAULT_SLOT_LABEL = (position: number, length: number): string => `Character ${position} of ${length}`;
+const DEFAULT_SLOT_LABEL = (position: number, length: number): string => `Character ${position} of ${length}`;
 
 export type ViewConfig<ParentMessage> = Readonly<{
   model: Model;

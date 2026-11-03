@@ -85,7 +85,7 @@ export type ViewConfig<Message> = Readonly<{
   attributes?: ReadonlyArray<PartAttribute<Message>> | undefined;
 }>;
 
-export const toggledValues = (
+const toggledValues = (
   openValues: ReadonlyArray<string>,
   value: string,
   isOpen: boolean,

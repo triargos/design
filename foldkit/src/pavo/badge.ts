@@ -34,7 +34,7 @@ export type BadgeStyle = Readonly<{
   className?: string | undefined;
 }>;
 
-export const badgeVariants = ({
+const badgeVariants = ({
   intent = 'neutral',
   color,
   emphasis = 'subtle',

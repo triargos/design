@@ -23,7 +23,7 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   ClickedExtend: {},
-  GotPopoverMessage: { key: PopoverKey, message: Popover.Message },
+  GotPopoverMessage: { popoverId: PopoverKey, message: Popover.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -42,7 +42,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const toPopoverMessage = (key: PopoverKey, message: Popover.Message): Message =>
-  Message.GotPopoverMessage({ key, message });
+  Message.GotPopoverMessage({ popoverId: key, message });
 
 const foldPopoverOutMessage = (_key: PopoverKey) =>
   Popover.OutMessage.match<Update.Step<Model, Message>>({
@@ -59,10 +59,20 @@ const foldPopover = Update.foldChildAt({
   foldOutMessage: foldPopoverOutMessage,
 });
 
+const foldPopoverStep = (key: PopoverKey, step: typeof Popover.open) =>
+  Update.foldChildStep({
+    update: step,
+    read: (model: Model) => Option.some(model.popovers[key]),
+    write: (model: Model, nextPopover: Popover.Model) =>
+      modifyFields(model, { popovers: Record.set(key, nextPopover) }),
+    toParentMessage: (message: Popover.Message) => toPopoverMessage(key, message),
+    foldOutMessage: foldPopoverOutMessage(key),
+  });
+
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    ClickedExtend: () => foldPopover(model, 'Default', Popover.Message.RequestedClose()),
-    GotPopoverMessage: ({ key, message }) => foldPopover(model, key, message),
+    ClickedExtend: () => foldPopoverStep('Default', Popover.close)(model),
+    GotPopoverMessage: ({ popoverId: key, message }) => foldPopover(model, key, message),
   });
 
 type PopoverConfig = Omit<Popover.ViewConfig<Message>, 'model' | 'toParentMessage'>;

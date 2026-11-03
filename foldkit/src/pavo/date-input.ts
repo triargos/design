@@ -17,16 +17,16 @@ import * as Input from './input.ts';
 import * as InputGroup from './input-group.ts';
 import * as Popover from './popover.ts';
 
-export const DEFAULT_LOCALE = 'en-US';
-export const DEFAULT_CHOOSE_DATE_LABEL = 'Choose date';
+const DEFAULT_LOCALE = 'en-US';
+const DEFAULT_CHOOSE_DATE_LABEL = 'Choose date';
 
-export const FieldKind = Schema.Literals(['Date', 'Time']);
+const FieldKind = Schema.Literals(['Date', 'Time']);
 export type FieldKind = typeof FieldKind.Type;
 
-export const SegmentType = Schema.Literals(['year', 'month', 'day', 'hour', 'minute', 'dayPeriod']);
+const SegmentType = Schema.Literals(['year', 'month', 'day', 'hour', 'minute', 'dayPeriod']);
 export type SegmentType = typeof SegmentType.Type;
 
-export const Segments = Schema.Struct({
+const Segments = Schema.Struct({
   year: Schema.Option(Schema.Number),
   month: Schema.Option(Schema.Number),
   day: Schema.Option(Schema.Number),
@@ -63,8 +63,8 @@ export const Message = defineMessageUnion({
 export type Message = typeof Message.Type;
 
 export const OutMessage = defineMessageUnion({
-  ChangedDate: { maybeDate: Schema.Option(FoldkitCalendar.CalendarDate) },
-  ChangedTime: { maybeTime: Schema.Option(TimeOfDay) },
+  UpdatedDate: { maybeDate: Schema.Option(FoldkitCalendar.CalendarDate) },
+  UpdatedTime: { maybeTime: Schema.Option(TimeOfDay) },
 });
 export type OutMessage = typeof OutMessage.Type;
 
@@ -139,7 +139,7 @@ const NARROW_NO_BREAK_SPACE = /\u202f/g;
 const isSegmentType = (type: string): type is SegmentType =>
   Array.contains(['year', 'month', 'day', 'hour', 'minute', 'dayPeriod'], type);
 
-export const isTwelveHour = (locale: string): boolean => {
+const isTwelveHour = (locale: string): boolean => {
   const { hourCycle } = new Intl.DateTimeFormat(locale, { hour: 'numeric' }).resolvedOptions();
   return hourCycle === 'h12' || hourCycle === 'h11';
 };
@@ -278,19 +278,19 @@ const changeOutMessage = (model: Model, segments: Segments): Option.Option<OutMe
   if (isEmpty(model, segments)) {
     return Option.some(
       model.kind === 'Date'
-        ? OutMessage.ChangedDate({ maybeDate: Option.none() })
-        : OutMessage.ChangedTime({ maybeTime: Option.none() }),
+        ? OutMessage.UpdatedDate({ maybeDate: Option.none() })
+        : OutMessage.UpdatedTime({ maybeTime: Option.none() }),
     );
   } else if (model.kind === 'Date') {
-    return Option.map(maybeCompleteDate(segments), (date) => OutMessage.ChangedDate({ maybeDate: Option.some(date) }));
+    return Option.map(maybeCompleteDate(segments), (date) => OutMessage.UpdatedDate({ maybeDate: Option.some(date) }));
   } else {
     return Option.map(maybeCompleteTime(model, segments), (time) =>
-      OutMessage.ChangedTime({ maybeTime: Option.some(time) }),
+      OutMessage.UpdatedTime({ maybeTime: Option.some(time) }),
     );
   }
 };
 
-export const segmentId = (id: string, segment: SegmentType): string => `${id}-segment-${segment}`;
+const segmentId = (id: string, segment: SegmentType): string => `${id}-segment-${segment}`;
 
 const FocusSegment = Command.define('FocusSegment', {
   args: { id: Schema.String, segment: SegmentType },

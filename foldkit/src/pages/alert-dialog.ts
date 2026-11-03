@@ -32,7 +32,7 @@ export const Message = defineMessageUnion({
   ClickedSendNote: {},
   ClickedDiscardNote: {},
   UpdatedNote: { value: Schema.String },
-  GotDialogMessage: { key: DialogKey, message: Dialog.Message },
+  GotDialogMessage: { dialogId: DialogKey, message: Dialog.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -52,7 +52,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const toDialogMessage = (key: DialogKey, message: Dialog.Message): Message =>
-  Message.GotDialogMessage({ key, message });
+  Message.GotDialogMessage({ dialogId: key, message });
 
 const foldDialogOutMessage = (_key: DialogKey) =>
   Dialog.OutMessage.match<Update.Step<Model, Message>>({
@@ -69,8 +69,17 @@ const foldDialog = Update.foldChildAt({
   foldOutMessage: foldDialogOutMessage,
 });
 
-const openDialog = (key: DialogKey) => (model: Model) => foldDialog(model, key, Dialog.Message.RequestedOpen());
-const closeDialog = (key: DialogKey) => (model: Model) => foldDialog(model, key, Dialog.Message.RequestedClose());
+const foldDialogStep = (key: DialogKey, step: typeof Dialog.open) =>
+  Update.foldChildStep({
+    update: step,
+    read: (model: Model) => Option.some(model.dialogs[key]),
+    write: (model: Model, nextDialog: Dialog.Model) => modifyFields(model, { dialogs: Record.set(key, nextDialog) }),
+    toParentMessage: (message: Dialog.Message) => toDialogMessage(key, message),
+    foldOutMessage: foldDialogOutMessage(key),
+  });
+
+const openDialog = (key: DialogKey) => foldDialogStep(key, Dialog.open);
+const closeDialog = (key: DialogKey) => foldDialogStep(key, Dialog.close);
 
 const clearNote = (model: Model): Update.Return<Model, Message> => ({
   model: modifyFields(model, { note: () => '' }),
@@ -89,7 +98,7 @@ export const update = (model: Model, message: Message) =>
     ClickedSendNote: () => closeNote(model),
     ClickedDiscardNote: () => closeNote(model),
     UpdatedNote: ({ value }) => ({ model: modifyFields(model, { note: () => value }) }),
-    GotDialogMessage: ({ key, message }) => {
+    GotDialogMessage: ({ dialogId: key, message }) => {
       if (isRequestedNoteClose(key, message, model) && String.isNonEmpty(model.note)) {
         return openDialog('DiscardNote')(model);
       } else if (isRequestedNoteClose(key, message, model)) {

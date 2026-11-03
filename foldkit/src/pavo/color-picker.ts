@@ -11,7 +11,7 @@ import * as Popover from './popover.ts';
 
 export type ColorPreset = Readonly<{ value: string; label: string }>;
 
-export const DEFAULT_PRESETS: ReadonlyArray<ColorPreset> = [
+const DEFAULT_PRESETS: ReadonlyArray<ColorPreset> = [
   { value: '#6b7280', label: 'Gray' },
   { value: '#ef4444', label: 'Red' },
   { value: '#f97316', label: 'Orange' },
@@ -26,16 +26,16 @@ export const DEFAULT_PRESETS: ReadonlyArray<ColorPreset> = [
   { value: '#ec4899', label: 'Pink' },
 ];
 
-export const DEFAULT_LABEL = 'Color';
-export const DEFAULT_CUSTOM_LABEL = 'Custom color';
-export const DEFAULT_HEX_LABEL = 'Hex color';
+const DEFAULT_LABEL = 'Color';
+const DEFAULT_CUSTOM_LABEL = 'Custom color';
+const DEFAULT_HEX_LABEL = 'Hex color';
 
 const CUSTOM_GRADIENT = 'conic-gradient(#ef4444, #eab308, #22c55e, #06b6d4, #3b82f6, #8b5cf6, #ec4899, #ef4444)';
 const HUE_GRADIENT = 'linear-gradient(90deg, red 0, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, red)';
 const SATURATION_GRADIENT =
   'linear-gradient(0deg, #000, transparent), linear-gradient(90deg, #fff, hsla(0, 0%, 100%, 0))';
 
-export const Hsv = Schema.Struct({ hue: Schema.Number, saturation: Schema.Number, brightness: Schema.Number });
+const Hsv = Schema.Struct({ hue: Schema.Number, saturation: Schema.Number, brightness: Schema.Number });
 export type Hsv = typeof Hsv.Type;
 
 const HEX = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i;
@@ -59,7 +59,7 @@ const expandedHex = (hex: string): string => {
 const channel = (digits: string, index: number): number =>
   globalThis.Number.parseInt(digits.slice(index * 2, index * 2 + 2), HEX_RADIX);
 
-export const hexToHsv = (hex: string): Hsv => {
+const hexToHsv = (hex: string): Hsv => {
   const digits = expandedHex(hex);
   const [red, green, blue] = [channel(digits, 0), channel(digits, 1), channel(digits, 2)];
   const max = Math.max(red, green, blue);
@@ -83,7 +83,7 @@ export const hexToHsv = (hex: string): Hsv => {
 
 const toHexPair = (value: number): string => Math.round(value).toString(HEX_RADIX).padStart(2, '0');
 
-export const hsvToHex = ({ hue, saturation, brightness }: Hsv): string => {
+const hsvToHex = ({ hue, saturation, brightness }: Hsv): string => {
   const scaledSaturation = saturation / MAX_PERCENT;
   const scaledBrightness = (brightness / MAX_PERCENT) * MAX_CHANNEL;
   const sector = (hue / HUE_SECTOR) % 6;
@@ -96,11 +96,11 @@ export const hsvToHex = ({ hue, saturation, brightness }: Hsv): string => {
 
 const hueColor = (hue: number): string => `hsl(${hue}, 100%, 50%)`;
 
-export const isHex = (text: string): boolean => HEX.test(text);
+const isHex = (text: string): boolean => HEX.test(text);
 
 const normalizedHex = (text: string): string => `#${expandedHex(text).toLowerCase()}`;
 
-export const DragTarget = Schema.Literals(['Area', 'Hue']);
+const DragTarget = Schema.Literals(['Area', 'Hue']);
 export type DragTarget = typeof DragTarget.Type;
 
 export const Model = Schema.Struct({
@@ -122,13 +122,13 @@ export const Message = defineMessageUnion({
   ReleasedDragPointer: {},
   PressedAreaKey: { key: Schema.String },
   PressedHueKey: { key: Schema.String },
-  ChangedHexText: { text: Schema.String },
+  UpdatedHexText: { text: Schema.String },
   BlurredHexInput: {},
 });
 export type Message = typeof Message.Type;
 
 export const OutMessage = defineMessageUnion({
-  ChangedColor: { value: Schema.String },
+  UpdatedColor: { value: Schema.String },
 });
 export type OutMessage = typeof OutMessage.Type;
 
@@ -149,7 +149,7 @@ type UpdateReturn = Update.ReturnWithOutMessage<Model, Message, OutMessage>;
 
 const withHsv = (model: Model, hsv: Hsv): UpdateReturn => ({
   model: modifyFields(model, { hsv: () => hsv, maybeHexDraft: () => Option.none() }),
-  outMessage: OutMessage.ChangedColor({ value: hsvToHex(hsv) }),
+  outMessage: OutMessage.UpdatedColor({ value: hsvToHex(hsv) }),
 });
 
 const clampPercent = Number.clamp({ minimum: 0, maximum: MAX_PERCENT });
@@ -236,11 +236,11 @@ export const update = (model: Model, message: Message) =>
       const { horizontal } = keyDelta(key);
       return withHsv(model, { ...model.hsv, hue: clampHue(model.hsv.hue + horizontal) });
     },
-    ChangedHexText: ({ text }) =>
+    UpdatedHexText: ({ text }) =>
       isHex(text)
         ? {
             model: modifyFields(model, { hsv: () => hexToHsv(text), maybeHexDraft: () => Option.some(text) }),
-            outMessage: OutMessage.ChangedColor({ value: normalizedHex(text) }),
+            outMessage: OutMessage.UpdatedColor({ value: normalizedHex(text) }),
           }
         : { model: modifyFields(model, { maybeHexDraft: () => Option.some(text) }) },
     BlurredHexInput: () => ({ model: modifyFields(model, { maybeHexDraft: () => Option.none() }) }),
@@ -463,7 +463,7 @@ export const customColor = <ParentMessage>(
                   h.Autocomplete('off'),
                   h.Spellcheck(false),
                   h.Value(hexText.startsWith('#') ? hexText : `#${hexText}`),
-                  h.OnInput((text) => toParentMessage(Message.ChangedHexText({ text }))),
+                  h.OnInput((text) => toParentMessage(Message.UpdatedHexText({ text }))),
                   h.OnBlur(toParentMessage(Message.BlurredHexInput())),
                   h.Class(
                     'h-full w-full min-w-0 flex-1 bg-transparent p-0 font-mono uppercase outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',

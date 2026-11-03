@@ -15,7 +15,7 @@ const SWIPE_DISMISS_RATIO = 0.25;
 const SWIPE_DISMISS_VELOCITY = 0.5;
 const DEFAULT_BACK_LABEL = 'Back';
 
-export const Direction = Schema.Literals(['Open', 'Push', 'Pop']);
+const Direction = Schema.Literals(['Open', 'Push', 'Pop']);
 export type Direction = typeof Direction.Type;
 
 export const Model = Schema.Struct({
@@ -32,7 +32,6 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   GotDialogMessage: { message: Dialog.Message },
-  ClickedPush: { page: Schema.String },
   ClickedBack: {},
   MeasuredPage: { page: Schema.String, height: Schema.Number },
   MovedSwipe: { offset: Schema.Number, progress: Schema.Number },
@@ -56,10 +55,9 @@ export const init = ({ id, initialPage }: InitConfig): Model => ({
 
 export const isOpen = (model: Model): boolean => Dialog.isOpen(model.dialog);
 
-export const currentPage = (model: Model): string =>
-  Option.getOrElse(Array.last(model.history), () => model.initialPage);
+const currentPage = (model: Model): string => Option.getOrElse(Array.last(model.history), () => model.initialPage);
 
-export const backButtonId = (model: Model, page: string): string => `${model.dialog.id}-back-${page}`;
+const backButtonId = (model: Model, page: string): string => `${model.dialog.id}-back-${page}`;
 export const pushTriggerId = (model: Model, page: string): string => `${model.dialog.id}-push-${page}`;
 
 const FocusDrawerControl = Command.define('FocusDrawerControl', {
@@ -106,13 +104,14 @@ const resetStack = (model: Model): Model =>
 export const open = (model: Model): UpdateReturn => foldDialogOpen(resetStack(model));
 export const close = (model: Model): UpdateReturn => foldDialogClose(model);
 
+export const push = (model: Model, page: string): UpdateReturn => ({
+  model: modifyFields(model, { history: Array.append(page), direction: () => 'Push' }),
+  commands: [FocusDrawerControl({ selector: `#${backButtonId(model, page)}` })],
+});
+
 export const update = (model: Model, message: Message): UpdateReturn =>
   Message.match<UpdateReturn>(message, {
     GotDialogMessage: ({ message }) => foldDialog(model, message),
-    ClickedPush: ({ page }) => ({
-      model: modifyFields(model, { history: Array.append(page), direction: () => 'Push' }),
-      commands: [FocusDrawerControl({ selector: `#${backButtonId(model, page)}` })],
-    }),
     ClickedBack: () =>
       Option.match(Array.last(model.history), {
         onNone: () => ({ model }),

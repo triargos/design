@@ -29,7 +29,7 @@ export const Message = defineMessageUnion({
 });
 export type Message = typeof Message.Type;
 
-export const DEFAULT_DELAY = Duration.millis(200);
+const DEFAULT_DELAY = Duration.millis(200);
 
 export type InitConfig = TooltipPrimitive.InitConfig;
 
@@ -106,7 +106,7 @@ export const focus = (model: Model): Model =>
 
 export const cutLeave = (model: Model): Model => modifyFields(model, { isLeaving: () => false });
 
-export const contentClassName = cn(
+const contentClassName = cn(
   'z-50 w-fit max-w-xs rounded-tooltip bg-popover px-(--tooltip-pad-x) py-(--tooltip-pad-y) text-caption text-balance text-popover-foreground shadow-popup',
   'data-[placement=bottom]:origin-top data-[placement=left]:origin-right data-[placement=right]:origin-left data-[placement=top]:origin-bottom',
   'transition-[opacity,scale] duration-enter ease-enter data-closed:opacity-0 motion-safe:data-closed:scale-95',
@@ -207,7 +207,7 @@ const WaitBeforeCooling = Command.define('WaitBeforeCooling', {
     Effect.sleep(DELAY_GROUP_TIMEOUT).pipe(Effect.as(DelayGroupMessage.CompletedWaitBeforeCooling({ version }))),
 });
 
-export const showDelayIn = (group: DelayGroup): Duration.Duration => (group.isWarm ? Duration.zero : DEFAULT_DELAY);
+const showDelayIn = (group: DelayGroup): Duration.Duration => (group.isWarm ? Duration.zero : DEFAULT_DELAY);
 
 export const reflectDelayGroup = (model: Model, group: DelayGroup): Model =>
   modifyFields(model, {

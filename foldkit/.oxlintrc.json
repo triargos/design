@@ -1,0 +1,41 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "extends": ["./node_modules/@foldkit/oxlint-plugin/recommended.json"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": ["dist", "*.generated.ts"],
+  "overrides": [
+    {
+      "files": [
+        "src/pages/combobox.ts",
+        "src/pages/item.ts",
+        "src/pages/shortcut-tooltip.ts",
+        "src/pages/table.ts",
+        "src/pages/tooltip.ts",
+        "src/pavo/toast.ts"
+      ],
+      "rules": {
+        "foldkit/got-prefix-requires-submodel-payload": "off"
+      }
+    },
+    {
+      "files": ["src/pavo/combobox.ts", "src/pavo/tooltip.ts"],
+      "rules": {
+        "foldkit/no-child-message-construction-in-root": "off"
+      }
+    },
+    {
+      "files": ["src/pavo/dropdown-menu.ts"],
+      "rules": {
+        "foldkit/selection-submodel-factory-at-module-scope": "off"
+      }
+    },
+    {
+      "files": ["src/pavo/item.ts"],
+      "rules": {
+        "foldkit/prefer-callable-message-constructor": "off"
+      }
+    }
+  ]
+}

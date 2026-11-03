@@ -32,9 +32,9 @@ export const Message = defineMessageUnion({
   GotUnderlineTabsMessage: { message: Tabs.Message },
   GotPillTabsMessage: { message: Tabs.Message },
   GotInACardTabsMessage: { message: Tabs.Message },
-  ChangedPeriod: { value: Schema.String },
-  ChangedTheme: { value: Schema.String },
-  ChangedDocumentsView: { value: Schema.String },
+  UpdatedPeriod: { value: Schema.String },
+  UpdatedTheme: { value: Schema.String },
+  UpdatedDocumentsView: { value: Schema.String },
 });
 export type Message = typeof Message.Type;
 
@@ -93,9 +93,9 @@ export const update = (model: Model, message: Message) =>
     GotUnderlineTabsMessage: ({ message }) => foldUnderlineTabs(model, message),
     GotPillTabsMessage: ({ message }) => foldPillTabs(model, message),
     GotInACardTabsMessage: ({ message }) => foldInACardTabs(model, message),
-    ChangedPeriod: ({ value }) => ({ model: modifyFields(model, { period: () => value }) }),
-    ChangedTheme: ({ value }) => ({ model: modifyFields(model, { theme: () => value }) }),
-    ChangedDocumentsView: ({ value }) => ({ model: modifyFields(model, { documentsView: () => value }) }),
+    UpdatedPeriod: ({ value }) => ({ model: modifyFields(model, { period: () => value }) }),
+    UpdatedTheme: ({ value }) => ({ model: modifyFields(model, { theme: () => value }) }),
+    UpdatedDocumentsView: ({ value }) => ({ model: modifyFields(model, { documentsView: () => value }) }),
   });
 
 const STATUS_TABS: ReadonlyArray<Tabs.Tab> = [
@@ -182,7 +182,7 @@ const asRadio = (model: Model, h: HtmlBuilder<Message>): Html =>
     {
       ariaLabel: 'Period',
       value: model.period,
-      onValueChange: (value) => Message.ChangedPeriod({ value }),
+      onValueChange: (value) => Message.UpdatedPeriod({ value }),
       radios: [
         { value: 'day', children: ['Today'] },
         { value: 'week', children: ['This week'] },
@@ -206,7 +206,7 @@ const inline = (model: Model, h: HtmlBuilder<Message>): Html =>
               variant: 'inline',
               ariaLabelledBy: 'tabs-inline-theme',
               value: model.theme,
-              onValueChange: (value) => Message.ChangedTheme({ value }),
+              onValueChange: (value) => Message.UpdatedTheme({ value }),
               radios: [
                 { value: 'light', ariaLabel: 'Light', children: [icon('sun')] },
                 { value: 'dark', ariaLabel: 'Dark', children: [icon('moon')] },
@@ -223,7 +223,7 @@ const inline = (model: Model, h: HtmlBuilder<Message>): Html =>
           ariaLabel: 'Documents',
           className: 'w-full',
           value: model.documentsView,
-          onValueChange: (value) => Message.ChangedDocumentsView({ value }),
+          onValueChange: (value) => Message.UpdatedDocumentsView({ value }),
           radios: [
             { value: 'forYou', className: 'flex-1', children: ['For you'] },
             { value: 'uploads', className: 'flex-1', children: ['My uploads'] },

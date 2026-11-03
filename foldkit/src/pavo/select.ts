@@ -16,7 +16,7 @@ export type SelectOption = Readonly<{
   description?: string | undefined;
 }>;
 
-export const DEFAULT_CUSTOM_LABEL = 'Custom';
+const DEFAULT_CUSTOM_LABEL = 'Custom';
 
 export const Choice = defineTaggedUnion({
   Listed: { value: Schema.String },
@@ -56,7 +56,7 @@ const ListboxBundle = Listbox.create<string>();
 
 export const { buttonId } = Listbox;
 
-export const customInputId = (id: string): string => `${id}-custom-input`;
+const customInputId = (id: string): string => `${id}-custom-input`;
 
 const FocusCustomInput = Command.define('FocusCustomInput', {
   args: { id: Schema.String },
@@ -122,7 +122,7 @@ const triggerClassName = cn(
   'data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-64 data-disabled:shadow-field-flat data-disabled:before:shadow-none',
 );
 
-export const contentClassName = cn(
+const contentClassName = cn(
   'relative isolate z-50 min-w-(--button-width) overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-popup-inset text-popover-foreground shadow-popup outline-none [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
   'origin-top data-[placement=top]:origin-bottom',
   'transition-[opacity,scale] duration-enter ease-enter data-closed:not-data-enter:opacity-0 motion-safe:data-closed:not-data-enter:scale-95',
@@ -136,7 +136,7 @@ const itemClassName =
 const labelClassName =
   'px-menu-item-pad pt-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pb-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/4)] text-caption font-medium text-muted-foreground';
 
-export const separatorClassName = 'pointer-events-none -mx-popup-inset my-popup-inset h-px bg-border';
+const separatorClassName = 'pointer-events-none -mx-popup-inset my-popup-inset h-px bg-border';
 
 export type Group = Readonly<{ label: string; options: ReadonlyArray<SelectOption> }>;
 
@@ -147,7 +147,7 @@ export type ViewConfig<ParentMessage> = Readonly<{
   groups?: ReadonlyArray<Group> | undefined;
   maybeValue: Option.Option<string>;
   placeholder?: string | undefined;
-  allowCustom?: boolean | undefined;
+  isCustomAllowed?: boolean | undefined;
   isCustomChosen?: boolean | undefined;
   customLabel?: string | undefined;
   ariaLabel?: string | undefined;
@@ -167,7 +167,7 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
     groups = [],
     maybeValue,
     placeholder,
-    allowCustom = false,
+    isCustomAllowed = false,
     isCustomChosen = false,
     customLabel = DEFAULT_CUSTOM_LABEL,
     ariaLabel,
@@ -183,7 +183,7 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
       Array.map(group.options, ({ value, label }) => Row.Listed({ value, label, group: group.label })),
     ),
   ];
-  const rows: ReadonlyArray<Row> = allowCustom ? [...listedRows, Row.Custom({ label: customLabel })] : listedRows;
+  const rows: ReadonlyArray<Row> = isCustomAllowed ? [...listedRows, Row.Custom({ label: customLabel })] : listedRows;
 
   const maybeSelectedKey: Option.Option<string> = isCustomChosen
     ? Option.some(CUSTOM_KEY)
@@ -203,7 +203,7 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
       );
 
   const isPlaceholder = Option.isNone(maybeTriggerLabel);
-  const isGrouped = allowCustom || Array.isReadonlyArrayNonEmpty(groups);
+  const isGrouped = isCustomAllowed || Array.isReadonlyArrayNonEmpty(groups);
 
   const buttonContent = h.span(
     [h.Class('contents')],

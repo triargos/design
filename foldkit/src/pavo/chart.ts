@@ -60,7 +60,7 @@ const observePlotSize = (element: Element): Stream.Stream<MeasuredPlot> =>
     ).pipe(Effect.flatMap(() => Effect.never)),
   );
 
-export const ObservePlotSize = Mount.defineStream('ObservePlotSize', {
+const ObservePlotSize = Mount.defineStream('ObservePlotSize', {
   args: { id: Schema.String },
   messages: [Message.MeasuredPlot],
   execute: ({ element }) => observePlotSize(element),

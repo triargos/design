@@ -35,7 +35,7 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  GotFieldMessage: { key: FieldKey, message: DateInput.Message },
+  GotFieldMessage: { fieldId: FieldKey, message: DateInput.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -77,10 +77,10 @@ const foldField = Update.foldChildAt({
   update: DateInput.update,
   readAt: (model: Model, key: FieldKey) => Option.some(model.fields[key]),
   writeAt: writeField,
-  toParentMessage: (key: FieldKey, message: DateInput.Message) => Message.GotFieldMessage({ key, message }),
+  toParentMessage: (key: FieldKey, message: DateInput.Message) => Message.GotFieldMessage({ fieldId: key, message }),
   foldOutMessage: (key: FieldKey) =>
     DateInput.OutMessage.match<Update.Step<Model, Message>>({
-      ChangedDate:
+      UpdatedDate:
         ({ maybeDate }) =>
         (stepModel) =>
           Option.match(Option.fromNullishOr(LOCALE_SIBLING[key]), {
@@ -89,13 +89,13 @@ const foldField = Update.foldChildAt({
               model: writeField(stepModel, siblingKey, DateInput.reflectDate(stepModel.fields[siblingKey], maybeDate)),
             }),
           }),
-      ChangedTime: () => (stepModel) => ({ model: stepModel }),
+      UpdatedTime: () => (stepModel) => ({ model: stepModel }),
     }),
 });
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    GotFieldMessage: ({ key, message }) => foldField(model, key, message),
+    GotFieldMessage: ({ fieldId: key, message }) => foldField(model, key, message),
   });
 
 type FieldOverrides = Omit<DateInput.ViewConfig<Message>, 'model' | 'toParentMessage'>;
@@ -104,7 +104,7 @@ const dateField = (model: Model, key: FieldKey, overrides: FieldOverrides, h: Ht
   DateInput.view(
     {
       model: model.fields[key],
-      toParentMessage: (message) => Message.GotFieldMessage({ key, message }),
+      toParentMessage: (message) => Message.GotFieldMessage({ fieldId: key, message }),
       ...overrides,
     },
     h,
@@ -114,7 +114,7 @@ const timeField = (model: Model, key: FieldKey, overrides: FieldOverrides, h: Ht
   DateInput.time(
     {
       model: model.fields[key],
-      toParentMessage: (message) => Message.GotFieldMessage({ key, message }),
+      toParentMessage: (message) => Message.GotFieldMessage({ fieldId: key, message }),
       ...overrides,
     },
     h,

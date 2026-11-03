@@ -46,7 +46,7 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  GotMenuMessage: { key: MenuKey, message: DropdownMenu.Message },
+  GotMenuMessage: { menuId: MenuKey, message: DropdownMenu.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -71,7 +71,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const toMenuMessage = (key: MenuKey, message: DropdownMenu.Message): Message =>
-  Message.GotMenuMessage({ key, message });
+  Message.GotMenuMessage({ menuId: key, message });
 
 const toggleColumn = (column: string) => (columns: ReadonlyArray<Column>) =>
   Array.some(columns, (visible) => visible === column)
@@ -112,7 +112,7 @@ const foldMenu = Update.foldChildAt({
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    GotMenuMessage: ({ key, message }) => foldMenu(model, key, message),
+    GotMenuMessage: ({ menuId: key, message }) => foldMenu(model, key, message),
   });
 
 type MenuConfig = Omit<DropdownMenu.ViewConfig<string, Message>, 'model' | 'toParentMessage'>;

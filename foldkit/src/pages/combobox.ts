@@ -188,8 +188,8 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  GotSingleMessage: { key: SingleKey, message: Combobox.Message },
-  GotMultipleMessage: { key: MultipleKey, message: Combobox.Message },
+  GotSingleMessage: { singleId: SingleKey, message: Combobox.Message },
+  GotMultipleMessage: { multipleId: MultipleKey, message: Combobox.Message },
   GotVirtualizedMessage: { message: Combobox.VirtualizedMessage },
   ClickedRemoveChip: { key: MultipleKey, value: Schema.String },
   ClickedChangeOwner: {},
@@ -273,7 +273,7 @@ const foldSingle = Update.foldChildAt({
   readAt: (model: Model, key: SingleKey) => Option.some(model.singles[key].combobox),
   writeAt: (model: Model, key: SingleKey, nextCombobox: Combobox.Model): Model =>
     writeSingle(model, key, { ...model.singles[key], combobox: nextCombobox }),
-  toParentMessage: (key: SingleKey, message: Combobox.Message) => Message.GotSingleMessage({ key, message }),
+  toParentMessage: (key: SingleKey, message: Combobox.Message) => Message.GotSingleMessage({ singleId: key, message }),
   foldOutMessage: (key: SingleKey) =>
     Combobox.OutMessage.match<Update.Step<Model, Message>>({
       Selected:
@@ -294,7 +294,8 @@ const foldMultiple = Update.foldChildAt({
   readAt: (model: Model, key: MultipleKey) => Option.some(model.multiples[key].combobox),
   writeAt: (model: Model, key: MultipleKey, nextCombobox: Combobox.Model): Model =>
     writeMultiple(model, key, { ...model.multiples[key], combobox: nextCombobox }),
-  toParentMessage: (key: MultipleKey, message: Combobox.Message) => Message.GotMultipleMessage({ key, message }),
+  toParentMessage: (key: MultipleKey, message: Combobox.Message) =>
+    Message.GotMultipleMessage({ multipleId: key, message }),
   foldOutMessage: (key: MultipleKey) =>
     Combobox.OutMessage.match<Update.Step<Model, Message>>({
       Selected:
@@ -350,8 +351,8 @@ const foldOwnerDialogOpen = Update.foldChildStep({ update: Dialog.open, ...owner
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    GotSingleMessage: ({ key, message }) => foldSingle(model, key, message),
-    GotMultipleMessage: ({ key, message }) => foldMultiple(model, key, message),
+    GotSingleMessage: ({ singleId: key, message }) => foldSingle(model, key, message),
+    GotMultipleMessage: ({ multipleId: key, message }) => foldMultiple(model, key, message),
     GotVirtualizedMessage: ({ message }) => foldVirtualized(model, message),
     ClickedRemoveChip: ({ key, value }) => ({
       model: writeMultiple(model, key, {
@@ -369,7 +370,7 @@ const single = (model: Model, key: SingleKey, overrides: SingleOverrides, h: Htm
   Combobox.view(
     {
       model: model.singles[key].combobox,
-      toParentMessage: (message) => Message.GotSingleMessage({ key, message }),
+      toParentMessage: (message) => Message.GotSingleMessage({ singleId: key, message }),
       options: SINGLE_OPTIONS[key],
       maybeValue: model.singles[key].maybeValue,
       ...overrides,
@@ -386,7 +387,7 @@ const multiple = (model: Model, key: MultipleKey, overrides: MultipleOverrides, 
   Combobox.multiple(
     {
       model: model.multiples[key].combobox,
-      toParentMessage: (message) => Message.GotMultipleMessage({ key, message }),
+      toParentMessage: (message) => Message.GotMultipleMessage({ multipleId: key, message }),
       options: MULTIPLE_OPTIONS[key],
       values: model.multiples[key].values,
       onRemove: (value) => Message.ClickedRemoveChip({ key, value }),
@@ -588,7 +589,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
           {
             title: 'Allow custom',
             description: [
-              code('allowCustom', h),
+              code('isCustomAllowed', h),
               ': the value is an option’s value or the typed text. While the query names no option, a row takes it, after the options whose label or a word in it starts with the query: Enter picks it unless one does. ',
               code('customLabel', h),
               ' and ',
@@ -607,7 +608,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
                     single(
                       model,
                       'allowCustom',
-                      { allowCustom: true, placeholder: 'Choose or type a role', emptyText: 'No roles found' },
+                      { isCustomAllowed: true, placeholder: 'Choose or type a role', emptyText: 'No roles found' },
                       h,
                     ),
                   ],
@@ -622,7 +623,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
           {
             title: 'Multiple, allow custom',
             description: [
-              code('allowCustom', h),
+              code('isCustomAllowed', h),
               ' on ',
               code('Combobox.multiple', h),
               ': chips of options and typed text. A typed chip’s value and label are its text; ',
@@ -634,7 +635,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
                 model,
                 'multipleAllowCustom',
                 {
-                  allowCustom: true,
+                  isCustomAllowed: true,
                   ariaLabel: 'Tags',
                   emptyText: 'No tags found',
                   className: 'w-80',

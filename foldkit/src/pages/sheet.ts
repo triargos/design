@@ -26,7 +26,7 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   ClickedOpenSheet: { key: SheetKey },
-  GotSheetMessage: { key: SheetKey, message: Sheet.Message },
+  GotSheetMessage: { sheetId: SheetKey, message: Sheet.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -45,7 +45,8 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
   },
 });
 
-const toSheetMessage = (key: SheetKey, message: Sheet.Message): Message => Message.GotSheetMessage({ key, message });
+const toSheetMessage = (key: SheetKey, message: Sheet.Message): Message =>
+  Message.GotSheetMessage({ sheetId: key, message });
 
 const foldSheetOutMessage = (_key: SheetKey) =>
   Sheet.OutMessage.match<Update.Step<Model, Message>>({
@@ -62,10 +63,19 @@ const foldSheet = Update.foldChildAt({
   foldOutMessage: foldSheetOutMessage,
 });
 
+const foldSheetStep = (key: SheetKey, step: typeof Sheet.open) =>
+  Update.foldChildStep({
+    update: step,
+    read: (model: Model) => Option.some(model.sheets[key]),
+    write: (model: Model, nextSheet: Sheet.Model) => modifyFields(model, { sheets: Record.set(key, nextSheet) }),
+    toParentMessage: (message: Sheet.Message) => toSheetMessage(key, message),
+    foldOutMessage: foldSheetOutMessage(key),
+  });
+
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    ClickedOpenSheet: ({ key }) => foldSheet(model, key, Sheet.Message.RequestedOpen()),
-    GotSheetMessage: ({ key, message }) => foldSheet(model, key, message),
+    ClickedOpenSheet: ({ key }) => foldSheetStep(key, Sheet.open)(model),
+    GotSheetMessage: ({ sheetId: key, message }) => foldSheet(model, key, message),
   });
 
 const trigger = (model: Model, key: SheetKey, children: ReadonlyArray<Child>, h: HtmlBuilder<Message>): Html =>

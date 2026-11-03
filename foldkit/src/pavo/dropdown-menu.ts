@@ -19,7 +19,7 @@ export const isOpen = (model: Model): boolean => model.isOpen;
 
 export type MenuSlot = 'dropdown-menu' | 'context-menu';
 
-export const itemVariants = cva(
+const itemVariants = cva(
   "relative flex cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-active:bg-highlight data-active:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
   {
     variants: {
@@ -40,7 +40,7 @@ export const itemVariants = cva(
   },
 );
 
-export const popupClassName = cn(
+const popupClassName = cn(
   'z-50 min-w-32 overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-popup-inset text-popover-foreground shadow-popup outline-none [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
   'data-[placement=bottom]:origin-top data-[placement=left]:origin-right data-[placement=right]:origin-left data-[placement=top]:origin-bottom',
   'transition-[opacity,scale] duration-enter ease-enter data-closed:not-data-enter:opacity-0 motion-safe:data-closed:not-data-enter:scale-95',

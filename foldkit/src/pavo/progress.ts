@@ -8,7 +8,7 @@ const DEFAULT_LOCALE = 'en-US';
 const DEFAULT_MIN = 0;
 const DEFAULT_MAX = 100;
 
-export const formatValue = (value: number, min: number, max: number, locale: string): string =>
+const formatValue = (value: number, min: number, max: number, locale: string): string =>
   new Intl.NumberFormat(locale, { style: 'percent' }).format((value - min) / (max - min));
 
 export type ViewConfig = Readonly<{

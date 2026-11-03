@@ -42,9 +42,10 @@ export const Message = defineMessageUnion({
   CompletedSaveThemePreference: {},
   ClickedLink: { request: UrlRequest },
   ChangedUrl: { url: Url },
-  ChangedThemePreference: { themePreference: ThemePreference },
-  ChangedSystemTheme: { systemTheme: ResolvedTheme },
+  UpdatedThemePreference: { themePreference: ThemePreference },
+  UpdatedSystemTheme: { systemTheme: ResolvedTheme },
   GotCustomizeMessage: { message: Customize.Message },
+  ClickedNavLink: {},
   GotSidebarMessage: { message: Sidebar.Message },
   GotPagesMessage: { message: Pages.Message },
 });
@@ -157,12 +158,14 @@ const foldCustomize = Update.foldChild({
 
 const toSidebarMessage = (message: Sidebar.Message): Message => Message.GotSidebarMessage({ message });
 
-const foldSidebar = Update.foldChild({
-  update: Sidebar.update,
+const sidebarFold = {
   read: (model: Model) => Option.some(model.sidebar),
-  write: (model, nextSidebar) => modifyFields(model, { sidebar: () => nextSidebar }),
+  write: (model: Model, nextSidebar: Sidebar.Model) => modifyFields(model, { sidebar: () => nextSidebar }),
   toParentMessage: toSidebarMessage,
-});
+};
+
+const foldSidebar = Update.foldChild({ update: Sidebar.update, ...sidebarFold });
+const foldSidebarCloseMobile = Update.foldChildStep({ update: Sidebar.closeMobile, ...sidebarFold });
 
 type UpdateReturn = Update.Return<Model, Message>;
 
@@ -184,16 +187,17 @@ export const update = (model: Model, message: Message) =>
         External: ({ href }) => ({ model, commands: [LoadExternal({ href })] }),
       }),
     ChangedUrl: ({ url }) => ({ model: modifyFields(model, { route: () => Pages.urlToAppRoute(url) }) }),
-    ChangedThemePreference: ({ themePreference }) => {
+    UpdatedThemePreference: ({ themePreference }) => {
       const themeChange = applyThemeChange(model, modifyFields(model, { themePreference: () => themePreference }));
       return {
         model: themeChange.model,
         commands: [...(themeChange.commands ?? []), SaveThemePreference({ themePreference })],
       };
     },
-    ChangedSystemTheme: ({ systemTheme }) =>
+    UpdatedSystemTheme: ({ systemTheme }) =>
       applyThemeChange(model, modifyFields(model, { systemTheme: () => systemTheme })),
     GotCustomizeMessage: ({ message }) => foldCustomize(model, message),
+    ClickedNavLink: () => foldSidebarCloseMobile(model),
     GotSidebarMessage: ({ message }) => foldSidebar(model, message),
     GotPagesMessage: ({ message }) => foldPages(model, message),
   });
@@ -209,7 +213,7 @@ const navLink = (title: string, href: string, isCurrent: boolean, h: HtmlBuilder
           {
             href,
             isCurrent,
-            onClick: toSidebarMessage(Sidebar.Message.ClickedMenuLink()),
+            onClick: Message.ClickedNavLink(),
             children: [title],
           },
           h,
@@ -235,7 +239,7 @@ const themePicker = (model: Model, h: HtmlBuilder<Message>): Html =>
       ariaLabel: 'Theme',
       value: model.themePreference,
       onValueChange: (value) =>
-        Message.ChangedThemePreference({ themePreference: isThemePreference(value) ? value : model.themePreference }),
+        Message.UpdatedThemePreference({ themePreference: isThemePreference(value) ? value : model.themePreference }),
       className: 'w-full',
       radios: Array.map(ThemePreference.literals, (themePreference) => ({
         value: themePreference,
@@ -392,7 +396,7 @@ const systemThemeSubscriptions = Subscription.make<Model, Message>()((entry) => 
         Stream.when(
           Dom.streamFromMediaQuery({
             query: DARK_COLOR_SCHEME_QUERY,
-            mapMatches: (isDark) => Message.ChangedSystemTheme({ systemTheme: isDark ? 'Dark' : 'Light' }),
+            mapMatches: (isDark) => Message.UpdatedSystemTheme({ systemTheme: isDark ? 'Dark' : 'Light' }),
           }),
           Effect.sync(() => isSystemPreference),
         ),

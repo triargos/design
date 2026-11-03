@@ -40,7 +40,7 @@ const toIntegerInputMessage =
 
 const foldIntegerInputOutMessage = () =>
   IntegerInput.OutMessage.match<Update.Step<Model, Message>>({
-    ChangedValue: () => (stepModel) => ({ model: stepModel }),
+    UpdatedValue: () => (stepModel) => ({ model: stepModel }),
   });
 
 const foldIntegerInput = Update.foldChildAt({

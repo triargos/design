@@ -49,7 +49,11 @@ export const Model = Schema.Struct({
 });
 export type Model = typeof Model.Type;
 
+const SidebarId = Schema.Literals(['Default', 'Collapsed']);
+type SidebarId = typeof SidebarId.Type;
+
 export const Message = defineMessageUnion({
+  ClickedMenuLink: { sidebarId: SidebarId },
   GotDefaultSidebarMessage: { message: Sidebar.Message },
   GotCollapsedSidebarMessage: { message: Sidebar.Message },
 });
@@ -66,24 +70,30 @@ const toDefaultSidebarMessage = (message: Sidebar.Message): Message => Message.G
 const toCollapsedSidebarMessage = (message: Sidebar.Message): Message =>
   Message.GotCollapsedSidebarMessage({ message });
 
-const foldDefaultSidebar = Update.foldChild({
-  update: Sidebar.update,
+const defaultSidebarFold = {
   read: (model: Model) => Option.some(model.defaultSidebar),
   write: (model: Model, nextDefaultSidebar: Sidebar.Model) =>
     modifyFields(model, { defaultSidebar: () => nextDefaultSidebar }),
   toParentMessage: toDefaultSidebarMessage,
-});
+};
 
-const foldCollapsedSidebar = Update.foldChild({
-  update: Sidebar.update,
+const foldDefaultSidebar = Update.foldChild({ update: Sidebar.update, ...defaultSidebarFold });
+const foldDefaultSidebarCloseMobile = Update.foldChildStep({ update: Sidebar.closeMobile, ...defaultSidebarFold });
+
+const collapsedSidebarFold = {
   read: (model: Model) => Option.some(model.collapsedSidebar),
   write: (model: Model, nextCollapsedSidebar: Sidebar.Model) =>
     modifyFields(model, { collapsedSidebar: () => nextCollapsedSidebar }),
   toParentMessage: toCollapsedSidebarMessage,
-});
+};
+
+const foldCollapsedSidebar = Update.foldChild({ update: Sidebar.update, ...collapsedSidebarFold });
+const foldCollapsedSidebarCloseMobile = Update.foldChildStep({ update: Sidebar.closeMobile, ...collapsedSidebarFold });
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
+    ClickedMenuLink: ({ sidebarId }) =>
+      sidebarId === 'Default' ? foldDefaultSidebarCloseMobile(model) : foldCollapsedSidebarCloseMobile(model),
     GotDefaultSidebarMessage: ({ message }) => foldDefaultSidebar(model, message),
     GotCollapsedSidebarMessage: ({ message }) => foldCollapsedSidebar(model, message),
   });
@@ -108,14 +118,11 @@ export const subscriptions = Subscription.aggregate(
 type AppFrameConfig = Readonly<{
   model: Sidebar.Model;
   toSidebarMessage: (message: Sidebar.Message) => Message;
+  sidebarId: SidebarId;
   isIconCollapsible: boolean;
 }>;
 
-const linkView = (
-  link: SidebarLink,
-  toSidebarMessage: (message: Sidebar.Message) => Message,
-  h: HtmlBuilder<Message>,
-): Html =>
+const linkView = (link: SidebarLink, sidebarId: SidebarId, h: HtmlBuilder<Message>): Html =>
   Sidebar.menuItem(
     {
       attributes: [h.Key(link.label)],
@@ -124,7 +131,7 @@ const linkView = (
           {
             isCurrent: link.isCurrent,
             className: 'relative w-full gap-3',
-            onClick: toSidebarMessage(Sidebar.Message.ClickedMenuLink()),
+            onClick: Message.ClickedMenuLink({ sidebarId }),
             children: [
               link.icon,
               h.span([], [link.label]),
@@ -158,7 +165,7 @@ const linkView = (
                           Sidebar.menuSubButton(
                             {
                               isCurrent: index === 0,
-                              onClick: toSidebarMessage(Sidebar.Message.ClickedMenuLink()),
+                              onClick: Message.ClickedMenuLink({ sidebarId }),
                               children: [h.span([], [child])],
                             },
                             h,
@@ -177,7 +184,10 @@ const linkView = (
     h,
   );
 
-const appFrame = ({ model, toSidebarMessage, isIconCollapsible }: AppFrameConfig, h: HtmlBuilder<Message>): Html => {
+const appFrame = (
+  { model, toSidebarMessage, sidebarId, isIconCollapsible }: AppFrameConfig,
+  h: HtmlBuilder<Message>,
+): Html => {
   const iconPadding = isIconCollapsible ? 'group-data-[collapsible=icon]:px-2' : '';
   return h.div(
     [h.Class('relative h-[600px] w-full overflow-hidden rounded-panel bg-sidebar')],
@@ -231,9 +241,7 @@ const appFrame = ({ model, toSidebarMessage, isIconCollapsible }: AppFrameConfig
                                       children: [
                                         Sidebar.menu(
                                           {
-                                            children: Array.map(group.links, (link) =>
-                                              linkView(link, toSidebarMessage, h),
-                                            ),
+                                            children: Array.map(group.links, (link) => linkView(link, sidebarId, h)),
                                           },
                                           h,
                                         ),
@@ -333,7 +341,12 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html =>
             isBare: true,
             children: [
               appFrame(
-                { model: model.defaultSidebar, toSidebarMessage: toDefaultSidebarMessage, isIconCollapsible: false },
+                {
+                  model: model.defaultSidebar,
+                  toSidebarMessage: toDefaultSidebarMessage,
+                  sidebarId: 'Default',
+                  isIconCollapsible: false,
+                },
                 h,
               ),
             ],
@@ -353,6 +366,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html =>
                 {
                   model: model.collapsedSidebar,
                   toSidebarMessage: toCollapsedSidebarMessage,
+                  sidebarId: 'Collapsed',
                   isIconCollapsible: true,
                 },
                 h,

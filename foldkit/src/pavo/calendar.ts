@@ -15,8 +15,6 @@ export type Model = CalendarPrimitive.Model;
 export type Message = CalendarPrimitive.Message;
 export type OutMessage = CalendarPrimitive.OutMessage;
 
-export const DEFAULT_LOCALE = 'en-US';
-
 const SAMPLE_YEAR = 2025;
 const SAMPLE_SUNDAY = Date.UTC(2023, 0, 1);
 const MILLIS_PER_DAY = 86_400_000;

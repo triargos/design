@@ -203,7 +203,7 @@ const observeLayers = (shell: Element): Stream.Stream<MeasuredLayers> =>
     ).pipe(Effect.flatMap(() => Effect.never)),
   );
 
-export const ObserveBottomNavLayers = Mount.defineStream('ObserveBottomNavLayers', {
+const ObserveBottomNavLayers = Mount.defineStream('ObserveBottomNavLayers', {
   args: { id: Schema.String },
   messages: [Message.MeasuredLayers],
   execute: ({ element }) => observeLayers(element),
@@ -247,7 +247,7 @@ const observeCurrentTab = (list: Element): Stream.Stream<MeasuredCurrentTab> =>
     ).pipe(Effect.flatMap(() => Effect.never)),
   );
 
-export const ObserveCurrentTab = Mount.defineStream('ObserveCurrentTab', {
+const ObserveCurrentTab = Mount.defineStream('ObserveCurrentTab', {
   args: { id: Schema.String },
   messages: [Message.MeasuredCurrentTab],
   execute: ({ element }) => observeCurrentTab(element),

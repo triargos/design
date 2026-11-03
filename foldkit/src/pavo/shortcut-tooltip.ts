@@ -68,7 +68,7 @@ const formatKey = (part: string, isMac: boolean): string => {
   );
 };
 
-export const formatShortcut = (shortcut: string, isMac: boolean): string =>
+const formatShortcut = (shortcut: string, isMac: boolean): string =>
   Array.join(
     Array.map(String.split(shortcut, '+'), (part) => formatKey(part, isMac)),
     isMac ? '' : '+',

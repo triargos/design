@@ -110,7 +110,7 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   ClickedTab: { example: NavExample, label: Schema.String },
-  GotNavMessage: { example: NavExample, message: BottomNav.Message },
+  GotNavMessage: { navId: NavExample, message: BottomNav.Message },
   ToggledTask: { example: SelectionExample, taskId: Schema.String, isChecked: Schema.Boolean },
   ClickedClearSelection: { example: SelectionExample },
   UpdatedName: { value: Schema.String },
@@ -151,7 +151,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 const toNavMessage =
   (example: NavExample) =>
   (message: BottomNav.Message): Message =>
-    Message.GotNavMessage({ example, message });
+    Message.GotNavMessage({ navId: example, message });
 
 const withCurrentPage = (model: Model, example: NavExample, label: string): Model =>
   modifyFields(model, { currentPages: Record.set(example, label) });
@@ -168,7 +168,8 @@ const foldNav = Update.foldChildAt({
   readAt: (model: Model, example: NavExample) => Option.some(model.navs[example]),
   writeAt: (model: Model, example: NavExample, nextNav: BottomNav.Model) =>
     modifyFields(model, { navs: Record.set(example, nextNav) }),
-  toParentMessage: (example: NavExample, message: BottomNav.Message) => Message.GotNavMessage({ example, message }),
+  toParentMessage: (example: NavExample, message: BottomNav.Message) =>
+    Message.GotNavMessage({ navId: example, message }),
   foldOutMessage: foldNavOutMessage,
 });
 
@@ -213,7 +214,7 @@ const toggleTask =
 const updateMessage = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     ClickedTab: ({ example, label }) => ({ model: withCurrentPage(model, example, label) }),
-    GotNavMessage: ({ example, message }) => foldNav(model, example, message),
+    GotNavMessage: ({ navId: example, message }) => foldNav(model, example, message),
     ToggledTask: ({ example, taskId, isChecked }) => ({
       model: updateSelection(model, example, toggleTask(taskId, isChecked)),
     }),

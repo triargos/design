@@ -30,7 +30,7 @@ export const Model = Schema.Struct({ pickers: Schema.Record(PickerKey, Picker) }
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  GotPickerMessage: { key: PickerKey, message: ColorPicker.Message },
+  GotPickerMessage: { pickerId: PickerKey, message: ColorPicker.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -57,7 +57,7 @@ const writePicker = (model: Model, key: PickerKey, nextPicker: Picker): Model =>
 const toPickerMessage =
   (key: PickerKey) =>
   (message: ColorPicker.Message): Message =>
-    Message.GotPickerMessage({ key, message });
+    Message.GotPickerMessage({ pickerId: key, message });
 
 const foldPicker = Update.foldChildAt({
   update: ColorPicker.update,
@@ -67,7 +67,7 @@ const foldPicker = Update.foldChildAt({
   toParentMessage: (key: PickerKey, message: ColorPicker.Message) => toPickerMessage(key)(message),
   foldOutMessage: (key: PickerKey) =>
     ColorPicker.OutMessage.match<Update.Step<Model, Message>>({
-      ChangedColor:
+      UpdatedColor:
         ({ value }) =>
         (stepModel) => ({ model: writePicker(stepModel, key, { ...stepModel.pickers[key], value }) }),
     }),
@@ -75,7 +75,7 @@ const foldPicker = Update.foldChildAt({
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    GotPickerMessage: ({ key, message }) => foldPicker(model, key, message),
+    GotPickerMessage: ({ pickerId: key, message }) => foldPicker(model, key, message),
   });
 
 const liftPicker = (key: PickerKey) => ({

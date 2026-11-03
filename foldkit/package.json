@@ -7,7 +7,8 @@
     "dev": "pnpm generate && vite",
     "build": "pnpm generate && vite build",
     "typecheck": "pnpm generate && tsc --noEmit",
-    "generate": "node scripts/icons.mjs && node scripts/pages.mjs"
+    "generate": "node scripts/icons.mjs && node scripts/pages.mjs",
+    "lint": "oxlint"
   },
   "dependencies": {
     "@effect/platform-browser": "4.1.0",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@foldkit/devtools": "0.170.0",
+    "@foldkit/oxlint-plugin": "^0.15.4",
     "@foldkit/vite-plugin": "0.29.0",
     "@tabler/icons": "3.49.0",
     "@tailwindcss/vite": "^4.3.3",

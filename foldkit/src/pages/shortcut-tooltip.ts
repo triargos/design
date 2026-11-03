@@ -30,7 +30,7 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   CompletedDetectPlatform: { isMac: Schema.Boolean },
-  GotTooltipMessage: { key: TooltipKey, message: Tooltip.Message },
+  GotTooltipMessage: { tooltipId: TooltipKey, message: Tooltip.Message },
   GotLinksGroupMessage: { message: Tooltip.DelayGroupMessage },
 });
 export type Message = typeof Message.Type;
@@ -64,7 +64,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const toTooltipMessage = (key: TooltipKey, message: Tooltip.Message): Message =>
-  Message.GotTooltipMessage({ key, message });
+  Message.GotTooltipMessage({ tooltipId: key, message });
 
 const linksGroupFold = {
   read: (model: Model) => Option.some(model.linksGroup),
@@ -108,7 +108,7 @@ const cutOtherGroupLeaves = (model: Model, shownKey: TooltipKey): Model =>
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     CompletedDetectPlatform: ({ isMac }) => ({ model: modifyFields(model, { isMac: () => isMac }) }),
-    GotTooltipMessage: ({ key, message }) =>
+    GotTooltipMessage: ({ tooltipId: key, message }) =>
       isInGroup(key) && Tooltip.isEnteredTrigger(message)
         ? foldTooltip(withGroupDelay(model, key), key, message)
         : foldTooltip(model, key, message),

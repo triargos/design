@@ -31,7 +31,7 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   ClickedSearch: {},
-  GotCommandMessage: { key: CommandKey, message: Command.Message },
+  GotCommandMessage: { commandId: CommandKey, message: Command.Message },
   GotPaletteDialogMessage: { message: Dialog.Message },
 });
 export type Message = typeof Message.Type;
@@ -74,7 +74,8 @@ const foldCommand = Update.foldChildAt({
   update: Command.update,
   readAt: (model: Model, key: CommandKey) => Option.some(model.commands[key]),
   writeAt: writeCommand,
-  toParentMessage: (key: CommandKey, message: Command.Message) => Message.GotCommandMessage({ key, message }),
+  toParentMessage: (key: CommandKey, message: Command.Message) =>
+    Message.GotCommandMessage({ commandId: key, message }),
   foldOutMessage: (key: CommandKey) =>
     Command.OutMessage.match<Update.Step<Model, Message>>({
       Selected: () => (stepModel) => (key === 'palette' ? foldPaletteDialogClose(stepModel) : { model: stepModel }),
@@ -84,7 +85,7 @@ const foldCommand = Update.foldChildAt({
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     ClickedSearch: () => foldPaletteDialogOpen(model),
-    GotCommandMessage: ({ key, message }) => foldCommand(model, key, message),
+    GotCommandMessage: ({ commandId: key, message }) => foldCommand(model, key, message),
     GotPaletteDialogMessage: ({ message }) => foldPaletteDialog(model, message),
   });
 
@@ -122,7 +123,7 @@ const command = (
   Command.view(
     {
       model: model.commands[key],
-      toParentMessage: (message) => Message.GotCommandMessage({ key, message }),
+      toParentMessage: (message) => Message.GotCommandMessage({ commandId: key, message }),
       ...config,
     },
     h,

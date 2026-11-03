@@ -460,7 +460,7 @@ const observeTableScroll = (element: Element, id: string): Stream.Stream<Virtual
     ).pipe(Effect.flatMap(() => Effect.never)),
   );
 
-export const ObserveTableScroll = Mount.defineStream('ObserveTableScroll', {
+const ObserveTableScroll = Mount.defineStream('ObserveTableScroll', {
   args: { id: Schema.String },
   messages: [VirtualTableMessage.ObservedScroll],
   execute: ({ element, id }) => observeTableScroll(element, id),

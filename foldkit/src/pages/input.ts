@@ -48,10 +48,10 @@ export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   UpdatedName: { value: Schema.String },
-  GotFieldSelectMessage: { state: FieldState, message: Select.Message },
-  GotFieldChipsMessage: { state: FieldState, message: Combobox.Message },
+  GotFieldSelectMessage: { fieldStateId: FieldState, message: Select.Message },
+  GotFieldChipsMessage: { fieldStateId: FieldState, message: Combobox.Message },
   ClickedRemoveTeamChip: { state: FieldState, value: Schema.String },
-  GotSurfaceSelectMessage: { surface: SurfaceLabel, message: Select.Message },
+  GotSurfaceSelectMessage: { surfaceId: SurfaceLabel, message: Select.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -119,7 +119,8 @@ const foldFieldSelect = Update.foldChildAt({
   readAt: (model: Model, state: FieldState) => Option.some(model.fieldSelects[state].select),
   writeAt: (model: Model, state: FieldState, nextSelect: Select.Model): Model =>
     writeFieldSelect(model, state, { ...model.fieldSelects[state], select: nextSelect }),
-  toParentMessage: (state: FieldState, message: Select.Message) => Message.GotFieldSelectMessage({ state, message }),
+  toParentMessage: (state: FieldState, message: Select.Message) =>
+    Message.GotFieldSelectMessage({ fieldStateId: state, message }),
   foldOutMessage: (state: FieldState) =>
     teamSelectOutMessage((model, toNext) => writeFieldSelect(model, state, toNext(model.fieldSelects[state]))),
 });
@@ -130,7 +131,7 @@ const foldSurfaceSelect = Update.foldChildAt({
   writeAt: (model: Model, surface: SurfaceLabel, nextSelect: Select.Model): Model =>
     writeSurfaceSelect(model, surface, { ...model.surfaceSelects[surface], select: nextSelect }),
   toParentMessage: (surface: SurfaceLabel, message: Select.Message) =>
-    Message.GotSurfaceSelectMessage({ surface, message }),
+    Message.GotSurfaceSelectMessage({ surfaceId: surface, message }),
   foldOutMessage: (surface: SurfaceLabel) =>
     teamSelectOutMessage((model, toNext) => writeSurfaceSelect(model, surface, toNext(model.surfaceSelects[surface]))),
 });
@@ -140,7 +141,8 @@ const foldFieldChips = Update.foldChildAt({
   readAt: (model: Model, state: FieldState) => Option.some(model.fieldChips[state].combobox),
   writeAt: (model: Model, state: FieldState, nextCombobox: Combobox.Model): Model =>
     writeFieldChips(model, state, { ...model.fieldChips[state], combobox: nextCombobox }),
-  toParentMessage: (state: FieldState, message: Combobox.Message) => Message.GotFieldChipsMessage({ state, message }),
+  toParentMessage: (state: FieldState, message: Combobox.Message) =>
+    Message.GotFieldChipsMessage({ fieldStateId: state, message }),
   foldOutMessage: (state: FieldState) =>
     Combobox.OutMessage.match<Update.Step<Model, Message>>({
       Selected:
@@ -158,15 +160,15 @@ const foldFieldChips = Update.foldChildAt({
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     UpdatedName: ({ value }) => ({ model: modifyFields(model, { name: () => value }) }),
-    GotFieldSelectMessage: ({ state, message }) => foldFieldSelect(model, state, message),
-    GotFieldChipsMessage: ({ state, message }) => foldFieldChips(model, state, message),
+    GotFieldSelectMessage: ({ fieldStateId: state, message }) => foldFieldSelect(model, state, message),
+    GotFieldChipsMessage: ({ fieldStateId: state, message }) => foldFieldChips(model, state, message),
     ClickedRemoveTeamChip: ({ state, value }) => ({
       model: writeFieldChips(model, state, {
         ...model.fieldChips[state],
         values: Array.filter(model.fieldChips[state].values, (current) => current !== value),
       }),
     }),
-    GotSurfaceSelectMessage: ({ surface, message }) => foldSurfaceSelect(model, surface, message),
+    GotSurfaceSelectMessage: ({ surfaceId: surface, message }) => foldSurfaceSelect(model, surface, message),
   });
 
 const stateConfig = (state: FieldState) => ({
@@ -207,7 +209,7 @@ const teamChips = (model: Model, state: FieldState, h: HtmlBuilder<Message>): Ht
   return Combobox.multiple(
     {
       model: combobox,
-      toParentMessage: (message) => Message.GotFieldChipsMessage({ state, message }),
+      toParentMessage: (message) => Message.GotFieldChipsMessage({ fieldStateId: state, message }),
       options: TEAMS,
       values,
       onRemove: (value) => Message.ClickedRemoveTeamChip({ state, value }),
@@ -255,7 +257,12 @@ const FIELDS: ReadonlyArray<FieldSpecimen> = [
     name: 'Select',
     meta: 'SelectTrigger',
     render: (model, state, h) =>
-      teamSelect(model.fieldSelects[state], (message) => Message.GotFieldSelectMessage({ state, message }), state, h),
+      teamSelect(
+        model.fieldSelects[state],
+        (message) => Message.GotFieldSelectMessage({ fieldStateId: state, message }),
+        state,
+        h,
+      ),
   },
   {
     name: 'Combobox chips',
@@ -362,7 +369,7 @@ const surfaceSample = (model: Model, { label, surface, className }: Surface, h: 
               Input.view({ id: `surface-${label}-name`, placeholder: 'Maya Chen', ariaLabel: 'Name' }, h),
               teamSelect(
                 model.surfaceSelects[label],
-                (message) => Message.GotSurfaceSelectMessage({ surface: label, message }),
+                (message) => Message.GotSurfaceSelectMessage({ surfaceId: label, message }),
                 'filled',
                 h,
               ),

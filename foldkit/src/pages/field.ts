@@ -63,7 +63,7 @@ export const Message = defineMessageUnion({
   SelectedDue: { due: Schema.String },
   ToggledMentionsOnly: { isChecked: Schema.Boolean },
   ToggledNotifyEvent: { event: Schema.String, isChecked: Schema.Boolean },
-  ChangedProfile: {},
+  UpdatedProfile: {},
   ClickedSaveProfile: {},
   UpdatedInviteEmail: { value: Schema.String },
   SubmittedInviteForm: {},
@@ -122,7 +122,7 @@ const foldColorPicker = Update.foldChild({
     modifyFields(model, { colorPicker: () => nextColorPicker }),
   toParentMessage: toColorPickerMessage,
   foldOutMessage: ColorPicker.OutMessage.match<Update.Step<Model, Message>>({
-    ChangedColor:
+    UpdatedColor:
       ({ value }) =>
       (stepModel) => ({ model: modifyFields(stepModel, { color: () => value }) }),
   }),
@@ -159,7 +159,7 @@ export const update = (model: Model, message: Message) =>
     ToggledNotifyEvent: ({ event, isChecked }) => ({
       model: modifyFields(model, { notifyEvents: toggleMember(event, isChecked) }),
     }),
-    ChangedProfile: () => ({ model: modifyFields(model, { isProfileDirty: () => true }) }),
+    UpdatedProfile: () => ({ model: modifyFields(model, { isProfileDirty: () => true }) }),
     ClickedSaveProfile: () => ({ model: modifyFields(model, { isProfileDirty: () => false }) }),
     UpdatedInviteEmail: ({ value }) => ({
       model: modifyFields(model, {
@@ -510,7 +510,7 @@ const legend = (model: Model, h: HtmlBuilder<Message>): Html =>
     h,
   );
 
-const markProfileChanged = () => Message.ChangedProfile();
+const markProfileChanged = () => Message.UpdatedProfile();
 
 const inACard = (model: Model, h: HtmlBuilder<Message>): Html =>
   Card.view(

@@ -26,6 +26,7 @@ export const view = ({ size = DEFAULT_SIZE, className }: SpinnerConfig = {}): Ht
       ih.ViewBox('0 0 24 24'),
       ih.Xmlns('http://www.w3.org/2000/svg'),
       ih.Stroke('currentColor'),
+      ih.DataAttribute('slot', 'spinner'),
       ih.AriaHidden(true),
       ih.Class(cn('shrink-0', className)),
     ],

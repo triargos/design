@@ -73,20 +73,20 @@ const STYLE_LABELS: Record<SizingStyle, string> = { pavo: 'Pavo', coss: 'Coss', 
 const SCALE = { min: 0.8, max: 1.25, step: 0.025 } as const;
 const SCALE_PRECISION = 1000;
 
-export const Density = defineTaggedUnion({
+const Density = defineTaggedUnion({
   Named: { density: DensityName },
   Scaled: { factor: Schema.Number },
 });
 export type Density = typeof Density.Type;
 
-export const Sizing = Schema.Struct({
+const Sizing = Schema.Struct({
   maybeStyle: Schema.OptionFromNullOr(SizingStyle),
   density: Density,
   radius: Radius,
 });
 export type Sizing = typeof Sizing.Type;
 
-export const Branding = Schema.Struct({
+const Branding = Schema.Struct({
   primaryColor: PrimaryColor,
   baseColor: BaseColor,
   destructiveColor: DestructiveColor,
@@ -130,7 +130,7 @@ const themeGlobals = (sizing: Sizing): Record<string, number> => ({
   ...sizingGlobals(sizingValues(sizingTheme(sizing)).base),
 });
 
-export const DEFAULT_CUSTOMIZATION: Customization = {
+const DEFAULT_CUSTOMIZATION: Customization = {
   branding: DEFAULT_BRANDING_THEME,
   sizing: styleSizing('pavo'),
   tokens: {},
@@ -168,19 +168,19 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  ChangedFont: { font: Font },
-  ChangedSizingStyle: { style: SizingStyle },
-  ChangedDensity: { density: DensityName },
-  ChangedRadius: { radius: Radius },
-  ChangedPrimaryColor: { primaryColor: PrimaryColor },
-  ChangedBaseColor: { baseColor: BaseColor },
-  ChangedDestructiveColor: { destructiveColor: DestructiveColor },
-  ChangedOpenTokenGroups: { openTokenGroups: Schema.Array(Schema.String) },
+  UpdatedFont: { font: Font },
+  UpdatedSizingStyle: { style: SizingStyle },
+  UpdatedDensity: { density: DensityName },
+  UpdatedRadius: { radius: Radius },
+  UpdatedPrimaryColor: { primaryColor: PrimaryColor },
+  UpdatedBaseColor: { baseColor: BaseColor },
+  UpdatedDestructiveColor: { destructiveColor: DestructiveColor },
+  UpdatedOpenTokenGroups: { openTokenGroups: Schema.Array(Schema.String) },
   ClickedReset: {},
   CompletedSaveCustomization: {},
   GotPopoverMessage: { message: Popover.Message },
   GotScaleSliderMessage: { message: Slider.Message },
-  GotTokenSliderMessage: { global: Schema.String, message: Slider.Message },
+  GotTokenSliderMessage: { tokenId: Schema.String, message: Slider.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -256,7 +256,7 @@ const toScaleSliderMessage = (message: Slider.Message): Message => Message.GotSc
 const toTokenSliderMessage =
   (global: string) =>
   (message: Slider.Message): Message =>
-    Message.GotTokenSliderMessage({ global, message });
+    Message.GotTokenSliderMessage({ tokenId: global, message });
 
 const foldPopover = Update.foldChild({
   update: Popover.update,
@@ -299,22 +299,22 @@ const foldTokenSlider = Update.foldChildAt({
 
 export const update = (model: Model, message: Message) =>
   Message.match<UpdateReturn>(message, {
-    ChangedFont: ({ font }) => withCustomization(model, { ...model.customization, font }),
-    ChangedSizingStyle: ({ style }) => withSizing(model, styleSizing(style)),
-    ChangedDensity: ({ density }) =>
+    UpdatedFont: ({ font }) => withCustomization(model, { ...model.customization, font }),
+    UpdatedSizingStyle: ({ style }) => withSizing(model, styleSizing(style)),
+    UpdatedDensity: ({ density }) =>
       withSizing(model, axesSizing(Density.Named({ density }), model.customization.sizing.radius)),
-    ChangedRadius: ({ radius }) => withSizing(model, axesSizing(model.customization.sizing.density, radius)),
-    ChangedPrimaryColor: ({ primaryColor }) => withBranding(model, { primaryColor }),
-    ChangedBaseColor: ({ baseColor }) => withBranding(model, { baseColor }),
-    ChangedDestructiveColor: ({ destructiveColor }) => withBranding(model, { destructiveColor }),
-    ChangedOpenTokenGroups: ({ openTokenGroups }) => ({
+    UpdatedRadius: ({ radius }) => withSizing(model, axesSizing(model.customization.sizing.density, radius)),
+    UpdatedPrimaryColor: ({ primaryColor }) => withBranding(model, { primaryColor }),
+    UpdatedBaseColor: ({ baseColor }) => withBranding(model, { baseColor }),
+    UpdatedDestructiveColor: ({ destructiveColor }) => withBranding(model, { destructiveColor }),
+    UpdatedOpenTokenGroups: ({ openTokenGroups }) => ({
       model: modifyFields(model, { openTokenGroups: () => openTokenGroups }),
     }),
     ClickedReset: () => withCustomization(model, DEFAULT_CUSTOMIZATION),
     CompletedSaveCustomization: () => ({ model }),
     GotPopoverMessage: ({ message }) => foldPopover(model, message),
     GotScaleSliderMessage: ({ message }) => foldScaleSlider(model, message),
-    GotTokenSliderMessage: ({ global, message }) => foldTokenSlider(model, global, message),
+    GotTokenSliderMessage: ({ tokenId: global, message }) => foldTokenSlider(model, global, message),
   });
 
 const scaleSliderSubscriptions = Subscription.lift({
@@ -516,7 +516,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
                 onValueChange: (value) =>
                   Option.match(decodeOption(Font)(value), {
                     onNone: () => Message.CompletedSaveCustomization(),
-                    onSome: (font) => Message.ChangedFont({ font }),
+                    onSome: (font) => Message.UpdatedFont({ font }),
                   }),
                 className: 'w-full',
                 radios: Array.map(Font.literals, (font) => ({
@@ -537,7 +537,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
           SIZING_STYLE_NAMES,
           sizing.maybeStyle,
           (style) => STYLE_LABELS[style],
-          (value) => Option.map(decodeOption(SizingStyle)(value), (style) => Message.ChangedSizingStyle({ style })),
+          (value) => Option.map(decodeOption(SizingStyle)(value), (style) => Message.UpdatedSizingStyle({ style })),
           h,
           Option.isNone(sizing.maybeStyle)
             ? [h.span([h.Class('text-caption font-normal text-muted-foreground')], ['Custom'])]
@@ -549,7 +549,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
           DENSITY_NAMES,
           densityNameOf(sizing.density),
           (density) => density,
-          (value) => Option.map(decodeOption(DensityName)(value), (density) => Message.ChangedDensity({ density })),
+          (value) => Option.map(decodeOption(DensityName)(value), (density) => Message.UpdatedDensity({ density })),
           h,
           [],
           [
@@ -589,7 +589,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
           RADIUS_NAMES,
           Option.some(sizing.radius),
           (radius) => radius,
-          (value) => Option.map(decodeOption(Radius)(value), (radius) => Message.ChangedRadius({ radius })),
+          (value) => Option.map(decodeOption(Radius)(value), (radius) => Message.UpdatedRadius({ radius })),
           h,
         ),
         swatches(
@@ -597,7 +597,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
           'customize-primary',
           BRAND_PRIMARY_COLORS,
           branding.primaryColor,
-          (primaryColor) => Message.ChangedPrimaryColor({ primaryColor }),
+          (primaryColor) => Message.UpdatedPrimaryColor({ primaryColor }),
           h,
         ),
         swatches(
@@ -605,7 +605,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
           'customize-base',
           BRAND_BASE_COLORS,
           branding.baseColor,
-          (baseColor) => Message.ChangedBaseColor({ baseColor }),
+          (baseColor) => Message.UpdatedBaseColor({ baseColor }),
           h,
         ),
         swatches(
@@ -613,7 +613,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
           'customize-destructive',
           BRAND_DESTRUCTIVE_COLORS,
           branding.destructiveColor,
-          (destructiveColor) => Message.ChangedDestructiveColor({ destructiveColor }),
+          (destructiveColor) => Message.UpdatedDestructiveColor({ destructiveColor }),
           h,
         ),
         Accordion.view(
@@ -621,7 +621,7 @@ const panel = (model: Model, h: HtmlBuilder<Message>): ReadonlyArray<Html> => {
             id: 'customize-tokens',
             isMultiple: true,
             openValues: model.openTokenGroups,
-            onOpenValuesChange: (openTokenGroups) => Message.ChangedOpenTokenGroups({ openTokenGroups }),
+            onOpenValuesChange: (openTokenGroups) => Message.UpdatedOpenTokenGroups({ openTokenGroups }),
             items: Array.map(TOKEN_GROUPS, (group) => ({
               value: group.title,
               trigger: [group.title],

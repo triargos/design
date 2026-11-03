@@ -26,7 +26,7 @@ const fieldSurfaceWithin = [
 
 export type FileDropZoneSize = 'default' | 'sm';
 
-export const fileDropZoneVariants = cva(
+const fileDropZoneVariants = cva(
   [
     fieldSurfaceWithin,
     'flex cursor-pointer items-center has-disabled:cursor-not-allowed',

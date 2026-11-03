@@ -4,7 +4,7 @@ import type { Html, HtmlBuilder } from 'foldkit/html';
 
 import type { PartAttribute } from './part.ts';
 
-export const DEFAULT_LOCALE = 'en-US';
+const DEFAULT_LOCALE = 'en-US';
 
 const DATE: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 const DATE_TIME: Intl.DateTimeFormatOptions = { ...DATE, hour: 'numeric', minute: '2-digit' };
@@ -34,8 +34,7 @@ const relativeParts = (millis: number): RelativeParts =>
 
 const pad = (value: number, length: number): string => String(value).padStart(length, '0');
 
-export const toIsoDay = ({ year, month, day }: CalendarDate): string =>
-  `${pad(year, 4)}-${pad(month, 2)}-${pad(day, 2)}`;
+const toIsoDay = ({ year, month, day }: CalendarDate): string => `${pad(year, 4)}-${pad(month, 2)}-${pad(day, 2)}`;
 
 const dayToUtcDate = ({ year, month, day }: CalendarDate): Date => new Date(Date.UTC(year, month - 1, day));
 
@@ -68,7 +67,7 @@ export type DayConfig = FormatConfig &
     format?: Intl.DateTimeFormatOptions | undefined;
   }>;
 
-export const formatDay = ({ date, end, format = DATE, locale = DEFAULT_LOCALE }: DayConfig): string => {
+const formatDay = ({ date, end, format = DATE, locale = DEFAULT_LOCALE }: DayConfig): string => {
   const formatter = new Intl.DateTimeFormat(locale, { ...format, timeZone: 'UTC' });
   return end === undefined
     ? formatter.format(dayToUtcDate(date))
@@ -86,13 +85,7 @@ export type MomentConfig = FormatConfig &
     timeZone?: string | undefined;
   }>;
 
-export const formatMoment = ({
-  date,
-  end,
-  format = DATE_TIME,
-  locale = DEFAULT_LOCALE,
-  timeZone,
-}: MomentConfig): string => {
+const formatMoment = ({ date, end, format = DATE_TIME, locale = DEFAULT_LOCALE, timeZone }: MomentConfig): string => {
   const formatter = new Intl.DateTimeFormat(locale, { ...format, ...(timeZone === undefined ? {} : { timeZone }) });
   return end === undefined
     ? formatter.format(DateTime.toDateUtc(date))
@@ -109,7 +102,7 @@ export type RelativeConfig = FormatConfig &
     timeZone?: string | undefined;
   }>;
 
-export const formatRelative = ({ date, now, locale = DEFAULT_LOCALE }: RelativeConfig): string => {
+const formatRelative = ({ date, now, locale = DEFAULT_LOCALE }: RelativeConfig): string => {
   const [value, unit] = relativeParts(DateTime.toEpochMillis(date) - DateTime.toEpochMillis(now));
   return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, unit);
 };

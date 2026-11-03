@@ -39,7 +39,7 @@ export const reset = (model: Model): Model =>
   modifyFields(model, { query: () => '', maybeActiveValue: () => Option.none() });
 
 const itemId = (id: string, value: string): string => `${id}-item-${value.replaceAll(/\W/g, '-')}`;
-export const inputId = (id: string): string => `${id}-input`;
+const inputId = (id: string): string => `${id}-input`;
 const listId = (id: string): string => `${id}-list`;
 
 const ScrollItemIntoView = FoldkitCommand.define('ScrollItemIntoView', {
@@ -93,7 +93,7 @@ const isMatch = (item: Item, query: string): boolean =>
     normalized(text).includes(normalized(String.trim(query))),
   );
 
-export const filteredGroups = (groups: ReadonlyArray<Group>, query: string): ReadonlyArray<Group> =>
+const filteredGroups = (groups: ReadonlyArray<Group>, query: string): ReadonlyArray<Group> =>
   pipe(
     groups,
     Array.map((group) => ({ ...group, items: Array.filter(group.items, (item) => isMatch(item, query)) })),

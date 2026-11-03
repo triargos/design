@@ -36,6 +36,8 @@ export const Model = Schema.Struct({
   maybeMax: Schema.Option(Schema.Number),
   maybeDraft: Schema.Option(Schema.String),
   direction: Direction,
+  previousText: Schema.String,
+  rollCount: Schema.Number,
   holdState: HoldState,
   holdCount: Schema.Number,
 });
@@ -44,7 +46,7 @@ export type Model = typeof Model.Type;
 export const Message = defineMessageUnion({
   FocusedField: {},
   BlurredField: {},
-  ChangedText: { text: Schema.String },
+  UpdatedText: { text: Schema.String },
   RejectedCharacter: {},
   PressedArrowKey: { delta: Schema.Number },
   PressedStepper: { delta: Schema.Number },
@@ -58,7 +60,7 @@ export const Message = defineMessageUnion({
 export type Message = typeof Message.Type;
 
 export const OutMessage = defineMessageUnion({
-  ChangedValue: { value: Schema.Number },
+  UpdatedValue: { value: Schema.Number },
 });
 export type OutMessage = typeof OutMessage.Type;
 
@@ -70,6 +72,8 @@ export const init = ({ id, value, max }: InitConfig): Model => ({
   maybeMax: Option.fromNullishOr(max),
   maybeDraft: Option.none(),
   direction: 'None',
+  previousText: globalThis.String(value),
+  rollCount: 0,
   holdState: HoldState.Idle(),
   holdCount: 0,
 });
@@ -161,9 +165,11 @@ const step = (model: Model, delta: number): Option.Option<UpdateReturn> => {
       model: modifyFields(model, {
         value: () => nextValue,
         direction: () => directionOf(nextValue - model.value),
+        previousText: () => Option.getOrElse(model.maybeDraft, () => globalThis.String(model.value)),
+        rollCount: Number.increment,
         maybeDraft: Option.map(() => globalThis.String(nextValue)),
       }),
-      outMessage: OutMessage.ChangedValue({ value: nextValue }),
+      outMessage: OutMessage.UpdatedValue({ value: nextValue }),
     });
   }
 };
@@ -178,7 +184,7 @@ const changeText = (model: Model, text: string): UpdateReturn => {
     return {
       model: modifyFields(model, { maybeDraft: () => Option.some(''), value: () => 0, direction: () => 'None' }),
       commands: [SyncText({ id: controlId(model.id), text: '' })],
-      ...(model.value === 0 ? {} : { outMessage: OutMessage.ChangedValue({ value: 0 }) }),
+      ...(model.value === 0 ? {} : { outMessage: OutMessage.UpdatedValue({ value: 0 }) }),
     };
   }
 
@@ -195,7 +201,7 @@ const changeText = (model: Model, text: string): UpdateReturn => {
       SyncText({ id: controlId(model.id), text: nextDraft }),
       ...(nextValue === typedValue ? [] : [shake(model)]),
     ],
-    ...(nextValue === model.value ? {} : { outMessage: OutMessage.ChangedValue({ value: nextValue }) }),
+    ...(nextValue === model.value ? {} : { outMessage: OutMessage.UpdatedValue({ value: nextValue }) }),
   };
 };
 
@@ -230,7 +236,7 @@ export const update = (model: Model, message: Message) =>
       commands: [SelectText({ id: controlId(model.id) })],
     }),
     BlurredField: () => ({ model: modifyFields(model, { maybeDraft: () => Option.none() }) }),
-    ChangedText: ({ text }) => changeText(model, text),
+    UpdatedText: ({ text }) => changeText(model, text),
     RejectedCharacter: () => ({ model }),
     PressedArrowKey: ({ delta }) => stepOrShake(model, delta),
     PressedStepper: ({ delta }) => {
@@ -283,35 +289,76 @@ export type ViewConfig<ParentMessage> = Readonly<{
   className?: string;
 }>;
 
-const rollingNumber = <ParentMessage>(text: string, direction: Direction, h: HtmlBuilder<ParentMessage>): Html =>
-  h.span(
+const digitClassName = 'col-start-1 row-start-1';
+
+const leavingDigit = <ParentMessage>(digit: string, rollCount: number, h: HtmlBuilder<ParentMessage>): Html =>
+  h.keyed('span')(
+    `leaving-${digit}-${rollCount}`,
+    [
+      h.Class(
+        cn(
+          digitClassName,
+          'animate-out fade-out-0 duration-feedback ease-enter fill-mode-forwards motion-reduce:hidden',
+          'group-data-[direction=Up]/roll:slide-out-to-top-[100%] group-data-[direction=Down]/roll:slide-out-to-bottom-[100%]',
+        ),
+      ),
+    ],
+    [digit],
+  );
+
+const rollingNumber = <ParentMessage>(
+  text: string,
+  previousText: string,
+  rollCount: number,
+  direction: Direction,
+  h: HtmlBuilder<ParentMessage>,
+): Html => {
+  const places = Array.reverse(String.split('')(text));
+  const previousPlaces = Array.reverse(String.split('')(previousText));
+  const placeCount = direction === 'None' ? places.length : Math.max(places.length, previousPlaces.length);
+  return h.span(
     [
       h.AriaHidden(true),
       h.DataAttribute('direction', direction),
       h.Class('group/roll pointer-events-none absolute inset-0 flex flex-row-reverse items-center justify-start'),
     ],
-    Array.map(Array.reverse(String.split('')(text)), (digit, place) =>
-      h.keyed('span')(
+    Array.makeBy(placeCount, (place) => {
+      const maybeDigit = Array.get(places, place);
+      const maybeLeavingDigit = Array.get(previousPlaces, place).pipe(
+        Option.filter((previousDigit) => direction !== 'None' && !Option.contains(maybeDigit, previousDigit)),
+      );
+      return h.keyed('span')(
         place,
         [h.Class('grid')],
         [
-          h.keyed('span')(
-            digit,
-            [
-              h.Class(
-                cn(
-                  'col-start-1 row-start-1 transition-[translate,opacity] duration-feedback ease-enter motion-reduce:transition-none',
-                  'group-data-[direction=Up]/roll:starting:translate-y-full group-data-[direction=Up]/roll:starting:opacity-0',
-                  'group-data-[direction=Down]/roll:starting:-translate-y-full group-data-[direction=Down]/roll:starting:opacity-0',
-                ),
+          ...Option.match(maybeLeavingDigit, {
+            onNone: () => [],
+            onSome: (digit) => [leavingDigit(digit, rollCount, h)],
+          }),
+          ...Option.match(maybeDigit, {
+            onNone: () => [],
+            onSome: (digit) => [
+              h.keyed('span')(
+                digit,
+                [
+                  h.Class(
+                    cn(
+                      digitClassName,
+                      'transition-[translate,opacity] duration-feedback ease-enter motion-reduce:transition-none',
+                      'group-data-[direction=Up]/roll:starting:translate-y-full group-data-[direction=Up]/roll:starting:opacity-0',
+                      'group-data-[direction=Down]/roll:starting:-translate-y-full group-data-[direction=Down]/roll:starting:opacity-0',
+                    ),
+                  ),
+                ],
+                [digit],
               ),
             ],
-            [digit],
-          ),
+          }),
         ],
-      ),
-    ),
+      );
+    }),
   );
+};
 
 export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBuilder<ParentMessage>): Html => {
   const {
@@ -428,7 +475,7 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
                       : [
                           h.OnFocus(toParentMessage(Message.FocusedField())),
                           h.OnBlur(toParentMessage(Message.BlurredField())),
-                          h.OnInput((nextText) => toParentMessage(Message.ChangedText({ text: nextText }))),
+                          h.OnInput((nextText) => toParentMessage(Message.UpdatedText({ text: nextText }))),
                           h.OnBeforeInputPreventDefault(handleBeforeInput),
                           h.OnKeyDownPreventDefault(handleKeyDown),
                         ]),
@@ -439,7 +486,7 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
                       ),
                     ),
                   ]),
-                  ...(isEditing ? [] : [rollingNumber(text, direction, h)]),
+                  ...(isEditing ? [] : [rollingNumber(text, model.previousText, model.rollCount, direction, h)]),
                 ],
               ),
               ...(unit === undefined ? [] : [h.span([h.Class('text-muted-foreground select-none')], [unit])]),

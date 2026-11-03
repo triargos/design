@@ -24,7 +24,7 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  ChangedProfileName: { value: Schema.String },
+  UpdatedProfileName: { value: Schema.String },
   ClickedSaveProfile: {},
 });
 export type Message = typeof Message.Type;
@@ -35,7 +35,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    ChangedProfileName: () => ({ model: modifyFields(model, { isProfileDirty: () => true }) }),
+    UpdatedProfileName: () => ({ model: modifyFields(model, { isProfileDirty: () => true }) }),
     ClickedSaveProfile: () => ({ model: modifyFields(model, { isProfileDirty: () => false }) }),
   });
 
@@ -192,7 +192,7 @@ const withFooter = (model: Model, h: HtmlBuilder<Message>): Html =>
                       {
                         id: 'card-name',
                         defaultValue: 'Jordan Lee',
-                        onInput: (value) => Message.ChangedProfileName({ value }),
+                        onInput: (value) => Message.UpdatedProfileName({ value }),
                       },
                       h,
                     ),

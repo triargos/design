@@ -15,13 +15,13 @@ import * as InputGroup from './input-group.ts';
 import type { Child } from './part.ts';
 import type { SelectOption } from './select.ts';
 
-export const DEFAULT_CUSTOM_LABEL = 'Custom';
-export const DEFAULT_CLEAR_LABEL = 'Clear';
-export const DEFAULT_OPEN_LABEL = 'Open list';
-export const DEFAULT_REMOVE_LABEL = 'Remove';
-export const defaultCustomOptionLabel = (text: Child): ReadonlyArray<Child> => ['Use “', text, '”'];
+const DEFAULT_CUSTOM_LABEL = 'Custom';
+const DEFAULT_CLEAR_LABEL = 'Clear';
+const DEFAULT_OPEN_LABEL = 'Open list';
+const DEFAULT_REMOVE_LABEL = 'Remove';
+const defaultCustomOptionLabel = (text: Child): ReadonlyArray<Child> => ['Use “', text, '”'];
 
-export const Entry = defineTaggedUnion({
+const Entry = defineTaggedUnion({
   Item: { value: Schema.String, label: Schema.String, description: Schema.optional(Schema.String) },
   CustomValue: { text: Schema.String },
   Proposal: { text: Schema.String },
@@ -136,14 +136,20 @@ export type EntriesConfig = Readonly<{
   values: ReadonlyArray<string>;
   query: string;
   isMultiple: boolean;
-  allowCustom: boolean;
+  isCustomAllowed: boolean;
 }>;
 
-export const entries = ({ options, values, query, isMultiple, allowCustom }: EntriesConfig): ReadonlyArray<Entry> => {
+export const entries = ({
+  options,
+  values,
+  query,
+  isMultiple,
+  isCustomAllowed,
+}: EntriesConfig): ReadonlyArray<Entry> => {
   const items = Array.map(options, ({ value, label, description }) =>
     Entry.Item({ value, label, ...(description === undefined ? {} : { description }) }),
   );
-  const customValues = allowCustom
+  const customValues = isCustomAllowed
     ? pipe(
         values,
         Array.filter((value) => !Array.some(options, (option) => option.value === value)),
@@ -160,7 +166,7 @@ export const entries = ({ options, values, query, isMultiple, allowCustom }: Ent
         Option.flatMap((value) => Array.findFirst(all, (entry) => entryValue(entry) === value)),
       );
   const isShowingSelected = Option.exists(maybeSelected, (selected) => isSameText(entryLabel(selected), query));
-  const maybeProposal = allowCustom ? proposalFor(query, options, values) : Option.none();
+  const maybeProposal = isCustomAllowed ? proposalFor(query, options, values) : Option.none();
 
   if (String.isNonEmpty(query) && !isShowingSelected) {
     return rankedForQuery(all, query, maybeProposal, isMultiple ? values : []);
@@ -178,8 +184,8 @@ type CachedEntries = Readonly<{ cacheKey: string; rows: ReadonlyArray<Entry> }>;
 const entriesByOptions = new WeakMap<ReadonlyArray<SelectOption>, CachedEntries>();
 
 const cachedEntries = (config: EntriesConfig): ReadonlyArray<Entry> => {
-  const { options, values, query, isMultiple, allowCustom } = config;
-  const cacheKey = JSON.stringify([values, query, isMultiple, allowCustom]);
+  const { options, values, query, isMultiple, isCustomAllowed } = config;
+  const cacheKey = JSON.stringify([values, query, isMultiple, isCustomAllowed]);
   return pipe(
     Option.fromNullishOr(entriesByOptions.get(options)),
     Option.filter((cached) => cached.cacheKey === cacheKey),
@@ -201,7 +207,7 @@ export const labelOf = (options: ReadonlyArray<SelectOption>, value: string): st
     Option.match({ onNone: () => value, onSome: ({ label }) => label }),
   );
 
-export const isCustomValue = (options: ReadonlyArray<SelectOption>, value: string): boolean =>
+const isCustomValue = (options: ReadonlyArray<SelectOption>, value: string): boolean =>
   String.isNonEmpty(value) && !Array.some(options, (option) => option.value === value);
 
 export const Model = ComboboxPrimitive.Model;
@@ -308,7 +314,7 @@ type SharedViewConfig<ParentMessage> = Readonly<{
   options: ReadonlyArray<SelectOption>;
   itemContent?: ItemContent | undefined;
   emptyText?: string | undefined;
-  allowCustom?: boolean | undefined;
+  isCustomAllowed?: boolean | undefined;
   customLabel?: string | undefined;
   customOptionLabel?: ((text: Child) => ReadonlyArray<Child>) | undefined;
   placeholder?: string | undefined;
@@ -461,7 +467,7 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
     toParentMessage,
     options,
     maybeValue,
-    allowCustom = false,
+    isCustomAllowed = false,
     customLabel = DEFAULT_CUSTOM_LABEL,
     placeholder,
     ariaLabel,
@@ -475,12 +481,12 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
 
   const values = Option.toArray(maybeValue);
   const rows = isPanelShown(model)
-    ? entries({ options, values, query: model.inputValue, isMultiple: false, allowCustom })
+    ? entries({ options, values, query: model.inputValue, isMultiple: false, isCustomAllowed })
     : [];
   const rowsByKey = entriesByKey(rows);
   const restingInputValue = Option.match(maybeValue, { onNone: () => '', onSome: (value) => labelOf(options, value) });
   const hasValue = Option.isSome(maybeValue);
-  const isCustomNoteShown = Option.exists(maybeValue, (value) => allowCustom && isCustomValue(options, value));
+  const isCustomNoteShown = Option.exists(maybeValue, (value) => isCustomAllowed && isCustomValue(options, value));
   const customNoteId = `${model.id}-custom-note`;
   const toComboboxParentMessage = (message: ComboboxPrimitive.Message): ParentMessage =>
     toParentMessage(toGotComboboxMessage(message));
@@ -492,7 +498,7 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
     viewInputs: {
       items: rowsWithEmpty(rows, model.isOpen),
       maybeSelectedValue: Option.map(maybeValue, (value) =>
-        isCustomValue(options, value) && allowCustom ? `CustomValue:${value}` : `Item:${value}`,
+        isCustomValue(options, value) && isCustomAllowed ? `CustomValue:${value}` : `Item:${value}`,
       ),
       restingInputValue,
       itemToValue: (key) => key,
@@ -555,7 +561,7 @@ export const multiple = <ParentMessage>(
     options,
     values,
     onRemove,
-    allowCustom = false,
+    isCustomAllowed = false,
     placeholder,
     ariaLabel,
     isInvalid = false,
@@ -566,7 +572,7 @@ export const multiple = <ParentMessage>(
   } = config;
 
   const rows = isPanelShown(model)
-    ? entries({ options, values, query: model.inputValue, isMultiple: true, allowCustom })
+    ? entries({ options, values, query: model.inputValue, isMultiple: true, isCustomAllowed })
     : [];
   const rowsByKey = entriesByKey(rows);
 
@@ -605,7 +611,7 @@ export const multiple = <ParentMessage>(
     viewInputs: {
       items: rowsWithEmpty(rows, model.isOpen),
       selectedValues: Array.map(values, (value) =>
-        isCustomValue(options, value) && allowCustom ? `CustomValue:${value}` : `Item:${value}`,
+        isCustomValue(options, value) && isCustomAllowed ? `CustomValue:${value}` : `Item:${value}`,
       ),
       restingInputValue: '',
       itemToValue: (key) => key,
@@ -686,7 +692,7 @@ export const initVirtualized = (config: InitConfig): VirtualizedModel => ({
   pageRowCount: DEFAULT_PAGE_ROW_COUNT,
 });
 
-export const listboxId = (id: string): string => `${id}-listbox`;
+const listboxId = (id: string): string => `${id}-listbox`;
 const listScrollId = (id: string): string => `${id}-list-scroll`;
 const optionId = (id: string, index: number): string => `${id}-item-${index}`;
 
@@ -742,7 +748,7 @@ const observeListScroll = (element: Element): Stream.Stream<ObservedListScroll> 
     ).pipe(Effect.flatMap(() => Effect.never)),
   );
 
-export const ObserveListScroll = Mount.defineStream('ObserveListScroll', {
+const ObserveListScroll = Mount.defineStream('ObserveListScroll', {
   messages: [VirtualizedMessage.ObservedListScroll],
   execute: ({ element }) => observeListScroll(element),
 });
@@ -946,7 +952,7 @@ export const virtualized = <ParentMessage>(
     toParentMessage,
     options,
     maybeValue,
-    allowCustom = false,
+    isCustomAllowed = false,
     customLabel = DEFAULT_CUSTOM_LABEL,
     emptyText = '',
     placeholder,
@@ -966,7 +972,7 @@ export const virtualized = <ParentMessage>(
 
   const values = Option.toArray(maybeValue);
   const entriesFor = (query: string): ReadonlyArray<Entry> =>
-    cachedEntries({ options, values, query, isMultiple: false, allowCustom });
+    cachedEntries({ options, values, query, isMultiple: false, isCustomAllowed });
   const isShown = isPanelShown(combobox);
   const rows = isShown ? entriesFor(combobox.inputValue) : [];
   const rowCount = rows.length;
@@ -974,10 +980,10 @@ export const virtualized = <ParentMessage>(
   const isLeaving = transitionState === 'LeaveStart' || transitionState === 'LeaveAnimating';
   const restingInputValue = Option.match(maybeValue, { onNone: () => '', onSome: (value) => labelOf(options, value) });
   const maybeSelectedKey = Option.map(maybeValue, (value) =>
-    isCustomValue(options, value) && allowCustom ? `CustomValue:${value}` : `Item:${value}`,
+    isCustomValue(options, value) && isCustomAllowed ? `CustomValue:${value}` : `Item:${value}`,
   );
   const hasValue = Option.isSome(maybeValue);
-  const isCustomNoteShown = Option.exists(maybeValue, (value) => allowCustom && isCustomValue(options, value));
+  const isCustomNoteShown = Option.exists(maybeValue, (value) => isCustomAllowed && isCustomValue(options, value));
   const customNoteId = `${id}-custom-note`;
   const maybeActiveIndex = Option.filter(combobox.maybeActiveItemIndex, (index) => index < rowCount);
   const entryContent = entryContentFor(config, 'truncate', h);

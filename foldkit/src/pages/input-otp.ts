@@ -69,7 +69,7 @@ const toVerifyInputMessage = (message: InputOtp.Message): Message => Message.Got
 
 const foldCodeInputOutMessage = () =>
   InputOtp.OutMessage.match<Update.Step<Model, Message>>({
-    ChangedValue: () => (stepModel) => ({ model: stepModel }),
+    UpdatedValue: () => (stepModel) => ({ model: stepModel }),
   });
 
 const foldCodeInput = Update.foldChildAt({
@@ -87,7 +87,7 @@ const startVerify = (model: Model): Update.Return<Model, Message> => ({
 });
 
 const foldVerifyInputOutMessage = InputOtp.OutMessage.match<Update.Step<Model, Message>>({
-  ChangedValue:
+  UpdatedValue:
     ({ isComplete }) =>
     (stepModel) => {
       const clearedModel = modifyFields(stepModel, { maybeVerifyError: () => Option.none() });

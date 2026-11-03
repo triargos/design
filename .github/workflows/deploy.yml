@@ -33,6 +33,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm --filter @pavo/foldkit exec tsc --noEmit
+      - run: pnpm --filter @pavo/foldkit lint
       - run: pnpm exec alchemy provider check-env --provider Cloudflare
       - run: pnpm exec alchemy deploy --stage ${{ env.STAGE }} --yes --no-input
         env:

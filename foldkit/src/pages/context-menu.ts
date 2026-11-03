@@ -31,7 +31,7 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  GotMenuMessage: { key: MenuKey, message: ContextMenu.Message },
+  GotMenuMessage: { menuId: MenuKey, message: ContextMenu.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -52,7 +52,8 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
   },
 });
 
-const toMenuMessage = (key: MenuKey, message: ContextMenu.Message): Message => Message.GotMenuMessage({ key, message });
+const toMenuMessage = (key: MenuKey, message: ContextMenu.Message): Message =>
+  Message.GotMenuMessage({ menuId: key, message });
 
 const toggleAudience = (value: string) => (audiences: ReadonlyArray<Audience>) =>
   Array.filter(AUDIENCES, (audience) =>
@@ -93,7 +94,7 @@ const foldMenu = Update.foldChildAt({
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    GotMenuMessage: ({ key, message }) => foldMenu(model, key, message),
+    GotMenuMessage: ({ menuId: key, message }) => foldMenu(model, key, message),
   });
 
 const ICONS: Readonly<Record<string, Html>> = {
