@@ -49,8 +49,7 @@ export type Message = typeof Message.Type;
 
 const initTooltip = (key: TooltipKey): Tooltip.Model => Tooltip.init({ id: `tooltip-${key}` });
 
-const initOpenTooltip = (key: TooltipKey): Tooltip.Model =>
-  Tooltip.update(initTooltip(key), Tooltip.Message.FocusedTrigger()).model;
+const initOpenTooltip = (key: TooltipKey): Tooltip.Model => Tooltip.focus(initTooltip(key));
 
 export const init = (_context: PageContext): Update.Return<Model, Message> => ({
   model: {
@@ -92,7 +91,8 @@ const foldToolbarGroupCool = Update.foldChildStep({ update: Tooltip.coolDelayGro
 
 const foldTooltipOutMessage = (key: TooltipKey) =>
   Tooltip.OutMessage.match<Update.Step<Model, Message>>({
-    Shown: () => (stepModel) => (isInGroup(key) ? foldToolbarGroupWarm(stepModel) : { model: stepModel }),
+    Shown: () => (stepModel) =>
+      isInGroup(key) ? foldToolbarGroupWarm(cutOtherGroupLeaves(stepModel, key)) : { model: stepModel },
     Hidden: () => (stepModel) => (isInGroup(key) ? foldToolbarGroupCool(stepModel) : { model: stepModel }),
   });
 
@@ -108,14 +108,21 @@ const foldTooltip = Update.foldChildAt({
 });
 
 const withGroupDelay = (model: Model, key: TooltipKey): Model =>
-  writeTooltip(model, key, Tooltip.reflectShowDelay(model.tooltips[key], Tooltip.showDelayIn(model.toolbarGroup)));
+  writeTooltip(model, key, Tooltip.reflectDelayGroup(model.tooltips[key], model.toolbarGroup));
+
+const cutOtherGroupLeaves = (model: Model, shownKey: TooltipKey): Model =>
+  Array.reduce(
+    Array.filter(GROUP_KEYS, (key) => key !== shownKey),
+    model,
+    (stepModel, key) => writeTooltip(stepModel, key, Tooltip.cutLeave(stepModel.tooltips[key])),
+  );
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     GotTooltipMessage: ({ key, message }) => {
       if (key === 'Open') {
         return { model };
-      } else if (isInGroup(key) && message._tag === 'EnteredTrigger') {
+      } else if (isInGroup(key) && Tooltip.isEnteredTrigger(message)) {
         return foldTooltip(withGroupDelay(model, key), key, message);
       } else {
         return foldTooltip(model, key, message);

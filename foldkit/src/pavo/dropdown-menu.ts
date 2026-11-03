@@ -43,9 +43,9 @@ export const itemVariants = cva(
 export const popupClassName = cn(
   'z-50 min-w-32 overflow-x-hidden overflow-y-auto rounded-popup bg-popover p-popup-inset text-popover-foreground shadow-popup outline-none [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
   'data-[placement=bottom]:origin-top data-[placement=left]:origin-right data-[placement=right]:origin-left data-[placement=top]:origin-bottom',
-  'transition-[opacity,scale,translate] duration-enter ease-enter data-closed:scale-95 data-closed:opacity-0',
-  'data-enter:data-closed:data-[placement=bottom]:-translate-y-2 data-enter:data-closed:data-[placement=left]:translate-x-2 data-enter:data-closed:data-[placement=right]:-translate-x-2 data-enter:data-closed:data-[placement=top]:translate-y-2',
-  'motion-reduce:data-closed:scale-100 motion-reduce:data-closed:translate-x-0 motion-reduce:data-closed:translate-y-0',
+  'transition-[opacity,scale] duration-enter ease-enter data-closed:not-data-enter:opacity-0 motion-safe:data-closed:not-data-enter:scale-95',
+  'data-enter:animate-in data-enter:transition-none data-enter:fade-in-0 data-enter:zoom-in-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2',
+  'motion-reduce:zoom-in-100 motion-reduce:slide-in-from-top-0 motion-reduce:slide-in-from-left-0',
 );
 
 const labelClassName =

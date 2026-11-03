@@ -281,8 +281,10 @@ export const { inputId } = ComboboxPrimitive;
 
 const contentClassName = cn(
   'group/combobox-content relative z-50 max-h-92 max-w-[calc(100vw-1rem)] min-w-(--button-width) overflow-x-hidden overflow-y-auto overscroll-contain rounded-popup bg-popover p-popup-inset text-popover-foreground shadow-popup outline-none [--outer-inset:var(--spacing-popup-inset)] [--outer-radius:var(--radius-popup)]',
-  'origin-top transition-[opacity,scale,translate] duration-enter ease-enter data-closed:scale-95 data-closed:opacity-0 data-[placement=bottom]:data-closed:-translate-y-2 data-[placement=top]:origin-bottom data-[placement=top]:data-closed:translate-y-2',
-  'motion-reduce:data-closed:translate-y-0 motion-reduce:data-closed:scale-100',
+  'origin-top data-[placement=top]:origin-bottom',
+  'transition-[opacity,scale] duration-enter ease-enter data-closed:not-data-enter:opacity-0 motion-safe:data-closed:not-data-enter:scale-95',
+  'data-enter:animate-in data-enter:transition-none data-enter:fade-in-0 data-enter:zoom-in-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2',
+  'motion-reduce:zoom-in-100 motion-reduce:slide-in-from-top-0 motion-reduce:slide-in-from-left-0',
 );
 
 const itemClassName =

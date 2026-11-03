@@ -79,7 +79,8 @@ const foldLinksGroupCool = Update.foldChildStep({ update: Tooltip.coolDelayGroup
 
 const foldTooltipOutMessage = (key: TooltipKey) =>
   Tooltip.OutMessage.match<Update.Step<Model, Message>>({
-    Shown: () => (stepModel) => (isInGroup(key) ? foldLinksGroupWarm(stepModel) : { model: stepModel }),
+    Shown: () => (stepModel) =>
+      isInGroup(key) ? foldLinksGroupWarm(cutOtherGroupLeaves(stepModel, key)) : { model: stepModel },
     Hidden: () => (stepModel) => (isInGroup(key) ? foldLinksGroupCool(stepModel) : { model: stepModel }),
   });
 
@@ -95,13 +96,20 @@ const foldTooltip = Update.foldChildAt({
 });
 
 const withGroupDelay = (model: Model, key: TooltipKey): Model =>
-  writeTooltip(model, key, Tooltip.reflectShowDelay(model.tooltips[key], Tooltip.showDelayIn(model.linksGroup)));
+  writeTooltip(model, key, Tooltip.reflectDelayGroup(model.tooltips[key], model.linksGroup));
+
+const cutOtherGroupLeaves = (model: Model, shownKey: TooltipKey): Model =>
+  Array.reduce(
+    Array.filter(GROUP_KEYS, (key) => key !== shownKey),
+    model,
+    (stepModel, key) => writeTooltip(stepModel, key, Tooltip.cutLeave(stepModel.tooltips[key])),
+  );
 
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     CompletedDetectPlatform: ({ isMac }) => ({ model: modifyFields(model, { isMac: () => isMac }) }),
     GotTooltipMessage: ({ key, message }) =>
-      isInGroup(key) && message._tag === 'EnteredTrigger'
+      isInGroup(key) && Tooltip.isEnteredTrigger(message)
         ? foldTooltip(withGroupDelay(model, key), key, message)
         : foldTooltip(model, key, message),
     GotLinksGroupMessage: ({ message }) => foldLinksGroup(model, message),

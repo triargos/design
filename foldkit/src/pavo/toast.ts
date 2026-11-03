@@ -374,10 +374,9 @@ export type ViewInputs = Readonly<{ ariaLabel?: string }>;
 const stackView = defineView<Model, Message, ViewInputs>((model, viewInputs, h): Html => {
   const { ariaLabel = DEFAULT_ARIA_LABEL } = viewInputs;
   const entries = model.stack.entries;
-  const frontmostHeight = pipe(
+  const maybeFrontmostHeight = pipe(
     Array.last(entries),
-    Option.map((entry) => model.heights[entry.id] ?? 0),
-    Option.getOrElse(() => 0),
+    Option.flatMap((entry) => Record.get(model.heights, entry.id)),
   );
 
   const entryView = (entry: Entry, position: number): Html => {
@@ -401,8 +400,14 @@ const stackView = defineView<Model, Message, ViewInputs>((model, viewInputs, h):
         ...(isDragging(entry) ? [h.DataAttribute('swiping', '')] : []),
         h.Style({
           '--toast-index': String(index),
-          '--toast-height': `${model.heights[entry.id] ?? 0}px`,
-          '--toast-frontmost-height': `${frontmostHeight}px`,
+          ...Option.match(Record.get(model.heights, entry.id), {
+            onNone: () => ({}),
+            onSome: (height) => ({ '--toast-height': `${height}px` }),
+          }),
+          ...Option.match(maybeFrontmostHeight, {
+            onNone: () => ({}),
+            onSome: (height) => ({ '--toast-frontmost-height': `${height}px` }),
+          }),
           '--toast-offset-y': `${sumHeights(model, newer)}px`,
           '--toast-swipe-movement-x': `${swipeOffset}px`,
           '--toast-swipe-movement-y': '0px',

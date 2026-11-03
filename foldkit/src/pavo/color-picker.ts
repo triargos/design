@@ -303,7 +303,7 @@ const swatchFillClassName = cn(
 );
 
 const pointerClassName =
-  'pointer-events-none absolute z-1 size-7 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] transition-transform group-focus/interactive:scale-110';
+  'pointer-events-none absolute z-1 size-7 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] group-focus/interactive:scale-110';
 
 const LEFT_MOUSE_BUTTON = 0;
 
