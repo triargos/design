@@ -14,6 +14,14 @@ export default Alchemy.Stack(
   Effect.gen(function* () {
     const stage = yield* Alchemy.Stage;
 
+    if (stage === 'foldkit') {
+      const foldkitSite = yield* Cloudflare.Website.Foldkit('FoldkitWebsite', {
+        rootDir: 'foldkit',
+        domain: 'pavo-foldkit.proschule.de',
+      });
+      return { url: foldkitSite.url, registry: Output.interpolate`${foldkitSite.url}/r/registry.json` };
+    }
+
     // Docs site + registry JSON (/r/registry.json, /r/{name}.json) as one assets-only Worker. vite.config.ts runs
     // `shadcn build`, then prerenders every page (/button → button.html). Unknown paths, /r/* included, get 404.html
     // with a 404 status.
