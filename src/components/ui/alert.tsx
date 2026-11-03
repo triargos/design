@@ -12,8 +12,9 @@ type AlertProps = React.ComponentProps<'div'> & {
 
 /**
  * A notice inside a page, always `subtle`. Text only: the intent says what kind of notice it is, the first line says
- * the rest. Its text shares the edge of `Card` header text, and an `AlertAction` stays concentric with its corner. The
- * root reads its parts (`has-data-[slot=…]`), so the layout needs no props.
+ * the rest. Its text shares the edge of `Card` header text, wraps at a readable measure (`max-w-prose`, no orphaned last
+ * word), and an `AlertAction` stays at the far edge, concentric with its corner. The root reads its parts
+ * (`has-data-[slot=…]`), so the layout needs no props.
  */
 function Alert({ className, intent = 'info', ...props }: AlertProps) {
   return (
@@ -34,12 +35,18 @@ function Alert({ className, intent = 'info', ...props }: AlertProps) {
 }
 
 function AlertContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='alert-content' className={cn('min-w-0 flex-1', className)} {...props} />;
+  return (
+    <div data-slot='alert-content' className={cn('min-w-0 flex-1 max-w-prose text-pretty', className)} {...props} />
+  );
 }
 
 function AlertAction({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div data-slot='alert-action' className={cn('shrink-0 sm:[&>:is(button,a)]:rounded-inner', className)} {...props} />
+    <div
+      data-slot='alert-action'
+      className={cn('shrink-0 sm:ml-auto sm:[&>:is(button,a)]:rounded-inner', className)}
+      {...props}
+    />
   );
 }
 
