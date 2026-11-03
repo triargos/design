@@ -24,7 +24,9 @@ const inputSurfaceVariants = cva(
   [
     // `--field-radius` drives the box, the `::before` accent and `--outer-radius` (buttons and chips inside take
     // `rounded-inner` with their own `--outer-inset`). A multi-line field sets it to `--radius-area`.
-    'hit-area relative rounded-(--field-radius) border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--field-radius:var(--radius-control)] [--outer-radius:var(--field-radius)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
+    // The touch target sits under the field's content (`isolate`, `-z-1`): over it, it would catch every tap meant
+    // for a date segment or an addon button.
+    'hit-area relative isolate after:-z-1 rounded-(--field-radius) border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--field-radius:var(--radius-control)] [--outer-radius:var(--field-radius)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
     'before:pointer-events-none before:absolute before:inset-0 before:rounded-[max(0px,calc(var(--field-radius)-1px))] before:shadow-field-edge',
     'transition-[background-color,border-color,box-shadow] duration-feedback outline-none',
   ],
