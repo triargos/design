@@ -13,7 +13,7 @@ type AlertProps = React.ComponentProps<'div'> & {
 /**
  * A notice inside a page, always `subtle`. Text only: the intent says what kind of notice it is, the first line says
  * the rest. One inset (`--alert-pad`) on every side, around the text and around an `AlertAction` alike, which stays at
- * the far edge, concentric with the corner. The text wraps at a readable measure (`max-w-prose`, no orphaned last
+ * the far edge with its own control radius. The corner stays below a card content corner, as a field's does. The text wraps at a readable measure (`max-w-prose`, no orphaned last
  * word). The root reads its parts (`has-data-[slot=…]`), so the layout needs no props.
  */
 function Alert({ className, intent = 'info', ...props }: AlertProps) {
@@ -24,7 +24,7 @@ function Alert({ className, intent = 'info', ...props }: AlertProps) {
       className={cn(
         intentVariants({ intent, emphasis: 'subtle' }),
         'group/alert flex w-full items-center gap-(--alert-pad) rounded-(--alert-radius) p-(--alert-pad) text-body data-[intent=neutral]:text-muted-foreground',
-        '[--outer-inset:var(--alert-pad)] [--outer-radius:var(--alert-radius)] [--edge-hover:var(--intent-border)] [--edge:var(--intent-border)]',
+        '[--edge-hover:var(--intent-border)] [--edge:var(--intent-border)]',
         'max-sm:has-data-[slot=alert-action]:flex-col max-sm:has-data-[slot=alert-action]:items-start',
         className,
       )}
@@ -40,13 +40,7 @@ function AlertContent({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function AlertAction({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot='alert-action'
-      className={cn('shrink-0 sm:ml-auto [&>:is(button,a)]:rounded-inner', className)}
-      {...props}
-    />
-  );
+  return <div data-slot='alert-action' className={cn('shrink-0 sm:ml-auto', className)} {...props} />;
 }
 
 export { Alert, AlertContent, AlertAction };
