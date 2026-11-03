@@ -247,6 +247,7 @@
       "name": "alert",
       "type": "registry:ui",
       "registryDependencies": [
+        "@pavo/button",
         "@pavo/intent-variants",
         "@pavo/theme",
         "@pavo/utils"

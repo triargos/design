@@ -258,9 +258,9 @@
      a chart and its legend, stacked toasts. */
   --spacing-part: 0.75rem;
   /* Peer blocks; a heading and its content. */
-  --spacing-group: 1.5rem;
+  --spacing-group: 1rem;
   /* Inside a card: the content's padding, and the header, footer and flush rows on the same edge. */
-  --spacing-card: 1.5rem;
+  --spacing-card: 1.25rem;
   --spacing-page: 3rem;
   --spacing-section: 4rem;
 
@@ -668,7 +668,7 @@
   /* `Alert`: padding (the block padding is also the stacked alert's text-to-action gap), radius (also its
      `--outer-radius`), the action's inset from the corner. */
   --alert-pad: 0.75rem;
-  --alert-radius: 22px;
+  --alert-radius: 14px;
   /* `AlertDialogMedia`: the icon on its tile. */
   --alert-dialog-icon: 1.5rem;
   /* `Tooltip` (also an anchored toast), `ChartTooltipContent` (its rows sit `pad-y` apart). */
