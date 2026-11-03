@@ -668,7 +668,7 @@
   /* `Alert`: padding (the block padding is also the stacked alert's text-to-action gap), radius (also its
      `--outer-radius`), the action's inset from the corner. */
   --alert-pad: 0.75rem;
-  --alert-radius: 20px;
+  --alert-radius: 22px;
   /* `AlertDialogMedia`: the icon on its tile. */
   --alert-dialog-icon: 1.5rem;
   /* `Tooltip` (also an anchored toast), `ChartTooltipContent` (its rows sit `pad-y` apart). */

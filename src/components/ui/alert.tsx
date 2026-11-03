@@ -24,7 +24,7 @@ function Alert({ className, intent = 'info', ...props }: AlertProps) {
       className={cn(
         intentVariants({ intent, emphasis: 'subtle' }),
         'group/alert flex w-full items-center gap-(--alert-pad) rounded-(--alert-radius) p-(--alert-pad) text-body data-[intent=neutral]:text-muted-foreground',
-        '[--outer-inset:var(--alert-pad)] [--outer-radius:var(--alert-radius)]',
+        '[--outer-inset:var(--alert-pad)] [--outer-radius:var(--alert-radius)] [--edge-hover:var(--intent-border)] [--edge:var(--intent-border)]',
         'max-sm:has-data-[slot=alert-action]:flex-col max-sm:has-data-[slot=alert-action]:items-start',
         className,
       )}

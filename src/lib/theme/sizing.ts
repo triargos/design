@@ -157,7 +157,11 @@ export const SIZING_TOKENS = {
   '--command-footer-height': t('rows', '44px', 'Command footer height'),
   // Component sizing: surfaces.
   '--alert-pad': t('surfaces', '12px', 'Alert inset on every side, around the text and the action'),
-  '--alert-radius': t('surfaces', '20px', 'Alert radius'),
+  '--alert-radius': t(
+    'surfaces',
+    '22px',
+    'Alert radius: the control radius plus the inset, so an action keeps its own corner',
+  ),
   '--alert-dialog-icon': t('surfaces', '24px', 'Alert dialog media icon'),
   '--bottom-nav-radius': t(
     'surfaces',
@@ -489,7 +493,7 @@ export const SIZING_STYLES = {
       '--switch-width': '30px',
       '--switch-width-sm': '22px',
       '--alert-pad': '12px',
-      '--alert-radius': '14px',
+      '--alert-radius': '22px',
       '--table-head-height': '40px',
       '--badge-pad-x': '4px',
       '--tabs-inset': '2px',
@@ -560,7 +564,7 @@ export const SIZING_STYLES = {
       '--radius-area': '8px',
       '--radius-block': '8px',
       '--tabs-radius': '8px',
-      '--alert-radius': '12px',
+      '--alert-radius': '16px',
       '--badge-pad-x': '4px',
       '--badge-height-sm': '16px',
       '--kbd-pad-x': '3px',
