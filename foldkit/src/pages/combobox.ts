@@ -153,6 +153,12 @@ const manyMembers: ReadonlyArray<SelectOption> = Array.makeBy(MANY_MEMBER_COUNT,
 const SingleExample = Schema.Struct({ combobox: Combobox.Model, maybeValue: Schema.Option(Schema.String) });
 type SingleExample = typeof SingleExample.Type;
 
+const VirtualizedExample = Schema.Struct({
+  combobox: Combobox.VirtualizedModel,
+  maybeValue: Schema.Option(Schema.String),
+});
+type VirtualizedExample = typeof VirtualizedExample.Type;
+
 const MultipleExample = Schema.Struct({ combobox: Combobox.Model, values: Schema.Array(Schema.String) });
 type MultipleExample = typeof MultipleExample.Type;
 
@@ -161,7 +167,6 @@ const SingleKey = Schema.Literals([
   'matching',
   'withDescription',
   'allowCustom',
-  'virtualized',
   'inADialog',
   'statePlaceholder',
   'stateLoading',
@@ -177,6 +182,7 @@ type MultipleKey = typeof MultipleKey.Type;
 export const Model = Schema.Struct({
   singles: Schema.Record(SingleKey, SingleExample),
   multiples: Schema.Record(MultipleKey, MultipleExample),
+  virtualized: VirtualizedExample,
   ownerDialog: Dialog.Model,
 });
 export type Model = typeof Model.Type;
@@ -184,6 +190,7 @@ export type Model = typeof Model.Type;
 export const Message = defineMessageUnion({
   GotSingleMessage: { key: SingleKey, message: Combobox.Message },
   GotMultipleMessage: { key: MultipleKey, message: Combobox.Message },
+  GotVirtualizedMessage: { message: Combobox.VirtualizedMessage },
   ClickedRemoveChip: { key: MultipleKey, value: Schema.String },
   ClickedChangeOwner: {},
   GotOwnerDialogMessage: { message: Dialog.Message },
@@ -195,7 +202,6 @@ const SINGLE_OPTIONS: Readonly<Record<SingleKey, ReadonlyArray<SelectOption>>> =
   matching: PAGES,
   withDescription: DESCRIBED_MEMBERS,
   allowCustom: ROLES,
-  virtualized: manyMembers,
   inADialog: SHORT_MEMBERS,
   statePlaceholder: STATE_PROJECTS,
   stateLoading: [],
@@ -233,7 +239,6 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
       matching: initSingle('matching', Option.none()),
       withDescription: initSingle('withDescription', Option.some('jonas-weber')),
       allowCustom: initSingle('allowCustom', Option.some('Contractor')),
-      virtualized: initSingle('virtualized', Option.none()),
       inADialog: initSingle('inADialog', Option.some('maya-chen')),
       statePlaceholder: initSingle('statePlaceholder', Option.none()),
       stateLoading: initSingle('stateLoading', Option.none()),
@@ -245,6 +250,10 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
       multiple: initMultiple('multiple', ['maya-chen', 'priya-patel', 'noah-kim']),
       multipleAllowCustom: initMultiple('multipleAllowCustom', ['bug', 'Onboarding']),
       inAField: initMultiple('inAField', []),
+    },
+    virtualized: {
+      combobox: Combobox.initVirtualized({ id: 'combobox-virtualized' }),
+      maybeValue: Option.none(),
     },
     ownerDialog: Dialog.init({ id: 'combobox-owner-dialog', isAnimated: true }),
   },
@@ -300,6 +309,30 @@ const foldMultiple = Update.foldChildAt({
     }),
 });
 
+const toVirtualizedMessage = (message: Combobox.VirtualizedMessage): Message =>
+  Message.GotVirtualizedMessage({ message });
+
+const writeVirtualized = (model: Model, next: VirtualizedExample): Model =>
+  modifyFields(model, { virtualized: () => next });
+
+const foldVirtualized = Update.foldChild({
+  update: Combobox.updateVirtualized,
+  read: (model: Model) => Option.some(model.virtualized.combobox),
+  write: (model: Model, nextCombobox: Combobox.VirtualizedModel) =>
+    writeVirtualized(model, { ...model.virtualized, combobox: nextCombobox }),
+  toParentMessage: toVirtualizedMessage,
+  foldOutMessage: Combobox.OutMessage.match<Update.Step<Model, Message>>({
+    Selected:
+      ({ value }) =>
+      (stepModel) => ({
+        model: writeVirtualized(stepModel, { ...stepModel.virtualized, maybeValue: Option.some(value) }),
+      }),
+    Cleared: () => (stepModel) => ({
+      model: writeVirtualized(stepModel, { ...stepModel.virtualized, maybeValue: Option.none() }),
+    }),
+  }),
+});
+
 const toOwnerDialogMessage = (message: Dialog.Message): Message => Message.GotOwnerDialogMessage({ message });
 
 const ownerDialogFold = {
@@ -319,6 +352,7 @@ export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     GotSingleMessage: ({ key, message }) => foldSingle(model, key, message),
     GotMultipleMessage: ({ key, message }) => foldMultiple(model, key, message),
+    GotVirtualizedMessage: ({ message }) => foldVirtualized(model, message),
     ClickedRemoveChip: ({ key, value }) => ({
       model: writeMultiple(model, key, {
         ...model.multiples[key],
@@ -615,13 +649,17 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html => {
         exampleSection(
           {
             title: 'Virtualized',
-            description:
-              '2,000 members. Not virtualized here: @foldkit/ui Combobox renders every row, so this measures the cost of that.',
+            description: [
+              code('Combobox.virtualized', h),
+              ': 2,000 members, only the rows in view render. Rows keep to one line.',
+            ],
             children: [
-              single(
-                model,
-                'virtualized',
+              Combobox.virtualized(
                 {
+                  model: model.virtualized.combobox,
+                  toParentMessage: toVirtualizedMessage,
+                  options: manyMembers,
+                  maybeValue: model.virtualized.maybeValue,
                   ariaLabel: 'Member',
                   placeholder: 'Choose a member',
                   emptyText: 'No members found',
