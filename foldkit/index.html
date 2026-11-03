@@ -9,7 +9,8 @@
     <link href="/src/styles.css" rel="stylesheet" />
     <script>
       try {
-        var dark = matchMedia('(prefers-color-scheme: dark)').matches;
+        var stored = JSON.parse(localStorage.getItem('pavo-foldkit-theme') || '"System"');
+        var dark = stored === 'Dark' || (stored !== 'Light' && matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.classList.toggle('dark', dark);
         document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
       } catch (error) {}
