@@ -12,6 +12,8 @@ export type Message = DialogPrimitive.Message;
 export type OutMessage = DialogPrimitive.OutMessage;
 export type RenderInfo = DialogPrimitive.RenderInfo;
 
+export const isOpen = (model: Model): boolean => model.isOpen;
+
 export type DialogSize = 'sm' | 'default' | 'lg' | 'xl';
 
 const SIZE_CLASS: Record<DialogSize, string> = {
@@ -21,77 +23,80 @@ const SIZE_CLASS: Record<DialogSize, string> = {
   xl: 'sm:max-w-4xl',
 };
 
-const DEFAULT_CLOSE_LABEL = 'Close';
+export const DEFAULT_CLOSE_LABEL = 'Close';
 
-export type ViewConfig<ParentMessage> = Readonly<{
+export const overlayClassName =
+  'fixed inset-0 isolate z-50 bg-black/32 transition-opacity duration-modal ease-enter data-closed:opacity-0 supports-backdrop-filter:backdrop-blur-sm';
+
+export const nestedOverlayClassName = 'fixed inset-0 isolate z-50';
+
+export const popupClassName =
+  'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none';
+
+export const centeredClassName = cn(
+  'fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog',
+  'transition-[opacity,scale] duration-modal ease-enter data-closed:scale-[0.97] data-closed:opacity-0 motion-reduce:data-closed:scale-100',
+  'data-nested-dialog-open:scale-[calc(1-0.04*var(--nested-dialogs))] data-nested-dialog-open:ease-move motion-reduce:data-nested-dialog-open:scale-100',
+  'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-black/0 after:transition-colors after:duration-modal data-nested-dialog-open:after:bg-black/8',
+);
+
+export type ModalConfig<ParentMessage> = Readonly<{
   model: Model;
   toParentMessage: (message: Message) => ParentMessage;
+  slot: string;
+  slotId?: string | undefined;
+  hasDescription?: boolean | undefined;
+  isBackdropDismissable?: boolean | undefined;
+  nestedDialogCount?: number | undefined;
+  overlayClassName: string;
+  overlayAttributes?: ReadonlyArray<PartAttribute<ParentMessage>> | undefined;
+  contentClassName: string;
+  contentAttributes?: ReadonlyArray<PartAttribute<ParentMessage>> | undefined;
   content: (render: RenderInfo) => ReadonlyArray<Child>;
-  slotId?: string;
-  size?: DialogSize;
-  isCloseButtonShown?: boolean;
-  closeLabel?: string;
-  hasDescription?: boolean;
-  className?: string;
 }>;
 
-export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBuilder<ParentMessage>): Html => {
+export const modal = <ParentMessage>(config: ModalConfig<ParentMessage>, h: HtmlBuilder<ParentMessage>): Html => {
   const {
     model,
     toParentMessage,
-    content,
+    slot,
     slotId = model.id,
-    size = 'default',
-    isCloseButtonShown = true,
-    closeLabel = DEFAULT_CLOSE_LABEL,
     hasDescription = false,
-    className,
+    isBackdropDismissable = true,
+    nestedDialogCount = 0,
+    overlayClassName: overlayClass,
+    overlayAttributes = [],
+    contentClassName,
+    contentAttributes = [],
+    content,
   } = config;
 
-  const closeButton = (render: RenderInfo): Html =>
-    Button.view(
-      {
-        emphasis: 'ghost',
-        size: 'icon',
-        ariaLabel: closeLabel,
-        attributes: render.closeButton,
-        className:
-          'absolute top-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)] right-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)]',
-        children: [icon('x')],
-      },
-      h,
-    );
+  const nestedAttributes =
+    nestedDialogCount > 0
+      ? [h.DataAttribute('nested-dialog-open', ''), h.Style({ '--nested-dialogs': String(nestedDialogCount) })]
+      : [];
 
   const toView = (render: RenderInfo): Html =>
     h.dialog(
-      [...render.dialog, h.DataAttribute('slot', 'dialog')],
+      [...render.dialog, h.DataAttribute('slot', slot)],
       render.isVisible
         ? [
             h.div([
               ...render.backdrop,
-              h.DataAttribute('slot', 'dialog-overlay'),
-              h.Class(
-                'fixed inset-0 isolate z-50 bg-black/32 transition-opacity duration-modal ease-enter data-closed:opacity-0 supports-backdrop-filter:backdrop-blur-sm',
-              ),
+              h.DataAttribute('slot', `${slot}-overlay`),
+              ...overlayAttributes,
+              h.Class(cn(overlayClass, !isBackdropDismissable && 'pointer-events-none')),
             ]),
             h.div(
               [
                 ...render.panel,
-                h.DataAttribute('slot', 'dialog-content'),
+                h.DataAttribute('slot', `${slot}-content`),
                 h.DataAttribute('surface', 'popup'),
-                h.DataAttribute('size', size),
-                h.Class(
-                  cn(
-                    'flex flex-col overflow-hidden bg-popover text-body text-popover-foreground shadow-modal outline-none',
-                    'fixed top-[round(50%,1px)] left-[round(50%,1px)] z-50 w-full translate-x-[round(-50%,1px)] translate-y-[round(-50%,1px)] rounded-dialog',
-                    'transition-[opacity,scale] duration-modal ease-enter data-closed:scale-[0.97] data-closed:opacity-0 motion-reduce:data-closed:scale-100',
-                    'max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] sm:min-w-min',
-                    SIZE_CLASS[size],
-                    className,
-                  ),
-                ),
+                ...nestedAttributes,
+                ...contentAttributes,
+                h.Class(contentClassName),
               ],
-              [...content(render), ...(isCloseButtonShown ? [closeButton(render)] : [])],
+              content(render),
             ),
           ]
         : [],
@@ -104,6 +109,76 @@ export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBu
     viewInputs: { toView, hasDescription },
     toParentMessage,
   });
+};
+
+export const closeButton = <ParentMessage>(
+  render: RenderInfo,
+  closeLabel: string,
+  h: HtmlBuilder<ParentMessage>,
+): Html =>
+  Button.view(
+    {
+      emphasis: 'ghost',
+      size: 'icon',
+      ariaLabel: closeLabel,
+      attributes: render.closeButton,
+      className:
+        'absolute top-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)] right-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)]',
+      children: [icon('x')],
+    },
+    h,
+  );
+
+export type ViewConfig<ParentMessage> = Readonly<{
+  model: Model;
+  toParentMessage: (message: Message) => ParentMessage;
+  content: (render: RenderInfo) => ReadonlyArray<Child>;
+  slotId?: string;
+  size?: DialogSize;
+  isCloseButtonShown?: boolean;
+  closeLabel?: string;
+  hasDescription?: boolean;
+  nestedDialogCount?: number;
+  isNested?: boolean;
+  className?: string;
+}>;
+
+export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBuilder<ParentMessage>): Html => {
+  const {
+    model,
+    toParentMessage,
+    content,
+    slotId,
+    size = 'default',
+    isCloseButtonShown = true,
+    closeLabel = DEFAULT_CLOSE_LABEL,
+    hasDescription,
+    nestedDialogCount,
+    isNested = false,
+    className,
+  } = config;
+
+  return modal(
+    {
+      model,
+      toParentMessage,
+      slot: 'dialog',
+      slotId,
+      hasDescription,
+      nestedDialogCount,
+      overlayClassName: isNested ? nestedOverlayClassName : overlayClassName,
+      contentClassName: cn(
+        popupClassName,
+        centeredClassName,
+        'max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] sm:min-w-min',
+        SIZE_CLASS[size],
+        className,
+      ),
+      contentAttributes: [h.DataAttribute('size', size)],
+      content: (render) => [...content(render), ...(isCloseButtonShown ? [closeButton(render, closeLabel, h)] : [])],
+    },
+    h,
+  );
 };
 
 export const header = <Message>(
