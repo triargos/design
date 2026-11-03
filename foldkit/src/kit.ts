@@ -123,7 +123,7 @@ export const matrix = <Message>(
                   h.Style({ 'grid-template-columns': `8rem repeat(${columns.length}, minmax(7.5rem, 1fr))` }),
                 ],
                 [
-                  h.span([], []),
+                  h.span([]),
                   ...columns.map((column) =>
                     h.span(
                       [h.Class('px-1 pt-group pb-related font-mono text-caption text-muted-foreground')],

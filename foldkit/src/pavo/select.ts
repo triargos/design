@@ -1,6 +1,6 @@
 import { Listbox } from '@foldkit/ui';
 import { Array, Effect, Option, Schema, String, pipe } from 'effect';
-import { Command, type Update } from 'foldkit';
+import { Command, Update } from 'foldkit';
 import * as Dom from 'foldkit/dom';
 import { type Html, type HtmlBuilder, childAttributes } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -76,16 +76,18 @@ const toOutMessage = (key: string): OutMessage =>
 
 const updateListbox = (model: Model, message: Listbox.Message): UpdateReturn => {
   const listboxUpdate = ListboxBundle.update(model, message);
-  const commands = Command.mapMessages(listboxUpdate.commands ?? [], toGotListboxMessage);
+  const commands = Command.mapMessages(listboxUpdate.commands, toGotListboxMessage);
   const maybeOutMessage = Option.map(Option.fromNullishOr(listboxUpdate.outMessage), ({ value }) =>
     toOutMessage(value),
   );
   const isCustomChosen = Option.exists(maybeOutMessage, (outMessage) => outMessage._tag === 'ChoseCustom');
-  return {
-    model: listboxUpdate.model,
-    commands: isCustomChosen ? [...commands, FocusCustomInput({ id: model.id })] : commands,
-    ...Option.match(maybeOutMessage, { onNone: () => ({}), onSome: (outMessage) => ({ outMessage }) }),
-  };
+  return Update.withOutMessage(
+    {
+      model: listboxUpdate.model,
+      commands: isCustomChosen ? [...commands, FocusCustomInput({ id: model.id })] : commands,
+    },
+    Option.getOrUndefined(maybeOutMessage),
+  );
 };
 
 export const update = (model: Model, message: Message) =>

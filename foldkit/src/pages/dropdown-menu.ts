@@ -1,4 +1,4 @@
-import { Array, Option, Schema } from 'effect';
+import { Array, Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -105,7 +105,7 @@ const foldMenu = Update.foldChildAt({
   update: ActionMenu.update,
   readAt: (model: Model, key: MenuKey) => Option.some(model.menus[key]),
   writeAt: (model: Model, key: MenuKey, nextMenu: DropdownMenu.Model) =>
-    modifyFields(model, { menus: (menus) => ({ ...menus, [key]: nextMenu }) }),
+    modifyFields(model, { menus: Record.set(key, nextMenu) }),
   toParentMessage: toMenuMessage,
   foldOutMessage: foldMenuOutMessage,
 });

@@ -1,4 +1,4 @@
-import { Array, DateTime, Duration, Effect, Number, Option, Order, Schema } from 'effect';
+import { Array, DateTime, Duration, Effect, Number, Option, Order, Record, Schema } from 'effect';
 import { Command, Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -248,7 +248,7 @@ const foldProjectMenu = Update.foldChildAt({
   update: ProjectMenu.update,
   readAt: (model: Model, projectId: LinkedProjectId) => Option.some(model.projectMenus[projectId]),
   writeAt: (model: Model, projectId: LinkedProjectId, nextMenu: DropdownMenu.Model) =>
-    modifyFields(model, { projectMenus: (menus) => ({ ...menus, [projectId]: nextMenu }) }),
+    modifyFields(model, { projectMenus: Record.set(projectId, nextMenu) }),
   toParentMessage: toProjectMenuMessage,
   foldOutMessage: () => () => (stepModel) => ({ model: stepModel }),
 });

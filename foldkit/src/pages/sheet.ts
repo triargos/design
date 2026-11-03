@@ -1,4 +1,4 @@
-import { Option, Schema } from 'effect';
+import { Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -57,7 +57,7 @@ const foldSheet = Update.foldChildAt({
   update: Sheet.update,
   readAt: (model: Model, key: SheetKey) => Option.some(model.sheets[key]),
   writeAt: (model: Model, key: SheetKey, nextSheet: Sheet.Model) =>
-    modifyFields(model, { sheets: (sheets) => ({ ...sheets, [key]: nextSheet }) }),
+    modifyFields(model, { sheets: Record.set(key, nextSheet) }),
   toParentMessage: toSheetMessage,
   foldOutMessage: foldSheetOutMessage,
 });

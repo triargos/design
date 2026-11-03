@@ -1,4 +1,4 @@
-import { Array, Option, Schema } from 'effect';
+import { Array, Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -75,7 +75,7 @@ const foldRadioGroupOutMessage = (groupId: GroupId) =>
       ({ value }) =>
       (stepModel) => ({
         model: modifyFields(stepModel, {
-          selections: (selections) => ({ ...selections, [groupId]: Option.some(value) }),
+          selections: Record.set(groupId, Option.some(value)),
         }),
       }),
   });
@@ -84,7 +84,7 @@ const foldRadioGroup = Update.foldChildAt({
   update: RadioGroup.update,
   readAt: (model: Model, groupId: GroupId) => Option.some(model.radioGroups[groupId]),
   writeAt: (model: Model, groupId: GroupId, nextRadioGroup: RadioGroup.Model) =>
-    modifyFields(model, { radioGroups: (radioGroups) => ({ ...radioGroups, [groupId]: nextRadioGroup }) }),
+    modifyFields(model, { radioGroups: Record.set(groupId, nextRadioGroup) }),
   toParentMessage: (groupId: GroupId, message: RadioGroup.Message) => toRadioGroupMessage(groupId)(message),
   foldOutMessage: (groupId: GroupId) => foldRadioGroupOutMessage(groupId),
 });

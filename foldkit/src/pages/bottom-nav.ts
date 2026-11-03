@@ -1,4 +1,4 @@
-import { Array, Duration, Effect, Option, Schema } from 'effect';
+import { Array, Duration, Effect, Option, Record, Schema } from 'effect';
 import { Command, Submodel, Subscription, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -154,7 +154,7 @@ const toNavMessage =
     Message.GotNavMessage({ example, message });
 
 const withCurrentPage = (model: Model, example: NavExample, label: string): Model =>
-  modifyFields(model, { currentPages: (currentPages) => ({ ...currentPages, [example]: label }) });
+  modifyFields(model, { currentPages: Record.set(example, label) });
 
 const foldNavOutMessage = (example: NavExample) =>
   BottomNav.OutMessage.match<Update.Step<Model, Message>>({
@@ -167,7 +167,7 @@ const foldNav = Update.foldChildAt({
   update: BottomNav.update,
   readAt: (model: Model, example: NavExample) => Option.some(model.navs[example]),
   writeAt: (model: Model, example: NavExample, nextNav: BottomNav.Model) =>
-    modifyFields(model, { navs: (navs) => ({ ...navs, [example]: nextNav }) }),
+    modifyFields(model, { navs: Record.set(example, nextNav) }),
   toParentMessage: (example: NavExample, message: BottomNav.Message) => Message.GotNavMessage({ example, message }),
   foldOutMessage: foldNavOutMessage,
 });

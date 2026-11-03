@@ -512,9 +512,6 @@ export const update = (model: Model, message: Message) =>
 export const reflectDate = (model: Model, maybeDate: Option.Option<CalendarDate>): Model =>
   modifyFields(model, { segments: () => dateSegments(maybeDate), committedSegments: () => dateSegments(maybeDate) });
 
-export const toIsoTime = ({ hour, minute }: TimeOfDay): string =>
-  `${String.padStart(2, '0')(globalThis.String(hour))}:${String.padStart(2, '0')(globalThis.String(minute))}`;
-
 const PLACEHOLDERS: Readonly<Record<string, Readonly<Record<SegmentType, string>>>> = {
   de: { year: 'JJJJ', month: 'MM', day: 'TT', hour: '––', minute: '––', dayPeriod: 'AM' },
 };

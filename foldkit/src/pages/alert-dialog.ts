@@ -1,4 +1,4 @@
-import { Option, Schema, String } from 'effect';
+import { Option, Record, Schema, String } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -64,7 +64,7 @@ const foldDialog = Update.foldChildAt({
   update: Dialog.update,
   readAt: (model: Model, key: DialogKey) => Option.some(model.dialogs[key]),
   writeAt: (model: Model, key: DialogKey, nextDialog: Dialog.Model) =>
-    modifyFields(model, { dialogs: (dialogs) => ({ ...dialogs, [key]: nextDialog }) }),
+    modifyFields(model, { dialogs: Record.set(key, nextDialog) }),
   toParentMessage: toDialogMessage,
   foldOutMessage: foldDialogOutMessage,
 });

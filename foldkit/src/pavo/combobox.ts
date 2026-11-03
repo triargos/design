@@ -1,6 +1,6 @@
 import { Combobox as ComboboxPrimitive } from '@foldkit/ui';
 import { Array, Effect, Match, Number, Option, Order, Queue, Schema, Stream, String, pipe } from 'effect';
-import { Command, Mount, Render, type Update } from 'foldkit';
+import { Command, Mount, Render, Update } from 'foldkit';
 import * as Dom from 'foldkit/dom';
 import { type Html, type HtmlBuilder, childAttributes } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -245,22 +245,21 @@ type UpdateReturn = Update.ReturnWithOutMessage<Model, Message, OutMessage>;
 
 const liftComboboxUpdate = (
   comboboxUpdate: Update.ReturnWithOutMessage<Model, ComboboxPrimitive.Message, ComboboxPrimitive.OutMessage<string>>,
-): UpdateReturn => ({
-  model: comboboxUpdate.model,
-  commands: Command.mapMessages(comboboxUpdate.commands ?? [], toGotComboboxMessage),
-  ...pipe(
-    Option.fromNullishOr(comboboxUpdate.outMessage),
-    Option.match({
-      onNone: () => ({}),
-      onSome: (outMessage) => ({
-        outMessage: ComboboxPrimitive.OutMessage.match<OutMessage, ComboboxPrimitive.OutMessage<string>>(outMessage, {
+): UpdateReturn =>
+  Update.withOutMessage(
+    {
+      model: comboboxUpdate.model,
+      commands: Command.mapMessages(comboboxUpdate.commands, toGotComboboxMessage),
+    },
+    Option.getOrUndefined(
+      Option.map(Option.fromNullishOr(comboboxUpdate.outMessage), (outMessage) =>
+        ComboboxPrimitive.OutMessage.match<OutMessage, ComboboxPrimitive.OutMessage<string>>(outMessage, {
           Selected: ({ value }) => OutMessage.Selected({ value: valueOfKey(value) }),
           ClearedSelection: () => OutMessage.Cleared(),
         }),
-      }),
-    }),
-  ),
-});
+      ),
+    ),
+  );
 
 const makeUpdate =
   (comboboxUpdate: typeof SingleBundle.update) =>
@@ -277,9 +276,6 @@ const makeUpdate =
 
 export const update = makeUpdate(SingleBundle.update);
 export const updateMultiple = makeUpdate(MultiBundle.update);
-
-export const reflectInputValue = (model: Model, inputValue: string): Model =>
-  modifyFields(model, { inputValue: () => inputValue });
 
 export const { inputId } = ComboboxPrimitive;
 

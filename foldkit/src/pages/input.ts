@@ -1,4 +1,4 @@
-import { Array, Option, Schema } from 'effect';
+import { Array, Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -96,13 +96,13 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const writeFieldSelect = (model: Model, state: FieldState, next: TeamSelect): Model =>
-  modifyFields(model, { fieldSelects: (selects) => ({ ...selects, [state]: next }) });
+  modifyFields(model, { fieldSelects: Record.set(state, next) });
 
 const writeFieldChips = (model: Model, state: FieldState, next: TeamChips): Model =>
-  modifyFields(model, { fieldChips: (chips) => ({ ...chips, [state]: next }) });
+  modifyFields(model, { fieldChips: Record.set(state, next) });
 
 const writeSurfaceSelect = (model: Model, surface: SurfaceLabel, next: TeamSelect): Model =>
-  modifyFields(model, { surfaceSelects: (selects) => ({ ...selects, [surface]: next }) });
+  modifyFields(model, { surfaceSelects: Record.set(surface, next) });
 
 const teamSelectOutMessage = (write: (model: Model, toNext: (teamSelect: TeamSelect) => TeamSelect) => Model) =>
   Select.OutMessage.match<Update.Step<Model, Message>>({

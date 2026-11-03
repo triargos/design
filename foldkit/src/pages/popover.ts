@@ -1,4 +1,4 @@
-import { Array, Option, Schema } from 'effect';
+import { Array, Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -54,7 +54,7 @@ const foldPopover = Update.foldChildAt({
   update: Popover.update,
   readAt: (model: Model, key: PopoverKey) => Option.some(model.popovers[key]),
   writeAt: (model: Model, key: PopoverKey, nextPopover: Popover.Model) =>
-    modifyFields(model, { popovers: (popovers) => ({ ...popovers, [key]: nextPopover }) }),
+    modifyFields(model, { popovers: Record.set(key, nextPopover) }),
   toParentMessage: toPopoverMessage,
   foldOutMessage: foldPopoverOutMessage,
 });

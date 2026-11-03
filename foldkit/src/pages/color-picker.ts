@@ -1,4 +1,4 @@
-import { Option, Schema } from 'effect';
+import { Option, Record, Schema } from 'effect';
 import { Submodel, Subscription, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -52,7 +52,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const writePicker = (model: Model, key: PickerKey, nextPicker: Picker): Model =>
-  modifyFields(model, { pickers: (pickers) => ({ ...pickers, [key]: nextPicker }) });
+  modifyFields(model, { pickers: Record.set(key, nextPicker) });
 
 const toPickerMessage =
   (key: PickerKey) =>

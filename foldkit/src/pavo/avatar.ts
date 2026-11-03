@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import { Array, String as Str } from 'effect';
+import { Array, String } from 'effect';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 
 import { cn } from './cn.ts';
@@ -199,8 +199,8 @@ export const group = <Message>(
   );
 
 export const initials = (name: string): string => {
-  const words = Str.split(Str.trim(name), /\s+/);
+  const words = String.split(String.trim(name), /\s+/);
   const first = Array.headNonEmpty(words);
   const last = words.length > 1 ? Array.lastNonEmpty(words) : '';
-  return Str.toUpperCase(first.charAt(0) + last.charAt(0));
+  return String.toUpperCase(first.charAt(0) + last.charAt(0));
 };

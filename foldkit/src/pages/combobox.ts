@@ -1,4 +1,4 @@
-import { Array, Option, Schema } from 'effect';
+import { Array, Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -260,10 +260,10 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 });
 
 const writeSingle = (model: Model, key: SingleKey, next: SingleExample): Model =>
-  modifyFields(model, { singles: (singles) => ({ ...singles, [key]: next }) });
+  modifyFields(model, { singles: Record.set(key, next) });
 
 const writeMultiple = (model: Model, key: MultipleKey, next: MultipleExample): Model =>
-  modifyFields(model, { multiples: (multiples) => ({ ...multiples, [key]: next }) });
+  modifyFields(model, { multiples: Record.set(key, next) });
 
 const isStaticState = (key: SingleKey): boolean =>
   key === 'stateReadOnly' || key === 'stateDisabled' || key === 'statePlaceholder' || key === 'stateInvalid';

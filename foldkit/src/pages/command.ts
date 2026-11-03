@@ -1,4 +1,4 @@
-import { Array, Option, Schema } from 'effect';
+import { Array, Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -51,7 +51,7 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
 const toPaletteDialogMessage = (message: Dialog.Message): Message => Message.GotPaletteDialogMessage({ message });
 
 const writeCommand = (model: Model, key: CommandKey, nextCommand: Command.Model): Model =>
-  modifyFields(model, { commands: (commands) => ({ ...commands, [key]: nextCommand }) });
+  modifyFields(model, { commands: Record.set(key, nextCommand) });
 
 const paletteDialogFold = {
   read: (model: Model) => Option.some(model.paletteDialog),

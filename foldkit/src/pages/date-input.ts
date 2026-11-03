@@ -1,4 +1,4 @@
-import { Option, Schema } from 'effect';
+import { Option, Record, Schema } from 'effect';
 import { Calendar, Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -69,7 +69,7 @@ export const init = (context: PageContext): Update.Return<Model, Message> => {
 };
 
 const writeField = (model: Model, key: FieldKey, nextField: DateInput.Model): Model =>
-  modifyFields(model, { fields: (fields) => ({ ...fields, [key]: nextField }) });
+  modifyFields(model, { fields: Record.set(key, nextField) });
 
 const LOCALE_SIBLING: Partial<Record<FieldKey, FieldKey>> = { localeGb: 'localeDe', localeDe: 'localeGb' };
 

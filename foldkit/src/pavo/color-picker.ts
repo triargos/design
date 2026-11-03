@@ -143,9 +143,6 @@ export const init = ({ id, value }: InitConfig): Model => ({
   popover: PopoverPrimitive.init({ id: `${id}-popover`, isAnimated: true }),
 });
 
-export const reflectValue = (model: Model, value: string): Model =>
-  hsvToHex(model.hsv) === value ? model : modifyFields(model, { hsv: () => hexToHsv(value) });
-
 const SwatchesBundle = RadioGroupPrimitive.create<string>();
 
 type UpdateReturn = Update.ReturnWithOutMessage<Model, Message, OutMessage>;

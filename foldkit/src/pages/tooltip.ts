@@ -1,4 +1,4 @@
-import { Array, Option, Schema } from 'effect';
+import { Array, Option, Record, Schema } from 'effect';
 import { Submodel, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -97,7 +97,7 @@ const foldTooltipOutMessage = (key: TooltipKey) =>
   });
 
 const writeTooltip = (model: Model, key: TooltipKey, nextTooltip: Tooltip.Model): Model =>
-  modifyFields(model, { tooltips: (tooltips) => ({ ...tooltips, [key]: nextTooltip }) });
+  modifyFields(model, { tooltips: Record.set(key, nextTooltip) });
 
 const foldTooltip = Update.foldChildAt({
   update: Tooltip.update,
