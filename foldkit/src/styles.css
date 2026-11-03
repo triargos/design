@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '../../src/inter.css';
+@import '../../src/tailwind.css';
+
+@source './';
+@source '../../src/components/ui/intent-variants.ts';

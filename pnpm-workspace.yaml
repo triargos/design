@@ -1,3 +1,6 @@
+packages:
+  - foldkit
+
 allowBuilds:
   esbuild: true
   workerd: true
