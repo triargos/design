@@ -178,12 +178,21 @@ function PendingSwap({ pending, size, children }: { pending: boolean; size: Butt
 
 type ButtonProps = ButtonPrimitive.Props & Omit<ButtonStyleProps, 'className'> & { isLoading?: boolean };
 
+type ButtonDefaultsValue = Pick<ButtonStyleProps, 'intent' | 'emphasis' | 'size'>;
+
+const ButtonDefaultsContext = React.createContext<ButtonDefaultsValue>({});
+
+/** What every `Button` inside takes unless it passes its own: a part that owns its buttons (`AlertAction`) sets them. */
+function ButtonDefaults({ children, ...defaults }: ButtonDefaultsValue & { children: React.ReactNode }) {
+  return <ButtonDefaultsContext value={defaults}>{children}</ButtonDefaultsContext>;
+}
+
 /** A native `type='button'` unless the caller passes `type='submit'`. */
 function Button({
   className,
-  intent,
-  emphasis,
-  size = 'default',
+  intent: intentProp,
+  emphasis: emphasisProp,
+  size: sizeProp,
   static: isStatic,
   isLoading,
   disabled,
@@ -191,6 +200,10 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
+  const defaults = React.use(ButtonDefaultsContext);
+  const intent = intentProp ?? defaults.intent;
+  const emphasis = emphasisProp ?? defaults.emphasis;
+  const size = sizeProp ?? defaults.size ?? 'default';
   const pending = useMinimumPending(isLoading === true);
   const nameCheck = useAccessibleNameCheck('Button', size.startsWith('icon'));
   // A router `<Link to>` or an `<a href>` stays a link for assistive tech; Base UI would announce it as a button.
@@ -232,4 +245,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants, type ButtonProps };
+export { Button, ButtonDefaults, buttonVariants, type ButtonProps };
