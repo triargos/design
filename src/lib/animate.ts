@@ -4,6 +4,14 @@ export const springEasing = () =>
 
 const timingKeys = new Set(['offset', 'computedOffset', 'easing', 'composite']);
 
+const animatedProperties = (keyframes: Keyframe[] | PropertyIndexedKeyframes) => [
+  ...new Set(
+    (Array.isArray(keyframes) ? keyframes.flatMap(Object.keys) : Object.keys(keyframes))
+      .filter((key) => !timingKeys.has(key))
+      .map((key) => key.replace(/[A-Z]/g, '-$&').toLowerCase()),
+  ),
+];
+
 /**
  * A Web Animation that ends in inline styles: finished or stopped, the element keeps the values it reached, so the
  * next animation starts from there. `finished` resolves either way.
@@ -13,17 +21,13 @@ export function animateTo(
   keyframes: Keyframe[] | PropertyIndexedKeyframes,
   options: KeyframeAnimationOptions,
 ) {
+  const properties = animatedProperties(keyframes);
   const animation = element.animate(keyframes, { ...options, fill: 'both' });
   const settle = () => {
     if (animation.playState === 'idle') return;
-    try {
-      animation.commitStyles();
-    } catch {
-      const last = animation.effect instanceof KeyframeEffect ? animation.effect.getKeyframes().at(-1) : undefined;
-      for (const [property, value] of Object.entries(last ?? {}))
-        if (!timingKeys.has(property))
-          element.style.setProperty(property.replace(/[A-Z]/g, '-$&').toLowerCase(), String(value));
-    }
+    const computed = getComputedStyle(element);
+    const reached = properties.map((property) => [property, computed.getPropertyValue(property)] as const);
+    for (const [property, value] of reached) element.style.setProperty(property, value);
     animation.cancel();
   };
   return { finished: animation.finished.then(settle, () => {}), stop: settle };
