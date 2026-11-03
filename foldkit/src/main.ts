@@ -9,8 +9,9 @@ import { modifyFields } from 'foldkit/struct';
 import { Url, toString as urlToString } from 'foldkit/url';
 
 import * as Customize from './customize.ts';
+import { proschuleLogo } from './logo.ts';
 import * as Pages from './pages.generated.ts';
-import { cn } from './pavo/cn.ts';
+import * as Sidebar from './pavo/sidebar.ts';
 import * as Tabs from './pavo/tabs.ts';
 
 const DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
@@ -29,6 +30,7 @@ export const Model = Schema.Struct({
   themePreference: ThemePreference,
   systemTheme: ResolvedTheme,
   customize: Customize.Model,
+  sidebar: Sidebar.Model,
   pages: Pages.Model,
 });
 export type Model = typeof Model.Type;
@@ -43,6 +45,7 @@ export const Message = defineMessageUnion({
   ChangedThemePreference: { themePreference: ThemePreference },
   ChangedSystemTheme: { systemTheme: ResolvedTheme },
   GotCustomizeMessage: { message: Customize.Message },
+  GotSidebarMessage: { message: Sidebar.Message },
   GotPagesMessage: { message: Pages.Message },
 });
 export type Message = typeof Message.Type;
@@ -132,6 +135,7 @@ export const init: Runtime.RoutingApplicationInit<Model, Message, Flags> = (flag
       themePreference: flags.themePreference,
       systemTheme: flags.systemTheme,
       customize: Customize.init(flags.customization),
+      sidebar: Sidebar.init({ id: 'docs-sidebar', isShortcutBound: true }),
       pages,
     }),
     toParentMessage: (message) => Message.GotPagesMessage({ message }),
@@ -149,6 +153,15 @@ const foldCustomize = Update.foldChild({
   read: (model: Model) => Option.some(model.customize),
   write: (model, nextCustomize) => modifyFields(model, { customize: () => nextCustomize }),
   toParentMessage: (message) => Message.GotCustomizeMessage({ message }),
+});
+
+const toSidebarMessage = (message: Sidebar.Message): Message => Message.GotSidebarMessage({ message });
+
+const foldSidebar = Update.foldChild({
+  update: Sidebar.update,
+  read: (model: Model) => Option.some(model.sidebar),
+  write: (model, nextSidebar) => modifyFields(model, { sidebar: () => nextSidebar }),
+  toParentMessage: toSidebarMessage,
 });
 
 type UpdateReturn = Update.Return<Model, Message>;
@@ -181,32 +194,39 @@ export const update = (model: Model, message: Message) =>
     ChangedSystemTheme: ({ systemTheme }) =>
       applyThemeChange(model, modifyFields(model, { systemTheme: () => systemTheme })),
     GotCustomizeMessage: ({ message }) => foldCustomize(model, message),
+    GotSidebarMessage: ({ message }) => foldSidebar(model, message),
     GotPagesMessage: ({ message }) => foldPages(model, message),
   });
 
 const isThemePreference = Schema.is(ThemePreference);
 
-const navLink = (item: Pages.NavItem, route: Pages.AppRoute, h: HtmlBuilder<Message>): Html => {
-  const isCurrent = item.routeTag === route._tag;
-  return h.li(
-    [],
-    [
-      h.a(
-        [
-          h.Href(item.href),
-          ...(isCurrent ? [h.AriaCurrent('page')] : []),
-          h.Class(
-            cn(
-              'flex h-menu-item items-center rounded-control px-menu-item-pad text-control text-muted-foreground transition-colors hover:bg-highlight hover:text-foreground',
-              isCurrent && 'bg-highlight font-medium text-foreground',
-            ),
-          ),
-        ],
-        [item.title],
-      ),
-    ],
+const navLink = (title: string, href: string, isCurrent: boolean, h: HtmlBuilder<Message>): Html =>
+  Sidebar.menuItem(
+    {
+      attributes: [h.Key(href)],
+      children: [
+        Sidebar.menuButton(
+          {
+            href,
+            isCurrent,
+            onClick: toSidebarMessage(Sidebar.Message.ClickedMenuLink()),
+            children: [title],
+          },
+          h,
+        ),
+      ],
+    },
+    h,
   );
-};
+
+const wordmark = (h: HtmlBuilder<Message>): Html =>
+  h.a(
+    [
+      h.Href(Pages.homeHref),
+      h.Class('flex items-center gap-2 rounded-control-sm text-body font-medium text-sidebar-foreground'),
+    ],
+    [proschuleLogo(), 'Pavo', h.span([h.Class('font-normal text-muted-foreground')], ['· Foldkit'])],
+  );
 
 const themePicker = (model: Model, h: HtmlBuilder<Message>): Html =>
   Tabs.radioGroup(
@@ -227,25 +247,69 @@ const themePicker = (model: Model, h: HtmlBuilder<Message>): Html =>
   );
 
 const sidebar = (model: Model, h: HtmlBuilder<Message>): Html =>
-  h.aside(
-    [h.Class('hidden w-64 shrink-0 flex-col gap-group overflow-y-auto px-3 py-group md:flex')],
-    [
-      h.a(
-        [h.Href(Pages.homeHref), h.Class('px-2 text-body font-semibold text-foreground')],
-        ['Pavo ', h.span([h.Class('font-normal text-muted-foreground')], ['· Foldkit'])],
-      ),
-      h.nav(
-        [h.AriaLabel('Components'), h.Class('flex flex-col gap-tight')],
-        [
-          h.h2([h.Class('px-2 text-caption font-medium text-muted-foreground')], ['Components']),
-          h.ul(
-            [h.Class('flex flex-col')],
-            Array.map(Pages.NAV_ITEMS, (item) => navLink(item, model.route, h)),
-          ),
-        ],
-      ),
-      h.footer([h.Class('mt-auto flex flex-col gap-related')], [themePicker(model, h)]),
-    ],
+  Sidebar.view(
+    {
+      model: model.sidebar,
+      toParentMessage: toSidebarMessage,
+      children: [
+        Sidebar.header({ className: 'px-3 pt-group', children: [h.header([h.Class('px-2')], [wordmark(h)])] }, h),
+        Sidebar.content(
+          {
+            className: 'px-1',
+            children: [
+              h.nav(
+                [h.AriaLabel('Pages'), h.Class('flex flex-col gap-2')],
+                [
+                  Sidebar.group(
+                    {
+                      children: [
+                        Sidebar.menu(
+                          { children: [navLink('Introduction', Pages.homeHref, model.route._tag === 'Home', h)] },
+                          h,
+                        ),
+                      ],
+                    },
+                    h,
+                  ),
+                  Sidebar.group(
+                    {
+                      children: [
+                        Sidebar.groupLabel({ children: [h.h2([], ['Components'])] }, h),
+                        Sidebar.groupContent(
+                          {
+                            children: [
+                              Sidebar.menu(
+                                {
+                                  children: Array.map(Pages.NAV_ITEMS, (item) =>
+                                    navLink(item.title, item.href, item.routeTag === model.route._tag, h),
+                                  ),
+                                },
+                                h,
+                              ),
+                            ],
+                          },
+                          h,
+                        ),
+                      ],
+                    },
+                    h,
+                  ),
+                ],
+              ),
+            ],
+          },
+          h,
+        ),
+        Sidebar.footer(
+          {
+            className: 'px-3 pb-group',
+            children: [h.footer([h.Class('flex flex-col gap-related')], [themePicker(model, h)])],
+          },
+          h,
+        ),
+      ],
+    },
+    h,
   );
 
 const routeTitle = (route: Pages.AppRoute): string =>
@@ -257,36 +321,57 @@ const routeTitle = (route: Pages.AppRoute): string =>
 export const view = (model: Model, h: HtmlBuilder<Message>): Document => ({
   title: routeTitle(model.route),
   body: h.div(
-    [h.Class('relative flex h-dvh w-screen bg-sidebar font-sans antialiased')],
+    [],
     [
       ...Array.map(Customize.customizationCss(model.customize.customization), (css) => h.style([], [css])),
-      sidebar(model, h),
-      h.div(
-        [h.Class('flex h-full min-w-0 flex-1 md:py-3 md:pe-3')],
-        [
-          h.main(
-            [
-              h.Id('content'),
-              h.Class(
-                'relative h-full w-full [scrollbar-gutter:stable] overflow-y-auto overscroll-none bg-background text-foreground shadow-md ring ring-border/50 outline-none md:rounded-panel',
-              ),
-            ],
-            [
-              h.div(
-                [h.Class('px-5 pt-12 pb-28 md:px-10')],
-                [
-                  h.submodel({
-                    slotId: 'pages',
-                    model: model.pages,
-                    view: Pages.view,
-                    viewInputs: { route: model.route },
-                    toParentMessage: (message) => Message.GotPagesMessage({ message }),
-                  }),
-                ],
-              ),
-            ],
-          ),
-        ],
+      Sidebar.provider(
+        {
+          children: [
+            h.div(
+              [h.Class('relative flex h-dvh w-screen flex-col bg-sidebar font-sans antialiased')],
+              [
+                h.header(
+                  [h.Class('flex h-14 shrink-0 items-center gap-related px-3 md:hidden')],
+                  [Sidebar.trigger({ model: model.sidebar, toParentMessage: toSidebarMessage }, h), wordmark(h)],
+                ),
+                h.div(
+                  [h.Class('flex h-full min-h-0 shrink md:py-3 md:pe-3')],
+                  [
+                    sidebar(model, h),
+                    h.div(
+                      [h.Class('relative h-full min-w-0 flex-1')],
+                      [
+                        h.main(
+                          [
+                            h.Id('content'),
+                            h.Class(
+                              'relative h-full w-full [scrollbar-gutter:stable] overflow-y-auto overscroll-none bg-background text-foreground shadow-md ring ring-border/50 outline-none md:rounded-panel',
+                            ),
+                          ],
+                          [
+                            h.div(
+                              [h.Class('px-5 pt-12 pb-28 md:px-10')],
+                              [
+                                h.submodel({
+                                  slotId: 'pages',
+                                  model: model.pages,
+                                  view: Pages.view,
+                                  viewInputs: { route: model.route },
+                                  toParentMessage: (message) => Message.GotPagesMessage({ message }),
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        },
+        h,
       ),
       h.submodel({
         slotId: 'customize',
@@ -317,6 +402,13 @@ const systemThemeSubscriptions = Subscription.make<Model, Message>()((entry) => 
 
 export const subscriptions = Subscription.aggregate(
   systemThemeSubscriptions,
+  Subscription.lift({
+    docsSidebarViewport: Sidebar.subscriptions.viewport,
+    docsSidebarToggleShortcut: Sidebar.subscriptions.toggleShortcut,
+  })<Model, Message>({
+    read: (model) => Option.some(model.sidebar),
+    toParentMessage: toSidebarMessage,
+  }),
   Subscription.lift(Customize.subscriptions)<Model, Message>({
     read: (model) => Option.some(model.customize),
     toParentMessage: (message) => Message.GotCustomizeMessage({ message }),

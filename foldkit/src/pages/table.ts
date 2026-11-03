@@ -10,6 +10,7 @@ import * as Badge from '../pavo/badge.ts';
 import * as Button from '../pavo/button.ts';
 import * as Card from '../pavo/card.ts';
 import * as Checkbox from '../pavo/checkbox.ts';
+import * as DropdownMenu from '../pavo/dropdown-menu.ts';
 import * as Empty from '../pavo/empty.ts';
 import { icon } from '../pavo/icon.ts';
 import type { Intent } from '../pavo/intent.ts';
@@ -81,7 +82,10 @@ const PROJECTS: ReadonlyArray<Project> = [
 
 const GROUP_COLUMNS = 3;
 
-type LinkedProject = Readonly<{ id: string; name: string; lead: string; status: StatusLabel }>;
+const LinkedProjectId = Schema.Literals(['website', 'mobile', 'brand']);
+type LinkedProjectId = typeof LinkedProjectId.Type;
+
+type LinkedProject = Readonly<{ id: LinkedProjectId; name: string; lead: string; status: StatusLabel }>;
 
 const LINKED_PROJECTS: ReadonlyArray<LinkedProject> = [
   { id: 'website', name: 'Website redesign', lead: 'Maya Chen', status: { label: 'On track', intent: 'success' } },
@@ -194,6 +198,7 @@ export const Model = Schema.Struct({
   isLoadingInvoices: Schema.Boolean,
   invoiceTable: Table.VirtualTableModel,
   directoryTable: Table.VirtualTableModel,
+  projectMenus: Schema.Record(LinkedProjectId, DropdownMenu.Model),
 });
 export type Model = typeof Model.Type;
 
@@ -205,6 +210,7 @@ export const Message = defineMessageUnion({
   GotInvoiceTableMessage: { message: Table.VirtualTableMessage },
   CompletedLoadInvoices: {},
   GotDirectoryTableMessage: { message: Table.VirtualTableMessage },
+  GotProjectMenuMessage: { projectId: LinkedProjectId, message: DropdownMenu.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -212,6 +218,9 @@ const LoadInvoices = Command.define('LoadInvoices', {
   messages: [Message.CompletedLoadInvoices],
   execute: Effect.sleep(LOAD_INVOICES_LATENCY).pipe(Effect.as(Message.CompletedLoadInvoices())),
 });
+
+const initProjectMenu = (projectId: LinkedProjectId): DropdownMenu.Model =>
+  DropdownMenu.init({ id: `table-project-menu-${projectId}`, isAnimated: true, isModal: true });
 
 export const init = (_context: PageContext): Update.Return<Model, Message> => ({
   model: {
@@ -222,7 +231,26 @@ export const init = (_context: PageContext): Update.Return<Model, Message> => ({
     isLoadingInvoices: false,
     invoiceTable: Table.initVirtualTable({ id: 'table-invoices' }),
     directoryTable: Table.initVirtualTable({ id: 'table-directory' }),
+    projectMenus: {
+      website: initProjectMenu('website'),
+      mobile: initProjectMenu('mobile'),
+      brand: initProjectMenu('brand'),
+    },
   },
+});
+
+const ProjectMenu = DropdownMenu.create<ProjectAction>();
+
+const toProjectMenuMessage = (projectId: LinkedProjectId, message: DropdownMenu.Message): Message =>
+  Message.GotProjectMenuMessage({ projectId, message });
+
+const foldProjectMenu = Update.foldChildAt({
+  update: ProjectMenu.update,
+  readAt: (model: Model, projectId: LinkedProjectId) => Option.some(model.projectMenus[projectId]),
+  writeAt: (model: Model, projectId: LinkedProjectId, nextMenu: DropdownMenu.Model) =>
+    modifyFields(model, { projectMenus: (menus) => ({ ...menus, [projectId]: nextMenu }) }),
+  toParentMessage: toProjectMenuMessage,
+  foldOutMessage: () => () => (stepModel) => ({ model: stepModel }),
 });
 
 const toInvoiceTableMessage = (message: Table.VirtualTableMessage): Message =>
@@ -291,6 +319,7 @@ export const update = (model: Model, message: Message) =>
       }),
     }),
     GotDirectoryTableMessage: ({ message }) => foldDirectoryTable(model, message),
+    GotProjectMenuMessage: ({ projectId, message }) => foldProjectMenu(model, projectId, message),
   });
 
 const paymentHeaderRow = (variant: Table.TableVariant, h: HtmlBuilder<Message>): Html =>
@@ -732,7 +761,32 @@ const groupedRows = (model: Model, h: HtmlBuilder<Message>): Html =>
     h,
   );
 
-const rowLinks = (h: HtmlBuilder<Message>): Html =>
+const PROJECT_ACTIONS = ['Rename…', 'Archive', 'Delete…'] as const;
+type ProjectAction = (typeof PROJECT_ACTIONS)[number];
+
+const projectMenu = (model: Model, project: LinkedProject, h: HtmlBuilder<Message>): Html =>
+  ProjectMenu.view(
+    {
+      model: model.projectMenus[project.id],
+      toParentMessage: (message) => toProjectMenuMessage(project.id, message),
+      trigger: {
+        emphasis: 'ghost',
+        size: 'icon-sm',
+        ariaLabel: `Actions for ${project.name}`,
+        children: [icon('dots')],
+      },
+      align: 'end',
+      items: PROJECT_ACTIONS,
+      itemGroupKey: (action) => (action === 'Delete…' ? 'Danger' : 'Actions'),
+      itemToConfig: (action) => ({
+        intent: action === 'Delete…' ? 'destructive' : 'neutral',
+        children: [action],
+      }),
+    },
+    h,
+  );
+
+const rowLinks = (model: Model, h: HtmlBuilder<Message>): Html =>
   Card.view(
     {
       className: 'w-full max-w-2xl',
@@ -802,17 +856,7 @@ const rowLinks = (h: HtmlBuilder<Message>): Html =>
                             {
                               variant: 'card',
                               className: 'py-1',
-                              children: [
-                                Button.view(
-                                  {
-                                    emphasis: 'ghost',
-                                    size: 'icon-sm',
-                                    ariaLabel: `Actions for ${project.name}`,
-                                    children: [icon('dots')],
-                                  },
-                                  h,
-                                ),
-                              ],
+                              children: [projectMenu(model, project, h)],
                             },
                             h,
                           ),
@@ -1176,7 +1220,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html =>
               ' in one cell: its click area covers the row; the row’s other controls sit above it.',
             ],
             isBare: true,
-            children: [rowLinks(h)],
+            children: [rowLinks(model, h)],
           },
           h,
         ),

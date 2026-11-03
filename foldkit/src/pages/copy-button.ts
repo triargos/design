@@ -1,5 +1,5 @@
 import { Array, Option, Record, Schema } from 'effect';
-import { Submodel, Update } from 'foldkit';
+import { Submodel, Subscription, Update } from 'foldkit';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
 import { modifyFields } from 'foldkit/struct';
@@ -12,6 +12,7 @@ import * as CopyButton from '../pavo/copy-button.ts';
 import { icon } from '../pavo/icon.ts';
 import * as InputGroup from '../pavo/input-group.ts';
 import * as Item from '../pavo/item.ts';
+import * as Toast from '../pavo/toast.ts';
 
 export const title = 'Copy Button';
 export const description = 'Copies a value to the clipboard; the icon springs into a check.';
@@ -38,12 +39,13 @@ const COPY_IDS = [
 
 export const Model = Schema.Struct({
   copyButtons: Schema.Record(Schema.String, CopyButton.Model),
-  maybeToast: Schema.Option(Schema.String),
+  toasts: Toast.Model,
 });
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
   GotCopyButtonMessage: { copyId: Schema.String, message: CopyButton.Message },
+  GotToastsMessage: { message: Toast.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -55,7 +57,7 @@ const initCopyButton = (copyId: string): CopyButton.Model => {
 export const init = (_context: PageContext): Update.Return<Model, Message> => ({
   model: {
     copyButtons: Record.fromIterableWith(COPY_IDS, (copyId) => [copyId, initCopyButton(copyId)]),
-    maybeToast: Option.none(),
+    toasts: Toast.init({ id: 'copy-button-toasts' }),
   },
 });
 
@@ -64,13 +66,27 @@ const toCopyButtonMessage =
   (message: CopyButton.Message): Message =>
     Message.GotCopyButtonMessage({ copyId, message });
 
+const toToastsMessage = (message: Toast.Message): Message => Message.GotToastsMessage({ message });
+
+const toastsFold = {
+  read: (model: Model) => Option.some(model.toasts),
+  write: (model: Model, nextToasts: Toast.Model) => modifyFields(model, { toasts: () => nextToasts }),
+  toParentMessage: toToastsMessage,
+};
+
+const foldToasts = Update.foldChild({
+  update: Toast.update,
+  ...toastsFold,
+  foldOutMessage: Toast.OutMessage.match<Update.Step<Model, Message>>({
+    ClickedAction: () => (stepModel) => ({ model: stepModel }),
+  }),
+});
+const foldShowToast = Update.foldChild({ update: Toast.show, ...toastsFold });
+
 const foldCopyButtonOutMessage = (copyId: string) =>
   CopyButton.OutMessage.match<Update.Step<Model, Message>>({
-    Copied: () => (stepModel) => ({
-      model: modifyFields(stepModel, {
-        maybeToast: (maybeToast) => (copyId === 'with-toast' ? Option.some(TOAST_TEXT) : maybeToast),
-      }),
-    }),
+    Copied: () => (stepModel) =>
+      copyId === 'with-toast' ? foldShowToast(stepModel, { type: 'Success', title: TOAST_TEXT }) : { model: stepModel },
   });
 
 const foldCopyButton = Update.foldChildAt({
@@ -85,7 +101,18 @@ const foldCopyButton = Update.foldChildAt({
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
     GotCopyButtonMessage: ({ copyId, message }) => foldCopyButton(model, copyId, message),
+    GotToastsMessage: ({ message }) => foldToasts(model, message),
   });
+
+const liftedToastSubscriptions = Subscription.lift(Toast.subscriptions)<Model, Message>({
+  read: (model) => Option.some(model.toasts),
+  toParentMessage: toToastsMessage,
+});
+
+export const subscriptions = {
+  copyButtonToastSwipePointer: liftedToastSubscriptions.swipePointer,
+  copyButtonToastSwipeEscape: liftedToastSubscriptions.swipeEscape,
+};
 
 type CopyConfig = Omit<CopyButton.ViewConfig<Message>, 'model' | 'toParentMessage'>;
 
@@ -143,16 +170,7 @@ const nextToAValue = (model: Model, h: HtmlBuilder<Message>): Html =>
   );
 
 const withToast = (model: Model, h: HtmlBuilder<Message>): Html =>
-  h.div(
-    [h.Class('flex items-center gap-related')],
-    [
-      copyButton(model, 'with-toast', { value: API_KEY, emphasis: 'raised', children: ['Copy API key'] }, h),
-      ...Option.match(model.maybeToast, {
-        onNone: () => [],
-        onSome: (toast) => [h.span([h.Role('status'), h.Class('text-body text-muted-foreground')], [toast])],
-      }),
-    ],
-  );
+  copyButton(model, 'with-toast', { value: API_KEY, emphasis: 'raised', children: ['Copy API key'] }, h);
 
 const matrixCell = (model: Model, size: Button.ButtonSize, column: MatrixColumn, h: HtmlBuilder<Message>): Html =>
   h.keyed('div')(
@@ -331,6 +349,7 @@ export const view = Submodel.defineView<Model, Message>((model, h): Html =>
           h,
         ),
         foundationSection({ title: 'Usages', children: [usages(model, h)] }, h),
+        Toast.view({ model: model.toasts, toParentMessage: toToastsMessage }, h),
       ],
     },
     h,

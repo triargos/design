@@ -1,4 +1,3 @@
-import { Dialog as DialogPrimitive } from '@foldkit/ui';
 import { Effect, Option, Queue, Schema, Stream } from 'effect';
 import { Subscription, Update } from 'foldkit';
 import * as Dom from 'foldkit/dom';
@@ -10,6 +9,7 @@ import { cva } from 'class-variance-authority';
 import * as Button from './button.ts';
 import { cn } from './cn.ts';
 import { icon } from './icon.ts';
+import * as Sheet from './sheet.ts';
 import type { Child, PartConfig } from './part.ts';
 
 export const Model = Schema.Struct({
@@ -17,7 +17,7 @@ export const Model = Schema.Struct({
   isOpen: Schema.Boolean,
   isMobile: Schema.Boolean,
   isShortcutBound: Schema.Boolean,
-  sheet: DialogPrimitive.Model,
+  sheet: Sheet.Model,
 });
 export type Model = typeof Model.Type;
 
@@ -26,7 +26,7 @@ export const Message = defineMessageUnion({
   PressedToggleShortcut: {},
   ChangedViewport: { isMobile: Schema.Boolean },
   ClickedMenuLink: {},
-  GotSheetMessage: { message: DialogPrimitive.Message },
+  GotSheetMessage: { message: Sheet.Message },
 });
 export type Message = typeof Message.Type;
 
@@ -41,26 +41,26 @@ export const init = ({ id, isOpen = true, isShortcutBound = false }: InitConfig)
   isOpen,
   isMobile: false,
   isShortcutBound,
-  sheet: DialogPrimitive.init({ id: `${id}-sheet`, isAnimated: true }),
+  sheet: Sheet.init({ id: `${id}-sheet`, isAnimated: true }),
 });
 
-const toSheetMessage = (message: DialogPrimitive.Message): Message => Message.GotSheetMessage({ message });
+const toSheetMessage = (message: Sheet.Message): Message => Message.GotSheetMessage({ message });
 
-const foldSheetOutMessage = DialogPrimitive.OutMessage.match<Update.Step<Model, Message>>({
+const foldSheetOutMessage = Sheet.OutMessage.match<Update.Step<Model, Message>>({
   Opened: () => (stepModel) => ({ model: stepModel }),
   Closed: () => (stepModel) => ({ model: stepModel }),
 });
 
 const sheetFold = {
   read: (model: Model) => Option.some(model.sheet),
-  write: (model: Model, nextSheet: DialogPrimitive.Model) => modifyFields(model, { sheet: () => nextSheet }),
+  write: (model: Model, nextSheet: Sheet.Model) => modifyFields(model, { sheet: () => nextSheet }),
   toParentMessage: toSheetMessage,
   foldOutMessage: foldSheetOutMessage,
 };
 
-const foldSheet = Update.foldChild({ update: DialogPrimitive.update, ...sheetFold });
-const foldSheetOpen = Update.foldChildStep({ update: DialogPrimitive.open, ...sheetFold });
-const foldSheetClose = Update.foldChildStep({ update: DialogPrimitive.close, ...sheetFold });
+const foldSheet = Update.foldChild({ update: Sheet.update, ...sheetFold });
+const foldSheetOpen = Update.foldChildStep({ update: Sheet.open, ...sheetFold });
+const foldSheetClose = Update.foldChildStep({ update: Sheet.close, ...sheetFold });
 
 const closeSheet = (model: Model): Update.Return<Model, Message> =>
   model.sheet.isOpen ? foldSheetClose(model) : { model };
@@ -161,52 +161,21 @@ const mobileSheet = <ParentMessage>(
   label: string,
   children: ReadonlyArray<Child>,
   h: HtmlBuilder<ParentMessage>,
-): Html => {
-  const toView = (render: DialogPrimitive.RenderInfo): Html =>
-    h.dialog(
-      [...render.dialog, h.DataAttribute('slot', 'sheet')],
-      render.isVisible
-        ? [
-            h.div([
-              ...render.backdrop,
-              h.DataAttribute('slot', 'sheet-overlay'),
-              h.Class(
-                'fixed inset-0 isolate z-50 bg-black/32 transition-opacity duration-move ease-enter data-closed:opacity-0 supports-backdrop-filter:backdrop-blur-sm',
-              ),
-            ]),
-            h.div(
-              [
-                ...render.panel,
-                h.DataAttribute('slot', 'sheet-content'),
-                h.DataAttribute('surface', 'popup'),
-                h.DataAttribute('side', 'left'),
-                h.DataAttribute('mobile', 'true'),
-                h.Class(
-                  cn(
-                    'flex flex-col overflow-hidden text-body shadow-modal outline-none',
-                    'fixed inset-y-0 left-0 z-50 h-full w-3/4 rounded-r-dialog sm:inset-y-2 sm:left-2 sm:h-auto sm:max-w-sm sm:rounded-dialog',
-                    'transition-[opacity,translate] duration-move ease-enter data-closed:-translate-x-10 data-closed:opacity-0 motion-reduce:data-closed:translate-x-0',
-                    'w-72 bg-sidebar bg-none p-0 text-sidebar-foreground',
-                  ),
-                ),
-              ],
-              [
-                h.h2([...render.title, h.Class('sr-only')], [label]),
-                h.div([h.DataAttribute('slot', 'sidebar'), h.Class('flex size-full flex-col')], children),
-              ],
-            ),
-          ]
-        : [],
-    );
-
-  return h.submodel({
-    slotId: model.sheet.id,
-    model: model.sheet,
-    view: DialogPrimitive.view,
-    viewInputs: { toView },
-    toParentMessage: (message: DialogPrimitive.Message) => toParentMessage(toSheetMessage(message)),
-  });
-};
+): Html =>
+  Sheet.view(
+    {
+      model: model.sheet,
+      toParentMessage: (message) => toParentMessage(toSheetMessage(message)),
+      side: 'left',
+      isCloseButtonShown: false,
+      className: 'w-72 bg-sidebar bg-none p-0 text-sidebar-foreground',
+      content: (render) => [
+        Sheet.title({ render: render.title, className: 'sr-only', children: [label] }, h),
+        h.div([h.DataAttribute('slot', 'sidebar'), h.Class('flex size-full flex-col')], children),
+      ],
+    },
+    h,
+  );
 
 export const view = <ParentMessage>(config: ViewConfig<ParentMessage>, h: HtmlBuilder<ParentMessage>): Html => {
   const {

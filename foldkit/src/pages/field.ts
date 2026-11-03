@@ -1,5 +1,5 @@
-import { Array, Duration, Effect, Schema } from 'effect';
-import { Command, Submodel, type Update } from 'foldkit';
+import { Array, Duration, Effect, Option, Schema } from 'effect';
+import { Command, Submodel, Subscription, Update } from 'foldkit';
 import * as FieldValidation from 'foldkit/fieldValidation';
 import type { Html, HtmlBuilder } from 'foldkit/html';
 import { defineMessageUnion } from 'foldkit/message';
@@ -10,11 +10,12 @@ import type { PageContext } from '../pageContext.ts';
 import * as Button from '../pavo/button.ts';
 import * as Card from '../pavo/card.ts';
 import * as Checkbox from '../pavo/checkbox.ts';
-import { cn } from '../pavo/cn.ts';
+import * as ColorPicker from '../pavo/color-picker.ts';
 import * as Field from '../pavo/field.ts';
 import { icon } from '../pavo/icon.ts';
 import * as Input from '../pavo/input.ts';
 import * as InputGroup from '../pavo/input-group.ts';
+import * as Select from '../pavo/select.ts';
 import * as Switch from '../pavo/switch.ts';
 import * as Tabs from '../pavo/tabs.ts';
 import * as Textarea from '../pavo/textarea.ts';
@@ -24,12 +25,9 @@ export const description = 'A label, a control, a description and an error, in t
 
 const EVENTS = ['Comments', 'Assigned tasks', 'Due dates'];
 
-const COLORS = [
-  { value: '#64c989', name: 'Green' },
-  { value: '#5b8def', name: 'Blue' },
-  { value: '#e5a54b', name: 'Amber' },
-  { value: '#e0686b', name: 'Red' },
-  { value: '#a77de8', name: 'Violet' },
+const DIGESTS: ReadonlyArray<Select.SelectOption> = [
+  { value: 'instant', label: 'Instantly' },
+  { value: 'daily', label: 'Daily' },
 ];
 
 const DUE_RADIOS = [
@@ -46,6 +44,9 @@ const emailRules = FieldValidation.makeRules({
 
 export const Model = Schema.Struct({
   color: Schema.String,
+  colorPicker: ColorPicker.Model,
+  digest: Schema.String,
+  digestSelect: Select.Model,
   due: Schema.String,
   isMentionsOnly: Schema.Boolean,
   notifyEvents: Schema.Array(Schema.String),
@@ -57,7 +58,8 @@ export const Model = Schema.Struct({
 export type Model = typeof Model.Type;
 
 export const Message = defineMessageUnion({
-  ClickedColor: { color: Schema.String },
+  GotColorPickerMessage: { message: ColorPicker.Message },
+  GotDigestSelectMessage: { message: Select.Message },
   SelectedDue: { due: Schema.String },
   ToggledMentionsOnly: { isChecked: Schema.Boolean },
   ToggledNotifyEvent: { event: Schema.String, isChecked: Schema.Boolean },
@@ -77,6 +79,9 @@ const SendInvite = Command.define('SendInvite', {
 export const init = (_context: PageContext): Update.Return<Model, Message> => ({
   model: {
     color: '#64c989',
+    colorPicker: ColorPicker.init({ id: 'field-color', value: '#64c989' }),
+    digest: 'instant',
+    digestSelect: Select.init({ id: 'field-digest' }),
     due: 'week',
     isMentionsOnly: true,
     notifyEvents: Array.take(EVENTS, 2),
@@ -107,9 +112,48 @@ const submitInviteForm = (model: Model): Update.Return<Model, Message> => {
   }
 };
 
+const toColorPickerMessage = (message: ColorPicker.Message): Message => Message.GotColorPickerMessage({ message });
+const toDigestSelectMessage = (message: Select.Message): Message => Message.GotDigestSelectMessage({ message });
+
+const foldColorPicker = Update.foldChild({
+  update: ColorPicker.update,
+  read: (model: Model) => Option.some(model.colorPicker),
+  write: (model: Model, nextColorPicker: ColorPicker.Model) =>
+    modifyFields(model, { colorPicker: () => nextColorPicker }),
+  toParentMessage: toColorPickerMessage,
+  foldOutMessage: ColorPicker.OutMessage.match<Update.Step<Model, Message>>({
+    ChangedColor:
+      ({ value }) =>
+      (stepModel) => ({ model: modifyFields(stepModel, { color: () => value }) }),
+  }),
+});
+
+const foldDigestSelect = Update.foldChild({
+  update: Select.update,
+  read: (model: Model) => Option.some(model.digestSelect),
+  write: (model: Model, nextDigestSelect: Select.Model) =>
+    modifyFields(model, { digestSelect: () => nextDigestSelect }),
+  toParentMessage: toDigestSelectMessage,
+  foldOutMessage: Select.OutMessage.match<Update.Step<Model, Message>>({
+    Selected:
+      ({ value }) =>
+      (stepModel) => ({ model: modifyFields(stepModel, { digest: () => value }) }),
+    ChoseCustom: () => (stepModel) => ({ model: stepModel }),
+  }),
+});
+
+export const subscriptions = Subscription.lift({ fieldColorDrag: ColorPicker.subscriptions.dragPointer })<
+  Model,
+  Message
+>({
+  read: (model) => Option.some(model.colorPicker),
+  toParentMessage: toColorPickerMessage,
+});
+
 export const update = (model: Model, message: Message) =>
   Message.match<Update.Return<Model, Message>>(message, {
-    ClickedColor: ({ color }) => ({ model: modifyFields(model, { color: () => color }) }),
+    GotColorPickerMessage: ({ message }) => foldColorPicker(model, message),
+    GotDigestSelectMessage: ({ message }) => foldDigestSelect(model, message),
     SelectedDue: ({ due }) => ({ model: modifyFields(model, { due: () => due }) }),
     ToggledMentionsOnly: ({ isChecked }) => ({ model: modifyFields(model, { isMentionsOnly: () => isChecked }) }),
     ToggledNotifyEvent: ({ event, isChecked }) => ({
@@ -204,27 +248,6 @@ const severalErrors = (h: HtmlBuilder<Message>): Html =>
     h,
   );
 
-const colorSwatches = (model: Model, h: HtmlBuilder<Message>): Html =>
-  h.div(
-    [h.Role('radiogroup'), h.AriaLabelledBy('field-color-title'), h.Class('flex items-center gap-related')],
-    Array.map(COLORS, ({ value, name }) =>
-      h.keyed('button')(value, [
-        h.Type('button'),
-        h.Role('radio'),
-        h.AriaChecked(model.color === value),
-        h.AriaLabel(name),
-        h.Style({ backgroundColor: value }),
-        h.OnClick(Message.ClickedColor({ color: value })),
-        h.Class(
-          cn(
-            'size-6 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/24',
-            model.color === value && 'ring-2 ring-foreground ring-offset-2 ring-offset-background',
-          ),
-        ),
-      ]),
-    ),
-  );
-
 const withTitle = (model: Model, h: HtmlBuilder<Message>): Html =>
   Field.view(
     {
@@ -232,7 +255,15 @@ const withTitle = (model: Model, h: HtmlBuilder<Message>): Html =>
       attributes: [h.AriaLabelledBy('field-color-title')],
       children: [
         Field.title({ attributes: [h.Id('field-color-title')], children: ['Color'] }, h),
-        colorSwatches(model, h),
+        ColorPicker.view(
+          {
+            model: model.colorPicker,
+            toParentMessage: toColorPickerMessage,
+            value: model.color,
+            ariaLabelledBy: 'field-color-title',
+          },
+          h,
+        ),
         Field.description({ children: ['Shown as a dot next to the project name.'] }, h),
       ],
     },
@@ -325,6 +356,41 @@ const horizontal = (model: Model, h: HtmlBuilder<Message>): Html =>
                               className: 'w-full max-w-48',
                             },
                             h,
+                          ),
+                        ],
+                      },
+                      h,
+                    ),
+                    Field.separator({}, h),
+                    Field.view(
+                      {
+                        orientation: 'horizontal',
+                        children: [
+                          Field.content(
+                            {
+                              children: [
+                                Field.label({ forId: Select.buttonId(model.digestSelect.id), children: ['Email'] }, h),
+                                Field.description(
+                                  { children: ['Each update as it happens, or one email in the morning.'] },
+                                  h,
+                                ),
+                              ],
+                            },
+                            h,
+                          ),
+                          h.div(
+                            [h.Class('w-full max-w-48')],
+                            [
+                              Select.view(
+                                {
+                                  model: model.digestSelect,
+                                  toParentMessage: toDigestSelectMessage,
+                                  options: DIGESTS,
+                                  maybeValue: Option.some(model.digest),
+                                },
+                                h,
+                              ),
+                            ],
                           ),
                         ],
                       },

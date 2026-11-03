@@ -1438,6 +1438,14 @@ export const subscriptions = Subscription.aggregate(
     read: (model) => Option.some(model.colorPicker),
     toParentMessage: (message) => Message.GotColorPickerPageMessage({ message }),
   }),
+  Subscription.lift(CopyButtonPage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.copyButton),
+    toParentMessage: (message) => Message.GotCopyButtonPageMessage({ message }),
+  }),
+  Subscription.lift(FieldPage.subscriptions)<Model, Message>({
+    read: (model) => Option.some(model.field),
+    toParentMessage: (message) => Message.GotFieldPageMessage({ message }),
+  }),
   Subscription.lift(SidebarPage.subscriptions)<Model, Message>({
     read: (model) => Option.some(model.sidebar),
     toParentMessage: (message) => Message.GotSidebarPageMessage({ message }),
