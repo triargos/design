@@ -1,7 +1,7 @@
 import { Alert, AlertContent } from '~/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 
-/** Between cards, one group step apart; its text starts on the edge of the section title and the card headers. */
+/** Between cards, one group step apart. */
 export function AlertInASection() {
   return (
     <section className='flex w-full max-w-2xl flex-col gap-group'>

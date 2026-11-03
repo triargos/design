@@ -12,9 +12,9 @@ type AlertProps = React.ComponentProps<'div'> & {
 
 /**
  * A notice inside a page, always `subtle`. Text only: the intent says what kind of notice it is, the first line says
- * the rest. Its text shares the edge of `Card` header text, wraps at a readable measure (`max-w-prose`, no orphaned last
- * word), and an `AlertAction` stays at the far edge, concentric with its corner. The root reads its parts
- * (`has-data-[slot=…]`), so the layout needs no props.
+ * the rest. One inset (`--alert-pad`) on every side, around the text and around an `AlertAction` alike, which stays at
+ * the far edge, concentric with the corner. The text wraps at a readable measure (`max-w-prose`, no orphaned last
+ * word). The root reads its parts (`has-data-[slot=…]`), so the layout needs no props.
  */
 function Alert({ className, intent = 'info', ...props }: AlertProps) {
   return (
@@ -23,10 +23,9 @@ function Alert({ className, intent = 'info', ...props }: AlertProps) {
       data-intent={intent}
       className={cn(
         intentVariants({ intent, emphasis: 'subtle' }),
-        'group/alert flex w-full items-center gap-part rounded-(--alert-radius) px-(--alert-pad-x) py-(--alert-pad-y) text-body data-[intent=neutral]:text-muted-foreground',
-        '[--outer-inset:var(--alert-action-inset)] [--outer-radius:var(--alert-radius)]',
-        'has-data-[slot=alert-action]:py-(--alert-action-inset) sm:has-data-[slot=alert-action]:pr-(--alert-action-inset)',
-        'max-sm:has-data-[slot=alert-action]:flex-col max-sm:has-data-[slot=alert-action]:items-start max-sm:has-data-[slot=alert-action]:gap-(--alert-pad-y) max-sm:has-data-[slot=alert-action]:py-part',
+        'group/alert flex w-full items-center gap-(--alert-pad) rounded-(--alert-radius) p-(--alert-pad) text-body data-[intent=neutral]:text-muted-foreground',
+        '[--outer-inset:var(--alert-pad)] [--outer-radius:var(--alert-radius)] [--edge-hover:var(--intent-border)] [--edge:var(--intent-border)]',
+        'max-sm:has-data-[slot=alert-action]:flex-col max-sm:has-data-[slot=alert-action]:items-start',
         className,
       )}
       {...props}
@@ -44,7 +43,7 @@ function AlertAction({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='alert-action'
-      className={cn('shrink-0 sm:ml-auto sm:[&>:is(button,a)]:rounded-inner', className)}
+      className={cn('shrink-0 sm:ml-auto [&>:is(button,a)]:rounded-inner', className)}
       {...props}
     />
   );

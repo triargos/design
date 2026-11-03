@@ -62,13 +62,10 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='With action'
-        description='One 40px raised button, 6px from the edge on every side; rounded-inner keeps its corners concentric. Below sm the action stacks under the text.'>
+        description='One raised button, the same 12px inset as the text on every side; rounded-inner keeps its corners concentric. Below sm the action stacks under the text.'>
         <AlertWithAction />
       </ExampleSection>
-      <ExampleSection
-        title='In a section'
-        description='An alert sits between cards, one group step apart. Its text starts 28px in, on the edge of the section title and the card headers.'
-        bare>
+      <ExampleSection title='In a section' description='An alert sits between cards, one group step apart.' bare>
         <AlertInASection />
       </ExampleSection>
 
