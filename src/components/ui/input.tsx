@@ -90,10 +90,13 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-2px)]',
         className,
       )}
+      // Focus moves on click, not pointerdown: iOS opens the keyboard only for a focus inside a click. The pointerdown
+      // keeps the press on the padding from blurring the input first.
       onPointerDown={(event) => {
-        if (event.target !== event.currentTarget) return;
-        event.preventDefault();
-        event.currentTarget.querySelector('input')?.focus();
+        if (event.target === event.currentTarget) event.preventDefault();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) event.currentTarget.querySelector('input')?.focus();
       }}>
       {/* Below `sm` the field renders 16px (`max-md:text-[1rem]`), so iOS does not zoom on focus; the input inherits it. */}
       <InputPrimitive
