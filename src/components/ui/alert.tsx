@@ -36,7 +36,14 @@ function Alert({ className, intent = 'info', ...props }: AlertProps) {
 
 function AlertContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div data-slot='alert-content' className={cn('min-w-0 flex-1 max-w-prose text-pretty', className)} {...props} />
+    <div
+      data-slot='alert-content'
+      className={cn(
+        'min-w-0 flex-1 max-w-prose text-pretty sm:group-has-data-[slot=alert-action]/alert:py-[calc(var(--alert-pad-y)-var(--alert-action-inset))]',
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
