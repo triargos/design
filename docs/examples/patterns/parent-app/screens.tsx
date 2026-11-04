@@ -13,7 +13,6 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-import { Alert, AlertAction, AlertContent } from '~/components/ui/alert';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -48,15 +47,6 @@ import {
   ScreenScroll,
 } from './shared';
 
-const DAYS = [
-  { day: 'Tue', date: '3', state: 'today' },
-  { day: 'Wed', date: '4', state: 'absent' },
-  { day: 'Thu', date: '5', state: 'absent' },
-  { day: 'Fri', date: '6', state: 'absent' },
-  { day: 'Sat', date: '7', state: 'weekend' },
-  { day: 'Sun', date: '8', state: 'weekend' },
-] as const;
-
 /** A link row's props: an `<a>` that stays on the page. */
 const rowLink = (onClick?: () => void) => (
   // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- an example row: the link goes nowhere.
@@ -83,9 +73,41 @@ function ChildFilter({ value, onValueChange }: { value: string; onValueChange: (
   );
 }
 
+const QUICK_ACTIONS = [
+  { label: 'Report sick', icon: <IconPlus />, action: (nav: Navigation) => nav.open('report'), main: true },
+  { label: 'Upload', icon: <IconUpload />, action: (nav: Navigation) => nav.go('documents'), main: false },
+  { label: 'Message', icon: <IconEdit />, action: (nav: Navigation) => nav.go('messages'), main: false },
+  { label: 'Absences', icon: <IconCalendar />, action: (nav: Navigation) => nav.go('absences'), main: false },
+] as const;
+
+/** What a parent does most, one tap away: round icons with their label under, reporting sick first and solid. */
+function QuickActions({ nav }: { nav: Navigation }) {
+  return (
+    <nav aria-label='Quick actions' className='grid grid-cols-4 gap-related'>
+      {QUICK_ACTIONS.map((quick) => (
+        <button
+          key={quick.label}
+          type='button'
+          onClick={() => quick.action(nav)}
+          className='group/quick flex flex-col items-center gap-related rounded-block py-related outline-none focus-visible:ring-3 focus-visible:ring-ring/24'>
+          <span
+            aria-hidden
+            className={cn(
+              'flex size-14 items-center justify-center rounded-full transition-[scale] duration-feedback group-active/quick:scale-[0.94] [&_svg]:size-icon-lg',
+              quick.main ? 'bg-neutral-solid text-neutral-solid-foreground' : 'bg-card text-foreground shadow-card',
+            )}>
+            {quick.icon}
+          </span>
+          <span className='text-caption font-medium'>{quick.label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 /**
- * Today: the current absence as the lead card (the child's dot its only color), reporting a child sick, what needs
- * doing, the latest announcements. Once everyone is back, the lead card offers a quick report for each child instead.
+ * Today: the current absence as the lead card, quick actions, the latest announcements. Once everyone is back, the
+ * lead card offers a quick report for each child instead.
  */
 export function TodayScreen({
   nav,
@@ -115,22 +137,6 @@ export function TodayScreen({
                 </div>
                 <p className='text-body text-muted-foreground'>Doctor’s appointment · Tue, 3 – Sun, 8 Nov</p>
               </hgroup>
-              <ol aria-label='Days' className='grid grid-cols-6 gap-related'>
-                {DAYS.map(({ day, date, state }) => (
-                  <li
-                    key={day}
-                    aria-current={state === 'today' ? 'date' : undefined}
-                    className={cn(
-                      'flex flex-col items-center gap-tight rounded-block py-related',
-                      state === 'today' && 'bg-neutral-solid text-neutral-solid-foreground',
-                      state === 'absent' && 'bg-muted',
-                      state === 'weekend' && 'border border-dashed border-border-strong text-muted-foreground',
-                    )}>
-                    <span className='text-caption font-medium'>{day}</span>
-                    <span className='text-heading tabular-nums'>{date}</span>
-                  </li>
-                ))}
-              </ol>
               <div className='grid grid-cols-2 gap-related'>
                 <Button size='lg' intent='primary'>
                   Extend
@@ -139,24 +145,6 @@ export function TodayScreen({
                   Back to school
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className='overflow-hidden'>
-              <Item render={<button type='button' onClick={() => nav.open('report')} />} className='text-start'>
-                <ItemContent>
-                  <ItemTitle>Report a child sick</ItemTitle>
-                  <ItemDescription>For today or several days</ItemDescription>
-                </ItemContent>
-                <ItemActions>
-                  <span
-                    aria-hidden
-                    className='flex size-control-lg items-center justify-center rounded-full bg-neutral-solid text-neutral-solid-foreground [&_svg]:size-icon-lg'>
-                    <IconPlus />
-                  </span>
-                </ItemActions>
-              </Item>
             </CardContent>
           </Card>
         </>
@@ -206,17 +194,7 @@ export function TodayScreen({
         </Card>
       )}
 
-      <Alert intent='warning'>
-        <AlertContent>
-          <p className='font-medium'>Doctor’s note missing</p>
-          <p>Lilli · Thu, 22 Oct</p>
-        </AlertContent>
-        <AlertAction>
-          <Button intent='neutral' emphasis='solid'>
-            Upload
-          </Button>
-        </AlertAction>
-      </Alert>
+      <QuickActions nav={nav} />
 
       <Card>
         <CardHeader
