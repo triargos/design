@@ -654,6 +654,7 @@
   /* `BottomNav` and `ActionBar`: the bar's corner, capped at half its height (`bar-corners`); `9999px` makes a pill. */
   --bottom-nav-radius: 16px;
   --drawer-radius: 2rem;
+  --drawer-bottom-radius: 2rem;
   --drawer-inset: 0.5rem;
   --drawer-page-pad: 0.625rem;
   --drawer-menu-item-height: 3rem;

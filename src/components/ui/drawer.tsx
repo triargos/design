@@ -52,7 +52,8 @@ function stopSwipeOnControls(event: React.PointerEvent) {
 }
 
 /**
- * A menu on a phone: floating `--drawer-inset` in from the bottom and sides (above the home indicator), a grabber on
+ * A menu on a phone: floating `--drawer-inset` in from the bottom and sides (above the home indicator), or a sheet from
+ * the screen's edge when a style sets the inset and `--drawer-bottom-radius` to 0; a grabber on
  * top, no ✕. It springs up; a swipe down dismisses it (Base UI's `Drawer`, which also leaves a scrolled page to scroll
  * first). Its content is a `DrawerStack` of `DrawerPage`s holding `DrawerMenuGroup`s. Name it with `aria-label`.
  */
@@ -81,7 +82,7 @@ function DrawerContent({
           data-slot='drawer-content'
           data-surface='popup'
           className={cn(
-            'flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-(--drawer-radius) bg-popover text-body text-popover-foreground shadow-modal outline-none',
+            'flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-t-(--drawer-radius) rounded-b-(--drawer-bottom-radius) bg-popover text-body text-popover-foreground shadow-modal outline-none',
             // `transform`, as Base UI writes it inline while a finger drags.
             '[transform:translateY(var(--drawer-swipe-movement-y))] transition-[transform,opacity] duration-drawer ease-spring data-swiping:select-none',
             'data-ending-style:[transform:translateY(calc(100%+var(--drawer-inset)+env(safe-area-inset-bottom)))] data-starting-style:[transform:translateY(calc(100%+var(--drawer-inset)+env(safe-area-inset-bottom)))]',
