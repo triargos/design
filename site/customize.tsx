@@ -34,6 +34,7 @@ import {
   type SizingStyle,
   type SizingTheme,
   scaleDensity,
+  sizingThemeAttributes,
   sizingThemeCss,
   sizingValues,
 } from '~/lib/theme/sizing';
@@ -70,6 +71,8 @@ interface Customization {
   readonly surface: DocsSurface;
   /** The sans font every page renders with: swaps `--font-sans`. */
   readonly font: Font;
+  /** The face of titles and headings: swaps `--font-display`; `sans` follows `font`. */
+  readonly display: DisplayFont;
 }
 
 const SURFACES: ReadonlyArray<DocsSurface> = ['page', 'card', 'popup'];
@@ -83,10 +86,26 @@ const FONT_FAMILIES: Record<Font, { readonly label: string; readonly family: str
   'cal-sans': { label: 'Cal Sans', family: "'Cal Sans', sans-serif" },
 };
 
+type DisplayFont = 'sans' | 'bricolage';
+const DISPLAY_FONTS: ReadonlyArray<DisplayFont> = ['sans', 'bricolage'];
+/** `sans` leaves `--font-display` on `--font-sans`; Bricolage Grotesque is in `site/styles.css`. */
+const DISPLAY_FAMILIES: Record<DisplayFont, { readonly label: string; readonly family: string }> = {
+  sans: { label: 'Same as font', family: 'var(--font-sans)' },
+  bricolage: { label: 'Bricolage', family: "'Bricolage Grotesque', sans-serif" },
+};
+
 const SIZING_STYLE_NAMES = Object.keys(SIZING_STYLES) as ReadonlyArray<SizingStyle>;
 const DENSITY_NAMES = Object.keys(DENSITIES) as ReadonlyArray<Density>;
 const RADIUS_NAMES = Object.keys(RADII) as ReadonlyArray<Radius>;
-const STYLE_LABELS: Record<SizingStyle, string> = { pavo: 'Pavo', coss: 'Coss', dense: 'Dense', soft: 'Soft' };
+const STYLE_LABELS: Record<SizingStyle, string> = {
+  pavo: 'Pavo',
+  coss: 'Coss',
+  dense: 'Dense',
+  soft: 'Soft',
+  clear: 'Clear',
+  contrast: 'Contrast',
+  friendly: 'Friendly',
+};
 
 /** A named style as a choice: its density and radius. */
 const styleChoice = (style: SizingStyle): SizingChoice => ({
@@ -131,6 +150,7 @@ const DEFAULT: Customization = {
   tokens: {},
   surface: 'page',
   font: 'inter',
+  display: 'sans',
 };
 const KEY = 'customization';
 const CHANGE = 'customizationchange';
@@ -150,6 +170,7 @@ const read = (): Customization => {
     tokens: Record<string, unknown>;
     surface: unknown;
     font: unknown;
+    display: unknown;
   }> = {};
   try {
     stored = raw === null ? {} : JSON.parse(raw);
@@ -184,6 +205,7 @@ const read = (): Customization => {
     ),
     surface: oneOf(SURFACES, stored.surface, DEFAULT.surface),
     font: oneOf(FONTS, stored.font, DEFAULT.font),
+    display: oneOf(DISPLAY_FONTS, stored.display, DEFAULT.display),
   };
   cache = { raw, value };
   return value;
@@ -209,13 +231,30 @@ export const useCustomization = () => useSyncExternalStore(subscribe, read, () =
 
 /** The theme, sizing and token CSS, after `tailwind.css` so it wins; the panel's tokens last, over the sizing theme. */
 export function CustomizationStyles() {
-  const { branding, sizing, tokens, font } = useCustomization();
+  const { branding, sizing, tokens, font, display } = useCustomization();
+  const attributes = sizingThemeAttributes(sizingTheme(sizing));
+  const cardStyle = attributes['data-card-style'];
+  const controlStyle = attributes['data-control-style'];
+  // Card and control styles are attributes, not CSS: set them on `<html>`, where the theme's CSS lands.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    for (const [name, value] of [
+      ['data-card-style', cardStyle],
+      ['data-control-style', controlStyle],
+    ] as const) {
+      if (value === undefined) root.removeAttribute(name);
+      else root.setAttribute(name, value);
+    }
+  }, [cardStyle, controlStyle]);
   return (
     <>
       <style data-branding>{brandingThemeCss(branding)}</style>
       <style data-sizing>{sizingThemeCss(sizingTheme(sizing))}</style>
       <style data-tokens>{tokenCss(tokens)}</style>
       {font !== DEFAULT.font && <style data-font>{`:root{--font-sans:${FONT_FAMILIES[font].family};}`}</style>}
+      {display !== DEFAULT.display && (
+        <style data-display-font>{`:root{--font-display:${DISPLAY_FAMILIES[display].family};}`}</style>
+      )}
     </>
   );
 }
@@ -484,6 +523,29 @@ export function CustomizeMenu() {
                   style={{ fontFamily: FONT_FAMILIES[font].family }}
                   className='flex-1'>
                   {FONT_FAMILIES[font].label}
+                </TabsRadio>
+              ))}
+            </TabsRadioGroup>
+          </div>
+          <div role='group' aria-labelledby='display-font' className='flex flex-col gap-related'>
+            <span id='display-font' className='text-body font-medium'>
+              Titles
+            </span>
+            <TabsRadioGroup
+              variant='segmented'
+              aria-labelledby='display-font'
+              value={customization.display}
+              onValueChange={(display) =>
+                write({ ...customization, display: oneOf(DISPLAY_FONTS, display, DEFAULT.display) })
+              }
+              className='w-full'>
+              {DISPLAY_FONTS.map((display) => (
+                <TabsRadio
+                  key={display}
+                  value={display}
+                  style={{ fontFamily: DISPLAY_FAMILIES[display].family }}
+                  className='flex-1'>
+                  {DISPLAY_FAMILIES[display].label}
                 </TabsRadio>
               ))}
             </TabsRadioGroup>

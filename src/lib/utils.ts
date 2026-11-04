@@ -52,6 +52,7 @@ const twMerge = extendTailwindMerge({
         'control-lg',
         'popup',
         'card',
+        'card-lg',
         'dialog',
         'panel',
         'inner',

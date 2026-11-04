@@ -83,6 +83,8 @@ Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), whic
 
 Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other t-shirt sizes do not compile. Emphasis is `font-medium` and tone is a text level; neither one is a new size.
 
+- `text-title` and `text-heading` are the display roles: they set `--font-display` (the sans by default) and their weight is a token (`--text-title--font-weight`, `--text-heading--font-weight`, 500), so a sizing style can make titles heavier and an app can give them a display face beside its brand colors (`:root { --font-display: 'Bricolage Grotesque', sans-serif }`). A family utility beside them loses; set `--font-display` on the element instead.
+
 | Role           | px · weight            | Use                                                                                                            | Owner                                                      |
 | -------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
 | `text-title`   | 28 / 36 · 500, −0.02em | Page title; a big number (`tabular-nums`)                                                                      | Page pattern, `StatValue`                                  |
@@ -118,21 +120,22 @@ Seven steps, named by relationship. Components own the gaps inside them; the pag
 
 Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role, not the step, and never a literal radius; an inner layer is a `calc()` of roles (`rounded-inner`, a border's `- 1px`).
 
-| Role                 | px   | Use                                                                     |
-| -------------------- | ---- | ----------------------------------------------------------------------- |
-| `rounded-control-xs` | 4    | Controls 16–20px: `Kbd`                                                 |
-| `rounded-control-sm` | 8    | Controls 20–28px (`Button` `xs`), badges                                |
-| `rounded-control`    | 10   | Controls 32–36px (`Button` `sm`, default, tabs), single-line fields     |
-| `rounded-control-lg` | 12   | Controls 40px (`Button` `lg`)                                           |
-| `rounded-popup`      | 16   | Menus, popovers, selects                                                |
-| `rounded-card`       | 20   | `Card` shell, `Alert`                                                   |
-| `rounded-dialog`     | 20   | Dialogs, sheets                                                         |
-| `rounded-panel`      | 20   | The page panel (the app frame, not a component)                         |
-| `rounded-checkbox`   | 4    | The checkbox box: never a pill                                          |
-| `rounded-tooltip`    | 8    | Tooltips, chart tooltip, an anchored toast                              |
-| `rounded-area`       | 10   | Multi-line fields: `Textarea`, `FileDropZone`, a wrapping `InputGroup`  |
-| `rounded-block`      | 12   | Multi-line rows and blocks: `Item`, `ChoiceCard`, prose `pre` and `img` |
-| `rounded-track`      | full | Switch, slider, progress: tracks and thumbs                             |
+| Role                 | px   | Use                                                                           |
+| -------------------- | ---- | ----------------------------------------------------------------------------- |
+| `rounded-control-xs` | 4    | Controls 16–20px: `Kbd`                                                       |
+| `rounded-control-sm` | 8    | Controls 20–28px (`Button` `xs`), badges                                      |
+| `rounded-control`    | 10   | Controls 32–36px (`Button` `sm`, default, tabs), single-line fields           |
+| `rounded-control-lg` | 12   | Controls 40px (`Button` `lg`)                                                 |
+| `rounded-popup`      | 16   | Menus, popovers, selects                                                      |
+| `rounded-card`       | 20   | `Card` shell, `Alert`                                                         |
+| `rounded-card-lg`    | 20   | `Card size='lg'`: the one card a screen leads with; a style may round it more |
+| `rounded-dialog`     | 20   | Dialogs, sheets                                                               |
+| `rounded-panel`      | 20   | The page panel (the app frame, not a component)                               |
+| `rounded-checkbox`   | 4    | The checkbox box: never a pill                                                |
+| `rounded-tooltip`    | 8    | Tooltips, chart tooltip, an anchored toast                                    |
+| `rounded-area`       | 10   | Multi-line fields: `Textarea`, `FileDropZone`, a wrapping `InputGroup`        |
+| `rounded-block`      | 12   | Multi-line rows and blocks: `Item`, `ChoiceCard`, prose `pre` and `img`       |
+| `rounded-track`      | full | Switch, slider, progress: tracks and thumbs                                   |
 
 - `control-*` is for single-line controls only: a sizing theme may turn them into pills. Anything that wraps takes `area`, `block`, `tooltip` or `checkbox`, which cap. Dots, radio dots and round avatars stay `rounded-full`: geometry, not theme.
 
@@ -177,17 +180,22 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | `density` | `compact` (controls 32, card 16, group 12, switch 14) · `default` · `comfortable` (controls 40, card 24, group 20, icons 18, checkbox 18). Component tokens move with it                                                                                      |
 | `radius`  | `sharp` (all 0, the fixed steps too; checkbox and track 2) · `default` · `soft` (×1.2) · `pill` (`control-*` and tabs full; the rest capped). Component radii (`--tabs-radius`, `--alert-radius`, `--drawer-*-radius`) are literal: each radius sets them too |
 
-| Style (`SIZING_STYLES`) | Density · radius   | Its own                                                                                                                                                               |
-| ----------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pavo`                  | default · default  | Nothing: `tailwind.css` as is                                                                                                                                         |
-| `coss`                  | compact · default  | coss ui: controls 32, menu rows 28, popups and controls 10, tabs 8, cards 18, popover padding 16; touch: controls 36, rows 32, icons 18, checkbox 18, switch thumb 20 |
-| `dense`                 | compact · default  | shadcn mira/nova: controls 28, control text 13, checkbox 14, smaller corners; touch: controls 32                                                                      |
-| `soft`                  | comfortable · pill | shadcn maia: rounder surfaces (card 28, popup 24)                                                                                                                     |
+| Style (`SIZING_STYLES`) | Density · radius   | Its own                                                                                                                                                                    |
+| ----------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pavo`                  | default · default  | Nothing: `tailwind.css` as is                                                                                                                                              |
+| `coss`                  | compact · default  | coss ui: controls 32, menu rows 28, popups and controls 10, tabs 8, cards 18, popover padding 16; touch: controls 36, rows 32, icons 18, checkbox 18, switch thumb 20      |
+| `dense`                 | compact · default  | shadcn mira/nova: controls 28, control text 13, checkbox 14, smaller corners; touch: controls 32                                                                           |
+| `soft`                  | comfortable · pill | shadcn maia: rounder surfaces (card 28, popup 24)                                                                                                                          |
+| `clear`                 | comfortable · pill | A calm phone app, plain cards and flat controls: cards 20, lead card and sheets 24, rows 12; title 30 / 650, heading 17 / 600; body and control 15, caption 13; labels 600 |
+| `contrast`              | comfortable · pill | `clear` with bolder display type: title 34 / 760, heading 20 / 700. Pairs with `--font-display`                                                                            |
+| `friendly`              | comfortable · pill | A warmer phone app: cards 22, lead card and sheets 24, popups 20; title 32 / 720, heading 19 / 700; body and control 15, caption 13. Pairs with `--font-display`           |
 
 - An app renders `sizingThemeCss(theme)` into a `<style>` after the stylesheet, next to `brandingThemeCss`. It writes only the overrides on `:root`, and `touch` in `@media (width < 40rem)`; the default theme writes nothing.
+- Card and control styles are the theme's structural choices: `cards` is `shell` (default) or `plain`, where a `Card` is one surface on the page and its header a section title above it in `text-heading`; `controls` is `raised` (default) or `flat`, where buttons are fills without edge, drop or gradient (the neutral one `muted`), pill tabs are white chips with the chosen one on `primary-subtle`, and initials lose their ring. They are attributes, not CSS: spread `sizingThemeAttributes(theme)` (`data-card-style`, `data-control-style`) on the element the theme's CSS targets, `<html>` for `:root`. `clear` and `friendly` use `plain` and `flat`.
+- Label weights are tokens too: `--control-font-weight` (buttons, pill tabs, the bottom nav's current label), `--badge-font-weight`, `--item-title-font-weight`; 500 by default, 600 in `clear` and `friendly`.
 - A subtree: `sizingThemeCss(theme, '[data-sizing=compact]')` and `data-sizing='compact'` on the element. A popup portals out of the subtree; give it a `container` inside, or theme `:root`.
 - A new token goes in `SIZING_TOKENS` (`sizing.ts`: default, family, what it tunes), with its value in each axis or style that moves it. `pnpm sizing:check` fails when `tailwind.css` and `sizing.ts` drift.
-- A density of your own: `scaleDensity(0.9)` scales every default length to whole px (not radius, type, `page`, `section`; a value of 4px or less moves at most 1px), or pass any token map as `density`.
+- A density of your own: `scaleDensity(0.9)` scales every default length to whole px (not radius, type, weights, `page`, `section`; a value of 4px or less moves at most 1px), or pass any token map as `density`.
 
 ## Surfaces and elevation
 
@@ -198,7 +206,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | Card shell | `rounded-card bg-(--card-shell)`, default `--shell`                                                                                                     | `Card`                                                      |
 | Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), `shadow-card`                                                                         | `CardContent`, `Table variant='card'` body                  |
 | Popup      | `rounded-popup bg-popover shadow-popup`, fade + zoom from 95% over `duration-enter`                                                                     | `PopoverContent`, menus, `SelectContent`, `ComboboxContent` |
-| Inverse    | `data-surface='inverse'` + `rounded-popup bg-popover shadow-popup`: the other mode's tokens, dark on a light page and light on a dark one               | `ActionBar`                                                 |
+| Inverse    | `data-surface='inverse'` + `rounded-popup bg-popover shadow-popup`: the other mode's tokens, dark on a light page and light on a dark one               | `ActionBar`, `BottomNavList inverse`                        |
 | Modal      | `rounded-dialog bg-popover shadow-modal`; header and body `--modal-inset` (24px) in, the footer a `muted` band under a rule; backdrop `black/32` + blur | `DialogContent`, `AlertDialogContent`, `SheetContent`       |
 
 - Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`; `-drop` + `-drop-hover` without the ring, on a raised button's `--edge` border), `shadow-popup`, `shadow-modal`.
@@ -298,7 +306,7 @@ button        (none) neutral/raised · intent='primary' · emphasis='ghost' · i
 text          foreground · muted-foreground · faint-foreground · disabled-foreground
 type          title 28 · heading 18 · body 14 · control 14 · caption 12
 spacing       tight 4 · related 8 · part 12 · group 16 · card 20 · page 32 · section 48
-radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · dialog 20 · panel 20 · rounded-inner
+radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · card-lg 20 · dialog 20 · panel 20 · rounded-inner
               checkbox 4 · tooltip 8 · area 10 · block 12 · track full
 sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 36 · size-icon 16 · sizingThemeCss(SIZING_STYLES.coss) · scaleDensity(0.9)
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal

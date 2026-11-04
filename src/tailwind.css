@@ -2,6 +2,10 @@
    `@import 'tailwindcss'` and `@import 'tw-animate-css'` (README, Use the registry; the docs site: `site/styles.css`). */
 
 @custom-variant dark (&:is(.dark *));
+/* Plain cards (`SizingTheme.cards`, DESIGN.md Surfaces): set by `data-card-style='plain'` on `<html>` or a subtree. */
+@custom-variant plain (&:where([data-card-style=plain] *));
+/* Flat controls (`SizingTheme.controls`): set by `data-control-style='flat'` on `<html>` or a subtree. */
+@custom-variant flat (&:where([data-control-style=flat] *));
 
 /* Branded colors come from `brandingThemeCss` (`lib/theme/branding-theme.ts`), rendered into a `<style>` by the page.
    Only non-branded values live here. */
@@ -214,6 +218,9 @@
    or `twMerge` misreads it. The docs Customize sheet tunes radius, spacing and type. */
 @theme {
   --font-sans: 'Inter Variable', sans-serif;
+  /* The face of the two display roles, `text-title` and `text-heading` (the utilities below). The sans by default; an
+     app with a display face sets it beside its brand colors: `:root { --font-display: 'Bricolage Grotesque', sans-serif }`. */
+  --font-display: var(--font-sans);
 
   /* Radius (DESIGN.md, Shape): fixed steps, and the roles that pick from them. A control's radius follows its height. */
   --radius-xs: 2px;
@@ -231,6 +238,8 @@
   --radius-control-lg: 12px;
   --radius-popup: 16px;
   --radius-card: 20px;
+  /* `Card size='lg'`: the one card a screen leads with (a current status, a summary), a step rounder than the rest. */
+  --radius-card-lg: 20px;
   --radius-dialog: 20px;
   --radius-panel: 20px;
   /* Shapes that must not follow a pill control: a checkbox stays a box, a tooltip and a multi-line block cap. */
@@ -432,6 +441,11 @@
   --text-label--font-weight: 500;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
+  /* Weights of the labels a parent app sets heavier (`clear`, `friendly`): buttons, pill tabs and the bottom nav's
+     current label; badges; item titles. */
+  --control-font-weight: 500;
+  --badge-font-weight: 500;
+  --item-title-font-weight: 500;
 
   /* Toast upsert replay (`components/ui/toast.tsx`): odd and even run the same keyframes, so each update restarts them. */
   --animate-toast-success-odd: toast-pulse 0.32s cubic-bezier(0.5, 1, 0.89, 1);
@@ -640,6 +654,7 @@
   /* `BottomNav` and `ActionBar`: the bar's corner, capped at half its height (`bar-corners`); `9999px` makes a pill. */
   --bottom-nav-radius: 16px;
   --drawer-radius: 2rem;
+  --drawer-bottom-radius: 2rem;
   --drawer-inset: 0.5rem;
   --drawer-page-pad: 0.625rem;
   --drawer-menu-item-height: 3rem;
@@ -707,6 +722,17 @@
   --timeline-marker-size: 1rem;
   --timeline-step: 3rem;
   --timeline-step-x: 2rem;
+}
+
+/* The display roles add their face to what `--text-title` / `--text-heading` set (size, line height, tracking, weight),
+   so a theme swaps it with `--font-display`. These sort after the family utilities, so `font-sans` beside them loses:
+   to set one title in another face, set `--font-display` on it. */
+@utility text-title {
+  font-family: var(--font-display);
+}
+
+@utility text-heading {
+  font-family: var(--font-display);
 }
 
 /* A color from data as an intent (`intent: 'data'` in `intentVariants`, `color` on `Badge`). The component sets

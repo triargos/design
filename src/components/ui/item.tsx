@@ -317,7 +317,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='item-title'
       className={cn(
-        'block w-fit max-w-full min-w-0 truncate text-body font-medium underline-offset-4',
+        'block w-fit max-w-full min-w-0 truncate text-body font-(weight:--item-title-font-weight) underline-offset-4',
         'has-[>*]:flex has-[>*]:items-center has-[>*]:gap-row-gap has-[>*]:*:shrink-0 has-[>*]:[&>span:not([data-slot])]:shrink has-[>*]:[&>span:not([data-slot])]:truncate',
         className,
       )}

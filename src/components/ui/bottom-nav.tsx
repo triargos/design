@@ -299,16 +299,25 @@ function BottomNav({ className, ...props }: React.ComponentProps<'div'>) {
  * fill springs to the current tab. Tabs shrink to fit 4–5 on a phone. A docked `ActionBar` takes the tabs' box, so
  * docking morphs only the content. For an app whose tabs are not recognisable by icon alone.
  *
+ * `labels='current'`: only the current tab shows its label, beside the icon, on a solid `foreground` pill that the
+ * others' icons slide around. A compact bar for an app whose tabs read by icon once the user is in.
+ *
  * `fill`: the bar spans the `BottomNav`'s width, its edges in line with the page's content; the tabs share it evenly.
+ *
+ * `inverse`: the bar on the inverted surface (`data-surface='inverse'`), dark on a light page and light on a dark one,
+ * as `ActionBar` draws.
  */
 function BottomNavList({
   className,
   children,
-  labels = false,
+  labels: labelsProp = false,
   fill = false,
+  inverse = false,
   'aria-label': ariaLabelProp,
   ...props
-}: React.ComponentProps<'nav'> & { labels?: boolean; fill?: boolean }) {
+}: React.ComponentProps<'nav'> & { labels?: boolean | 'current'; fill?: boolean; inverse?: boolean }) {
+  const labels = labelsProp === true;
+  const currentLabel = labelsProp === 'current';
   const ariaLabel = ariaLabelProp ?? useLocale().labels.mainNavigation;
   const {
     view,
@@ -553,7 +562,7 @@ function BottomNavList({
     <div
       ref={shellRef}
       data-slot='bottom-nav-shell'
-      data-surface='popup'
+      data-surface={inverse ? 'inverse' : 'popup'}
       data-view={view}
       // The outer corner for every layer (`bar-corners`): the tabs sit `popup-inset` in, the panel's pages
       // `--spacing-list-inset`, a docked bar what brings its buttons to the bar's height.
@@ -575,6 +584,7 @@ function BottomNavList({
         aria-label={ariaLabel}
         inert={view !== 'tabs'}
         data-labels={labels || undefined}
+        data-current-label={currentLabel || undefined}
         data-fill={fill || undefined}
         data-optimistic={optimisticCurrent !== null || undefined}
         className={cn(
@@ -673,6 +683,8 @@ function CurrentIndicator() {
         'pointer-events-none absolute top-popup-inset left-0 h-(--current-height,var(--spacing-control-lg)) w-(--current-width,var(--spacing-control-lg)) translate-x-(--current-left) rounded-inner bg-foreground/10 transition-[translate,width] duration-move ease-move motion-reduce:transition-none',
         // No text rides it, so it may overshoot.
         'group-data-labels/bottom-nav:bg-foreground/12 group-data-labels/bottom-nav:duration-indicator group-data-labels/bottom-nav:ease-spring-bounce',
+        // `labels='current'`: a solid pill under the current tab's icon and label, which take the page color on it.
+        'group-data-current-label/bottom-nav:bg-foreground group-data-current-label/bottom-nav:duration-indicator group-data-current-label/bottom-nav:ease-spring-bounce',
         !animate && 'transition-none',
         !visible && 'invisible',
       )}
@@ -686,6 +698,16 @@ function CurrentIndicator() {
  * and of the main action. The label is a `<span>` after the icon, read by screen readers only. A count is a
  * `Badge size='sm' shape='pill'` after the label, pinned to the icon's top-right corner, at least as wide as it is high.
  */
+/**
+ * The current tab under `labels='current'`, for each way a tab is current (as the text color below): it widens to its
+ * icon and label, its count inline after the label. Written out whole so Tailwind finds every class.
+ */
+const currentTabClassName = cn(
+  'group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:w-auto group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:gap-control-gap group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:pr-control-pad group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:pl-[calc(var(--spacing-control-pad)-2px)] group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:text-background group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:text-control group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:font-(weight:--control-font-weight) group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:[&>span:not([data-slot=badge])]:not-sr-only group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:[&>span:not([data-slot=badge])]:whitespace-nowrap group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:aria-[current=page]:[&>[data-slot=badge]]:static',
+  'group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:w-auto group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:gap-control-gap group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:pr-control-pad group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:pl-[calc(var(--spacing-control-pad)-2px)] group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:text-background group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:text-control group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:font-(weight:--control-font-weight) group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:[&>span:not([data-slot=badge])]:not-sr-only group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:[&>span:not([data-slot=badge])]:whitespace-nowrap group-data-current-label/bottom-nav:group-not-data-optimistic/bottom-nav:data-current:[&>[data-slot=badge]]:static',
+  'group-data-current-label/bottom-nav:data-optimistic-current:w-auto group-data-current-label/bottom-nav:data-optimistic-current:gap-control-gap group-data-current-label/bottom-nav:data-optimistic-current:pr-control-pad group-data-current-label/bottom-nav:data-optimistic-current:pl-[calc(var(--spacing-control-pad)-2px)] group-data-current-label/bottom-nav:data-optimistic-current:text-background group-data-current-label/bottom-nav:data-optimistic-current:text-control group-data-current-label/bottom-nav:data-optimistic-current:font-(weight:--control-font-weight) group-data-current-label/bottom-nav:data-optimistic-current:[&>span:not([data-slot=badge])]:not-sr-only group-data-current-label/bottom-nav:data-optimistic-current:[&>span:not([data-slot=badge])]:whitespace-nowrap group-data-current-label/bottom-nav:data-optimistic-current:[&>[data-slot=badge]]:static',
+);
+
 const bottomNavItemClassName = cn(
   'hit-area relative flex size-control-lg shrink-0 items-center justify-center rounded-inner text-muted-foreground outline-hidden select-none',
   'transition-[color,scale] duration-feedback hover:text-foreground active:scale-[0.92] focus-visible:ring-3 focus-visible:ring-ring/24 motion-reduce:active:scale-100',
@@ -698,6 +720,8 @@ const bottomNavItemClassName = cn(
   'group-data-labels/bottom-nav:[&>[data-slot=badge]]:top-1 group-data-labels/bottom-nav:[&>[data-slot=badge]]:left-[calc(50%+6px)] group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-2 group-data-labels/bottom-nav:[&>[data-slot=badge]]:ring-popover',
   // While a tapped tab waits for its page, it alone looks current.
   'group-not-data-optimistic/bottom-nav:aria-[current=page]:text-foreground group-not-data-optimistic/bottom-nav:data-current:text-foreground data-optimistic-current:text-foreground',
+  // `labels='current'`: the current tab widens to its icon and label, on the indicator's solid pill.
+  currentTabClassName,
   'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
 );
 

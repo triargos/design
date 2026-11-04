@@ -34,6 +34,16 @@
   src: url('/resources/fonts/cal-sans/CalSansVF.woff2') format('woff2');
 }
 
+/* A display face for `--font-display` (titles and headings): the Customize menu's Titles choice and the Phone app
+   pattern. Latin subset, weight axis only. OFL, see public/resources/fonts/bricolage-grotesque/LICENSE.txt. */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 200 800;
+  font-display: swap;
+  font-style: normal;
+  src: url('/resources/fonts/bricolage-grotesque/BricolageGrotesque-Variable.woff2') format('woff2');
+}
+
 @theme {
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }

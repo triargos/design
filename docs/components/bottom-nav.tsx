@@ -1,3 +1,4 @@
+import { BottomNavCurrentLabel } from '../examples/bottom-nav/current-label';
 import { BottomNavDefault } from '../examples/bottom-nav/default';
 import { BottomNavLabels } from '../examples/bottom-nav/labels';
 import { BottomNavStackedBars } from '../examples/bottom-nav/stacked-bars';
@@ -43,6 +44,17 @@ export default defineDocs({
         }
         bare>
         <BottomNavLabels />
+      </ExampleSection>
+      <ExampleSection
+        title='Current label'
+        description={
+          <>
+            <Code>labels='current'</Code>: only the current tab shows its label, beside the icon on a solid pill.{' '}
+            <Code>inverse</Code>: the bar on the inverted surface, dark on a light page.
+          </>
+        }
+        bare>
+        <BottomNavCurrentLabel />
       </ExampleSection>
       <ExampleSection
         title='With selection'

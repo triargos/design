@@ -59,7 +59,13 @@ const tabsTriggerVariants = cva(
         underline: 'h-control rounded-control-xs px-0.5 data-active:text-foreground',
         // A resting fill, so each pill reads as a target; the indicator covers it when checked. 2px more padding than a
         // segmented tab: the round ends eat into it.
-        pill: 'rounded-full bg-neutral-subtle px-[calc(var(--spacing-control-pad-sm)+2px)] font-normal hover:bg-foreground/8 active:scale-[0.96] motion-reduce:active:scale-100 aria-checked:bg-transparent aria-checked:text-primary-solid-foreground aria-checked:hover:bg-transparent aria-checked:hover:text-primary-solid-foreground data-active:bg-transparent data-active:text-primary-solid-foreground data-active:hover:bg-transparent',
+        pill: [
+          'rounded-full bg-neutral-subtle px-[calc(var(--spacing-control-pad-sm)+2px)] font-normal hover:bg-foreground/8 active:scale-[0.96] motion-reduce:active:scale-100 aria-checked:bg-transparent aria-checked:text-primary-solid-foreground aria-checked:hover:bg-transparent aria-checked:hover:text-primary-solid-foreground data-active:bg-transparent data-active:text-primary-solid-foreground data-active:hover:bg-transparent',
+          // Flat: raised white chips at the control weight; the chosen one on the `primary-subtle` indicator, in its text.
+          'flat:bg-card flat:font-(weight:--control-font-weight) flat:text-foreground flat:shadow-raised flat:hover:bg-card flat:dark:bg-foreground/10',
+          'flat:aria-checked:bg-transparent flat:aria-checked:text-primary-subtle-foreground flat:aria-checked:shadow-none flat:aria-checked:hover:bg-transparent flat:aria-checked:hover:text-primary-subtle-foreground',
+          'flat:data-active:bg-transparent flat:data-active:text-primary-subtle-foreground flat:data-active:shadow-none flat:data-active:hover:bg-transparent',
+        ],
       },
     },
   },
@@ -77,7 +83,7 @@ const indicatorVariants = cva(
         segmented: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/10',
         inline: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/10',
         underline: 'after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full after:bg-foreground',
-        pill: 'rounded-full bg-primary-solid',
+        pill: 'rounded-full bg-primary-solid flat:bg-primary-subtle',
       },
     },
   },

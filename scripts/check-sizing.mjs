@@ -33,6 +33,12 @@ const px = (value) => {
   return value.endsWith('rem') ? number * 16 : number;
 };
 
+/** A length is whole px; a weight (`--text-title--font-weight`, `--badge-font-weight`) a bare number from 100 to 900. */
+const isWeight = (name) => name.endsWith('-font-weight');
+const unit = (name) => (isWeight(name) ? 'a weight from 100 to 900' : 'whole px');
+const wholeValue = (name, value) =>
+  isWeight(name) ? /^\d+$/.test(value) && Number(value) >= 100 && Number(value) <= 900 : /^\d+px$/.test(value);
+
 const errors = [];
 for (const [name, value] of themed) {
   if (!(name in SIZING_TOKENS)) errors.push(`${name}: in tailwind.css, missing from SIZING_TOKENS`);
@@ -44,7 +50,7 @@ for (const [name, spec] of Object.entries(SIZING_TOKENS)) {
   if (value === undefined) errors.push(`${name}: in SIZING_TOKENS, not declared in tailwind.css`);
   else if (!themed.has(name) && px(value) !== px(spec.value))
     errors.push(`${name}: tailwind.css ${value}, SIZING_TOKENS ${spec.value}`);
-  if (!/^\d+px$/.test(spec.value)) errors.push(`${name}: default ${spec.value} is not whole px`);
+  if (!wholeValue(name, spec.value)) errors.push(`${name}: default ${spec.value} is not ${unit(name)}`);
 }
 
 const presets = [
@@ -60,7 +66,7 @@ const presets = [
 for (const [preset, values] of presets) {
   for (const [name, value] of Object.entries(values)) {
     if (!(name in SIZING_TOKENS)) errors.push(`${preset}: unknown token ${name}`);
-    if (!/^\d+px$/.test(value)) errors.push(`${preset}: ${name} ${value} is not whole px`);
+    if (!wholeValue(name, value)) errors.push(`${preset}: ${name} ${value} is not ${unit(name)}`);
   }
 }
 

@@ -14,7 +14,7 @@ import { cn } from '~/lib/utils';
  */
 const buttonShape = cva(
   [
-    'hit-area relative inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-border text-control font-medium whitespace-nowrap outline-none select-none',
+    'hit-area relative inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-border text-control font-(weight:--control-font-weight) whitespace-nowrap outline-none select-none',
     'transition-[background-color,border-color,color,box-shadow,opacity,transform,scale,--tw-gradient-from]',
     'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24',
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon",
@@ -29,6 +29,8 @@ const buttonShape = cva(
         solid: [
           'border-[color-mix(in_oklch,var(--intent-solid),black_10%)] bg-clip-padding bg-linear-to-b from-[color-mix(in_oklch,var(--intent-solid),white_15%)] to-(--intent-solid) shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--intent-solid),white_30%)] hover:from-[color-mix(in_oklch,var(--intent-solid),white_30%)]',
           'disabled:border-transparent disabled:bg-disabled disabled:bg-clip-border disabled:bg-none disabled:shadow-none',
+          // Flat: the plain color, no edge, no light; hover darkens it.
+          'flat:border-transparent flat:bg-(--intent-solid) flat:bg-none flat:shadow-none flat:hover:bg-[color-mix(in_oklch,var(--intent-solid),black_8%)] flat:disabled:bg-disabled',
         ],
         subtle: 'disabled:bg-disabled',
         // The edge is the border, not `intentVariants`' inset ring: an inset ring paints inside the border, 2px short.
@@ -42,6 +44,8 @@ const buttonShape = cva(
           'border-(--edge) bg-clip-border shadow-raised-drop',
           'hover:border-(--edge-hover) hover:shadow-raised-drop-hover aria-expanded:border-(--edge-hover) aria-expanded:shadow-raised-drop-hover',
           'disabled:border-border disabled:bg-transparent disabled:shadow-none',
+          // Flat: a `muted` fill, no edge or drop; hover deepens it.
+          'flat:border-transparent flat:bg-muted flat:text-foreground flat:shadow-none flat:hover:border-transparent flat:hover:bg-foreground/10 flat:hover:shadow-none flat:aria-expanded:border-transparent flat:aria-expanded:shadow-none flat:dark:bg-muted flat:disabled:bg-transparent',
         ],
       },
       // Heights `control-xs` / `control-sm` / `control` / `control-lg`; the default is a field's height. The radius follows

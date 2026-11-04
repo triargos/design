@@ -44,8 +44,16 @@ function DrawerClose(props: DrawerPrimitive.Close.Props) {
   return <DrawerPrimitive.Close data-slot='drawer-close' {...props} />;
 }
 
+const INTERACTIVE_ROLES =
+  '[role=switch],[role=radio],[role=checkbox],[role=slider],[role=spinbutton],[role=tab],[role=option],[role=menuitem],[role=textbox]';
+
+function stopSwipeOnControls(event: React.PointerEvent) {
+  if (event.target instanceof Element && event.target.closest(INTERACTIVE_ROLES)) event.stopPropagation();
+}
+
 /**
- * A menu on a phone: floating `--drawer-inset` in from the bottom and sides (above the home indicator), a grabber on
+ * A menu on a phone: floating `--drawer-inset` in from the bottom and sides (above the home indicator), or a sheet from
+ * the screen's edge when a style sets the inset and `--drawer-bottom-radius` to 0; a grabber on
  * top, no ✕. It springs up; a swipe down dismisses it (Base UI's `Drawer`, which also leaves a scrolled page to scroll
  * first). Its content is a `DrawerStack` of `DrawerPage`s holding `DrawerMenuGroup`s. Name it with `aria-label`.
  */
@@ -74,7 +82,7 @@ function DrawerContent({
           data-slot='drawer-content'
           data-surface='popup'
           className={cn(
-            'flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-(--drawer-radius) bg-popover text-body text-popover-foreground shadow-modal outline-none',
+            'flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-t-(--drawer-radius) rounded-b-(--drawer-bottom-radius) bg-popover text-body text-popover-foreground shadow-modal outline-none',
             // `transform`, as Base UI writes it inline while a finger drags.
             '[transform:translateY(var(--drawer-swipe-movement-y))] transition-[transform,opacity] duration-drawer ease-spring data-swiping:select-none',
             'data-ending-style:[transform:translateY(calc(100%+var(--drawer-inset)+env(safe-area-inset-bottom)))] data-starting-style:[transform:translateY(calc(100%+var(--drawer-inset)+env(safe-area-inset-bottom)))]',
@@ -91,7 +99,12 @@ function DrawerContent({
             className='flex shrink-0 justify-center pt-related pb-(--drawer-page-pad)'>
             <div className='h-1 w-9 rounded-full bg-border' />
           </div>
-          {content}
+          {/* Base UI starts a swipe from any press that is not on a native control (`button`, `a`, `input` …) and
+              captures the pointer, so a Switch, Radio or Checkbox (a `span` with a role) never gets its click. A press on
+              a control with an interactive role stops here, before the popup's swipe handler sees it. */}
+          <div className='contents' onPointerDown={stopSwipeOnControls}>
+            {content}
+          </div>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>

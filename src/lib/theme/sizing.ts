@@ -14,11 +14,12 @@ export const SIZING_GROUPS = {
   marks: 'Marks',
   radius: 'Radius',
   type: 'Type',
+  weight: 'Weight',
 } as const;
 
 export type SizingGroup = keyof typeof SIZING_GROUPS;
 
-/** A sizing token: its default (px, as in `tailwind.css`), its family, and what it tunes. */
+/** A sizing token: its default (px as in `tailwind.css`; a weight is a bare number), its family, and what it tunes. */
 export interface SizingTokenSpec {
   readonly value: string;
   readonly group: SizingGroup;
@@ -85,6 +86,7 @@ export const SIZING_TOKENS = {
   '--radius-control-lg': t('radius', '12px', 'Button lg'),
   '--radius-popup': t('radius', '16px', 'Menus, popovers, selects'),
   '--radius-card': t('radius', '20px', 'Card shell'),
+  '--radius-card-lg': t('radius', '20px', 'Card lg: the one card a screen leads with'),
   '--radius-dialog': t('radius', '20px', 'Dialogs and sheets'),
   '--radius-panel': t('radius', '20px', 'The page panel'),
   '--radius-checkbox': t('radius', '4px', 'Checkbox box (never a pill)'),
@@ -114,6 +116,11 @@ export const SIZING_TOKENS = {
   '--text-label--line-height': t('type', '16px', 'Label line height'),
   '--text-caption': t('type', '12px', 'Meta, badges, tooltips'),
   '--text-caption--line-height': t('type', '16px', 'Caption line height'),
+  '--text-title--font-weight': t('weight', '500', 'Title weight'),
+  '--text-heading--font-weight': t('weight', '500', 'Heading weight'),
+  '--control-font-weight': t('weight', '500', 'Button labels, pill tabs, the bottom nav’s current label'),
+  '--badge-font-weight': t('weight', '500', 'Badge labels'),
+  '--item-title-font-weight': t('weight', '500', 'Item titles: list rows'),
   // Component sizing: controls.
   '--badge-height': t('controls', '24px', 'Badge height'),
   '--badge-height-sm': t('controls', '20px', 'Badge sm height'),
@@ -165,6 +172,11 @@ export const SIZING_TOKENS = {
     'Bottom nav and action bar corner, capped at half the bar (9999px: pill)',
   ),
   '--drawer-radius': t('surfaces', '32px', 'Drawer radius'),
+  '--drawer-bottom-radius': t(
+    'surfaces',
+    '32px',
+    'Drawer bottom corners; 0 with no inset: a sheet from the screen edge',
+  ),
   '--drawer-inset': t('surfaces', '8px', 'Drawer inset from the screen edge'),
   '--drawer-page-pad': t('surfaces', '10px', 'Drawer page padding and block gap'),
   '--drawer-menu-item-height': t('surfaces', '48px', 'Drawer menu row height'),
@@ -350,8 +362,8 @@ const isHeight = (token: SizingToken) =>
 
 /**
  * A density of your own: every default length times `factor`, rounded to whole px. Heights (the control scale,
- * menu rows, every `-height` token) snap to the 4px grid instead, so ×1.125 gives 40px controls, not 41. Radius, `page`
- * and `section` spacing never scale; type scales only with `type: true` (sizes and line heights, whole px). A small
+ * menu rows, every `-height` token) snap to the 4px grid instead, so ×1.125 gives 40px controls, not 41. Radius,
+ * weights, `page` and `section` spacing never scale; type scales only with `type: true` (sizes and line heights, whole px). A small
  * value (4px or less: an inset, a gap, a hairline-ish padding) moves at most 1px and never below 1px, so a switch keeps
  * its 2px inset at 0.8 and 1.2. Only tokens that differ from the default are returned; `scaleDensity(1)` is `{}`.
  */
@@ -359,7 +371,8 @@ export function scaleDensity(factor: number, options: { readonly type?: boolean 
   const values: Partial<Record<SizingToken, string>> = {};
   for (const token of SIZING_TOKEN_NAMES) {
     const { group, value } = SIZING_TOKENS[token];
-    if (group === 'radius' || UNSCALED.has(token) || (group === 'type' && options.type !== true)) continue;
+    if (group === 'radius' || group === 'weight' || UNSCALED.has(token) || (group === 'type' && options.type !== true))
+      continue;
     const px = Number.parseFloat(value);
     const scaled = isHeight(token) ? Math.round((px * factor) / 4) * 4 : Math.round(px * factor);
     const next = px <= 4 ? Math.min(px + 1, Math.max(px - 1, 1, scaled)) : Math.max(1, scaled);
@@ -380,6 +393,7 @@ export const RADII = {
     '--radius-control-lg': '0px',
     '--radius-popup': '0px',
     '--radius-card': '0px',
+    '--radius-card-lg': '0px',
     '--radius-dialog': '0px',
     '--radius-panel': '0px',
     '--radius-checkbox': '2px',
@@ -390,6 +404,7 @@ export const RADII = {
     '--alert-radius': '0px',
     '--bottom-nav-radius': '0px',
     '--drawer-radius': '0px',
+    '--drawer-bottom-radius': '0px',
     '--drawer-menu-item-radius': '0px',
     '--drawer-option-radius': '0px',
     '--radius-track': '2px',
@@ -411,6 +426,7 @@ export const RADII = {
     '--radius-control-lg': '14px',
     '--radius-popup': '20px',
     '--radius-card': '24px',
+    '--radius-card-lg': '24px',
     '--radius-dialog': '24px',
     '--radius-panel': '24px',
     '--radius-checkbox': '5px',
@@ -421,6 +437,7 @@ export const RADII = {
     '--alert-radius': '24px',
     '--bottom-nav-radius': '20px',
     '--drawer-radius': '38px',
+    '--drawer-bottom-radius': '38px',
     '--drawer-menu-item-radius': '17px',
     '--drawer-option-radius': '19px',
   },
@@ -431,6 +448,7 @@ export const RADII = {
     '--radius-control-lg': '9999px',
     '--radius-popup': '20px',
     '--radius-card': '24px',
+    '--radius-card-lg': '24px',
     '--radius-dialog': '24px',
     '--radius-panel': '24px',
     '--radius-checkbox': '6px',
@@ -453,6 +471,10 @@ export interface SizingTheme {
   /** A named density, or one of your own (`scaleDensity(0.9)`, or any `SizingValues`). */
   readonly density: Density | SizingValues;
   readonly radius: Radius;
+  /** How a `Card` is built: `shell` (default) or `plain` (`CardStyle`); applied by `sizingThemeAttributes`. */
+  readonly cards?: CardStyle;
+  /** How controls sit: `raised` (default) or `flat` (`ControlStyle`); applied by `sizingThemeAttributes`. */
+  readonly controls?: ControlStyle;
   readonly tokens?: SizingValues;
   readonly touch?: SizingValues;
 }
@@ -479,6 +501,7 @@ export const SIZING_STYLES = {
       '--radius-control-lg': '10px',
       '--radius-popup': '10px',
       '--radius-card': '18px',
+      '--radius-card-lg': '18px',
       '--radius-dialog': '18px',
       '--radius-panel': '14px',
       '--radius-block': '10px',
@@ -554,6 +577,7 @@ export const SIZING_STYLES = {
       '--radius-control-lg': '8px',
       '--radius-popup': '10px',
       '--radius-card': '12px',
+      '--radius-card-lg': '12px',
       '--radius-dialog': '14px',
       '--radius-panel': '12px',
       '--radius-tooltip': '6px',
@@ -616,14 +640,173 @@ export const SIZING_STYLES = {
     tokens: {
       '--radius-popup': '24px',
       '--radius-card': '28px',
+      '--radius-card-lg': '28px',
       '--radius-dialog': '28px',
       '--radius-panel': '28px',
       '--alert-radius': '28px',
     },
   },
+  /**
+   * A calm phone app: plain cards (one surface, section titles above) and flat controls at 600, roomy pill controls
+   * (40px, 44px lg) on 20px cards, the lead card and sheets 24px, 12px rows; a 16px page rhythm with 18px card padding;
+   * titles 30 / 650 and headings 17 / 600; 15px reading and control text, 13px meta. The bottom nav stays a floating
+   * pill.
+   */
+  clear: {
+    density: 'comfortable',
+    radius: 'pill',
+    cards: 'plain',
+    controls: 'flat',
+    tokens: {
+      '--drawer-radius': '24px',
+      '--drawer-inset': '0px',
+      '--drawer-bottom-radius': '0px',
+      '--control-font-weight': '600',
+      '--badge-font-weight': '600',
+      '--item-title-font-weight': '600',
+      '--spacing-group': '16px',
+      '--spacing-card': '18px',
+      '--spacing-page': '16px',
+      '--spacing-section': '20px',
+      '--spacing-row-pad-x': '16px',
+      '--spacing-row-pad-y': '12px',
+      '--radius-popup': '20px',
+      '--radius-card': '20px',
+      '--radius-card-lg': '24px',
+      '--radius-dialog': '24px',
+      '--radius-panel': '24px',
+      '--radius-area': '12px',
+      '--radius-block': '12px',
+      '--alert-radius': '20px',
+      '--text-title': '30px',
+      '--text-title--line-height': '34px',
+      '--text-title--font-weight': '650',
+      '--text-heading': '17px',
+      '--text-heading--line-height': '22px',
+      '--text-heading--font-weight': '600',
+      '--text-body': '15px',
+      '--text-body--line-height': '20px',
+      '--text-control': '15px',
+      '--text-control--line-height': '20px',
+      '--text-caption': '13px',
+      '--text-caption--line-height': '18px',
+    },
+  } /**
+   * `clear` with bolder display type: titles 34 / 760 and headings 20 / 700, for a display face in `--font-display`.
+   * The parent app's look: an inverse lead card and bottom nav against light cards.
+   */,
+  contrast: {
+    density: 'comfortable',
+    radius: 'pill',
+    cards: 'plain',
+    controls: 'flat',
+    tokens: {
+      '--drawer-radius': '24px',
+      '--drawer-inset': '0px',
+      '--drawer-bottom-radius': '0px',
+      '--control-font-weight': '600',
+      '--badge-font-weight': '600',
+      '--item-title-font-weight': '600',
+      '--spacing-group': '16px',
+      '--spacing-card': '18px',
+      '--spacing-page': '16px',
+      '--spacing-section': '20px',
+      '--spacing-row-pad-x': '16px',
+      '--spacing-row-pad-y': '12px',
+      '--radius-popup': '20px',
+      '--radius-card': '20px',
+      '--radius-card-lg': '24px',
+      '--radius-dialog': '24px',
+      '--radius-panel': '24px',
+      '--radius-area': '12px',
+      '--radius-block': '12px',
+      '--alert-radius': '20px',
+      '--text-title': '34px',
+      '--text-title--line-height': '38px',
+      '--text-title--font-weight': '760',
+      '--text-heading': '20px',
+      '--text-heading--line-height': '25px',
+      '--text-heading--font-weight': '700',
+      '--text-body': '15px',
+      '--text-body--line-height': '20px',
+      '--text-control': '15px',
+      '--text-control--line-height': '20px',
+      '--text-caption': '13px',
+      '--text-caption--line-height': '18px',
+    },
+  },
+  /**
+   * A warmer phone app: `clear`'s plain cards, controls and rhythm on rounder shapes (22px cards, the lead card and
+   * sheets 24px, 16px rows) and heavier, bigger display type (titles 32 / 720, headings 19 / 700). Pairs with a display
+   * face in `--font-display`.
+   */
+  friendly: {
+    density: 'comfortable',
+    radius: 'pill',
+    cards: 'plain',
+    controls: 'flat',
+    tokens: {
+      '--drawer-radius': '24px',
+      '--drawer-inset': '0px',
+      '--drawer-bottom-radius': '0px',
+      '--control-font-weight': '600',
+      '--badge-font-weight': '600',
+      '--item-title-font-weight': '600',
+      '--spacing-group': '16px',
+      '--spacing-card': '18px',
+      '--spacing-page': '16px',
+      '--spacing-section': '20px',
+      '--spacing-row-pad-x': '16px',
+      '--spacing-row-pad-y': '12px',
+      '--radius-popup': '20px',
+      '--radius-card': '22px',
+      '--radius-card-lg': '24px',
+      '--radius-dialog': '24px',
+      '--radius-panel': '24px',
+      '--alert-radius': '22px',
+      '--text-title': '32px',
+      '--text-title--line-height': '36px',
+      '--text-title--font-weight': '720',
+      '--text-heading': '19px',
+      '--text-heading--line-height': '24px',
+      '--text-heading--font-weight': '700',
+      '--text-body': '15px',
+      '--text-body--line-height': '20px',
+      '--text-control': '15px',
+      '--text-control--line-height': '20px',
+      '--text-caption': '13px',
+      '--text-caption--line-height': '18px',
+    },
+  },
 } as const satisfies Record<string, SizingTheme>;
 
 export type SizingStyle = keyof typeof SIZING_STYLES;
+
+/**
+ * How a `Card` is built. `shell`: a tinted shell around the card, its header a label strip on the shell. `plain`: the
+ * card alone, one surface on the page, its header a section title above it in `text-heading`. Not a token: it changes
+ * structure, so it is an attribute (`data-card-style`) next to the theme's CSS.
+ */
+export type CardStyle = 'shell' | 'plain';
+
+/**
+ * How controls sit. `raised`: the neutral button a white chip with an edge and drop, the solid one a gradient with a lit
+ * edge, pill tabs a solid primary pill. `flat`: fills only, the way a phone app draws them: the neutral button `muted`,
+ * the solid one its plain color, pill tabs a `primary-subtle` pill on white chips, no ring on initials. An attribute
+ * (`data-control-style`), as `CardStyle` is.
+ */
+export type ControlStyle = 'raised' | 'flat';
+
+/**
+ * The attributes a sizing theme needs on the element its CSS targets (`<html>` for `:root`, or the subtree):
+ * `data-card-style` for plain cards, `data-control-style` for flat controls. Empty for the default theme.
+ */
+export function sizingThemeAttributes(theme: SizingTheme): Record<string, string> {
+  return {
+    ...(theme.cards === 'plain' && { 'data-card-style': 'plain' }),
+    ...(theme.controls === 'flat' && { 'data-control-style': 'flat' }),
+  };
+}
 
 export const DEFAULT_SIZING_THEME: SizingTheme = SIZING_STYLES.pavo;
 

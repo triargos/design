@@ -87,7 +87,7 @@ const RouterLink = ({ href = '', ...props }: React.ComponentPropsWithRef<'a'>) =
   <div data-sizing='dense'>…</div>
   ```
 
-  Styles: `pavo` (default), `coss`, `dense`, `soft`. Densities: `compact`, `default`, `comfortable`. Radii: `sharp`, `default`, `soft`, `pill`. A density of your own: `scaleDensity(factor)` or any map of token to px; `SIZING_TOKENS` lists every token with what it tunes. A theme's `tokens` add any token on top (DESIGN.md, Sizing).
+  Styles: `pavo` (default), `coss`, `dense`, `soft`, `clear`, `friendly`. Densities: `compact`, `default`, `comfortable`. Radii: `sharp`, `default`, `soft`, `pill`. A density of your own: `scaleDensity(factor)` or any map of token to px; `SIZING_TOKENS` lists every token with what it tunes. A theme's `tokens` add any token on top (DESIGN.md, Sizing).
 
 - The registry owns `lib/utils.ts` (`utils`, imported as `~/lib/utils` by every component), `lib/theme/*` with its CSS (`theme`), `hooks/use-mobile.ts` and `components/ui/*`. `add` overwrites them. Keep the app's own helpers, hooks and styles in other files.
 

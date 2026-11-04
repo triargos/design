@@ -15,22 +15,34 @@ import { cn } from '~/lib/utils';
 //
 // Fields (`rounded-control`) sit `card` + 1px into the content corner: too far in to be concentric, and the corners
 // differ enough to read as two layers.
+//
+// Plain (`data-card-style='plain'` above, `SizingTheme.cards`): no shell. The section is a column, the header a section
+// title (`text-heading`, inset `tight` to line up with the content's corner) `related` above the content, which is the
+// one surface at the full card radius; a footer sits below it the same way.
 
 /**
  * The shell (`--card-shell`, default `--shell`) wraps the content on every side, so the content's corners sit on
  * the shell, never on the page; restyle the tint by setting the variable. `intent='destructive'` marks only the title.
+ * `size='lg'` is the one card a screen leads with (a current status, a summary): `radius-card-lg`, which a sizing
+ * style may set a step rounder than `radius-card`; the content follows, concentric.
  */
 function Card({
   className,
   intent = 'neutral',
+  size = 'default',
   ...props
-}: ComponentProps<'section'> & { intent?: 'neutral' | 'destructive' }) {
+}: ComponentProps<'section'> & { intent?: 'neutral' | 'destructive'; size?: 'default' | 'lg' }) {
   return (
     <section
       data-slot='card'
       data-intent={intent}
+      data-size={size}
       className={cn(
-        'group/card rounded-card bg-(--card-shell) p-card-inset [--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)] [--outer-radius:var(--radius-card)]',
+        'group/card bg-(--card-shell) p-card-inset [--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)]',
+        'plain:flex plain:flex-col plain:gap-related plain:bg-transparent plain:p-0 plain:[--outer-inset:0px]',
+        size === 'lg'
+          ? 'rounded-card-lg [--outer-radius:var(--radius-card-lg)]'
+          : 'rounded-card [--outer-radius:var(--radius-card)]',
         className,
       )}
       {...props}
@@ -46,7 +58,10 @@ function Card({
 function CardHeader({ className, actions, children, ...props }: ComponentProps<'div'> & { actions?: ReactNode }) {
   if (actions === undefined) {
     return (
-      <div data-slot='card-header' className={cn('px-[calc(var(--spacing-card)+1px)] py-group', className)} {...props}>
+      <div
+        data-slot='card-header'
+        className={cn('px-[calc(var(--spacing-card)+1px)] py-group plain:px-tight plain:py-0', className)}
+        {...props}>
         {children}
       </div>
     );
@@ -55,7 +70,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
     <div
       data-slot='card-header'
       className={cn(
-        'flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-group',
+        'flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-group plain:px-tight plain:py-0',
         className,
       )}
       {...props}>
@@ -93,7 +108,12 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
       <div className='min-h-0 overflow-hidden'>
         {/* A margin on the child, not padding on the grid item: padding floors the grid track and the fold stalls
           before unmount. */}
-        <div className={cn('mb-group px-[calc(var(--spacing-card)+1px)] pt-group', className)} {...props}>
+        <div
+          className={cn(
+            'mb-group px-[calc(var(--spacing-card)+1px)] pt-group plain:mb-0 plain:px-tight plain:pt-0',
+            className,
+          )}
+          {...props}>
           {children}
         </div>
       </div>
@@ -108,6 +128,8 @@ function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
       className={cn(
         // 14 / 20 semibold, the description 14 / 20 below it: a compact label for the strip, heavier than row titles.
         'text-body leading-5 font-semibold text-balance group-data-[intent=destructive]/card:text-destructive',
+        // Plain: a section title above the card, in the heading role (its face, size and weight).
+        'plain:text-heading plain:leading-(--text-heading--line-height) plain:font-(weight:--text-heading--font-weight)',
         className,
       )}
       {...props}
