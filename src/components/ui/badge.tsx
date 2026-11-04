@@ -13,7 +13,7 @@ import { cn } from '~/lib/utils';
  * `intent`: any CSS color or `var(--category-N)`; every emphasis paints from it.
  */
 const badgeShape = cva(
-  'inline-flex shrink-0 items-center justify-center gap-control-gap-sm font-medium whitespace-nowrap',
+  'inline-flex shrink-0 items-center justify-center gap-control-gap-sm font-(weight:--badge-font-weight) whitespace-nowrap',
   {
     variants: {
       size: {

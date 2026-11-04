@@ -33,8 +33,8 @@ const px = (value) => {
   return value.endsWith('rem') ? number * 16 : number;
 };
 
-/** A length is whole px; a weight (`--text-title--font-weight`) a bare number from 100 to 900. */
-const isWeight = (name) => name.endsWith('--font-weight');
+/** A length is whole px; a weight (`--text-title--font-weight`, `--badge-font-weight`) a bare number from 100 to 900. */
+const isWeight = (name) => name.endsWith('-font-weight');
 const unit = (name) => (isWeight(name) ? 'a weight from 100 to 900' : 'whole px');
 const wholeValue = (name, value) =>
   isWeight(name) ? /^\d+$/.test(value) && Number(value) >= 100 && Number(value) <= 900 : /^\d+px$/.test(value);

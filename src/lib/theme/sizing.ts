@@ -118,6 +118,9 @@ export const SIZING_TOKENS = {
   '--text-caption--line-height': t('type', '16px', 'Caption line height'),
   '--text-title--font-weight': t('weight', '500', 'Title weight'),
   '--text-heading--font-weight': t('weight', '500', 'Heading weight'),
+  '--control-font-weight': t('weight', '500', 'Button labels, pill tabs, the bottom nav’s current label'),
+  '--badge-font-weight': t('weight', '500', 'Badge labels'),
+  '--item-title-font-weight': t('weight', '500', 'Item titles: list rows'),
   // Component sizing: controls.
   '--badge-height': t('controls', '24px', 'Badge height'),
   '--badge-height-sm': t('controls', '20px', 'Badge sm height'),
@@ -463,6 +466,8 @@ export interface SizingTheme {
   readonly radius: Radius;
   /** How a `Card` is built: `shell` (default) or `plain` (`CardStyle`); applied by `sizingThemeAttributes`. */
   readonly cards?: CardStyle;
+  /** How controls sit: `raised` (default) or `flat` (`ControlStyle`); applied by `sizingThemeAttributes`. */
+  readonly controls?: ControlStyle;
   readonly tokens?: SizingValues;
   readonly touch?: SizingValues;
 }
@@ -643,7 +648,11 @@ export const SIZING_STYLES = {
     density: 'comfortable',
     radius: 'pill',
     cards: 'plain',
+    controls: 'flat',
     tokens: {
+      '--control-font-weight': '600',
+      '--badge-font-weight': '600',
+      '--item-title-font-weight': '600',
       '--spacing-group': '16px',
       '--spacing-card': '18px',
       '--spacing-page': '16px',
@@ -681,7 +690,11 @@ export const SIZING_STYLES = {
     density: 'comfortable',
     radius: 'pill',
     cards: 'plain',
+    controls: 'flat',
     tokens: {
+      '--control-font-weight': '600',
+      '--badge-font-weight': '600',
+      '--item-title-font-weight': '600',
       '--spacing-group': '16px',
       '--spacing-card': '18px',
       '--spacing-page': '16px',
@@ -720,11 +733,22 @@ export type SizingStyle = keyof typeof SIZING_STYLES;
 export type CardStyle = 'shell' | 'plain';
 
 /**
+ * How controls sit. `raised`: the neutral button a white chip with an edge and drop, the solid one a gradient with a lit
+ * edge, pill tabs a solid primary pill. `flat`: fills only, the way a phone app draws them: the neutral button `muted`,
+ * the solid one its plain color, pill tabs a `primary-subtle` pill on white chips, no ring on initials. An attribute
+ * (`data-control-style`), as `CardStyle` is.
+ */
+export type ControlStyle = 'raised' | 'flat';
+
+/**
  * The attributes a sizing theme needs on the element its CSS targets (`<html>` for `:root`, or the subtree):
- * `data-card-style` for plain cards. Empty for the rest.
+ * `data-card-style` for plain cards, `data-control-style` for flat controls. Empty for the default theme.
  */
 export function sizingThemeAttributes(theme: SizingTheme): Record<string, string> {
-  return theme.cards === 'plain' ? { 'data-card-style': 'plain' } : {};
+  return {
+    ...(theme.cards === 'plain' && { 'data-card-style': 'plain' }),
+    ...(theme.controls === 'flat' && { 'data-control-style': 'flat' }),
+  };
 }
 
 export const DEFAULT_SIZING_THEME: SizingTheme = SIZING_STYLES.pavo;

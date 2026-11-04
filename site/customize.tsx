@@ -231,13 +231,20 @@ export const useCustomization = () => useSyncExternalStore(subscribe, read, () =
 /** The theme, sizing and token CSS, after `tailwind.css` so it wins; the panel's tokens last, over the sizing theme. */
 export function CustomizationStyles() {
   const { branding, sizing, tokens, font, display } = useCustomization();
-  const cardStyle = sizingThemeAttributes(sizingTheme(sizing))['data-card-style'];
-  // Plain cards are an attribute, not CSS: set it on `<html>`, where the theme's CSS lands.
+  const attributes = sizingThemeAttributes(sizingTheme(sizing));
+  const cardStyle = attributes['data-card-style'];
+  const controlStyle = attributes['data-control-style'];
+  // Card and control styles are attributes, not CSS: set them on `<html>`, where the theme's CSS lands.
   useLayoutEffect(() => {
     const root = document.documentElement;
-    if (cardStyle === undefined) root.removeAttribute('data-card-style');
-    else root.setAttribute('data-card-style', cardStyle);
-  }, [cardStyle]);
+    for (const [name, value] of [
+      ['data-card-style', cardStyle],
+      ['data-control-style', controlStyle],
+    ] as const) {
+      if (value === undefined) root.removeAttribute(name);
+      else root.setAttribute(name, value);
+    }
+  }, [cardStyle, controlStyle]);
   return (
     <>
       <style data-branding>{brandingThemeCss(branding)}</style>

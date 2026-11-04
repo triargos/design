@@ -80,9 +80,7 @@ export function AbsencesScreen() {
                       Lilli is off sick until Sunday
                     </h2>
                   </hgroup>
-                  <Badge intent='primary' shape='pill'>
-                    Day 1 of 4
-                  </Badge>
+                  <Badge shape='pill'>Day 1 of 4</Badge>
                 </div>
                 <p className='text-body text-muted-foreground'>Medical appointment · 3–8 Nov</p>
                 <ol aria-label='Days' className='grid grid-cols-6 gap-related'>
@@ -92,28 +90,44 @@ export function AbsencesScreen() {
                       aria-current={state === 'today' ? 'date' : undefined}
                       className={cn(
                         'flex flex-col items-center gap-tight rounded-block py-related',
-                        state === 'today' && 'bg-primary-solid text-primary-solid-foreground',
+                        state === 'today' && 'bg-neutral-solid text-neutral-solid-foreground',
                         state === 'absent' && 'bg-muted',
                         state === 'weekend' && 'border border-dashed border-border-strong text-muted-foreground',
                       )}>
-                      <span className='text-caption'>{day}</span>
+                      <span className='text-caption font-medium'>{day}</span>
                       <span className='text-heading tabular-nums'>{date}</span>
                     </li>
                   ))}
                 </ol>
                 <div className='grid grid-cols-2 gap-related'>
-                  <Button size='lg'>Extend</Button>
                   <Button size='lg' intent='primary'>
-                    Back to school
+                    Extend
                   </Button>
+                  <Button size='lg'>Back to school</Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Button size='lg' className='w-full'>
-              <IconPlus data-icon='inline-start' />
-              Report an absence
-            </Button>
+            <Card>
+              <CardContent className='overflow-hidden'>
+                <Item>
+                  <ItemContent>
+                    <ItemTitle>Report an absence</ItemTitle>
+                    <ItemDescription>For today or several days</ItemDescription>
+                  </ItemContent>
+                  <ItemActions>
+                    <Button
+                      size='icon-lg'
+                      intent='primary'
+                      emphasis='subtle'
+                      className='rounded-full'
+                      aria-label='Report an absence'>
+                      <IconPlus />
+                    </Button>
+                  </ItemActions>
+                </Item>
+              </CardContent>
+            </Card>
 
             <Card>
               <CardHeader

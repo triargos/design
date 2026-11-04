@@ -4,6 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 /* Plain cards (`SizingTheme.cards`, DESIGN.md Surfaces): set by `data-card-style='plain'` on `<html>` or a subtree. */
 @custom-variant plain (&:where([data-card-style=plain] *));
+/* Flat controls (`SizingTheme.controls`): set by `data-control-style='flat'` on `<html>` or a subtree. */
+@custom-variant flat (&:where([data-control-style=flat] *));
 
 /* Branded colors come from `brandingThemeCss` (`lib/theme/branding-theme.ts`), rendered into a `<style>` by the page.
    Only non-branded values live here. */
@@ -439,6 +441,11 @@
   --text-label--font-weight: 500;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
+  /* Weights of the labels a parent app sets heavier (`clear`, `friendly`): buttons, pill tabs and the bottom nav's
+     current label; badges; item titles. */
+  --control-font-weight: 500;
+  --badge-font-weight: 500;
+  --item-title-font-weight: 500;
 
   /* Toast upsert replay (`components/ui/toast.tsx`): odd and even run the same keyframes, so each update restarts them. */
   --animate-toast-success-odd: toast-pulse 0.32s cubic-bezier(0.5, 1, 0.89, 1);

@@ -20,7 +20,7 @@ type AvatarShape = 'circle' | 'square';
 const avatarVariants = cva(
   [
     'relative flex shrink-0 items-center justify-center bg-muted font-medium text-muted-foreground select-none',
-    'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:inset-ring after:inset-ring-image-edge',
+    'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:inset-ring after:inset-ring-image-edge flat:after:inset-ring-0',
   ],
   {
     variants: {
