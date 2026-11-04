@@ -461,6 +461,8 @@ export interface SizingTheme {
   /** A named density, or one of your own (`scaleDensity(0.9)`, or any `SizingValues`). */
   readonly density: Density | SizingValues;
   readonly radius: Radius;
+  /** How a `Card` is built: `shell` (default) or `plain` (`CardStyle`); applied by `sizingThemeAttributes`. */
+  readonly cards?: CardStyle;
   readonly tokens?: SizingValues;
   readonly touch?: SizingValues;
 }
@@ -633,13 +635,21 @@ export const SIZING_STYLES = {
     },
   },
   /**
-   * A calm phone app: roomy pill controls (40px, 44px lg) on 16px cards and sheets, 12px rows; titles 30 / 650 and
-   * headings 17 / 600; 15px reading and control text, 13px meta. The bottom nav stays a floating pill.
+   * A calm phone app: plain cards (one surface, section titles above), roomy pill controls (40px, 44px lg) on 16px
+   * cards and sheets, 12px rows; a 16px page rhythm with 18px card padding; titles 30 / 650 and headings 17 / 600; 15px
+   * reading and control text, 13px meta. The bottom nav stays a floating pill.
    */
   clear: {
     density: 'comfortable',
     radius: 'pill',
+    cards: 'plain',
     tokens: {
+      '--spacing-group': '16px',
+      '--spacing-card': '18px',
+      '--spacing-page': '16px',
+      '--spacing-section': '20px',
+      '--spacing-row-pad-x': '16px',
+      '--spacing-row-pad-y': '12px',
       '--radius-popup': '16px',
       '--radius-card': '16px',
       '--radius-card-lg': '16px',
@@ -649,7 +659,7 @@ export const SIZING_STYLES = {
       '--radius-block': '12px',
       '--alert-radius': '16px',
       '--text-title': '30px',
-      '--text-title--line-height': '36px',
+      '--text-title--line-height': '34px',
       '--text-title--font-weight': '650',
       '--text-heading': '17px',
       '--text-heading--line-height': '22px',
@@ -663,13 +673,21 @@ export const SIZING_STYLES = {
     },
   },
   /**
-   * A warmer phone app: `clear`'s controls on rounder shapes (22px cards, the lead card and sheets 24px, 16px rows) and
-   * heavier, bigger display type (titles 32 / 720, headings 19 / 700). Pairs with a display face in `--font-display`.
+   * A warmer phone app: `clear`'s plain cards, controls and rhythm on rounder shapes (22px cards, the lead card and
+   * sheets 24px, 16px rows) and heavier, bigger display type (titles 32 / 720, headings 19 / 700). Pairs with a display
+   * face in `--font-display`.
    */
   friendly: {
     density: 'comfortable',
     radius: 'pill',
+    cards: 'plain',
     tokens: {
+      '--spacing-group': '16px',
+      '--spacing-card': '18px',
+      '--spacing-page': '16px',
+      '--spacing-section': '20px',
+      '--spacing-row-pad-x': '16px',
+      '--spacing-row-pad-y': '12px',
       '--radius-popup': '20px',
       '--radius-card': '22px',
       '--radius-card-lg': '24px',
@@ -677,7 +695,7 @@ export const SIZING_STYLES = {
       '--radius-panel': '24px',
       '--alert-radius': '22px',
       '--text-title': '32px',
-      '--text-title--line-height': '38px',
+      '--text-title--line-height': '36px',
       '--text-title--font-weight': '720',
       '--text-heading': '19px',
       '--text-heading--line-height': '24px',
@@ -693,6 +711,21 @@ export const SIZING_STYLES = {
 } as const satisfies Record<string, SizingTheme>;
 
 export type SizingStyle = keyof typeof SIZING_STYLES;
+
+/**
+ * How a `Card` is built. `shell`: a tinted shell around the card, its header a label strip on the shell. `plain`: the
+ * card alone, one surface on the page, its header a section title above it in `text-heading`. Not a token: it changes
+ * structure, so it is an attribute (`data-card-style`) next to the theme's CSS.
+ */
+export type CardStyle = 'shell' | 'plain';
+
+/**
+ * The attributes a sizing theme needs on the element its CSS targets (`<html>` for `:root`, or the subtree):
+ * `data-card-style` for plain cards. Empty for the rest.
+ */
+export function sizingThemeAttributes(theme: SizingTheme): Record<string, string> {
+  return theme.cards === 'plain' ? { 'data-card-style': 'plain' } : {};
+}
 
 export const DEFAULT_SIZING_THEME: SizingTheme = SIZING_STYLES.pavo;
 

@@ -34,6 +34,7 @@ import {
   type SizingStyle,
   type SizingTheme,
   scaleDensity,
+  sizingThemeAttributes,
   sizingThemeCss,
   sizingValues,
 } from '~/lib/theme/sizing';
@@ -230,6 +231,13 @@ export const useCustomization = () => useSyncExternalStore(subscribe, read, () =
 /** The theme, sizing and token CSS, after `tailwind.css` so it wins; the panel's tokens last, over the sizing theme. */
 export function CustomizationStyles() {
   const { branding, sizing, tokens, font, display } = useCustomization();
+  const cardStyle = sizingThemeAttributes(sizingTheme(sizing))['data-card-style'];
+  // Plain cards are an attribute, not CSS: set it on `<html>`, where the theme's CSS lands.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    if (cardStyle === undefined) root.removeAttribute('data-card-style');
+    else root.setAttribute('data-card-style', cardStyle);
+  }, [cardStyle]);
   return (
     <>
       <style data-branding>{brandingThemeCss(branding)}</style>

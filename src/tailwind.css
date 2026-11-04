@@ -2,6 +2,8 @@
    `@import 'tailwindcss'` and `@import 'tw-animate-css'` (README, Use the registry; the docs site: `site/styles.css`). */
 
 @custom-variant dark (&:is(.dark *));
+/* Plain cards (`SizingTheme.cards`, DESIGN.md Surfaces): set by `data-card-style='plain'` on `<html>` or a subtree. */
+@custom-variant plain (&:where([data-card-style=plain] *));
 
 /* Branded colors come from `brandingThemeCss` (`lib/theme/branding-theme.ts`), rendered into a `<style>` by the page.
    Only non-branded values live here. */

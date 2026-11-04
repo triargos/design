@@ -190,6 +190,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | `friendly`              | comfortable · pill | A warmer phone app: cards 22, lead card and sheets 24, popups 20; title 32 / 720, heading 19 / 700; body and control 15, caption 13. Pairs with `--font-display`      |
 
 - An app renders `sizingThemeCss(theme)` into a `<style>` after the stylesheet, next to `brandingThemeCss`. It writes only the overrides on `:root`, and `touch` in `@media (width < 40rem)`; the default theme writes nothing.
+- Card style is the theme's one structural choice (`cards`): `shell` (default) or `plain`, where a `Card` is one surface on the page and its header a section title above it in `text-heading`. It is an attribute, not CSS: spread `sizingThemeAttributes(theme)` (`data-card-style='plain'`) on the element the theme's CSS targets, `<html>` for `:root`. `clear` and `friendly` use `plain`.
 - A subtree: `sizingThemeCss(theme, '[data-sizing=compact]')` and `data-sizing='compact'` on the element. A popup portals out of the subtree; give it a `container` inside, or theme `:root`.
 - A new token goes in `SIZING_TOKENS` (`sizing.ts`: default, family, what it tunes), with its value in each axis or style that moves it. `pnpm sizing:check` fails when `tailwind.css` and `sizing.ts` drift.
 - A density of your own: `scaleDensity(0.9)` scales every default length to whole px (not radius, type, weights, `page`, `section`; a value of 4px or less moves at most 1px), or pass any token map as `density`.
@@ -203,7 +204,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | Card shell | `rounded-card bg-(--card-shell)`, default `--shell`                                                                                                     | `Card`                                                      |
 | Card       | `bg-card`, an `--edge` border inside the box (`bg-clip-padding`), `shadow-card`                                                                         | `CardContent`, `Table variant='card'` body                  |
 | Popup      | `rounded-popup bg-popover shadow-popup`, fade + zoom from 95% over `duration-enter`                                                                     | `PopoverContent`, menus, `SelectContent`, `ComboboxContent` |
-| Inverse    | `data-surface='inverse'` + `rounded-popup bg-popover shadow-popup`: the other mode's tokens, dark on a light page and light on a dark one               | `ActionBar`                                                 |
+| Inverse    | `data-surface='inverse'` + `rounded-popup bg-popover shadow-popup`: the other mode's tokens, dark on a light page and light on a dark one               | `ActionBar`, `BottomNavList inverse`                        |
 | Modal      | `rounded-dialog bg-popover shadow-modal`; header and body `--modal-inset` (24px) in, the footer a `muted` band under a rule; backdrop `black/32` + blur | `DialogContent`, `AlertDialogContent`, `SheetContent`       |
 
 - Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`; `-drop` + `-drop-hover` without the ring, on a raised button's `--edge` border), `shadow-popup`, `shadow-modal`.
