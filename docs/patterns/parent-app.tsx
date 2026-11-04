@@ -9,7 +9,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Parent App'
-      description='A whole phone app for parents, built from components and roles only: Today, Absences, Messages, Documents, Family, the announcements and two drawers (reporting a child sick, the profile). Tap through it; "Back to school" on Today shows the screen with nobody absent.'>
+      description='A whole phone app for parents, built from components and roles only: Today, Absences, Messages, Documents, Family, the announcements and two drawers (reporting a child sick, the profile). Tap through it: "Back to school" on Today shows the screen with nobody absent, and the Quiet day switch shows Today with nothing open (no note to upload, no unread message, no new announcement).'>
       <ExampleSection
         title='App'
         description={
