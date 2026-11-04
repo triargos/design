@@ -103,6 +103,7 @@ const STYLE_LABELS: Record<SizingStyle, string> = {
   dense: 'Dense',
   soft: 'Soft',
   clear: 'Clear',
+  contrast: 'Contrast',
   friendly: 'Friendly',
 };
 

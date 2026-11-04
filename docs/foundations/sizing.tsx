@@ -63,7 +63,12 @@ const STYLES: ReadonlyArray<{ name: SizingStyle; label: string; description: str
   {
     name: 'clear',
     label: 'Clear',
-    description: 'A calm phone app: 40px pill controls on 16px cards, titles 30 / 650, 15px body and control text.',
+    description: 'A calm phone app: plain cards, flat 40px pill controls, 20px cards, titles 30 / 650, 15px text.',
+  },
+  {
+    name: 'contrast',
+    label: 'Contrast',
+    description: 'Clear with bolder display type: titles 34 / 760, headings 20 / 700. Pairs with a display face.',
   },
   {
     name: 'friendly',

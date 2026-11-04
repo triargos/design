@@ -640,9 +640,10 @@ export const SIZING_STYLES = {
     },
   },
   /**
-   * A calm phone app: plain cards (one surface, section titles above), roomy pill controls (40px, 44px lg) on 16px
-   * cards and sheets, 12px rows; a 16px page rhythm with 18px card padding; titles 30 / 650 and headings 17 / 600; 15px
-   * reading and control text, 13px meta. The bottom nav stays a floating pill.
+   * A calm phone app: plain cards (one surface, section titles above) and flat controls at 600, roomy pill controls
+   * (40px, 44px lg) on 20px cards, the lead card and sheets 24px, 12px rows; a 16px page rhythm with 18px card padding;
+   * titles 30 / 650 and headings 17 / 600; 15px reading and control text, 13px meta. The bottom nav stays a floating
+   * pill.
    */
   clear: {
     density: 'comfortable',
@@ -659,20 +660,60 @@ export const SIZING_STYLES = {
       '--spacing-section': '20px',
       '--spacing-row-pad-x': '16px',
       '--spacing-row-pad-y': '12px',
-      '--radius-popup': '16px',
-      '--radius-card': '16px',
-      '--radius-card-lg': '16px',
-      '--radius-dialog': '16px',
-      '--radius-panel': '16px',
+      '--radius-popup': '20px',
+      '--radius-card': '20px',
+      '--radius-card-lg': '24px',
+      '--radius-dialog': '24px',
+      '--radius-panel': '24px',
       '--radius-area': '12px',
       '--radius-block': '12px',
-      '--alert-radius': '16px',
+      '--alert-radius': '20px',
       '--text-title': '30px',
       '--text-title--line-height': '34px',
       '--text-title--font-weight': '650',
       '--text-heading': '17px',
       '--text-heading--line-height': '22px',
       '--text-heading--font-weight': '600',
+      '--text-body': '15px',
+      '--text-body--line-height': '20px',
+      '--text-control': '15px',
+      '--text-control--line-height': '20px',
+      '--text-caption': '13px',
+      '--text-caption--line-height': '18px',
+    },
+  } /**
+   * `clear` with bolder display type: titles 34 / 760 and headings 20 / 700, for a display face in `--font-display`.
+   * The parent app's look: an inverse lead card and bottom nav against light cards.
+   */,
+  contrast: {
+    density: 'comfortable',
+    radius: 'pill',
+    cards: 'plain',
+    controls: 'flat',
+    tokens: {
+      '--control-font-weight': '600',
+      '--badge-font-weight': '600',
+      '--item-title-font-weight': '600',
+      '--spacing-group': '16px',
+      '--spacing-card': '18px',
+      '--spacing-page': '16px',
+      '--spacing-section': '20px',
+      '--spacing-row-pad-x': '16px',
+      '--spacing-row-pad-y': '12px',
+      '--radius-popup': '20px',
+      '--radius-card': '20px',
+      '--radius-card-lg': '24px',
+      '--radius-dialog': '24px',
+      '--radius-panel': '24px',
+      '--radius-area': '12px',
+      '--radius-block': '12px',
+      '--alert-radius': '20px',
+      '--text-title': '34px',
+      '--text-title--line-height': '38px',
+      '--text-title--font-weight': '760',
+      '--text-heading': '20px',
+      '--text-heading--line-height': '25px',
+      '--text-heading--font-weight': '700',
       '--text-body': '15px',
       '--text-body--line-height': '20px',
       '--text-control': '15px',
