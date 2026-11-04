@@ -8,6 +8,8 @@ import {
   IconLanguage,
   IconLogout,
   IconMessageReport,
+  IconMoon,
+  IconSun,
   IconNotes,
   IconSettings,
   IconSunHigh,
@@ -84,7 +86,7 @@ function ChildPicker({ value, onValueChange }: { value: ChildId; onValueChange: 
             <span
               aria-hidden
               className={cn(
-                'flex size-control-lg shrink-0 items-center justify-center rounded-full text-heading',
+                'flex size-9 shrink-0 items-center justify-center rounded-full font-medium',
                 checked ? colors.solid : colors.avatar,
               )}>
               {child.name[0]}
@@ -278,8 +280,8 @@ export function ReportSheet({
 }
 
 /**
- * The profile, as the mockup has it: who is signed in, a group of places to go (settings pushes a page of its own),
- * the appearance, a problem report and sign out.
+ * The profile, as Pavo's account menu draws it: who is signed in, the places to go (settings pushes a page of its
+ * own), the appearance inline, then a problem report and sign out.
  */
 export function ProfileSheet({
   open,
@@ -300,11 +302,11 @@ export function ProfileSheet({
         <DrawerStack initial='root'>
           <DrawerPage page='root'>
             <div className='flex items-center gap-part px-related pb-related'>
-              <Avatar size='4xl'>
+              <Avatar size='3xl'>
                 <AvatarFallback>TZ</AvatarFallback>
               </Avatar>
               <div className='min-w-0'>
-                <p className='truncate text-heading'>Tim Zolleis</p>
+                <p className='truncate font-medium'>Tim Zolleis</p>
                 <p className='truncate text-caption text-muted-foreground'>Musterberg Free School</p>
               </div>
             </div>
@@ -323,26 +325,26 @@ export function ProfileSheet({
                 <span>School</span>
                 <DrawerMenuValue>Musterberg</DrawerMenuValue>
               </DrawerMenuItem>
+              <DrawerMenuRow>
+                {theme === 'dark' ? <IconMoon /> : <IconSun />}
+                <span id='profile-appearance'>Appearance</span>
+                <TabsRadioGroup
+                  variant='inline'
+                  aria-labelledby='profile-appearance'
+                  value={theme}
+                  onValueChange={setTheme}>
+                  <TabsRadio value='light' aria-label='Light'>
+                    <IconSun />
+                  </TabsRadio>
+                  <TabsRadio value='dark' aria-label='Dark'>
+                    <IconMoon />
+                  </TabsRadio>
+                  <TabsRadio value='system' aria-label='System'>
+                    <IconDeviceDesktop />
+                  </TabsRadio>
+                </TabsRadioGroup>
+              </DrawerMenuRow>
             </DrawerMenuGroup>
-            <div className='flex flex-col gap-related'>
-              <SheetLabel id='profile-appearance'>Appearance</SheetLabel>
-              <TabsRadioGroup
-                variant='segmented'
-                aria-labelledby='profile-appearance'
-                value={theme}
-                onValueChange={setTheme}
-                className='w-full'>
-                <TabsRadio value='light' className='flex-1'>
-                  Light
-                </TabsRadio>
-                <TabsRadio value='dark' className='flex-1'>
-                  Dark
-                </TabsRadio>
-                <TabsRadio value='system' className='flex-1'>
-                  System
-                </TabsRadio>
-              </TabsRadioGroup>
-            </div>
             <DrawerMenuGroup>
               <DrawerMenuItem>
                 <IconMessageReport />

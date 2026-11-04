@@ -197,7 +197,7 @@ export function TodayScreen({
                     <span
                       aria-hidden
                       className={cn(
-                        'flex size-control-lg shrink-0 items-center justify-center rounded-full text-heading',
+                        'flex size-9 shrink-0 items-center justify-center rounded-full font-medium',
                         CHILD_COLORS[child.id].solid,
                       )}>
                       {child.name[0]}
@@ -440,7 +440,7 @@ export function MessagesScreen({ nav }: { nav: Navigation }) {
             {THREADS.map((thread) => (
               <Item key={thread.name} render={rowLink()}>
                 <ItemMedia>
-                  <Avatar size='3xl' className={thread.child ? CHILD_COLORS[thread.child].avatar : undefined}>
+                  <Avatar size='2xl' className={thread.child ? CHILD_COLORS[thread.child].avatar : undefined}>
                     <AvatarFallback>{thread.initials}</AvatarFallback>
                   </Avatar>
                 </ItemMedia>
@@ -585,7 +585,7 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
             <span
               aria-hidden
               className={cn(
-                'flex size-12 items-center justify-center rounded-full bg-white text-heading',
+                'flex size-9 items-center justify-center rounded-full bg-white font-medium',
                 CHILD_COLORS[child.id].text,
               )}>
               {child.name[0]}
@@ -603,7 +603,7 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
           <CardContent className='overflow-hidden'>
             <Item render={rowLink()}>
               <ItemMedia>
-                <Avatar size='2xl'>
+                <Avatar size='xl'>
                   <AvatarFallback>PA</AvatarFallback>
                 </Avatar>
               </ItemMedia>

@@ -48,7 +48,7 @@ export const CHILD_COLORS = {
 export const childOf = (name: string): ChildId => (name.toLowerCase() === 'theo' ? 'theo' : 'lilli');
 
 /** A child's initial in their color. */
-export function ChildAvatar({ child, size = '2xl' }: { child: ChildId; size?: '2xl' | '3xl' | '4xl' }) {
+export function ChildAvatar({ child, size = 'xl' }: { child: ChildId; size?: 'xl' | '2xl' }) {
   const { name } = CHILDREN.find((c) => c.id === child)!;
   return (
     <Avatar size={size} className={CHILD_COLORS[child].avatar}>
@@ -114,7 +114,7 @@ export function ScreenHeader({
           {actions}
           {onProfile && (
             <Button emphasis='ghost' size='icon-lg' className='rounded-full' aria-label='Profile' onClick={onProfile}>
-              <Avatar size='3xl'>
+              <Avatar size='xl'>
                 <AvatarFallback>TZ</AvatarFallback>
               </Avatar>
             </Button>
