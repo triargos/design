@@ -1,6 +1,5 @@
 import {
   IconCalendar,
-  IconCheck,
   IconChevronRight,
   IconDownload,
   IconEdit,
@@ -151,17 +150,10 @@ export function TodayScreen({
       ) : (
         <Card size='lg'>
           <CardContent className='flex flex-col gap-group p-card'>
-            <div className='flex items-center gap-part'>
-              <span
-                aria-hidden
-                className='flex size-control-lg shrink-0 items-center justify-center rounded-full bg-success-subtle text-success-subtle-foreground [&_svg]:size-icon-lg'>
-                <IconCheck />
-              </span>
-              <hgroup className='flex flex-col gap-tight'>
-                <h2 className='text-heading'>Everyone is at school</h2>
-                <p className='text-caption text-muted-foreground'>No absence running</p>
-              </hgroup>
-            </div>
+            <hgroup className='flex flex-col gap-tight'>
+              <h2 className='text-heading'>Everyone is at school</h2>
+              <p className='text-caption text-muted-foreground'>No absence running</p>
+            </hgroup>
             <div className='flex flex-col gap-related'>
               <div className='grid grid-cols-2 gap-related'>
                 {CHILDREN.map((child) => (
