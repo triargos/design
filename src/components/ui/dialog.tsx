@@ -83,7 +83,7 @@ function DialogContent({
           // Under an open nested dialog it steps back: smaller per level, dimmed by an overlay (`after:`).
           'transition-[scale] ease-move data-nested-dialog-open:scale-[calc(1-0.04*var(--nested-dialogs))] motion-reduce:data-nested-dialog-open:scale-100',
           'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-black/0 after:transition-colors after:duration-modal data-nested-dialog-open:after:bg-black/8',
-          'max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] sm:min-w-min',
+          'group/dialog-content max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] sm:min-w-min',
           { sm: 'sm:max-w-sm', default: 'sm:max-w-md', lg: 'sm:max-w-2xl', xl: 'sm:max-w-4xl' }[size],
           className,
         )}
@@ -97,7 +97,7 @@ function DialogContent({
               <Button
                 emphasis='ghost'
                 size='icon'
-                className='absolute top-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)] right-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)]'
+                className='absolute top-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)] right-[calc(var(--spacing-modal)-(var(--spacing-control)-var(--text-heading--line-height))/2)] max-sm:group-has-data-[slot=dialog-media]/dialog-content:top-[calc(var(--spacing-modal)+(var(--spacing-control-lg)-var(--spacing-control))/2)]'
               />
             }>
             <IconX />
@@ -117,6 +117,20 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
         // the dialog.
         'flex flex-col gap-tight px-modal pt-modal pr-[calc(var(--spacing-modal)+(var(--spacing-control)+var(--text-heading--line-height))/2+2px)] pb-[calc(var(--spacing-group)-var(--spacing-tight))]',
         'in-[[data-slot=dialog-content]:not(:has([data-slot=dialog-body]))]:pb-modal',
+        'max-sm:has-data-[slot=dialog-media]:pr-modal sm:has-data-[slot=dialog-media]:grid sm:has-data-[slot=dialog-media]:grid-cols-[auto_minmax(0,1fr)] sm:has-data-[slot=dialog-media]:grid-rows-[auto_1fr] sm:has-data-[slot=dialog-media]:gap-x-group',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function DialogMedia({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot='dialog-media'
+      className={cn(
+        "mb-related inline-flex size-control-lg shrink-0 items-center justify-center self-start rounded-control-lg bg-muted sm:row-span-2 sm:mb-0 *:[svg:not([class*='size-'])]:size-(--dialog-icon)",
         className,
       )}
       {...props}
@@ -179,6 +193,7 @@ export {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogMedia,
   DialogTitle,
   DialogTrigger,
 };

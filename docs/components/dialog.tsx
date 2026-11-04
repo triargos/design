@@ -1,4 +1,4 @@
-import { IconTrash } from '@tabler/icons-react';
+import { IconFolderPlus, IconTrash } from '@tabler/icons-react';
 import { useState, type ReactNode } from 'react';
 
 import {
@@ -21,6 +21,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogMedia,
   DialogTitle,
 } from '~/components/ui/dialog';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '~/components/ui/field';
@@ -45,6 +46,7 @@ import { DialogNoFooter } from '../examples/dialog/no-footer';
 import { DialogOpenedFromAMenu } from '../examples/dialog/opened-from-a-menu';
 import { DialogScrollingBody } from '../examples/dialog/scrolling-body';
 import { DialogSizes } from '../examples/dialog/sizes';
+import { DialogWithMedia } from '../examples/dialog/with-media';
 import { DialogWithoutCloseButton } from '../examples/dialog/without-close-button';
 import { Code, ExampleSection, FoundationPage, FoundationSection } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
@@ -114,6 +116,11 @@ export default defineDocs({
         }>
         <DialogSizes />
       </ExampleSection>
+      <ExampleSection
+        title='With media'
+        description='DialogMedia, first in DialogHeader: an icon on a muted tile, beside the title and description from sm up, above them on a phone.'>
+        <DialogWithMedia />
+      </ExampleSection>
       <ExampleSection title='No footer' description='Without a footer the body ends the dialog.'>
         <DialogNoFooter />
       </ExampleSection>
@@ -168,6 +175,28 @@ export default defineDocs({
                   <DialogFooter>
                     <DialogClose render={<Button />}>Cancel</DialogClose>
                     <Button intent='primary'>Send invite</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+          </Stage>
+          <Stage label={<Code>DialogMedia</Code>} className='h-[340px]'>
+            {(container) => (
+              <Dialog defaultOpen modal={false}>
+                <DialogContent container={container}>
+                  <DialogHeader>
+                    <DialogMedia>
+                      <IconFolderPlus />
+                    </DialogMedia>
+                    <DialogTitle>New project</DialogTitle>
+                    <DialogDescription>Start with a name. You add tasks and members next.</DialogDescription>
+                  </DialogHeader>
+                  <DialogBody>
+                    <Input aria-label='Name' placeholder='Website redesign' />
+                  </DialogBody>
+                  <DialogFooter>
+                    <DialogClose render={<Button />}>Cancel</DialogClose>
+                    <Button intent='primary'>Create project</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>

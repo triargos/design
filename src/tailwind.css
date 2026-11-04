@@ -671,6 +671,8 @@
   --alert-radius: 14px;
   /* `AlertDialogMedia`: the icon on its tile. */
   --alert-dialog-icon: 1.5rem;
+  /* `DialogMedia`: the icon on its tile. */
+  --dialog-icon: 1.5rem;
   /* `Tooltip` (also an anchored toast), `ChartTooltipContent` (its rows sit `pad-y` apart). */
   --tooltip-pad-x: 0.5rem;
   --tooltip-pad-y: 0.25rem;

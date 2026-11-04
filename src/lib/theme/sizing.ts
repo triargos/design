@@ -159,6 +159,7 @@ export const SIZING_TOKENS = {
   '--alert-pad': t('surfaces', '12px', 'Alert inset on every side, around the text and the action'),
   '--alert-radius': t('surfaces', '14px', 'Alert radius; below a card content corner, as a field is'),
   '--alert-dialog-icon': t('surfaces', '24px', 'Alert dialog media icon'),
+  '--dialog-icon': t('surfaces', '24px', 'Dialog media icon'),
   '--bottom-nav-radius': t(
     'surfaces',
     '16px',
