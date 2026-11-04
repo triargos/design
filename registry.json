@@ -982,8 +982,7 @@
       "name": "radio-group",
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react@1.8.0",
-        "@tabler/icons-react@3.49.0"
+        "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
         "@pavo/checkbox",
