@@ -6,8 +6,6 @@ import {
   IconClock,
   IconDeviceDesktop,
   IconLanguage,
-  IconLogout,
-  IconMessageReport,
   IconMoon,
   IconSun,
   IconNotes,
@@ -44,9 +42,9 @@ import { cn } from '~/lib/utils';
 import { CHILD_COLORS, CHILDREN, type ChildId } from './shared';
 
 const WHEN = [
-  { id: 'today', label: 'Today', meta: 'Tue, 3 Nov' },
-  { id: 'tomorrow', label: 'Tomorrow', meta: 'Wed, 4 Nov' },
-  { id: 'range', label: 'Range', meta: 'Pick days' },
+  { id: 'today', label: 'Today' },
+  { id: 'tomorrow', label: 'Tomorrow' },
+  { id: 'range', label: 'Range' },
 ] as const;
 
 const REASONS = ['Sick', 'Doctor’s appointment', 'Family reasons', 'Other'] as const;
@@ -86,7 +84,7 @@ function ChildPicker({ value, onValueChange }: { value: ChildId; onValueChange: 
             <span
               aria-hidden
               className={cn(
-                'flex size-9 shrink-0 items-center justify-center rounded-full font-medium',
+                'flex size-10 shrink-0 items-center justify-center rounded-full font-medium',
                 checked ? colors.solid : colors.avatar,
               )}>
               {child.name[0]}
@@ -99,7 +97,7 @@ function ChildPicker({ value, onValueChange }: { value: ChildId; onValueChange: 
   );
 }
 
-/** The day picker: three tiles, a label over its date; the chosen one solid ink. */
+/** The day picker: three tiles; the chosen one solid ink. */
 function WhenPicker({ value, onValueChange }: { value: string; onValueChange: (when: string) => void }) {
   return (
     <RadioGroup
@@ -112,12 +110,11 @@ function WhenPicker({ value, onValueChange }: { value: string; onValueChange: (w
           key={option.id}
           value={option.id}
           className={cn(
-            'flex h-13 flex-col items-center justify-center rounded-block outline-none',
+            'flex h-control-lg items-center justify-center rounded-block outline-none',
             'transition-[background-color,box-shadow] duration-feedback focus-visible:ring-3 focus-visible:ring-ring/24',
             value === option.id ? 'bg-neutral-solid text-neutral-solid-foreground' : 'bg-card shadow-raised',
           )}>
           <span className='text-control font-(weight:--control-font-weight)'>{option.label}</span>
-          <span className='text-caption opacity-80'>{option.meta}</span>
         </Radio.Root>
       ))}
     </RadioGroup>
@@ -214,8 +211,6 @@ export function ReportSheet({
                   setSent(true);
                   onSent();
                 }}>
-                <h2 className='px-tight text-heading'>Report a child sick</h2>
-
                 <div className='flex flex-col gap-related'>
                   <SheetLabel id='report-who'>Who is sick?</SheetLabel>
                   <ChildPicker value={child} onValueChange={setChild} />
@@ -281,7 +276,7 @@ export function ReportSheet({
 
 /**
  * The profile, as Pavo's account menu draws it: who is signed in, the places to go (settings pushes a page of its
- * own), the appearance inline, then a problem report and sign out.
+ * own), the appearance inline, then a problem report and sign out as two buttons.
  */
 export function ProfileSheet({
   open,
@@ -302,7 +297,7 @@ export function ProfileSheet({
         <DrawerStack initial='root'>
           <DrawerPage page='root'>
             <div className='flex items-center gap-part px-related pb-related'>
-              <Avatar size='3xl'>
+              <Avatar size='2xl'>
                 <AvatarFallback>TZ</AvatarFallback>
               </Avatar>
               <div className='min-w-0'>
@@ -345,21 +340,16 @@ export function ProfileSheet({
                 </TabsRadioGroup>
               </DrawerMenuRow>
             </DrawerMenuGroup>
-            <DrawerMenuGroup>
-              <DrawerMenuItem>
-                <IconMessageReport />
-                <span>Report a problem</span>
-              </DrawerMenuItem>
-              <DrawerMenuItem intent='destructive' onClick={() => onOpenChange(false)}>
-                <IconLogout />
-                <span>Sign out</span>
-              </DrawerMenuItem>
-            </DrawerMenuGroup>
+            <div className='grid grid-cols-2 gap-related px-tight'>
+              <Button size='lg'>Report a problem</Button>
+              <Button size='lg' intent='destructive' emphasis='subtle' onClick={() => onOpenChange(false)}>
+                Sign out
+              </Button>
+            </div>
           </DrawerPage>
 
           <DrawerPage page='settings' title='Settings'>
             <div className='flex flex-col gap-related'>
-              <SheetLabel>Notify me about</SheetLabel>
               <DrawerMenuGroup>
                 {(
                   [

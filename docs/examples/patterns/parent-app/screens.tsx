@@ -42,7 +42,6 @@ import {
   CHILDREN,
   ChildAvatar,
   type ChildId,
-  ChildDot,
   childOf,
   HeaderAction,
   ListLabel,
@@ -79,7 +78,6 @@ function ChildFilter({ value, onValueChange }: { value: string; onValueChange: (
       <TabsRadio value='all'>All</TabsRadio>
       {CHILDREN.map((child) => (
         <TabsRadio key={child.id} value={child.id}>
-          <ChildDot child={child.id} />
           {child.name}
         </TabsRadio>
       ))}
@@ -104,23 +102,19 @@ export function TodayScreen({
 }) {
   return (
     <ScreenScroll>
-      <ScreenHeader title='Hello, Tim' meta='Tuesday, 3 November' onProfile={() => nav.open('profile')} />
+      <ScreenHeader title='Hello, Tim' onProfile={() => nav.open('profile')} />
 
       {sick ? (
         <>
           <Card size='lg' aria-labelledby='today-absence'>
             <CardContent className='flex flex-col gap-group p-card'>
-              <div className='flex items-center justify-between gap-part'>
-                <p className='flex items-center gap-related text-caption font-medium text-muted-foreground'>
-                  <ChildDot child='lilli' />
-                  Absent now
-                </p>
-                <Badge shape='pill'>Day 1 of 4</Badge>
-              </div>
               <hgroup className='flex flex-col gap-tight'>
-                <h2 id='today-absence' className='text-heading text-balance'>
-                  Lilli is off sick until Sunday
-                </h2>
+                <div className='flex items-start justify-between gap-part'>
+                  <h2 id='today-absence' className='text-heading text-balance'>
+                    Lilli is off sick until Sunday
+                  </h2>
+                  <Badge shape='pill'>Day 1 of 4</Badge>
+                </div>
                 <p className='text-body text-muted-foreground'>Doctor’s appointment · Tue, 3 – Sun, 8 Nov</p>
               </hgroup>
               <ol aria-label='Days' className='grid grid-cols-6 gap-related'>
@@ -183,7 +177,6 @@ export function TodayScreen({
               </hgroup>
             </div>
             <div className='flex flex-col gap-related'>
-              <p className='px-tight text-caption font-medium text-muted-foreground'>Report sick for today</p>
               <div className='grid grid-cols-2 gap-related'>
                 {CHILDREN.map((child) => (
                   <button
@@ -197,13 +190,13 @@ export function TodayScreen({
                     <span
                       aria-hidden
                       className={cn(
-                        'flex size-9 shrink-0 items-center justify-center rounded-full font-medium',
+                        'flex size-10 shrink-0 items-center justify-center rounded-full font-medium',
                         CHILD_COLORS[child.id].solid,
                       )}>
                       {child.name[0]}
                     </span>
                     <span className='flex min-w-0 flex-col'>
-                      <span className='text-heading'>{child.name}</span>
+                      <span className='font-(weight:--control-font-weight)'>{child.name}</span>
                       <span className='text-caption opacity-80'>Sick today</span>
                     </span>
                   </button>
@@ -244,10 +237,7 @@ export function TodayScreen({
             {ANNOUNCEMENTS.map((announcement) => (
               <Item key={announcement.id} render={rowLink(() => nav.go('announcement'))}>
                 <ItemContent>
-                  <p className='flex items-center gap-related text-caption text-muted-foreground'>
-                    {announcement.unread && <StatusDot intent='primary' aria-label='Unread' role='img' />}
-                    {announcement.date}
-                  </p>
+                  <p className='text-caption text-muted-foreground'>{announcement.date}</p>
                   <ItemTitle>{announcement.title}</ItemTitle>
                   <ItemDescription className='truncate'>{announcement.preview}</ItemDescription>
                 </ItemContent>
@@ -270,8 +260,8 @@ const ABSENCES = [
 ] as const;
 
 const STATS = [
-  { child: 'lilli', value: '6', unit: 'days', meta: '+ 2 hrs since September' },
-  { child: 'theo', value: '2', unit: 'hrs', meta: 'since September' },
+  { child: 'lilli', value: '6', unit: 'days' },
+  { child: 'theo', value: '2', unit: 'hrs' },
 ] as const;
 
 /**
@@ -341,15 +331,11 @@ export function AbsencesScreen({ nav, sick }: { nav: Navigation; sick: boolean }
             <div
               key={stat.child}
               className={cn('flex flex-col gap-tight rounded-card p-card', CHILD_COLORS[stat.child].tint)}>
-              <p className='flex items-center gap-related text-caption font-medium'>
-                <ChildDot child={stat.child} />
-                {name}
-              </p>
-              <p className='mt-tight flex items-baseline gap-tight'>
+              <p className='text-caption font-medium'>{name}</p>
+              <p className='flex items-baseline gap-tight'>
                 <span className='text-title tabular-nums'>{stat.value}</span>
                 <span className='text-body font-medium'>{stat.unit}</span>
               </p>
-              <p className='text-caption opacity-80'>{stat.meta}</p>
             </div>
           );
         })}
@@ -420,7 +406,6 @@ export function MessagesScreen({ nav }: { nav: Navigation }) {
     <ScreenScroll>
       <ScreenHeader
         title='Messages'
-        description='2 unread'
         actions={
           <HeaderAction label='New message'>
             <IconEdit />
@@ -464,11 +449,11 @@ export function MessagesScreen({ nav }: { nav: Navigation }) {
 }
 
 const DOCUMENTS = [
-  { month: 'October 2026', title: 'School certificate 2026', child: 'lilli', meta: 'Lilli · 19 Oct' },
-  { month: 'October 2026', title: 'School certificate 2026', child: 'lilli', meta: 'Lilli · 6 Oct' },
-  { month: 'March 2026', title: 'School certificate 2026', child: 'lilli', meta: 'Lilli · 10 Mar' },
-  { month: 'January 2026', title: 'School notice', child: null, meta: 'All children · 23 Jan' },
-  { month: '2025', title: 'School notice', child: null, meta: 'All children' },
+  { month: 'October 2026', title: 'School certificate 2026', meta: 'Lilli · 19 Oct' },
+  { month: 'October 2026', title: 'School certificate 2026', meta: 'Lilli · 6 Oct' },
+  { month: 'March 2026', title: 'School certificate 2026', meta: 'Lilli · 10 Mar' },
+  { month: 'January 2026', title: 'School notice', meta: 'All children · 23 Jan' },
+  { month: '2025', title: 'School notice', meta: 'All children' },
 ] as const;
 
 /** Documents: search, what the school sent by month (the child's dot on each), and what the parent uploaded. */
@@ -528,10 +513,7 @@ export function DocumentsScreen({ nav }: { nav: Navigation }) {
                           </ItemMedia>
                           <ItemContent>
                             <ItemTitle>{document.title}</ItemTitle>
-                            <ItemDescription className='flex items-center gap-related'>
-                              {document.child && <ChildDot child={document.child} />}
-                              {document.meta}
-                            </ItemDescription>
+                            <ItemDescription>{document.meta}</ItemDescription>
                           </ItemContent>
                           <IconDownload aria-hidden className='size-icon shrink-0 text-muted-foreground' />
                         </Item>
@@ -585,15 +567,12 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
             <span
               aria-hidden
               className={cn(
-                'flex size-9 items-center justify-center rounded-full bg-white font-medium',
+                'flex size-10 items-center justify-center rounded-full bg-white font-medium',
                 CHILD_COLORS[child.id].text,
               )}>
               {child.name[0]}
             </span>
-            <span className='flex flex-col'>
-              <span className='text-heading'>{child.name}</span>
-              <span className='text-caption opacity-80'>{child.born}</span>
-            </span>
+            <span className='text-heading'>{child.name}</span>
           </button>
         ))}
       </div>
@@ -603,13 +582,13 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
           <CardContent className='overflow-hidden'>
             <Item render={rowLink()}>
               <ItemMedia>
-                <Avatar size='xl'>
+                <Avatar size='2xl'>
                   <AvatarFallback>PA</AvatarFallback>
                 </Avatar>
               </ItemMedia>
               <ItemContent>
                 <ItemTitle>Patricia Aalen</ItemTitle>
-                <ItemDescription>Mother · born 6 May 1986</ItemDescription>
+                <ItemDescription>Mother</ItemDescription>
               </ItemContent>
               <ItemChevron />
             </Item>
@@ -633,22 +612,6 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
           </CardContent>
         </Card>
       </section>
-      <section className='flex flex-col gap-related'>
-        <ListLabel>Change requests</ListLabel>
-        <Card>
-          <CardContent className='overflow-hidden'>
-            <Item>
-              <ItemMedia variant='icon' className='bg-success-subtle text-success-subtle-foreground'>
-                <IconCheck />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>No open requests</ItemTitle>
-                <ItemDescription>Tap an entry above to ask for a change.</ItemDescription>
-              </ItemContent>
-            </Item>
-          </CardContent>
-        </Card>
-      </section>
     </ScreenScroll>
   );
 }
@@ -657,21 +620,14 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
 export function AnnouncementsScreen({ nav }: { nav: Navigation }) {
   return (
     <ScreenScroll>
-      <ScreenHeader
-        title='Announcements'
-        description='1 unread'
-        back={{ label: 'Today', onClick: () => nav.go('today') }}
-      />
+      <ScreenHeader title='Announcements' back={{ label: 'Today', onClick: () => nav.go('today') }} />
       <ListLabel>October 2026</ListLabel>
       {ANNOUNCEMENTS.map((announcement) => (
         <Card key={announcement.id}>
           <CardContent className='overflow-hidden'>
             <Item render={rowLink(() => nav.go('announcement'))} className='items-start'>
               <ItemContent className='gap-tight'>
-                <p className='flex items-center gap-related text-caption text-muted-foreground'>
-                  {announcement.unread && <StatusDot intent='primary' role='img' aria-label='Unread' />}
-                  {announcement.date}
-                </p>
+                <p className='text-caption text-muted-foreground'>{announcement.date}</p>
                 <ItemTitle className={cn('text-heading', !announcement.unread && 'font-medium')}>
                   {announcement.title}
                 </ItemTitle>

@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import { cn } from '~/lib/utils';
 
 export type Screen = 'today' | 'absences' | 'messages' | 'documents' | 'family' | 'announcements' | 'announcement';
 export type Sheet = 'report' | 'profile' | null;
@@ -14,8 +13,8 @@ export interface Navigation {
 }
 
 export const CHILDREN = [
-  { id: 'lilli', name: 'Lilli', born: 'Born 25 May 2012' },
-  { id: 'theo', name: 'Theo', born: 'Born 8 May 2014' },
+  { id: 'lilli', name: 'Lilli' },
+  { id: 'theo', name: 'Theo' },
 ] as const;
 
 export type ChildId = (typeof CHILDREN)[number]['id'];
@@ -48,18 +47,13 @@ export const CHILD_COLORS = {
 export const childOf = (name: string): ChildId => (name.toLowerCase() === 'theo' ? 'theo' : 'lilli');
 
 /** A child's initial in their color. */
-export function ChildAvatar({ child, size = 'xl' }: { child: ChildId; size?: 'xl' | '2xl' }) {
+export function ChildAvatar({ child }: { child: ChildId }) {
   const { name } = CHILDREN.find((c) => c.id === child)!;
   return (
-    <Avatar size={size} className={CHILD_COLORS[child].avatar}>
+    <Avatar size='2xl' className={CHILD_COLORS[child].avatar}>
       <AvatarFallback>{name[0]}</AvatarFallback>
     </Avatar>
   );
-}
-
-/** A child's dot, before their name. */
-export function ChildDot({ child }: { child: ChildId }) {
-  return <span aria-hidden className={cn('size-2 shrink-0 rounded-full', CHILD_COLORS[child].dot)} />;
 }
 
 export const ANNOUNCEMENTS = [
@@ -114,7 +108,7 @@ export function ScreenHeader({
           {actions}
           {onProfile && (
             <Button emphasis='ghost' size='icon-lg' className='rounded-full' aria-label='Profile' onClick={onProfile}>
-              <Avatar size='xl'>
+              <Avatar size='2xl'>
                 <AvatarFallback>TZ</AvatarFallback>
               </Avatar>
             </Button>
