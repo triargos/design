@@ -60,6 +60,17 @@ const STYLES: ReadonlyArray<{ name: SizingStyle; label: string; description: str
   },
   { name: 'dense', label: 'Dense', description: 'shadcn mira and nova: 28px controls, 13px control text.' },
   { name: 'soft', label: 'Soft', description: 'shadcn maia: comfortable density, pill controls, round surfaces.' },
+  {
+    name: 'clear',
+    label: 'Clear',
+    description: 'A calm phone app: 40px pill controls on 16px cards, titles 30 / 650, 15px body and control text.',
+  },
+  {
+    name: 'friendly',
+    label: 'Friendly',
+    description:
+      'A warmer phone app: Clear’s controls on 22px cards and a 24px lead card, titles 32 / 720. Pairs with a display face.',
+  },
 ];
 
 const DENSITY_NAMES = Object.keys(DENSITIES) as ReadonlyArray<Density>;

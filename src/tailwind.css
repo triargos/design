@@ -214,6 +214,9 @@
    or `twMerge` misreads it. The docs Customize sheet tunes radius, spacing and type. */
 @theme {
   --font-sans: 'Inter Variable', sans-serif;
+  /* The face of the two display roles, `text-title` and `text-heading` (the utilities below). The sans by default; an
+     app with a display face sets it beside its brand colors: `:root { --font-display: 'Bricolage Grotesque', sans-serif }`. */
+  --font-display: var(--font-sans);
 
   /* Radius (DESIGN.md, Shape): fixed steps, and the roles that pick from them. A control's radius follows its height. */
   --radius-xs: 2px;
@@ -231,6 +234,8 @@
   --radius-control-lg: 12px;
   --radius-popup: 16px;
   --radius-card: 20px;
+  /* `Card size='lg'`: the one card a screen leads with (a current status, a summary), a step rounder than the rest. */
+  --radius-card-lg: 20px;
   --radius-dialog: 20px;
   --radius-panel: 20px;
   /* Shapes that must not follow a pill control: a checkbox stays a box, a tooltip and a multi-line block cap. */
@@ -707,6 +712,17 @@
   --timeline-marker-size: 1rem;
   --timeline-step: 3rem;
   --timeline-step-x: 2rem;
+}
+
+/* The display roles add their face to what `--text-title` / `--text-heading` set (size, line height, tracking, weight),
+   so a theme swaps it with `--font-display`. These sort after the family utilities, so `font-sans` beside them loses:
+   to set one title in another face, set `--font-display` on it. */
+@utility text-title {
+  font-family: var(--font-display);
+}
+
+@utility text-heading {
+  font-family: var(--font-display);
 }
 
 /* A color from data as an intent (`intent: 'data'` in `intentVariants`, `color` on `Badge`). The component sets

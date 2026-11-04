@@ -19,18 +19,25 @@ import { cn } from '~/lib/utils';
 /**
  * The shell (`--card-shell`, default `--shell`) wraps the content on every side, so the content's corners sit on
  * the shell, never on the page; restyle the tint by setting the variable. `intent='destructive'` marks only the title.
+ * `size='lg'` is the one card a screen leads with (a current status, a summary): `radius-card-lg`, which a sizing
+ * style may set a step rounder than `radius-card`; the content follows, concentric.
  */
 function Card({
   className,
   intent = 'neutral',
+  size = 'default',
   ...props
-}: ComponentProps<'section'> & { intent?: 'neutral' | 'destructive' }) {
+}: ComponentProps<'section'> & { intent?: 'neutral' | 'destructive'; size?: 'default' | 'lg' }) {
   return (
     <section
       data-slot='card'
       data-intent={intent}
+      data-size={size}
       className={cn(
-        'group/card rounded-card bg-(--card-shell) p-card-inset [--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)] [--outer-radius:var(--radius-card)]',
+        'group/card bg-(--card-shell) p-card-inset [--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)]',
+        size === 'lg'
+          ? 'rounded-card-lg [--outer-radius:var(--radius-card-lg)]'
+          : 'rounded-card [--outer-radius:var(--radius-card)]',
         className,
       )}
       {...props}
