@@ -1,5 +1,4 @@
 import {
-  IconCalendar,
   IconChevronRight,
   IconDownload,
   IconEdit,
@@ -72,41 +71,43 @@ function ChildFilter({ value, onValueChange }: { value: string; onValueChange: (
   );
 }
 
-const QUICK_ACTIONS = [
-  { label: 'Report sick', icon: <IconPlus />, action: (nav: Navigation) => nav.open('report'), main: true },
-  { label: 'Upload', icon: <IconUpload />, action: (nav: Navigation) => nav.go('documents'), main: false },
-  { label: 'Message', icon: <IconEdit />, action: (nav: Navigation) => nav.go('messages'), main: false },
-  { label: 'Absences', icon: <IconCalendar />, action: (nav: Navigation) => nav.go('absences'), main: false },
-] as const;
-
-/** What a parent does most, one tap away: round icons with their label under, reporting sick first and solid. */
-function QuickActions({ nav }: { nav: Navigation }) {
+/**
+ * Quick actions: the one thing a parent does in a hurry, bound to each child. A tap opens the report with that child
+ * and today already chosen, so Send is the only step left; a child who is already off sick offers to extend instead.
+ */
+function QuickActions({ sick, onQuickReport }: { sick: boolean; onQuickReport: (child: ChildId) => void }) {
   return (
-    <nav aria-label='Quick actions' className='grid grid-cols-4 gap-related'>
-      {QUICK_ACTIONS.map((quick) => (
-        <button
-          key={quick.label}
-          type='button'
-          onClick={() => quick.action(nav)}
-          className='group/quick flex flex-col items-center gap-related rounded-block py-related outline-none focus-visible:ring-3 focus-visible:ring-ring/24'>
-          <span
-            aria-hidden
-            className={cn(
-              'flex size-14 items-center justify-center rounded-full transition-[scale] duration-feedback group-active/quick:scale-[0.94] [&_svg]:size-icon-lg',
-              quick.main ? 'bg-neutral-solid text-neutral-solid-foreground' : 'bg-card text-foreground shadow-card',
-            )}>
-            {quick.icon}
-          </span>
-          <span className='text-caption font-medium'>{quick.label}</span>
-        </button>
-      ))}
-    </nav>
+    <div role='group' aria-label='Quick actions' className='grid grid-cols-2 gap-related'>
+      {CHILDREN.map((child) => {
+        const absent = sick && child.id === 'lilli';
+        return (
+          <button
+            key={child.id}
+            type='button'
+            onClick={() => onQuickReport(child.id)}
+            className='flex items-center gap-part rounded-card border border-(--edge) bg-card bg-clip-padding p-part text-start shadow-card transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.97]'>
+            <span
+              aria-hidden
+              className={cn(
+                'flex size-10 shrink-0 items-center justify-center rounded-full font-medium',
+                CHILD_COLORS[child.id].solid,
+              )}>
+              {child.name[0]}
+            </span>
+            <span className='flex min-w-0 flex-col'>
+              <span className='font-(weight:--control-font-weight)'>{child.name}</span>
+              <span className='text-caption text-muted-foreground'>{absent ? 'Extend' : 'Sick today'}</span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
 /**
- * Today: the current absence as the lead card, quick actions, the latest announcements. Once everyone is back, the
- * lead card offers a quick report for each child instead.
+ * Today: the current absence (or that everyone is at school) as the lead card, a quick report for each child, the
+ * latest announcements.
  */
 export function TodayScreen({
   nav,
@@ -154,39 +155,11 @@ export function TodayScreen({
               <h2 className='text-heading'>Everyone is at school</h2>
               <p className='text-caption text-muted-foreground'>No absence running</p>
             </hgroup>
-            <div className='flex flex-col gap-related'>
-              <div className='grid grid-cols-2 gap-related'>
-                {CHILDREN.map((child) => (
-                  <button
-                    key={child.id}
-                    type='button'
-                    onClick={() => onQuickReport(child.id)}
-                    className='flex min-h-19 items-center gap-part rounded-block bg-muted p-part text-start transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.97]'>
-                    <span
-                      aria-hidden
-                      className={cn(
-                        'flex size-10 shrink-0 items-center justify-center rounded-full font-medium',
-                        CHILD_COLORS[child.id].solid,
-                      )}>
-                      {child.name[0]}
-                    </span>
-                    <span className='flex min-w-0 flex-col'>
-                      <span className='font-(weight:--control-font-weight)'>{child.name}</span>
-                      <span className='text-caption text-muted-foreground'>Sick today</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <Button emphasis='ghost' className='self-start' onClick={() => nav.open('report')}>
-                <IconCalendar data-icon='inline-start' />
-                Another day or range
-              </Button>
-            </div>
           </CardContent>
         </Card>
       )}
 
-      <QuickActions nav={nav} />
+      <QuickActions sick={sick} onQuickReport={onQuickReport} />
 
       <Card>
         <CardHeader
