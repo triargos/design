@@ -2,6 +2,8 @@ import { IconCalendarOff, IconFolder, IconHome, IconMail, IconUsers } from '@tab
 import { useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
+import { Field, FieldLabel } from '~/components/ui/field';
+import { Switch } from '~/components/ui/switch';
 import { BottomNav, BottomNavLink, BottomNavList } from '~/components/ui/bottom-nav';
 import { SIZING_STYLES, sizingThemeAttributes, sizingThemeCss } from '~/lib/theme/sizing';
 
@@ -36,12 +38,20 @@ export function ParentApp() {
   const [sheet, setSheet] = useState<Sheet>(null);
   const [sick, setSick] = useState(true);
   const [reportChild, setReportChild] = useState<ChildId>('lilli');
+  const [quiet, setQuiet] = useState(false);
   const [frame, setFrame] = useState<HTMLDivElement | null>(null);
   const nav: Navigation = { go: setScreen, open: setSheet };
   const current = screen === 'announcements' || screen === 'announcement' ? 'today' : screen;
 
   return (
-    <div data-sizing='parent-app' {...sizingThemeAttributes(SIZING_STYLES.contrast)} className='flex justify-center'>
+    <div
+      data-sizing='parent-app'
+      {...sizingThemeAttributes(SIZING_STYLES.contrast)}
+      className='flex flex-col items-center gap-group'>
+      <Field orientation='horizontal' className='w-auto'>
+        <Switch id='parent-app-quiet' checked={quiet} onCheckedChange={setQuiet} />
+        <FieldLabel htmlFor='parent-app-quiet'>Quiet day: nothing open on Today</FieldLabel>
+      </Field>
       <style>
         {sizingThemeCss(SIZING_STYLES.contrast, '[data-sizing=parent-app]')}
         {`[data-sizing=parent-app]{--font-display:'Bricolage Grotesque',sans-serif;}`}
@@ -54,6 +64,7 @@ export function ParentApp() {
             nav={nav}
             sick={sick}
             setSick={setSick}
+            quiet={quiet}
             onQuickReport={(child) => {
               setReportChild(child);
               setSheet('report');
@@ -80,7 +91,7 @@ export function ParentApp() {
                 }}>
                 {tab.icon}
                 <span>{tab.label}</span>
-                {'count' in tab && (
+                {'count' in tab && !quiet && (
                   <Badge size='sm' shape='pill' intent='primary' emphasis='solid'>
                     {tab.count}
                   </Badge>

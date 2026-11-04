@@ -2,7 +2,9 @@ import {
   IconChevronRight,
   IconDownload,
   IconEdit,
+  IconFileAlert,
   IconFileText,
+  IconFileTypePdf,
   IconMapPin,
   IconPaperclip,
   IconPlus,
@@ -79,11 +81,15 @@ function QuickActions({
   nav,
   sick,
   onQuickReport,
+  inCard = false,
 }: {
   nav: Navigation;
   sick: boolean;
   onQuickReport: (child: ChildId) => void;
+  /** On a card the plain actions sit on `muted`; on the page, on a raised card fill. */
+  inCard?: boolean;
 }) {
+  const plain = inCard ? 'bg-muted text-foreground' : 'bg-card text-foreground shadow-card';
   const actions = [
     ...CHILDREN.map((child) => ({
       key: child.id,
@@ -94,17 +100,17 @@ function QuickActions({
     })),
     {
       key: 'upload',
-      label: 'Upload note',
+      label: 'Upload',
       onClick: () => nav.go('documents'),
       icon: <IconUpload />,
-      tone: 'bg-card text-foreground shadow-card',
+      tone: plain,
     },
     {
       key: 'message',
       label: 'Message',
       onClick: () => nav.go('messages'),
       icon: <IconEdit />,
-      tone: 'bg-card text-foreground shadow-card',
+      tone: plain,
     },
   ];
   return (
@@ -131,20 +137,25 @@ function QuickActions({
 }
 
 /**
- * Today: the current absence (or that everyone is at school) as the lead card, a quick report for each child, the
- * latest announcements.
+ * Today, built from what is there, most urgent first: who is absent (or that everyone is at school, with the quick
+ * actions on that card), what needs the parent, unread messages, what is coming up, then announcements. A quiet day
+ * keeps only the status and what is coming up, and says so in one line.
  */
 export function TodayScreen({
   nav,
   sick,
   setSick,
+  quiet,
   onQuickReport,
 }: {
   nav: Navigation;
   sick: boolean;
   setSick: (sick: boolean) => void;
+  /** A day with nothing open: no note to upload, no unread message, no new announcement. */
+  quiet: boolean;
   onQuickReport: (child: ChildId) => void;
 }) {
+  const unread = THREADS.filter((thread) => thread.unread);
   return (
     <ScreenScroll>
       <ScreenHeader title='Hello, Tim' onProfile={() => nav.open('profile')} />
@@ -172,6 +183,7 @@ export function TodayScreen({
               </div>
             </CardContent>
           </Card>
+          <QuickActions nav={nav} sick={sick} onQuickReport={onQuickReport} />
         </>
       ) : (
         <Card size='lg'>
@@ -180,39 +192,126 @@ export function TodayScreen({
               <h2 className='text-heading'>Everyone is at school</h2>
               <p className='text-caption text-muted-foreground'>No absence running</p>
             </hgroup>
+            <QuickActions nav={nav} sick={sick} onQuickReport={onQuickReport} inCard />
           </CardContent>
         </Card>
       )}
 
-      <QuickActions nav={nav} sick={sick} onQuickReport={onQuickReport} />
+      {quiet ? (
+        <p className='px-row-pad-x py-related text-center text-body text-muted-foreground'>You’re all caught up.</p>
+      ) : (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Needs you</CardTitle>
+            </CardHeader>
+            <CardContent className='overflow-hidden'>
+              <Item>
+                <ItemMedia variant='icon' className='bg-warning-subtle text-warning-subtle-foreground'>
+                  <IconFileAlert />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>Doctor’s note for Lilli</ItemTitle>
+                  <ItemDescription>Absent Thu, 22 Oct</ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <Button size='sm' intent='neutral' emphasis='solid' onClick={() => nav.go('documents')}>
+                    Upload
+                  </Button>
+                </ItemActions>
+              </Item>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader
+              actions={
+                <Button size='sm' emphasis='ghost' onClick={() => nav.go('messages')}>
+                  All
+                </Button>
+              }>
+              <CardTitle>Messages</CardTitle>
+            </CardHeader>
+            <CardContent className='overflow-hidden'>
+              <ItemList>
+                {unread.map((thread) => (
+                  <Item key={thread.name} render={rowLink(() => nav.go('messages'))}>
+                    <ItemMedia>
+                      <Avatar size='2xl' className={thread.child ? CHILD_COLORS[thread.child].avatar : undefined}>
+                        <AvatarFallback>{thread.initials}</AvatarFallback>
+                      </Avatar>
+                    </ItemMedia>
+                    <ItemContent>
+                      <ItemTitle>{thread.name}</ItemTitle>
+                      <ItemDescription className='truncate'>{thread.preview}</ItemDescription>
+                    </ItemContent>
+                    <StatusDot intent='primary' role='img' aria-label='Unread' />
+                  </Item>
+                ))}
+              </ItemList>
+            </CardContent>
+          </Card>
+        </>
+      )}
 
       <Card>
-        <CardHeader
-          actions={
-            <Button size='sm' emphasis='ghost' onClick={() => nav.go('announcements')}>
-              All
-            </Button>
-          }>
-          <CardTitle>Announcements</CardTitle>
+        <CardHeader>
+          <CardTitle>Coming up</CardTitle>
         </CardHeader>
         <CardContent className='overflow-hidden'>
           <ItemList>
-            {ANNOUNCEMENTS.map((announcement) => (
-              <Item key={announcement.id} render={rowLink(() => nav.go('announcement'))}>
+            {COMING_UP.map((event) => (
+              <Item key={event.title}>
+                <ItemMedia>
+                  <span className='flex size-10 flex-col items-center justify-center rounded-block bg-muted leading-none'>
+                    <span className='text-caption font-medium text-muted-foreground uppercase'>{event.month}</span>
+                    <span className='font-(weight:--control-font-weight) tabular-nums'>{event.day}</span>
+                  </span>
+                </ItemMedia>
                 <ItemContent>
-                  <p className='text-caption text-muted-foreground'>{announcement.date}</p>
-                  <ItemTitle>{announcement.title}</ItemTitle>
-                  <ItemDescription className='truncate'>{announcement.preview}</ItemDescription>
+                  <ItemTitle>{event.title}</ItemTitle>
+                  <ItemDescription>{event.when}</ItemDescription>
                 </ItemContent>
-                <ItemChevron />
               </Item>
             ))}
           </ItemList>
         </CardContent>
       </Card>
+
+      {!quiet && (
+        <Card>
+          <CardHeader
+            actions={
+              <Button size='sm' emphasis='ghost' onClick={() => nav.go('announcements')}>
+                All
+              </Button>
+            }>
+            <CardTitle>Announcements</CardTitle>
+          </CardHeader>
+          <CardContent className='overflow-hidden'>
+            <ItemList>
+              {ANNOUNCEMENTS.map((announcement) => (
+                <Item key={announcement.id} render={rowLink(() => nav.go('announcement'))}>
+                  <ItemContent>
+                    <p className='text-caption text-muted-foreground'>{announcement.date}</p>
+                    <ItemTitle>{announcement.title}</ItemTitle>
+                    <ItemDescription className='truncate'>{announcement.preview}</ItemDescription>
+                  </ItemContent>
+                  <ItemChevron />
+                </Item>
+              ))}
+            </ItemList>
+          </CardContent>
+        </Card>
+      )}
     </ScreenScroll>
   );
 }
+
+const COMING_UP = [
+  { month: 'Nov', day: '12', title: 'Parents’ evening', when: 'Thu, 18:00 · School hall' },
+  { month: 'Dec', day: '21', title: 'Christmas holidays', when: 'Until Fri, 8 Jan' },
+] as const;
 
 const ABSENCES = [
   { child: 'Lilli', month: 'Current', when: 'Tue, 3 – Sun, 8 Nov', status: 'Running', intent: 'info' },
@@ -406,21 +505,77 @@ export function MessagesScreen({ nav }: { nav: Navigation }) {
 }
 
 const DOCUMENTS = [
-  { month: 'October 2026', title: 'School certificate 2026', meta: 'Lilli · 19 Oct' },
-  { month: 'October 2026', title: 'School certificate 2026', meta: 'Lilli · 6 Oct' },
-  { month: 'March 2026', title: 'School certificate 2026', meta: 'Lilli · 10 Mar' },
-  { month: 'January 2026', title: 'School notice', meta: 'All children · 23 Jan' },
-  { month: '2025', title: 'School notice', meta: 'All children' },
+  { id: 1, month: 'October 2026', title: 'School certificate 2026', child: 'Lilli', date: '19 Oct', size: '120 KB' },
+  {
+    id: 2,
+    month: 'October 2026',
+    title: 'Parents’ evening invitation',
+    child: 'All children',
+    date: '6 Oct',
+    size: '84 KB',
+  },
+  { id: 3, month: 'March 2026', title: 'School certificate 2026', child: 'Lilli', date: '10 Mar', size: '118 KB' },
+  { id: 4, month: 'January 2026', title: 'School notice', child: 'All children', date: '23 Jan', size: '56 KB' },
+  { id: 5, month: '2025', title: 'School notice', child: 'All children', date: '12 Sept', size: '61 KB' },
 ] as const;
 
-/** Documents: search, what the school sent by month (the child's dot on each), and what the parent uploaded. */
+type SchoolDocument = (typeof DOCUMENTS)[number];
+
+/** A file's type as a tile: the format's icon over its name, so a PDF reads as one at a glance. */
+function FileTile({ large = false }: { large?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'flex shrink-0 flex-col items-center justify-center gap-0.5 rounded-block bg-muted text-muted-foreground',
+        large ? 'size-12 [&_svg]:size-icon-lg' : 'size-10 [&_svg]:size-icon',
+      )}>
+      <IconFileTypePdf />
+    </span>
+  );
+}
+
+/** A file in a list: its tile, title, who and when, and a download button at the end. */
+function FileRow({ document }: { document: SchoolDocument }) {
+  return (
+    <Item>
+      <ItemMedia>
+        <FileTile />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>{document.title}</ItemTitle>
+        <ItemDescription>
+          {document.child} · {document.date} · {document.size}
+        </ItemDescription>
+      </ItemContent>
+      <ItemActions>
+        <Button emphasis='ghost' size='icon-sm' className='rounded-full' aria-label={`Download ${document.title}`}>
+          <IconDownload />
+        </Button>
+      </ItemActions>
+    </Item>
+  );
+}
+
+/**
+ * Documents: search; from school, the two newest as cards and the rest by month as rows, each with its type, who it
+ * is for, its date and size, and a download button; what the parent uploaded (none yet).
+ */
 export function DocumentsScreen({ nav }: { nav: Navigation }) {
   const [view, setView] = useState('school');
   const [query, setQuery] = useState('');
+  const searching = query.trim() !== '';
   const found = DOCUMENTS.filter((document) =>
-    `${document.title} ${document.meta}`.toLowerCase().includes(query.trim().toLowerCase()),
+    `${document.title} ${document.child} ${document.date}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
-  const months = [...new Set(found.map((document) => document.month))];
+  const recent = searching ? [] : found.slice(0, 2);
+  const rest = searching ? found : found.slice(2);
+  const groups = searching
+    ? [{ label: 'Results', files: rest }]
+    : [...new Set(rest.map((document) => document.month))].map((month) => ({
+        label: month,
+        files: rest.filter((document) => document.month === month),
+      }));
 
   return (
     <ScreenScroll>
@@ -454,34 +609,44 @@ export function DocumentsScreen({ nav }: { nav: Navigation }) {
         </TabsRadio>
       </TabsRadioGroup>
       {view === 'school' ? (
-        months.length > 0 ? (
-          months.map((month) => (
-            <section key={month} className='flex flex-col gap-related'>
-              <ListLabel>{month}</ListLabel>
-              <Card>
-                <CardContent className='overflow-hidden'>
-                  <ItemList>
-                    {found
-                      .filter((document) => document.month === month)
-                      .map((document) => (
-                        <Item key={document.meta} render={rowLink()}>
-                          <ItemMedia variant='icon'>
-                            <IconFileText />
-                          </ItemMedia>
-                          <ItemContent>
-                            <ItemTitle>{document.title}</ItemTitle>
-                            <ItemDescription>{document.meta}</ItemDescription>
-                          </ItemContent>
-                          <IconDownload aria-hidden className='size-icon shrink-0 text-muted-foreground' />
-                        </Item>
-                      ))}
-                  </ItemList>
-                </CardContent>
-              </Card>
-            </section>
-          ))
-        ) : (
+        found.length === 0 ? (
           <p className='px-row-pad-x text-body text-muted-foreground'>No documents match “{query.trim()}”.</p>
+        ) : (
+          <>
+            {recent.length > 0 && (
+              <div className='grid grid-cols-2 gap-part'>
+                {recent.map((document) => (
+                  <Card key={document.id}>
+                    <CardContent
+                      render={<button type='button' />}
+                      className='flex w-full flex-col items-start gap-part p-card text-start'>
+                      <FileTile large />
+                      <span className='flex min-w-0 flex-col gap-tight'>
+                        <span className='line-clamp-2 font-(weight:--item-title-font-weight)'>{document.title}</span>
+                        <span className='text-caption text-muted-foreground'>
+                          {document.child} · {document.date}
+                        </span>
+                      </span>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+            {groups.map((group) => (
+              <section key={group.label} className='flex flex-col gap-related'>
+                <ListLabel>{group.label}</ListLabel>
+                <Card>
+                  <CardContent className='overflow-hidden'>
+                    <ItemList>
+                      {group.files.map((document) => (
+                        <FileRow key={document.id} document={document} />
+                      ))}
+                    </ItemList>
+                  </CardContent>
+                </Card>
+              </section>
+            ))}
+          </>
         )
       ) : (
         <Card>
