@@ -1,9 +1,11 @@
 import {
   IconCalendar,
   IconCheck,
+  IconChevronRight,
   IconDownload,
   IconEdit,
   IconFileText,
+  IconList,
   IconMapPin,
   IconPaperclip,
   IconPlus,
@@ -16,6 +18,7 @@ import { Alert, AlertAction, AlertContent } from '~/components/ui/alert';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Calendar, type DateRange } from '~/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from '~/components/ui/empty';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '~/components/ui/input-group';
@@ -29,14 +32,18 @@ import {
   ItemMedia,
   ItemTitle,
 } from '~/components/ui/item';
-import { Stat, StatLabel, StatValue } from '~/components/ui/stat';
 import { StatusDot } from '~/components/ui/status-dot';
 import { TabsRadio, TabsRadioGroup } from '~/components/ui/tabs';
 import { cn } from '~/lib/utils';
 
 import {
   ANNOUNCEMENTS,
+  CHILD_COLORS,
   CHILDREN,
+  ChildAvatar,
+  type ChildId,
+  ChildDot,
+  childOf,
   HeaderAction,
   ListLabel,
   type Navigation,
@@ -65,18 +72,35 @@ const rowLink = (onClick?: () => void) => (
   />
 );
 
+/** The child filter every list shares: All, then each child with their dot. */
+function ChildFilter({ value, onValueChange }: { value: string; onValueChange: (value: string) => void }) {
+  return (
+    <TabsRadioGroup aria-label='Child' value={value} onValueChange={onValueChange}>
+      <TabsRadio value='all'>All</TabsRadio>
+      {CHILDREN.map((child) => (
+        <TabsRadio key={child.id} value={child.id}>
+          <ChildDot child={child.id} />
+          {child.name}
+        </TabsRadio>
+      ))}
+    </TabsRadioGroup>
+  );
+}
+
 /**
- * Today: the current absence on the inverse surface (the nav's dark), reporting a child sick, what needs doing, and
- * the latest announcements. Once everyone is back, the lead card offers a quick report for each child instead.
+ * Today: the current absence as the lead card (the child's dot its only color), reporting a child sick, what needs
+ * doing, the latest announcements. Once everyone is back, the lead card offers a quick report for each child instead.
  */
 export function TodayScreen({
   nav,
   sick,
   setSick,
+  onQuickReport,
 }: {
   nav: Navigation;
   sick: boolean;
   setSick: (sick: boolean) => void;
+  onQuickReport: (child: ChildId) => void;
 }) {
   return (
     <ScreenScroll>
@@ -84,54 +108,53 @@ export function TodayScreen({
 
       {sick ? (
         <>
-          <section
-            data-surface='inverse'
-            aria-labelledby='today-absence'
-            className='flex flex-col gap-group rounded-card-lg bg-popover p-card text-popover-foreground shadow-card'>
-            <div className='flex items-center justify-between gap-part'>
-              <p className='flex items-center gap-related text-caption font-medium text-muted-foreground'>
-                <StatusDot intent='warning' />
-                Absent now
-              </p>
-              <Badge shape='pill'>Day 1 of 4</Badge>
-            </div>
-            <hgroup className='flex flex-col gap-tight'>
-              <h2 id='today-absence' className='text-heading text-balance'>
-                Lilli is off sick until Sunday
-              </h2>
-              <p className='text-body text-muted-foreground'>Doctor’s appointment · Tue, 3 – Sun, 8 Nov</p>
-            </hgroup>
-            <ol aria-label='Days' className='grid grid-cols-6 gap-related'>
-              {DAYS.map(({ day, date, state }) => (
-                <li
-                  key={day}
-                  aria-current={state === 'today' ? 'date' : undefined}
-                  className={cn(
-                    'flex flex-col items-center gap-tight rounded-block py-related',
-                    state === 'today' && 'bg-neutral-solid text-neutral-solid-foreground',
-                    state === 'absent' && 'bg-muted',
-                    state === 'weekend' && 'border border-dashed border-border-strong text-muted-foreground',
-                  )}>
-                  <span className='text-caption font-medium'>{day}</span>
-                  <span className='text-heading tabular-nums'>{date}</span>
-                </li>
-              ))}
-            </ol>
-            <div className='grid grid-cols-2 gap-related'>
-              <Button size='lg' intent='neutral' emphasis='solid'>
-                Extend
-              </Button>
-              <Button size='lg' onClick={() => setSick(false)}>
-                Back to school
-              </Button>
-            </div>
-          </section>
+          <Card size='lg' aria-labelledby='today-absence'>
+            <CardContent className='flex flex-col gap-group p-card'>
+              <div className='flex items-center justify-between gap-part'>
+                <p className='flex items-center gap-related text-caption font-medium text-muted-foreground'>
+                  <ChildDot child='lilli' />
+                  Absent now
+                </p>
+                <Badge shape='pill'>Day 1 of 4</Badge>
+              </div>
+              <hgroup className='flex flex-col gap-tight'>
+                <h2 id='today-absence' className='text-heading text-balance'>
+                  Lilli is off sick until Sunday
+                </h2>
+                <p className='text-body text-muted-foreground'>Doctor’s appointment · Tue, 3 – Sun, 8 Nov</p>
+              </hgroup>
+              <ol aria-label='Days' className='grid grid-cols-6 gap-related'>
+                {DAYS.map(({ day, date, state }) => (
+                  <li
+                    key={day}
+                    aria-current={state === 'today' ? 'date' : undefined}
+                    className={cn(
+                      'flex flex-col items-center gap-tight rounded-block py-related',
+                      state === 'today' && 'bg-neutral-solid text-neutral-solid-foreground',
+                      state === 'absent' && 'bg-muted',
+                      state === 'weekend' && 'border border-dashed border-border-strong text-muted-foreground',
+                    )}>
+                    <span className='text-caption font-medium'>{day}</span>
+                    <span className='text-heading tabular-nums'>{date}</span>
+                  </li>
+                ))}
+              </ol>
+              <div className='grid grid-cols-2 gap-related'>
+                <Button size='lg' intent='primary'>
+                  Extend
+                </Button>
+                <Button size='lg' onClick={() => setSick(false)}>
+                  Back to school
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardContent className='overflow-hidden'>
               <Item render={<button type='button' onClick={() => nav.open('report')} />} className='text-start'>
                 <ItemContent>
-                  <ItemTitle className='text-heading'>Report a child sick</ItemTitle>
+                  <ItemTitle>Report a child sick</ItemTitle>
                   <ItemDescription>For today or several days</ItemDescription>
                 </ItemContent>
                 <ItemActions>
@@ -160,15 +183,30 @@ export function TodayScreen({
               </hgroup>
             </div>
             <div className='flex flex-col gap-related'>
-              <p className='text-caption font-medium text-muted-foreground'>Report sick for today</p>
+              <p className='px-tight text-caption font-medium text-muted-foreground'>Report sick for today</p>
               <div className='grid grid-cols-2 gap-related'>
                 {CHILDREN.map((child) => (
-                  <Button key={child.id} size='lg' className='justify-start' onClick={() => nav.open('report')}>
-                    <Avatar size='lg'>
-                      <AvatarFallback>{child.name[0]}</AvatarFallback>
-                    </Avatar>
-                    {child.name}
-                  </Button>
+                  <button
+                    key={child.id}
+                    type='button'
+                    onClick={() => onQuickReport(child.id)}
+                    className={cn(
+                      'flex min-h-19 items-center gap-part rounded-block p-part text-start transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.97]',
+                      CHILD_COLORS[child.id].tint,
+                    )}>
+                    <span
+                      aria-hidden
+                      className={cn(
+                        'flex size-control-lg shrink-0 items-center justify-center rounded-full text-heading',
+                        CHILD_COLORS[child.id].solid,
+                      )}>
+                      {child.name[0]}
+                    </span>
+                    <span className='flex min-w-0 flex-col'>
+                      <span className='text-heading'>{child.name}</span>
+                      <span className='text-caption opacity-80'>Sick today</span>
+                    </span>
+                  </button>
                 ))}
               </div>
               <Button emphasis='ghost' className='self-start' onClick={() => nav.open('report')}>
@@ -232,15 +270,20 @@ const ABSENCES = [
 ] as const;
 
 const STATS = [
-  { child: 'Lilli', value: '6', unit: 'days', meta: '+ 2 hrs since September' },
-  { child: 'Theo', value: '2', unit: 'hrs', meta: 'since September' },
+  { child: 'lilli', value: '6', unit: 'days', meta: '+ 2 hrs since September' },
+  { child: 'theo', value: '2', unit: 'hrs', meta: 'since September' },
 ] as const;
 
-/** Absences: filter by child, the totals since the term began, then every absence by month. */
+/**
+ * Absences: filter by child, then the list by month or the month as a calendar (the "calendar" direction), with the
+ * totals since September in each child's color.
+ */
 export function AbsencesScreen({ nav, sick }: { nav: Navigation; sick: boolean }) {
   const [child, setChild] = useState('all');
-  const shown = (name: string) => child === 'all' || name.toLowerCase() === child;
-  const rows = ABSENCES.filter((row) => shown(row.child) && (sick || row.month !== 'Current'));
+  const [view, setView] = useState('list');
+  const [range, setRange] = useState<DateRange | null>({ start: '2026-11-03', end: '2026-11-08' });
+  const shown = (id: string) => child === 'all' || id === child;
+  const rows = ABSENCES.filter((row) => shown(childOf(row.child)) && (sick || row.month !== 'Current'));
   const months = [...new Set(rows.map((row) => row.month))];
 
   return (
@@ -248,65 +291,98 @@ export function AbsencesScreen({ nav, sick }: { nav: Navigation; sick: boolean }
       <ScreenHeader
         title='Absences'
         actions={
-          <HeaderAction label='Report a child sick' onClick={() => nav.open('report')}>
-            <IconPlus />
-          </HeaderAction>
+          <>
+            <Button
+              emphasis='ghost'
+              size='icon-lg'
+              className='rounded-full'
+              aria-label={view === 'list' ? 'Show as calendar' : 'Show as list'}
+              onClick={() => setView(view === 'list' ? 'calendar' : 'list')}>
+              {view === 'list' ? <IconCalendar /> : <IconList />}
+            </Button>
+            <HeaderAction label='New absence' onClick={() => nav.open('report')}>
+              <IconPlus />
+            </HeaderAction>
+          </>
         }
         onProfile={() => nav.open('profile')}
       />
-      <TabsRadioGroup aria-label='Child' value={child} onValueChange={setChild}>
-        <TabsRadio value='all'>All</TabsRadio>
-        {CHILDREN.map((c) => (
-          <TabsRadio key={c.id} value={c.id}>
-            {c.name}
-          </TabsRadio>
-        ))}
-      </TabsRadioGroup>
+      <ChildFilter value={child} onValueChange={setChild} />
+
+      {view === 'calendar' ? (
+        <Card size='lg'>
+          <CardContent className='flex flex-col items-center gap-part overflow-hidden pb-related'>
+            <Calendar
+              mode='range'
+              value={range}
+              onValueChange={setRange}
+              className='w-full [--cell-size:--spacing(11)]'
+            />
+            {sick && shown('lilli') && (
+              <Item className='w-full'>
+                <ItemMedia>
+                  <span aria-hidden className={cn('h-8 w-1 rounded-full', CHILD_COLORS.lilli.dot)} />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>Lilli · Doctor’s appointment</ItemTitle>
+                  <ItemDescription>Tue, 3 – Sun, 8 Nov · running</ItemDescription>
+                </ItemContent>
+                <ItemChevron />
+              </Item>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
+
       <div className='grid grid-cols-2 gap-part'>
-        {STATS.filter((stat) => shown(stat.child)).map((stat) => (
-          <Card key={stat.child}>
-            <CardContent className='p-card'>
-              <Stat>
-                <StatLabel className='font-medium text-foreground'>{stat.child}</StatLabel>
-                <StatValue className='flex items-baseline gap-tight'>
-                  {stat.value}
-                  <span className='text-body font-medium'>{stat.unit}</span>
-                </StatValue>
-                <StatLabel>{stat.meta}</StatLabel>
-              </Stat>
-            </CardContent>
-          </Card>
-        ))}
+        {STATS.filter((stat) => shown(stat.child)).map((stat) => {
+          const name = CHILDREN.find((c) => c.id === stat.child)!.name;
+          return (
+            <div
+              key={stat.child}
+              className={cn('flex flex-col gap-tight rounded-card p-card', CHILD_COLORS[stat.child].tint)}>
+              <p className='flex items-center gap-related text-caption font-medium'>
+                <ChildDot child={stat.child} />
+                {name}
+              </p>
+              <p className='mt-tight flex items-baseline gap-tight'>
+                <span className='text-title tabular-nums'>{stat.value}</span>
+                <span className='text-body font-medium'>{stat.unit}</span>
+              </p>
+              <p className='text-caption opacity-80'>{stat.meta}</p>
+            </div>
+          );
+        })}
       </div>
-      {months.map((month) => (
-        <section key={month} className='flex flex-col gap-related'>
-          <ListLabel>{month}</ListLabel>
-          <Card>
-            <CardContent className='overflow-hidden'>
-              <ItemList>
-                {rows
-                  .filter((row) => row.month === month)
-                  .map((row) => (
-                    <Item key={row.when} render={rowLink()}>
-                      <ItemMedia>
-                        <Avatar size='2xl'>
-                          <AvatarFallback>{row.child[0]}</AvatarFallback>
-                        </Avatar>
-                      </ItemMedia>
-                      <ItemContent>
-                        <ItemTitle className='tabular-nums'>{row.when}</ItemTitle>
-                        <ItemDescription>{row.child} · Doctor’s appointment</ItemDescription>
-                      </ItemContent>
-                      <ItemActions>
-                        <Badge intent={row.intent}>{row.status}</Badge>
-                      </ItemActions>
-                    </Item>
-                  ))}
-              </ItemList>
-            </CardContent>
-          </Card>
-        </section>
-      ))}
+
+      {view === 'list' &&
+        months.map((month) => (
+          <section key={month} className='flex flex-col gap-related'>
+            <ListLabel>{month}</ListLabel>
+            <Card>
+              <CardContent className='overflow-hidden'>
+                <ItemList>
+                  {rows
+                    .filter((row) => row.month === month)
+                    .map((row) => (
+                      <Item key={row.when} render={rowLink()}>
+                        <ItemMedia>
+                          <ChildAvatar child={childOf(row.child)} />
+                        </ItemMedia>
+                        <ItemContent>
+                          <ItemTitle className='tabular-nums'>{row.when}</ItemTitle>
+                          <ItemDescription>{row.child} · Doctor’s appointment</ItemDescription>
+                        </ItemContent>
+                        <ItemActions>
+                          <Badge intent={row.intent}>{row.status}</Badge>
+                        </ItemActions>
+                      </Item>
+                    ))}
+                </ItemList>
+              </CardContent>
+            </Card>
+          </section>
+        ))}
     </ScreenScroll>
   );
 }
@@ -314,6 +390,7 @@ export function AbsencesScreen({ nav, sick }: { nav: Navigation; sick: boolean }
 const THREADS = [
   {
     initials: 'KL',
+    child: 'lilli',
     name: 'Lilli’s class teacher',
     time: '18:02',
     preview: 'Thanks for letting us know, get well soon!',
@@ -321,6 +398,7 @@ const THREADS = [
   },
   {
     initials: 'SO',
+    child: null,
     name: 'School office',
     time: '19 Oct',
     preview: 'The school certificate is under Documents.',
@@ -328,6 +406,7 @@ const THREADS = [
   },
   {
     initials: 'KT',
+    child: 'theo',
     name: 'Theo’s class teacher',
     time: '8 Oct',
     preview: 'Parents’ evening: the date will follow.',
@@ -335,12 +414,13 @@ const THREADS = [
   },
 ] as const;
 
-/** Messages: search, then every conversation, unread ones heavier with a dot. */
+/** Messages: search, then every conversation; a child's teachers in that child's color, unread ones heavier. */
 export function MessagesScreen({ nav }: { nav: Navigation }) {
   return (
     <ScreenScroll>
       <ScreenHeader
         title='Messages'
+        description='2 unread'
         actions={
           <HeaderAction label='New message'>
             <IconEdit />
@@ -360,7 +440,7 @@ export function MessagesScreen({ nav }: { nav: Navigation }) {
             {THREADS.map((thread) => (
               <Item key={thread.name} render={rowLink()}>
                 <ItemMedia>
-                  <Avatar size='3xl'>
+                  <Avatar size='3xl' className={thread.child ? CHILD_COLORS[thread.child].avatar : undefined}>
                     <AvatarFallback>{thread.initials}</AvatarFallback>
                   </Avatar>
                 </ItemMedia>
@@ -384,16 +464,21 @@ export function MessagesScreen({ nav }: { nav: Navigation }) {
 }
 
 const DOCUMENTS = [
-  { month: 'October 2026', title: 'School certificate 2026', meta: 'Lilli · 19 Oct' },
-  { month: 'October 2026', title: 'School certificate 2026', meta: 'Lilli · 6 Oct' },
-  { month: 'March 2026', title: 'School certificate 2026', meta: 'Lilli · 10 Mar' },
-  { month: 'January 2026', title: 'School notice', meta: 'All children · 23 Jan' },
+  { month: 'October 2026', title: 'School certificate 2026', child: 'lilli', meta: 'Lilli · 19 Oct' },
+  { month: 'October 2026', title: 'School certificate 2026', child: 'lilli', meta: 'Lilli · 6 Oct' },
+  { month: 'March 2026', title: 'School certificate 2026', child: 'lilli', meta: 'Lilli · 10 Mar' },
+  { month: 'January 2026', title: 'School notice', child: null, meta: 'All children · 23 Jan' },
+  { month: '2025', title: 'School notice', child: null, meta: 'All children' },
 ] as const;
 
-/** Documents: what the school sent, by month, and what the parent uploaded (none yet). */
+/** Documents: search, what the school sent by month (the child's dot on each), and what the parent uploaded. */
 export function DocumentsScreen({ nav }: { nav: Navigation }) {
   const [view, setView] = useState('school');
-  const months = [...new Set(DOCUMENTS.map((document) => document.month))];
+  const [query, setQuery] = useState('');
+  const found = DOCUMENTS.filter((document) =>
+    `${document.title} ${document.meta}`.toLowerCase().includes(query.trim().toLowerCase()),
+  );
+  const months = [...new Set(found.map((document) => document.month))];
 
   return (
     <ScreenScroll>
@@ -406,6 +491,18 @@ export function DocumentsScreen({ nav }: { nav: Navigation }) {
         }
         onProfile={() => nav.open('profile')}
       />
+      <InputGroup>
+        <InputGroupAddon>
+          <IconSearch />
+        </InputGroupAddon>
+        <InputGroupInput
+          type='search'
+          placeholder='Search documents'
+          aria-label='Search documents'
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+      </InputGroup>
       <TabsRadioGroup variant='segmented' aria-label='View' value={view} onValueChange={setView} className='w-full'>
         <TabsRadio value='school' className='flex-1'>
           From school
@@ -415,29 +512,38 @@ export function DocumentsScreen({ nav }: { nav: Navigation }) {
         </TabsRadio>
       </TabsRadioGroup>
       {view === 'school' ? (
-        months.map((month) => (
-          <section key={month} className='flex flex-col gap-related'>
-            <ListLabel>{month}</ListLabel>
-            <Card>
-              <CardContent className='overflow-hidden'>
-                <ItemList>
-                  {DOCUMENTS.filter((document) => document.month === month).map((document) => (
-                    <Item key={document.meta} render={rowLink()}>
-                      <ItemMedia variant='icon'>
-                        <IconFileText />
-                      </ItemMedia>
-                      <ItemContent>
-                        <ItemTitle>{document.title}</ItemTitle>
-                        <ItemDescription>{document.meta}</ItemDescription>
-                      </ItemContent>
-                      <IconDownload aria-hidden className='size-icon shrink-0 text-muted-foreground' />
-                    </Item>
-                  ))}
-                </ItemList>
-              </CardContent>
-            </Card>
-          </section>
-        ))
+        months.length > 0 ? (
+          months.map((month) => (
+            <section key={month} className='flex flex-col gap-related'>
+              <ListLabel>{month}</ListLabel>
+              <Card>
+                <CardContent className='overflow-hidden'>
+                  <ItemList>
+                    {found
+                      .filter((document) => document.month === month)
+                      .map((document) => (
+                        <Item key={document.meta} render={rowLink()}>
+                          <ItemMedia variant='icon'>
+                            <IconFileText />
+                          </ItemMedia>
+                          <ItemContent>
+                            <ItemTitle>{document.title}</ItemTitle>
+                            <ItemDescription className='flex items-center gap-related'>
+                              {document.child && <ChildDot child={document.child} />}
+                              {document.meta}
+                            </ItemDescription>
+                          </ItemContent>
+                          <IconDownload aria-hidden className='size-icon shrink-0 text-muted-foreground' />
+                        </Item>
+                      ))}
+                  </ItemList>
+                </CardContent>
+              </Card>
+            </section>
+          ))
+        ) : (
+          <p className='px-row-pad-x text-body text-muted-foreground'>No documents match “{query.trim()}”.</p>
+        )
       ) : (
         <Card>
           <CardContent className='p-card'>
@@ -459,24 +565,36 @@ export function DocumentsScreen({ nav }: { nav: Navigation }) {
   );
 }
 
-/** Family: the children, the guardians and the address; a tap asks the school for a change. */
+/**
+ * Family: each child as a tile in their color, the guardians, the address, and the change requests; a tap asks the
+ * school for a change.
+ */
 export function FamilyScreen({ nav }: { nav: Navigation }) {
   return (
     <ScreenScroll>
       <ScreenHeader title='Family' onProfile={() => nav.open('profile')} />
       <div className='grid grid-cols-2 gap-part'>
         {CHILDREN.map((child) => (
-          <Card key={child.id}>
-            <CardContent className='flex flex-col gap-part p-card'>
-              <Avatar size='4xl'>
-                <AvatarFallback>{child.name[0]}</AvatarFallback>
-              </Avatar>
-              <div className='flex flex-col gap-tight'>
-                <p className='text-heading'>{child.name}</p>
-                <p className='text-caption text-muted-foreground'>{child.born}</p>
-              </div>
-            </CardContent>
-          </Card>
+          <button
+            key={child.id}
+            type='button'
+            className={cn(
+              'flex flex-col items-start gap-part rounded-card p-card text-start transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.98]',
+              CHILD_COLORS[child.id].tint,
+            )}>
+            <span
+              aria-hidden
+              className={cn(
+                'flex size-12 items-center justify-center rounded-full bg-white text-heading',
+                CHILD_COLORS[child.id].text,
+              )}>
+              {child.name[0]}
+            </span>
+            <span className='flex flex-col'>
+              <span className='text-heading'>{child.name}</span>
+              <span className='text-caption opacity-80'>{child.born}</span>
+            </span>
+          </button>
         ))}
       </div>
       <section className='flex flex-col gap-related'>
@@ -515,9 +633,22 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
           </CardContent>
         </Card>
       </section>
-      <p className='px-row-pad-x text-caption text-muted-foreground'>
-        No open change requests. Tap an entry to ask for a change.
-      </p>
+      <section className='flex flex-col gap-related'>
+        <ListLabel>Change requests</ListLabel>
+        <Card>
+          <CardContent className='overflow-hidden'>
+            <Item>
+              <ItemMedia variant='icon' className='bg-success-subtle text-success-subtle-foreground'>
+                <IconCheck />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>No open requests</ItemTitle>
+                <ItemDescription>Tap an entry above to ask for a change.</ItemDescription>
+              </ItemContent>
+            </Item>
+          </CardContent>
+        </Card>
+      </section>
     </ScreenScroll>
   );
 }
@@ -526,7 +657,11 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
 export function AnnouncementsScreen({ nav }: { nav: Navigation }) {
   return (
     <ScreenScroll>
-      <ScreenHeader title='Announcements' back={{ label: 'Today', onClick: () => nav.go('today') }} />
+      <ScreenHeader
+        title='Announcements'
+        description='1 unread'
+        back={{ label: 'Today', onClick: () => nav.go('today') }}
+      />
       <ListLabel>October 2026</ListLabel>
       {ANNOUNCEMENTS.map((announcement) => (
         <Card key={announcement.id}>
@@ -537,15 +672,17 @@ export function AnnouncementsScreen({ nav }: { nav: Navigation }) {
                   {announcement.unread && <StatusDot intent='primary' role='img' aria-label='Unread' />}
                   {announcement.date}
                 </p>
-                <ItemTitle className='text-heading'>{announcement.title}</ItemTitle>
-                <ItemDescription>{announcement.preview}</ItemDescription>
+                <ItemTitle className={cn('text-heading', !announcement.unread && 'font-medium')}>
+                  {announcement.title}
+                </ItemTitle>
+                <ItemDescription className='line-clamp-2'>{announcement.preview}</ItemDescription>
                 {announcement.attachment && (
                   <Badge className='mt-related self-start'>
                     <IconPaperclip />1 attachment
                   </Badge>
                 )}
               </ItemContent>
-              <ItemChevron />
+              <IconChevronRight aria-hidden className='mt-tight size-icon shrink-0 text-faint-foreground' />
             </Item>
           </CardContent>
         </Card>

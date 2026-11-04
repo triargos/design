@@ -14,7 +14,7 @@ import {
   MessagesScreen,
   TodayScreen,
 } from './screens';
-import type { Navigation, Screen, Sheet } from './shared';
+import type { ChildId, Navigation, Screen, Sheet } from './shared';
 import { ProfileSheet, ReportSheet } from './sheets';
 
 const TABS = [
@@ -27,14 +27,15 @@ const TABS = [
 
 /**
  * A parent app on a phone, every tab and both sheets, in the `contrast` style with Bricolage Grotesque titles: plain
- * cards, flat controls, an inverse lead card and an inverse pill nav that labels the current tab. Built from
- * components and roles only; the style and `--font-display` decide the look. The frame's `translate-z-0` keeps the
- * fixed drawers and nav inside it.
+ * cards, flat controls, each child in their own color (`CHILD_COLORS`) and an inverse pill nav that labels the current
+ * tab. The style and `--font-display` decide the look. The frame's `translate-z-0` keeps the fixed drawers and nav
+ * inside it.
  */
 export function ParentApp() {
   const [screen, setScreen] = useState<Screen>('today');
   const [sheet, setSheet] = useState<Sheet>(null);
   const [sick, setSick] = useState(true);
+  const [reportChild, setReportChild] = useState<ChildId>('lilli');
   const [frame, setFrame] = useState<HTMLDivElement | null>(null);
   const nav: Navigation = { go: setScreen, open: setSheet };
   const current = screen === 'announcements' || screen === 'announcement' ? 'today' : screen;
@@ -48,7 +49,17 @@ export function ParentApp() {
       <div
         ref={setFrame}
         className='relative h-[844px] w-[390px] max-w-full translate-z-0 overflow-hidden rounded-panel bg-background ring ring-border/50'>
-        {screen === 'today' && <TodayScreen nav={nav} sick={sick} setSick={setSick} />}
+        {screen === 'today' && (
+          <TodayScreen
+            nav={nav}
+            sick={sick}
+            setSick={setSick}
+            onQuickReport={(child) => {
+              setReportChild(child);
+              setSheet('report');
+            }}
+          />
+        )}
         {screen === 'absences' && <AbsencesScreen nav={nav} sick={sick} />}
         {screen === 'messages' && <MessagesScreen nav={nav} />}
         {screen === 'documents' && <DocumentsScreen nav={nav} />}
@@ -83,6 +94,8 @@ export function ParentApp() {
           open={sheet === 'report'}
           onOpenChange={(open) => setSheet(open ? 'report' : null)}
           container={frame}
+          child={reportChild}
+          setChild={setReportChild}
           onSent={() => setSick(true)}
         />
         <ProfileSheet

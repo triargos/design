@@ -44,6 +44,13 @@ function DrawerClose(props: DrawerPrimitive.Close.Props) {
   return <DrawerPrimitive.Close data-slot='drawer-close' {...props} />;
 }
 
+const INTERACTIVE_ROLES =
+  '[role=switch],[role=radio],[role=checkbox],[role=slider],[role=spinbutton],[role=tab],[role=option],[role=menuitem],[role=textbox]';
+
+function stopSwipeOnControls(event: React.PointerEvent) {
+  if (event.target instanceof Element && event.target.closest(INTERACTIVE_ROLES)) event.stopPropagation();
+}
+
 /**
  * A menu on a phone: floating `--drawer-inset` in from the bottom and sides (above the home indicator), a grabber on
  * top, no ✕. It springs up; a swipe down dismisses it (Base UI's `Drawer`, which also leaves a scrolled page to scroll
@@ -91,7 +98,12 @@ function DrawerContent({
             className='flex shrink-0 justify-center pt-related pb-(--drawer-page-pad)'>
             <div className='h-1 w-9 rounded-full bg-border' />
           </div>
-          {content}
+          {/* Base UI starts a swipe from any press that is not on a native control (`button`, `a`, `input` …) and
+              captures the pointer, so a Switch, Radio or Checkbox (a `span` with a role) never gets its click. A press on
+              a control with an interactive role stops here, before the popup's swipe handler sees it. */}
+          <div className='contents' onPointerDown={stopSwipeOnControls}>
+            {content}
+          </div>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>
