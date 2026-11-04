@@ -72,35 +72,60 @@ function ChildFilter({ value, onValueChange }: { value: string; onValueChange: (
 }
 
 /**
- * Quick actions: the one thing a parent does in a hurry, bound to each child. A tap opens the report with that child
- * and today already chosen, so Send is the only step left; a child who is already off sick offers to extend instead.
+ * Quick actions, round with a label under: each child first (their initial in their color; a tap opens the report
+ * with that child and today chosen, so Send is the only step left), then uploading a note and writing to the school.
  */
-function QuickActions({ sick, onQuickReport }: { sick: boolean; onQuickReport: (child: ChildId) => void }) {
+function QuickActions({
+  nav,
+  sick,
+  onQuickReport,
+}: {
+  nav: Navigation;
+  sick: boolean;
+  onQuickReport: (child: ChildId) => void;
+}) {
+  const actions = [
+    ...CHILDREN.map((child) => ({
+      key: child.id,
+      label: sick && child.id === 'lilli' ? `Extend ${child.name}` : `${child.name} sick`,
+      onClick: () => onQuickReport(child.id),
+      icon: <span className='text-heading'>{child.name[0]}</span>,
+      tone: CHILD_COLORS[child.id].solid,
+    })),
+    {
+      key: 'upload',
+      label: 'Upload note',
+      onClick: () => nav.go('documents'),
+      icon: <IconUpload />,
+      tone: 'bg-card text-foreground shadow-card',
+    },
+    {
+      key: 'message',
+      label: 'Message',
+      onClick: () => nav.go('messages'),
+      icon: <IconEdit />,
+      tone: 'bg-card text-foreground shadow-card',
+    },
+  ];
   return (
-    <div role='group' aria-label='Quick actions' className='grid grid-cols-2 gap-related'>
-      {CHILDREN.map((child) => {
-        const absent = sick && child.id === 'lilli';
-        return (
-          <button
-            key={child.id}
-            type='button'
-            onClick={() => onQuickReport(child.id)}
-            className='flex items-center gap-part rounded-card border border-(--edge) bg-card bg-clip-padding p-part text-start shadow-card transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.97]'>
-            <span
-              aria-hidden
-              className={cn(
-                'flex size-10 shrink-0 items-center justify-center rounded-full font-medium',
-                CHILD_COLORS[child.id].solid,
-              )}>
-              {child.name[0]}
-            </span>
-            <span className='flex min-w-0 flex-col'>
-              <span className='font-(weight:--control-font-weight)'>{child.name}</span>
-              <span className='text-caption text-muted-foreground'>{absent ? 'Extend' : 'Sick today'}</span>
-            </span>
-          </button>
-        );
-      })}
+    <div role='group' aria-label='Quick actions' className='grid grid-cols-4 gap-related'>
+      {actions.map((action) => (
+        <button
+          key={action.key}
+          type='button'
+          onClick={action.onClick}
+          className='group/quick flex flex-col items-center gap-related rounded-block py-related outline-none focus-visible:ring-3 focus-visible:ring-ring/24'>
+          <span
+            aria-hidden
+            className={cn(
+              'flex size-14 items-center justify-center rounded-full transition-[scale] duration-feedback group-active/quick:scale-[0.94] [&_svg]:size-icon-lg',
+              action.tone,
+            )}>
+            {action.icon}
+          </span>
+          <span className='text-caption font-medium'>{action.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -159,7 +184,7 @@ export function TodayScreen({
         </Card>
       )}
 
-      <QuickActions sick={sick} onQuickReport={onQuickReport} />
+      <QuickActions nav={nav} sick={sick} onQuickReport={onQuickReport} />
 
       <Card>
         <CardHeader
