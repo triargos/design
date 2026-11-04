@@ -20,28 +20,13 @@ export const CHILDREN = [
 export type ChildId = (typeof CHILDREN)[number]['id'];
 
 /**
- * Each child's color, as the mockup gives them: a family's own labels, so plain Tailwind hues rather than tokens (the
- * one place this example uses raw colors; light mode only). `tint` is a soft surface with its text, `avatar` the
- * initials on it, `solid` the strong fill with white on it, `text` the hue as text on white, `dot` a marker, `ring` the
- * selected edge.
+ * Each child's color, as the mockup's "Klar" has it: on their avatar only, never on a card. A family's own labels, so
+ * plain Tailwind hues rather than tokens (the one place this example uses raw colors; light mode only). `avatar` is the
+ * initial on a soft fill, `solid` the strong fill for the picked child.
  */
 export const CHILD_COLORS = {
-  lilli: {
-    tint: 'bg-pink-50 text-pink-900',
-    avatar: 'bg-pink-100 text-pink-800',
-    solid: 'bg-pink-600 text-white',
-    text: 'text-pink-700',
-    dot: 'bg-pink-500',
-    ring: 'ring-pink-600',
-  },
-  theo: {
-    tint: 'bg-teal-50 text-teal-900',
-    avatar: 'bg-teal-100 text-teal-800',
-    solid: 'bg-teal-600 text-white',
-    text: 'text-teal-700',
-    dot: 'bg-teal-500',
-    ring: 'ring-teal-600',
-  },
+  lilli: { avatar: 'bg-pink-100 text-pink-800', solid: 'bg-pink-600 text-white' },
+  theo: { avatar: 'bg-teal-100 text-teal-800', solid: 'bg-teal-600 text-white' },
 } as const satisfies Record<ChildId, Record<string, string>>;
 
 export const childOf = (name: string): ChildId => (name.toLowerCase() === 'theo' ? 'theo' : 'lilli');

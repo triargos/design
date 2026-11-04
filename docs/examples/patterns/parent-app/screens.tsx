@@ -5,7 +5,6 @@ import {
   IconDownload,
   IconEdit,
   IconFileText,
-  IconList,
   IconMapPin,
   IconPaperclip,
   IconPlus,
@@ -18,7 +17,6 @@ import { Alert, AlertAction, AlertContent } from '~/components/ui/alert';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { Calendar, type DateRange } from '~/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from '~/components/ui/empty';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '~/components/ui/input-group';
@@ -183,10 +181,7 @@ export function TodayScreen({
                     key={child.id}
                     type='button'
                     onClick={() => onQuickReport(child.id)}
-                    className={cn(
-                      'flex min-h-19 items-center gap-part rounded-block p-part text-start transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.97]',
-                      CHILD_COLORS[child.id].tint,
-                    )}>
+                    className='flex min-h-19 items-center gap-part rounded-block bg-muted p-part text-start transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.97]'>
                     <span
                       aria-hidden
                       className={cn(
@@ -197,7 +192,7 @@ export function TodayScreen({
                     </span>
                     <span className='flex min-w-0 flex-col'>
                       <span className='font-(weight:--control-font-weight)'>{child.name}</span>
-                      <span className='text-caption opacity-80'>Sick today</span>
+                      <span className='text-caption text-muted-foreground'>Sick today</span>
                     </span>
                   </button>
                 ))}
@@ -264,14 +259,17 @@ const STATS = [
   { child: 'theo', value: '2', unit: 'hrs' },
 ] as const;
 
+const PRESENCE = [
+  { child: 'lilli', absent: 'Off sick · back Mon, 9 Nov' },
+  { child: 'theo', absent: null },
+] as const;
+
 /**
- * Absences: filter by child, then the list by month or the month as a calendar (the "calendar" direction), with the
- * totals since September in each child's color.
+ * Absences: filter by child, who is at school today, the totals since September, then every absence by month. Each
+ * child's color is on their avatar only.
  */
 export function AbsencesScreen({ nav, sick }: { nav: Navigation; sick: boolean }) {
   const [child, setChild] = useState('all');
-  const [view, setView] = useState('list');
-  const [range, setRange] = useState<DateRange | null>({ start: '2026-11-03', end: '2026-11-08' });
   const shown = (id: string) => child === 'all' || id === child;
   const rows = ABSENCES.filter((row) => shown(childOf(row.child)) && (sick || row.month !== 'Current'));
   const months = [...new Set(rows.map((row) => row.month))];
@@ -281,94 +279,85 @@ export function AbsencesScreen({ nav, sick }: { nav: Navigation; sick: boolean }
       <ScreenHeader
         title='Absences'
         actions={
-          <>
-            <Button
-              emphasis='ghost'
-              size='icon-lg'
-              className='rounded-full'
-              aria-label={view === 'list' ? 'Show as calendar' : 'Show as list'}
-              onClick={() => setView(view === 'list' ? 'calendar' : 'list')}>
-              {view === 'list' ? <IconCalendar /> : <IconList />}
-            </Button>
-            <HeaderAction label='New absence' onClick={() => nav.open('report')}>
-              <IconPlus />
-            </HeaderAction>
-          </>
+          <HeaderAction label='New absence' onClick={() => nav.open('report')}>
+            <IconPlus />
+          </HeaderAction>
         }
         onProfile={() => nav.open('profile')}
       />
       <ChildFilter value={child} onValueChange={setChild} />
 
-      {view === 'calendar' ? (
-        <Card size='lg'>
-          <CardContent className='flex flex-col items-center gap-part overflow-hidden pb-related'>
-            <Calendar
-              mode='range'
-              value={range}
-              onValueChange={setRange}
-              className='w-full [--cell-size:--spacing(11)]'
-            />
-            {sick && shown('lilli') && (
-              <Item className='w-full'>
-                <ItemMedia>
-                  <span aria-hidden className={cn('h-8 w-1 rounded-full', CHILD_COLORS.lilli.dot)} />
-                </ItemMedia>
-                <ItemContent>
-                  <ItemTitle>Lilli · Doctor’s appointment</ItemTitle>
-                  <ItemDescription>Tue, 3 – Sun, 8 Nov · running</ItemDescription>
-                </ItemContent>
-                <ItemChevron />
-              </Item>
-            )}
-          </CardContent>
-        </Card>
-      ) : null}
+      <Card size='lg'>
+        <CardHeader>
+          <CardTitle>Today</CardTitle>
+        </CardHeader>
+        <CardContent className='overflow-hidden'>
+          <ItemList>
+            {PRESENCE.filter((row) => shown(row.child)).map((row) => {
+              const absent = row.absent !== null && sick;
+              return (
+                <Item key={row.child}>
+                  <ItemMedia>
+                    <ChildAvatar child={row.child} />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle>{CHILDREN.find((c) => c.id === row.child)!.name}</ItemTitle>
+                    {absent && <ItemDescription>{row.absent}</ItemDescription>}
+                  </ItemContent>
+                  <ItemActions>
+                    <Badge intent={absent ? 'warning' : 'success'}>{absent ? 'Absent' : 'At school'}</Badge>
+                  </ItemActions>
+                </Item>
+              );
+            })}
+          </ItemList>
+        </CardContent>
+      </Card>
 
       <div className='grid grid-cols-2 gap-part'>
         {STATS.filter((stat) => shown(stat.child)).map((stat) => {
           const name = CHILDREN.find((c) => c.id === stat.child)!.name;
           return (
-            <div
-              key={stat.child}
-              className={cn('flex flex-col gap-tight rounded-card p-card', CHILD_COLORS[stat.child].tint)}>
-              <p className='text-caption font-medium'>{name}</p>
-              <p className='flex items-baseline gap-tight'>
-                <span className='text-title tabular-nums'>{stat.value}</span>
-                <span className='text-body font-medium'>{stat.unit}</span>
-              </p>
-            </div>
+            <Card key={stat.child}>
+              <CardContent className='flex flex-col gap-tight p-card'>
+                <p className='text-caption font-medium text-muted-foreground'>{name}</p>
+                <p className='flex items-baseline gap-tight'>
+                  <span className='text-title tabular-nums'>{stat.value}</span>
+                  <span className='text-body font-medium'>{stat.unit}</span>
+                </p>
+              </CardContent>
+            </Card>
           );
         })}
       </div>
 
-      {view === 'list' &&
-        months.map((month) => (
-          <section key={month} className='flex flex-col gap-related'>
-            <ListLabel>{month}</ListLabel>
-            <Card>
-              <CardContent className='overflow-hidden'>
-                <ItemList>
-                  {rows
-                    .filter((row) => row.month === month)
-                    .map((row) => (
-                      <Item key={row.when} render={rowLink()}>
-                        <ItemMedia>
-                          <ChildAvatar child={childOf(row.child)} />
-                        </ItemMedia>
-                        <ItemContent>
-                          <ItemTitle className='tabular-nums'>{row.when}</ItemTitle>
-                          <ItemDescription>{row.child} · Doctor’s appointment</ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                          <Badge intent={row.intent}>{row.status}</Badge>
-                        </ItemActions>
-                      </Item>
-                    ))}
-                </ItemList>
-              </CardContent>
-            </Card>
-          </section>
-        ))}
+      {months.map((month) => (
+        <section key={month} className='flex flex-col gap-related'>
+          <ListLabel>{month}</ListLabel>
+          <Card>
+            <CardContent className='overflow-hidden'>
+              <ItemList>
+                {rows
+                  .filter((row) => row.month === month)
+                  .map((row) => (
+                    <Item key={row.when} render={rowLink()}>
+                      <ItemMedia>
+                        <ChildAvatar child={childOf(row.child)} />
+                      </ItemMedia>
+                      <ItemContent>
+                        <ItemTitle className='tabular-nums'>{row.when}</ItemTitle>
+                        <ItemDescription>{row.child} · Doctor’s appointment</ItemDescription>
+                      </ItemContent>
+                      <ItemActions>
+                        <Badge intent={row.intent}>{row.status}</Badge>
+                      </ItemActions>
+                    </Item>
+                  ))}
+              </ItemList>
+            </CardContent>
+          </Card>
+        </section>
+      ))}
     </ScreenScroll>
   );
 }
@@ -557,23 +546,14 @@ export function FamilyScreen({ nav }: { nav: Navigation }) {
       <ScreenHeader title='Family' onProfile={() => nav.open('profile')} />
       <div className='grid grid-cols-2 gap-part'>
         {CHILDREN.map((child) => (
-          <button
-            key={child.id}
-            type='button'
-            className={cn(
-              'flex flex-col items-start gap-part rounded-card p-card text-start transition-[scale] duration-feedback outline-none focus-visible:ring-3 focus-visible:ring-ring/24 active:scale-[0.98]',
-              CHILD_COLORS[child.id].tint,
-            )}>
-            <span
-              aria-hidden
-              className={cn(
-                'flex size-10 items-center justify-center rounded-full bg-white font-medium',
-                CHILD_COLORS[child.id].text,
-              )}>
-              {child.name[0]}
-            </span>
-            <span className='text-heading'>{child.name}</span>
-          </button>
+          <Card key={child.id}>
+            <CardContent
+              render={<button type='button' />}
+              className='flex w-full flex-col items-start gap-part p-card text-start'>
+              <ChildAvatar child={child.id} />
+              <span className='text-heading'>{child.name}</span>
+            </CardContent>
+          </Card>
         ))}
       </div>
       <section className='flex flex-col gap-related'>

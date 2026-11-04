@@ -49,23 +49,14 @@ const WHEN = [
 
 const REASONS = ['Sick', 'Doctor’s appointment', 'Family reasons', 'Other'] as const;
 
-/** A label above a group in a drawer, inset to the text of the rows below it. */
-function SheetLabel({ id, children }: { id?: string; children: React.ReactNode }) {
-  return (
-    <p id={id} className='px-tight text-caption font-medium text-muted-foreground'>
-      {children}
-    </p>
-  );
-}
-
 /**
- * The child picker: a radio group (Base UI's `Radio`, so arrow keys move the choice), each child a tile with their
- * initial; the chosen one fills with the child's tint, rings in their color and turns the initial solid.
+ * The child picker: a radio group (Base UI's `Radio`, so arrow keys move the choice), each child a card with their
+ * initial in their color; the chosen one rings in the brand and turns the initial solid.
  */
 function ChildPicker({ value, onValueChange }: { value: ChildId; onValueChange: (child: ChildId) => void }) {
   return (
     <RadioGroup
-      aria-labelledby='report-who'
+      aria-label='Who is sick?'
       value={value}
       onValueChange={(next) => onValueChange(next as ChildId)}
       className='grid-cols-2'>
@@ -79,7 +70,7 @@ function ChildPicker({ value, onValueChange }: { value: ChildId; onValueChange: 
             className={cn(
               'flex h-16 items-center gap-part rounded-card px-part text-start text-body font-(weight:--control-font-weight) outline-none',
               'transition-[background-color,box-shadow] duration-feedback focus-visible:ring-3 focus-visible:ring-ring/24',
-              checked ? cn('ring-2', colors.tint, colors.ring) : 'bg-card shadow-raised',
+              checked ? 'bg-card ring-2 ring-primary' : 'bg-card shadow-raised',
             )}>
             <span
               aria-hidden
@@ -101,7 +92,7 @@ function ChildPicker({ value, onValueChange }: { value: ChildId; onValueChange: 
 function WhenPicker({ value, onValueChange }: { value: string; onValueChange: (when: string) => void }) {
   return (
     <RadioGroup
-      aria-labelledby='report-when'
+      aria-label='When?'
       value={value}
       onValueChange={(next) => onValueChange(String(next))}
       className='grid-cols-3'>
@@ -211,13 +202,9 @@ export function ReportSheet({
                   setSent(true);
                   onSent();
                 }}>
-                <div className='flex flex-col gap-related'>
-                  <SheetLabel id='report-who'>Who is sick?</SheetLabel>
-                  <ChildPicker value={child} onValueChange={setChild} />
-                </div>
+                <ChildPicker value={child} onValueChange={setChild} />
 
                 <div className='flex flex-col gap-related'>
-                  <SheetLabel id='report-when'>When?</SheetLabel>
                   <WhenPicker value={when} onValueChange={setWhen} />
                   {when === 'range' && (
                     <div className='grid grid-cols-2 gap-related'>
@@ -254,12 +241,7 @@ export function ReportSheet({
                   )}
                 </DrawerMenuGroup>
 
-                <Field>
-                  <FieldLabel htmlFor='report-note' className='px-tight'>
-                    Note to the school (optional)
-                  </FieldLabel>
-                  <Textarea id='report-note' placeholder='For example: appointment at the paediatrician' />
-                </Field>
+                <Textarea aria-label='Note to the school' placeholder='Note to the school (optional)' />
 
                 <Button type='submit' size='lg' intent='primary'>
                   Send report
