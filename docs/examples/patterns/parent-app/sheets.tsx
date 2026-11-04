@@ -196,7 +196,7 @@ export function ReportSheet({
               </div>
             ) : (
               <form
-                className='flex flex-col gap-section'
+                className='flex flex-col gap-section pt-related'
                 onSubmit={(event) => {
                   event.preventDefault();
                   setSent(true);
