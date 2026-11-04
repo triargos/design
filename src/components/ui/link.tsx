@@ -7,7 +7,7 @@ type LinkComponent = React.ComponentType<React.ComponentPropsWithRef<'a'>>;
 const LinkContext = React.createContext<LinkComponent | null>(null);
 
 /**
- * The link every linking part renders (`BreadcrumbLink`, `TabsLink`, `TableRowLink`, `SidebarMenuSubButton`,
+ * The link every linking part renders (`BackLink`, `BreadcrumbLink`, `TabsLink`, `TableRowLink`, `SidebarMenuSubButton`,
  * `BottomNavLink`, `BottomNavMoreItem`) instead of a plain `<a>`, so `href` routes client-side without a `render` on
  * each. A part's own `render` still wins. Map `href` to the router's prop in the component you pass.
  */

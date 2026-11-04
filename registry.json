@@ -278,6 +278,25 @@
       ]
     },
     {
+      "name": "back-link",
+      "type": "registry:ui",
+      "dependencies": [
+        "@base-ui/react@1.8.0",
+        "@tabler/icons-react@3.49.0"
+      ],
+      "registryDependencies": [
+        "@pavo/link",
+        "@pavo/theme",
+        "@pavo/utils"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/back-link.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "badge",
       "type": "registry:ui",
       "dependencies": [

@@ -1,13 +1,14 @@
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Alert, AlertContent } from '~/components/ui/alert';
+import { BackLink } from '~/components/ui/back-link';
 import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from '~/components/ui/empty';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 import { PageContent } from '../kit/page-layout';
-import { PageDescription, PageHeaderBackLink, PageHeaderGroup, PageSection, PageTitle } from '../kit/page-layout';
+import { PageDescription, PageHeaderGroup, PageSection, PageTitle } from '../kit/page-layout';
 
 import { Code, FoundationPage, FoundationSection, GapRuler, SpecimenList, SpecimenRow } from '../kit/blocks';
 import { defineDocs, useTokens } from '../kit/docs';
@@ -55,7 +56,7 @@ const SamplePage = () => (
     <PageContent
       header={
         <>
-          <PageHeaderBackLink href='/'>Projects</PageHeaderBackLink>
+          <BackLink href='/'>Projects</BackLink>
           <PageHeaderGroup>
             <PageTitle>Website redesign</PageTitle>
             <PageDescription>Review the details before you share the project with the team.</PageDescription>

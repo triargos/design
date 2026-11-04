@@ -1,5 +1,6 @@
-import { IconChevronLeft, IconPlus } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 
+import { BackLink } from '~/components/ui/back-link';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
@@ -11,12 +12,7 @@ export function PagePatternDefault() {
   return (
     <div className='flex w-full max-w-3xl flex-col gap-page'>
       <header className='flex flex-col gap-group'>
-        <a
-          href='#projects'
-          className='inline-flex min-h-6 items-center gap-1.5 self-start text-body text-muted-foreground transition-colors hover:text-foreground'>
-          <IconChevronLeft aria-hidden className='size-4' />
-          Projects
-        </a>
+        <BackLink href='#projects'>Projects</BackLink>
         <div className='flex flex-wrap items-start justify-between gap-group'>
           <hgroup className='flex flex-col gap-tight'>
             <h1 className='text-title text-balance'>Website redesign</h1>

@@ -1,6 +1,3 @@
-import { mergeProps } from '@base-ui/react/merge-props';
-import { useRender } from '@base-ui/react/use-render';
-import { IconChevronLeft } from '@tabler/icons-react';
 import type { ComponentProps, ReactNode } from 'react';
 
 import { cn } from '~/lib/utils';
@@ -10,7 +7,7 @@ import { cn } from '~/lib/utils';
 
 interface PageContentProps extends ComponentProps<'div'> {
   /**
-   * Stacked `group` apart in a `<header>`: a `PageHeaderBackLink`, the `PageHeaderGroup` (or a `PageHeaderRow` with
+   * Stacked `group` apart in a `<header>`: a `BackLink`, the `PageHeaderGroup` (or a `PageHeaderRow` with
    * actions), a `TabsNav`.
    */
   header: ReactNode;
@@ -63,29 +60,6 @@ export const PageHeaderRow = ({ className, ...props }: ComponentProps<'div'>) =>
 /** The page's buttons, the main action last. */
 export const PageHeaderActions = ({ className, ...props }: ComponentProps<'div'>) => {
   return <div className={cn('flex flex-wrap items-center gap-related', className)} {...props} />;
-};
-
-/** Link to the parent page, above the title. `children` is the link text; `render={<Link to='…' />}` for a router link. */
-export const PageHeaderBackLink = ({ className, children, render, ...props }: useRender.ComponentProps<'a'>) => {
-  return useRender({
-    defaultTagName: 'a',
-    render,
-    props: mergeProps<'a'>(
-      {
-        className: cn(
-          'inline-flex min-h-6 items-center gap-1.5 self-start text-body text-muted-foreground transition-colors hover:text-foreground',
-          className,
-        ),
-        children: (
-          <>
-            <IconChevronLeft aria-hidden className='size-4' />
-            {children}
-          </>
-        ),
-      },
-      props,
-    ),
-  });
 };
 
 interface PageSectionProps extends Omit<ComponentProps<'section'>, 'title'> {
