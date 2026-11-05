@@ -34,7 +34,7 @@ const D50: Vec3 = [0.3457 / 0.3585, 1, 0.2958 / 0.3585];
 export function toCss(format: ColorFormat, color: Color): string {
   const [l, c, h, a] = color;
   return format === 'LCH'
-    ? `lch(${round3(l)}% ${round3(c)} ${round3(h)}${a === undefined ? '' : ' / ' + round3(a)})`
+    ? `lch(${round3(l)}% ${round3(c)} ${round3(h) % 360}${a === undefined ? '' : ' / ' + round3(a)})`
     : format === 'P3'
       ? lchToP3String(color)
       : lchToRgbString(color);
