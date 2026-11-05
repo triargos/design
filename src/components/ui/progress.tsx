@@ -10,7 +10,7 @@ function Progress({ className, children, locale: localeProp, ...props }: Progres
     <ProgressPrimitive.Root
       data-slot='progress'
       locale={locale}
-      className={cn('flex flex-wrap gap-related', className)}
+      className={cn('flex flex-wrap items-center gap-related', className)}
       {...props}>
       {children}
       <ProgressTrack>
@@ -35,7 +35,7 @@ function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.
     <ProgressPrimitive.Indicator
       data-slot='progress-indicator'
       className={cn(
-        'h-full bg-primary-solid transition-[width] duration-move ease-move motion-reduce:transition-none',
+        'h-full rounded-track bg-primary-solid transition-[width] duration-move ease-move motion-reduce:transition-none',
         className,
       )}
       {...props}

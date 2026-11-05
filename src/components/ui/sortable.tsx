@@ -17,7 +17,8 @@ type SortableItemProps = useRender.ComponentProps<'div'> & { id: string };
 
 /**
  * A row that can be dragged. In an `ItemList`, render it as the row itself (`render={<Item />}`) so the list's padding
- * and hairlines reach it.
+ * and hairlines reach it. While it moves it lifts onto the popup surface, opaque, so the rows it passes do not show
+ * through.
  */
 function SortableItem({ id, render, ...props }: SortableItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -27,7 +28,7 @@ function SortableItem({ id, render, ...props }: SortableItemProps) {
     ref: setNodeRef,
     props: mergeProps<'div'>(
       {
-        className: cn('relative', isDragging && 'z-10 opacity-80'),
+        className: cn('relative', isDragging && 'z-10 bg-popover shadow-popup'),
         style: { transform: CSS.Translate.toString(transform), transition },
       },
       props,

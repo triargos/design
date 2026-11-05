@@ -27,6 +27,7 @@ export function ItemWithMedia() {
             </ItemMedia>
             <ItemContent>
               <ItemTitle>Q2 roadmap.pdf</ItemTitle>
+              <ItemDescription>Uploaded on April 2</ItemDescription>
             </ItemContent>
           </Item>
         </ItemList>
