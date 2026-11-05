@@ -3,11 +3,11 @@ import { useRender } from '@base-ui/react/use-render';
 import { IconChevronRight } from '@tabler/icons-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import useMeasure from 'react-use-measure';
-
 import { Skeleton } from '~/components/ui/skeleton';
 
+import { useReducedMotion } from '~/hooks/use-reduced-motion';
 import { LoadMore, useVirtualRows } from '~/hooks/use-virtual-rows';
+import { springEasing } from '~/lib/animate';
 import { cn } from '~/lib/utils';
 
 /**
@@ -70,8 +70,9 @@ type ItemListProps<T> = ItemListElementProps &
 
 /**
  * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-hidden'`. It
- * springs its height when rows come and go (reduced motion: it jumps); `virtualized` for a long list. While the rows
- * load, `ItemListSkeleton` stands in for it.
+ * springs its height when rows come and go or change size (reduced motion: it jumps); a row that animates its own
+ * height, as an `Accordion` panel does, sets the pace instead. `virtualized` for a long list. While the rows load,
+ * `ItemListSkeleton` stands in for it.
  */
 function ItemList<T>(props: ItemListProps<T>) {
   if (props.virtualized) return <VirtualizedItemList {...props} />;
@@ -87,21 +88,21 @@ function StaticItemList({
   'aria-labelledby': ariaLabelledBy,
   ...props
 }: ItemListElementProps & { children?: React.ReactNode }) {
-  const [measureRef, bounds] = useMeasure();
+  const rowsRef = useListFold();
   const rows = React.Children.toArray(children);
   return (
     <div
       data-slot='item-list'
       className={cn(
-        'overflow-hidden transition-[height] duration-fold ease-spring motion-reduce:transition-none',
+        'overflow-hidden',
         // In a card the rows sit `card` − `row-pad-x` in, so their text starts on the card's text edge, where the
         // header above starts too, at any density. A margin: the springing height is the rows' own.
         'in-data-[slot=card-content]:m-[calc(var(--spacing-card)-var(--spacing-row-pad-x))]',
         className,
       )}
-      style={bounds.height > 0 ? { ...style, height: bounds.height } : style}
+      style={style}
       {...props}>
-      <div ref={measureRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
+      <div ref={rowsRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
         {rows.map((row, index) => (
           <ItemListRow key={React.isValidElement(row) ? row.key : index} last={index === rows.length - 1}>
             {row}
@@ -110,6 +111,48 @@ function StaticItemList({
       </div>
     </div>
   );
+}
+
+/** Height changes a running animation in the rows makes: they move the rows themselves, frame by frame. */
+const foldsItself = (animation: Animation) =>
+  animation instanceof CSSTransition
+    ? animation.transitionProperty === 'height' || animation.transitionProperty === 'grid-template-rows'
+    : animation.effect instanceof KeyframeEffect &&
+      animation.effect.getKeyframes().some((keyframe) => 'height' in keyframe || 'gridTemplateRows' in keyframe);
+
+/**
+ * Springs the list from the height it shows to its rows' new height whenever they resize, and leaves it `auto`
+ * otherwise, so it never clips a row. A resize from a row's own height animation passes through: a spring behind it
+ * would trail the row and overshoot after it settled.
+ */
+function useListFold() {
+  const rowsRef = React.useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  React.useLayoutEffect(() => {
+    const rows = rowsRef.current;
+    const list = rows?.parentElement;
+    if (!rows || !list) return;
+    let height = rows.getBoundingClientRect().height;
+    let fold: Animation | undefined;
+    const observer = new ResizeObserver(() => {
+      const next = rows.getBoundingClientRect().height;
+      if (next === height) return;
+      // Mid-spring the list stands between two heights: the next spring starts there.
+      const from = fold?.playState === 'running' ? list.getBoundingClientRect().height : height;
+      height = next;
+      fold?.cancel();
+      if (reduced || rows.getAnimations({ subtree: true }).some(foldsItself)) return;
+      const duration = parseFloat(getComputedStyle(list).getPropertyValue('--transition-duration-fold')) || 400;
+      // No fill: the finished spring hands the height back to `auto`.
+      fold = list.animate({ height: [`${from}px`, `${next}px`] }, { duration, easing: springEasing() });
+    });
+    observer.observe(rows);
+    return () => {
+      observer.disconnect();
+      fold?.cancel();
+    };
+  }, [reduced]);
+  return rowsRef;
 }
 
 function VirtualizedItemList<T>({
