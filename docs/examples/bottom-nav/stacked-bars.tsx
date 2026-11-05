@@ -82,7 +82,7 @@ const TASKS = [
 /**
  * Two `ActionBar`s on one page, and "More" with nested groups. Rename the project: "Unsaved changes" docks (`priority={1}`). Select a task meanwhile:
  * the selection waits until the changes are saved or discarded. "Pill bar" sets `--bottom-nav-radius: 9999px`; off,
- * the bar takes the sizing theme's.
+ * the bar takes the default.
  */
 export function BottomNavStackedBars() {
   const [page, setPage] = useState('Tasks');

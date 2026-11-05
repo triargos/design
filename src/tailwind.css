@@ -226,7 +226,7 @@
      resolves on the element: something deeper in sets its own `--outer-inset`, its distance from the surface's edge. */
   --radius-inner: max(0px, calc(var(--outer-radius, 0px) - var(--outer-inset, 0px)));
   /* A button or chip seated in a field (`InputGroupButton`, a combobox chip, the file button): the field's height less
-     `field-inset` above and below. Inline, so it follows a density's or a subtree's `--spacing-control`. */
+     `field-inset` above and below. Inline, so it follows a subtree's `--spacing-control`. */
   --spacing-field-seat: calc(var(--spacing-control) - 2 * var(--spacing-field-inset));
 }
 
@@ -263,9 +263,9 @@
   /* Tracks and thumbs: switch, slider, progress. */
   --radius-track: calc(infinity * 1px);
 
-  /* Sizing (DESIGN.md, Sizing): every length a component draws is a token, so a sizing theme (`lib/theme/sizing.ts`)
-     re-declares them on `:root` or on a subtree. Literal values only, never a `var()` to another token: a theme scoped
-     to a subtree then changes exactly what it re-declares. A name reads thing first, then what about it: `control-pad`
+  /* Sizing (DESIGN.md, Sizing): every length a component draws is a token. One design: an app that needs another
+     length re-declares that one variable on `:root` or a subtree. Literal values only, never a `var()` to another
+     token, so a re-declared token changes exactly itself. A name reads thing first, then what about it: `control-pad`
      is a control's inline padding, `popup-inset` a popup's edge to its rows. Lengths one component owns are below, in
      Component sizing. */
 
@@ -615,8 +615,8 @@
   }
 }
 
-/* Component sizing: lengths one component owns, read as `w-(--switch-width)`. Literal values, like the scale above;
-   a sizing theme re-declares them too. Named component first, then what about it (`-height`, `-pad-x`, `-gap`,
+/* Component sizing: lengths one component owns, read as `w-(--switch-width)`. Literal values, like the scale above.
+   Named component first, then what about it (`-height`, `-pad-x`, `-gap`,
    `-inset`, `-size`, `-radius`), grouped by the same families. */
 :root {
   /* Controls. */
@@ -748,8 +748,7 @@
   --intent: var(--intent-subtle-foreground);
 }
 
-/* On a phone a menu row is a touch target: 36, a step above the desktop's 32. A sizing theme (`sizingThemeCss`, a
-   later stylesheet) overrides it with its own rows. */
+/* On a phone a menu row is a touch target: 36, a step above the desktop's 32. */
 @media (width < 48rem) {
   :root {
     --spacing-menu-item: 2.25rem;

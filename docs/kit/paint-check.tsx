@@ -20,7 +20,7 @@ const PaintCheckContext = createContext<Report | null>(null);
 
 /**
  * A regression check: every `PaintCheck` inside measures what its control paints, and the line on top counts the ones
- * that paint outside or short of their box. Live, so it holds under any theme, density or mode the page is in.
+ * that paint outside or short of their box. Live, so it holds under any theme, tuned token or mode the page is in.
  */
 export function PaintCheckGroup({ children }: { children: ReactNode }) {
   const [results, setResults] = useState<ReadonlyMap<string, boolean>>(new Map());

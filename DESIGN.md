@@ -6,7 +6,7 @@ The guide to this design system. Each design question has one axis. Every token 
 What does it say?             → intent      neutral · primary · info · success · warning · destructive
 How loud is it?               → emphasis    solid · subtle · outline · ghost · raised
 How big is it?                → size        default · sm · xs · lg (per component)
-How dense, how round?         → sizing      density compact · default · comfortable × radius sharp · default · soft · pill
+How big, how round?           → sizing      one design: the tokens in tailwind.css (Sizing)
 Where does it sit?            → surface     page · shell · card · popup        ([data-surface])
 What is the text for?         → type role   title · heading · subheading · body · control · label · caption
 How far from its neighbour?   → spacing     tight · related · group · card · page · section
@@ -21,7 +21,7 @@ How does it move?             → motion      enter · feedback · move · drawe
 | Path                                  | Holds                                                                                                                                                                                                                                                                   |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/components/ui/<c>.tsx`           | One component per file. It imports only `~/components/ui`, `~/lib/*` and `~/hooks/*`.                                                                                                                                                                                   |
-| `src/lib/theme/`                      | Theme generator (`README.md`), `brandingThemeCss`, `themeToCssVars`, `sizingThemeCss` (`sizing.ts`)                                                                                                                                                                     |
+| `src/lib/theme/`                      | Theme generator (`README.md`), `brandingThemeCss`, `themeToCssVars`, `SIZING_TOKENS` (`sizing.ts`)                                                                                                                                                                      |
 | `src/tailwind.css`                    | Tokens: `@theme inline` colors, roles, motion, utilities. No `@import 'tailwindcss'`: an entry imports it after Tailwind (`site/styles.css`; an app's own entry, README)                                                                                                |
 | `docs/components/<c>.tsx`             | Docs page for a component: `export default defineDocs({ title, description, group, Page, playground? })`                                                                                                                                                                |
 | `docs/foundations/`, `docs/patterns/` | Token pages (Color, Typography, Spacing, Surfaces, Shape, Sizing, Loading, Interaction, Motion) and compositions (Bulk Selection, Confirmation, Danger Zone, List in Card, List Page, Page)                                                                             |
@@ -30,7 +30,7 @@ How does it move?             → motion      enter · feedback · move · drawe
 
 - To add a component, write the component, then `docs/components/<c>.tsx`, then its examples. The page title follows the file name (`alert-dialog.tsx` → Alert Dialog).
 - A page lists its examples in this order: Default, Variants, Sizes, content, structure, placement, in context, States. The description is one sentence.
-- Run `pnpm dev` to see the docs site. Customize switches mode, the three brand names (`BrandingTheme`), the sizing style, density and radius (`SizingTheme`), the surface, and the tunable spacing, sizing, type and radius values (`docs/kit/tokens.ts`). A slider starts at the sizing theme's value and writes only what moved. Settle a value there, then change `tailwind.css`.
+- Run `pnpm dev` to see the docs site. Customize switches mode, the three brand names (`BrandingTheme`), the surface, and the tunable spacing, sizing, type and radius values (`docs/kit/tokens.ts`). A slider starts at the default and writes only what moved. Settle a value there, then change `tailwind.css`.
 - Forced states in a matrix: `StateCell state='hover' | 'press' | 'focus'`. A Board shows an overlay open on a stage through the overlay's `container` prop.
 
 ## API rules
@@ -94,7 +94,7 @@ Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other 
 | `text-caption`    | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                           | `Badge`, `TooltipContent`                                            |
 
 - Icons (Tabler, `@tabler/icons-react`) draw a 1.25px stroke at every size, the weight of their label (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
-- A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`, a `Drawer`'s rows 16 / 24), so iOS does not zoom on focus; labels stay 14 (`text-label`), so the value reads before its label, and a sizing theme's `touch` values apply. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
+- A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`, a `Drawer`'s rows 16 / 24), so iOS does not zoom on focus; labels stay 14 (`text-label`), so the value reads before its label. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
 - A new role goes in `tailwind.css` **and** in `cn` (`lib/utils.ts`). Otherwise `cn` drops the text color next to it.
 
 ## Spacing
@@ -113,7 +113,7 @@ Six steps, named by relationship, each about twice the one before. What touches 
 - A gap derived from two steps is a `calc` of their variables.
 - A card is a shell by default: its 16px title band sits inside the tint, one level under a section heading. `variant='plain'` is the exception, for a block whose title is itself a section heading (20px, above the surface); never under another heading, as two 20px headings in a row read as one level.
 - A `plain` card's `CardHeader`, and a shell's over a table, sits above the card, on its text edge: edge 1px + `card`. Other text outside a card that shares the edge pads the same: `px-[calc(var(--spacing-card)+1px)]`.
-- Padding inside rows and controls (`Item`, `Alert`) follows the sizing tokens (`control-pad`, `row-pad-*`, `*-inset`; Sizing), not this scale, on the same 4px grid: 4, 8, 12, 16, 24. A sizing theme's density moves `group` and `card` too; `page` and `section` never.
+- Padding inside rows and controls (`Item`, `Alert`) follows the sizing tokens (`control-pad`, `row-pad-*`, `*-inset`; Sizing), not this scale, on the same 4px grid: 4, 8, 12, 16, 24.
 
 ## Shape
 
@@ -135,7 +135,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | `rounded-block`      | 12   | Multi-line rows and blocks: `Item`, `ChoiceCard`, prose `pre` and `img` |
 | `rounded-track`      | full | Switch, slider, progress: tracks and thumbs                             |
 
-- `control-*` is for single-line controls only: a sizing theme may turn them into pills. Anything that wraps takes `area`, `block`, `tooltip` or `checkbox`, which cap. Dots, radio dots and round avatars stay `rounded-full`: geometry, not theme.
+- `control-*` is for single-line controls only: an app may round them into pills. Anything that wraps takes `area`, `block`, `tooltip` or `checkbox`, which cap. Dots, radio dots and round avatars stay `rounded-full`: geometry, not theme.
 
 - Concentric corners: `inner = outer − inset`. The outer surface sets `--outer-radius` and `--outer-inset`; what sits inside takes `rounded-inner`. Owners: `Card` (content 1px in), popups (items 4px in), `InputGroup` buttons (4px in), combobox chips (4px in).
 - `Avatar` `shape='square'` is the one exception: its radius steps with its size (`rounded-xs` at 12px to `rounded-2xl` at 80px), an icon-like scale no role covers.
@@ -154,7 +154,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 
 ## Sizing
 
-Every length a component draws comes from a token, so a sizing theme restyles the whole system by re-declaring tokens. Tokens are literals, never a `var()` to another token: a theme on a subtree changes exactly what it re-declares.
+Every length a component draws comes from a token, tuned once in `tailwind.css`. Tokens are literals, never a `var()` to another token: a token re-declared on a subtree changes exactly itself.
 
 Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/theme/sizing.ts`, each with what it tunes). A name reads thing first, then what about it: `control-pad` is a control's inline padding.
 
@@ -169,26 +169,12 @@ Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/the
 
 - A length one component owns is a component token in the Component sizing block of `tailwind.css` (`--switch-thumb`, `--tooltip-pad-x`), read as `w-(--switch-thumb)`. Prefer the shared scale.
 - A relationship is a `calc()` of tokens: a menu row's padding from `--spacing-menu-item` and the line height, a button in a field from the two heights.
-- Never scales: the 44px `hit-area`, 16px field text below `md` (iOS zoom), hairlines (`border`, `h-px`, `ring-3`), the −1px for a border, layout widths (`w-64` sidebar, `max-w-*`, dialog and sheet widths), `page` and `section` spacing.
+- Not tokens: the 44px `hit-area`, 16px field text below `md` (iOS zoom), hairlines (`border`, `h-px`, `ring-3`), the −1px for a border, layout widths (`w-64` sidebar, `max-w-*`, dialog and sheet widths), `page` and `section` spacing.
 
-A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius, each a partial map of token → value, plus its own `tokens`, and `touch` values for a phone (below `md`, 768px).
+One design, no sizing themes: the values are tuned in `tailwind.css`, not picked from presets.
 
-| Axis      | Values                                                                                                                                                                                                                                                        |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `density` | `compact` (controls 32, card 16, group 12, switch 14) · `default` · `comfortable` (controls 40, card 32, group 24, icons 18, checkbox 18). Component tokens move with it                                                                                      |
-| `radius`  | `sharp` (all 0, the fixed steps too; checkbox and track 2) · `default` · `soft` (×1.2) · `pill` (`control-*` and tabs full; the rest capped). Component radii (`--tabs-radius`, `--alert-radius`, `--drawer-*-radius`) are literal: each radius sets them too |
-
-| Style (`SIZING_STYLES`) | Density · radius   | Its own                                                                                                                                                               |
-| ----------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pavo`                  | default · default  | Nothing: `tailwind.css` as is                                                                                                                                         |
-| `coss`                  | compact · default  | coss ui: controls 32, menu rows 28, popups and controls 10, tabs 8, cards 18, popover padding 16; touch: controls 36, rows 32, icons 18, checkbox 18, switch thumb 20 |
-| `dense`                 | compact · default  | shadcn mira/nova: controls 28, control text 13, checkbox 14, smaller corners; touch: controls 32                                                                      |
-| `soft`                  | comfortable · pill | shadcn maia: rounder surfaces (card 28, popup 24)                                                                                                                     |
-
-- An app renders `sizingThemeCss(theme)` into a `<style>` after the stylesheet, next to `brandingThemeCss`. It writes only the overrides on `:root`, and `touch` in `@media (width < 40rem)`; the default theme writes nothing.
-- A subtree: `sizingThemeCss(theme, '[data-sizing=compact]')` and `data-sizing='compact'` on the element. A popup portals out of the subtree; give it a `container` inside, or theme `:root`.
-- A new token goes in `SIZING_TOKENS` (`sizing.ts`: default, family, what it tunes), with its value in each axis or style that moves it. `pnpm sizing:check` fails when `tailwind.css` and `sizing.ts` drift.
-- A density of your own: `scaleDensity(0.9)` scales every default length to whole px (not radius, type, `page`, `section`; a value of 4px or less moves at most 1px), or pass any token map as `density`.
+- A new token goes in `SIZING_TOKENS` (`sizing.ts`: default, family, what it tunes). `pnpm sizing:check` fails when `tailwind.css` and `sizing.ts` drift.
+- An app that needs another length re-declares that one variable after the stylesheet, on `:root` or a subtree; it never forks a component for it.
 
 ## Surfaces and elevation
 
@@ -302,7 +288,7 @@ type          title 28 · heading 20 · subheading 16 · body 14 · control 14 �
 spacing       tight 4 · related 8 · group 16 · card 16 · card-band 12 · page 48 · section 64
 radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 12 · card 20 · dialog 20 · panel 20 · rounded-inner
               checkbox 4 · tooltip 8 · area 10 · block 12 · track full
-sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 32 · size-icon 16 · sizingThemeCss(SIZING_STYLES.coss) · scaleDensity(0.9)
+sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 32 · size-icon 16
 elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-tooltip · shadow-modal · shadow-solid · shadow-selection · shadow-thumb
 block         Card [variant='plain'] > CardHeader > CardContent [> ItemList [virtualized]] > CardFooter
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
