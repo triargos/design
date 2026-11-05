@@ -51,16 +51,18 @@ export function BottomNavLabels() {
   return (
     <div className='relative h-[640px] w-[390px] max-w-full overflow-hidden rounded-panel bg-background ring ring-border/50'>
       <div className='h-full overflow-y-auto px-4 pt-6 pb-36'>
-        <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-page'>
           <h1 className='px-tight text-title text-balance'>{page}</h1>
-          {['Messages', 'Earlier'].map((title) => (
-            <Card key={title}>
-              <CardHeader>
-                <CardTitle>{title}</CardTitle>
-              </CardHeader>
-              <CardContent className='h-32' />
-            </Card>
-          ))}
+          <div className='flex flex-col gap-group'>
+            {['Messages', 'Earlier'].map((title) => (
+              <Card key={title}>
+                <CardHeader>
+                  <CardTitle>{title}</CardTitle>
+                </CardHeader>
+                <CardContent className='h-32' />
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
       <BottomNav className='absolute md:grid'>

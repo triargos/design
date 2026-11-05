@@ -7,13 +7,12 @@ import { defineDocs } from '../kit/docs';
 
 export default defineDocs({
   title: 'Bottom Nav',
-  description:
-    'The app navigation on a phone: a floating bar of icon tabs and the main action, on the inverted surface.',
+  description: 'The app navigation on a phone: a floating bar of icon tabs and the main action, on the popup surface.',
   group: 'Components',
   Page: () => (
     <FoundationPage
       title='Bottom Nav'
-      description='The app navigation on a phone: a floating bar of 3–5 icon tabs and the main action beside it, dark on a light page and light on a dark one. Hidden from md up, where the Sidebar takes over.'>
+      description='The app navigation on a phone: a floating bar of 3–5 icon tabs and the main action beside it, floating over the page as a popup. Hidden from md up, where the Sidebar takes over.'>
       <ExampleSection
         title='Default'
         description={

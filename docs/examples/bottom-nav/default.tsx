@@ -75,14 +75,16 @@ export function BottomNavDefault() {
       <div className='h-full overflow-y-auto px-5 pt-10 pb-24'>
         <div className='flex flex-col gap-page'>
           <h1 className='text-title text-balance'>{page}</h1>
-          {['Due today', 'This week', 'Later'].map((title) => (
-            <Card key={title}>
-              <CardHeader>
-                <CardTitle>{title}</CardTitle>
-              </CardHeader>
-              <CardContent className='h-24' />
-            </Card>
-          ))}
+          <div className='flex flex-col gap-group'>
+            {['Due today', 'This week', 'Later'].map((title) => (
+              <Card key={title}>
+                <CardHeader>
+                  <CardTitle>{title}</CardTitle>
+                </CardHeader>
+                <CardContent className='h-24' />
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
       <BottomNav className='absolute md:grid'>
