@@ -847,12 +847,13 @@
       "dependencies": [
         "@base-ui/react@1.8.0",
         "@tabler/icons-react@3.49.0",
-        "class-variance-authority@^0.7.1",
-        "react-use-measure@^2.1.7"
+        "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "@pavo/animate",
         "@pavo/skeleton",
         "@pavo/theme",
+        "@pavo/use-reduced-motion",
         "@pavo/use-virtual-rows",
         "@pavo/utils"
       ],
