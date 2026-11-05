@@ -101,14 +101,14 @@ Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other 
 
 Six steps, named by relationship, each about twice the one before. What touches sits `related` (8); peer blocks sit a `group` (16) apart, twice that, so a group always reads apart from its neighbours. A gap between the two (12) blurs that line, so the scale has none. Components own the gaps inside them; the page layout (the Page pattern) owns the gaps between them. Use the step name (`gap-group`, `p-group`), never its number.
 
-| Step      | px  | Relationship                                                   | Owner                                                                                  |
-| --------- | --- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty` |
-| `related` | 8   | Items that touch: label → control, media → text, text → action | `Field` (label → control), page header actions, `ItemActions`, `Stepper`, `Progress`   |
-| `group`   | 16  | Peer blocks; a heading → its content; a label beside a control | Page header stack, sections, `FieldGroup`, horizontal `Field`, `Empty` media, toasts   |
-| `card`    | 16  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges   |
-| `page`    | 48  | Page header → content                                          | Page pattern                                                                           |
-| `section` | 64  | Section ↔ section                                              | Page pattern                                                                           |
+| Step      | px  | Relationship                                                   | Owner                                                                                                                 |
+| --------- | --- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty`                                |
+| `related` | 8   | Items that touch: label → control, media → text, text → action | `Field` (label → control; a checkbox or radio → its label), page header actions, `ItemActions`, `Stepper`, `Progress` |
+| `group`   | 16  | Peer blocks; a heading → its content; a label beside a control | Page header stack, sections, `FieldGroup`, horizontal `Field`, `Empty` media, toasts                                  |
+| `card`    | 16  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges                                  |
+| `page`    | 48  | Page header → content                                          | Page pattern                                                                                                          |
+| `section` | 64  | Section ↔ section                                              | Page pattern                                                                                                          |
 
 - A gap derived from two steps is a `calc` of their variables.
 - A card is a shell by default: its 16px title band sits inside the tint, one level under a section heading. `variant='plain'` is the exception, for a block whose title is itself a section heading (20px, above the surface); never under another heading, as two 20px headings in a row read as one level.
