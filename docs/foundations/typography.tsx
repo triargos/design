@@ -125,21 +125,21 @@ export default defineDocs({
               <PageDescription>{paragraph}</PageDescription>
             </PageHeaderGroup>
             <PageSection title='Project details' description='Only admins see these details.'>
-              <Card>
+              <Card variant='shell'>
                 <CardHeader>
                   <CardTitle>Members</CardTitle>
                   <CardDescription>They get every project update.</CardDescription>
                 </CardHeader>
                 <CardContent className='overflow-hidden'>
                   <ItemList>
-                    <Item className='px-4'>
+                    <Item>
                       <ItemContent>
                         <ItemTitle>Anna Schmidt</ItemTitle>
                         <ItemDescription>anna@example.com</ItemDescription>
                       </ItemContent>
                       <Badge intent='success'>Active</Badge>
                     </Item>
-                    <Item className='px-4'>
+                    <Item>
                       <ItemContent>
                         <ItemTitle>Jonas Weber</ItemTitle>
                         <ItemDescription>Invited March 12</ItemDescription>
