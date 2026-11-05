@@ -13,7 +13,7 @@ const MEMBERS = [
 
 /**
  * Without search, the add action moves into the header row, centered on the title and description (`items-center`),
- * inset by the shell's 4px (`me-1`) to the card's edge. No toolbar row.
+ * on the card's edge. No toolbar row.
  */
 export function ListPageWithoutSearch() {
   return (
@@ -25,7 +25,7 @@ export function ListPageWithoutSearch() {
             Everyone with access to this workspace.
           </p>
         </hgroup>
-        <Button intent='primary' className='me-1'>
+        <Button intent='primary'>
           <IconPlus data-icon='inline-start' />
           Invite member
         </Button>

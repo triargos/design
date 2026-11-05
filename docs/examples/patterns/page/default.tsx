@@ -39,12 +39,12 @@ export function PagePatternDefault() {
           { title: 'Team', description: 'Only admins see these details.', card: 'Members' },
         ].map((section) => (
           <section key={section.title} className='flex flex-col gap-group'>
-            {/* Card shell 4px + the card's 1px edge + its `group` padding: the title starts on the cards' text. */}
-            <hgroup className='flex flex-col gap-tight px-[calc(--spacing(1)+1px+var(--spacing-group))]'>
+            {/* Card shell 4px + the card's 1px edge + its `card` padding: the title starts on the cards' text. */}
+            <hgroup className='flex flex-col gap-tight px-[calc(--spacing(1)+1px+var(--spacing-card))]'>
               <h2 className='text-heading text-balance'>{section.title}</h2>
               <p className='text-body text-pretty text-muted-foreground'>{section.description}</p>
             </hgroup>
-            <Card>
+            <Card variant='shell'>
               <CardHeader>
                 <CardTitle>{section.card}</CardTitle>
               </CardHeader>

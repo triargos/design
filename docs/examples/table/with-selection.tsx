@@ -73,7 +73,7 @@ export function TableWithSelection() {
     (state) => ({ rowSelection: state.rowSelection }),
   );
   return (
-    <Card className='w-full max-w-2xl'>
+    <Card variant='shell' className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

@@ -43,7 +43,7 @@ export function TableVirtualized() {
   };
 
   return (
-    <Card className='w-full max-w-2xl'>
+    <Card variant='shell' className='w-full max-w-2xl'>
       <CardHeader>
         <CardTitle>
           {items.length} of {TOTAL.toLocaleString('en-US')} invoices

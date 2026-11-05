@@ -20,7 +20,7 @@ const matches = (query: string) => (member: (typeof MEMBERS)[number]) =>
 
 /**
  * A page of one list: the title, then a toolbar `group` above the card with the search on the left and the add action
- * on the right. The toolbar is inset by the shell's 4px (`px-1`), so field and button line up with the card's edge. In
+ * on the right. Field and button line up with the card's edge. In
  * light mode the field takes the card fill (`bg-card`); dark mode keeps the field's own fill. A query with no match
  * shows an `Empty` that clears it; so does Escape.
  */
@@ -36,7 +36,7 @@ export function ListPageDefault() {
         </p>
       </hgroup>
       <div className='flex flex-col gap-group'>
-        <div className='flex flex-wrap items-center justify-between gap-related px-1'>
+        <div className='flex flex-wrap items-center justify-between gap-related'>
           <InputGroup className='bg-card sm:max-w-xs'>
             <InputGroupAddon>
               <IconSearch />

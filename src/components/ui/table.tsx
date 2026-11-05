@@ -23,9 +23,9 @@ import { cn } from '~/lib/utils';
 // - `flush`: `default` filling a card edge to edge, as an `ItemList` does:
 //   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `card` in,
 //   on the card header's text.
-// - `card`: the table is the content of an `Card`, in place of `CardContent`. Header and footer rows sit on
+// - `card`: the table is the content of a shell card, in place of `CardContent`. Header and footer rows sit on
 //   the shell; the body is the card (`bg-card`, an `--edge` ring, `rounded-inner` corners). Put it straight in the
-//   shell: `<Card><Table variant='card'>…</Table></Card>`.
+//   shell: `<Card variant='shell'><Table variant='card'>…</Table></Card>`.
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
 // - groups: `TableGroupRow`, a flat `muted` band across every column; with `onOpenChange` it folds its rows.

@@ -70,7 +70,7 @@ export default defineDocs({
       <FoundationSection title='Stack' description='Each layer shows the same fill classes.'>
         <div className='flex flex-col gap-6'>
           <Layer name='Page panel' owner={<Code>MainLayout · bg-background</Code>} />
-          <Card>
+          <Card variant='shell'>
             <CardHeader>
               <CardTitle>Card shell</CardTitle>
               <CardDescription>The label strip sits on the shell, not on a second surface.</CardDescription>

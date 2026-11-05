@@ -1,6 +1,6 @@
 import { Card, CardContent } from '~/components/ui/card';
 
-/** Content alone; the shell shows as a 4px rim. */
+/** Content alone. */
 export function CardNoHeader() {
   return (
     <Card className='w-full max-w-xl'>

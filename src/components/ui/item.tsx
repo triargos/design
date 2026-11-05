@@ -94,6 +94,9 @@ function StaticItemList({
       data-slot='item-list'
       className={cn(
         'overflow-hidden transition-[height] duration-fold ease-spring motion-reduce:transition-none',
+        // In a plain card the rows sit `list-inset` in, so their text (inset + `row-pad-x`) starts on the card's text
+        // edge (`card`), where the header above starts too. A margin: the springing height is the rows' own.
+        'group-data-[variant=default]/card:m-list-inset',
         className,
       )}
       style={bounds.height > 0 ? { ...style, height: bounds.height } : style}
@@ -150,6 +153,7 @@ function VirtualizedItemList<T>({
       className={cn(
         ownScroll &&
           'overflow-y-auto overscroll-contain outline-none focus-visible:ring-3 focus-visible:ring-ring/24 focus-visible:ring-inset',
+        'group-data-[variant=default]/card:m-list-inset',
         className,
       )}
       {...props}>
@@ -201,7 +205,11 @@ type ItemListSkeletonProps = Omit<React.ComponentProps<'div'>, 'children'> & {
  */
 function ItemListSkeleton({ rows = 3, media, description = true, className, ...props }: ItemListSkeletonProps) {
   return (
-    <div data-slot='item-list' aria-hidden className={cn('overflow-hidden', className)} {...props}>
+    <div
+      data-slot='item-list'
+      aria-hidden
+      className={cn('overflow-hidden group-data-[variant=default]/card:m-list-inset', className)}
+      {...props}>
       {Array.from({ length: rows }, (_, index) => (
         <ItemListRow key={index} role={undefined} last={index === rows - 1}>
           <Item className='flex-nowrap'>

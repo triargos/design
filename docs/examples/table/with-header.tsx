@@ -22,7 +22,7 @@ const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD',
 /** CardHeader above the table; no footer, so the shell shows as a 4px rim below the body. */
 export function TableWithHeader() {
   return (
-    <Card className='w-full max-w-2xl'>
+    <Card variant='shell' className='w-full max-w-2xl'>
       <CardHeader
         actions={
           <Button size='icon-sm' aria-label='More'>

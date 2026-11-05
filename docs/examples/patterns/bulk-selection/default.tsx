@@ -71,7 +71,7 @@ export function BulkSelectionDefault() {
 
   return (
     <div className='@container flex w-full max-w-2xl flex-col gap-group'>
-      <Card>
+      <Card variant='shell'>
         <CardHeader>
           <CardTitle>Tasks</CardTitle>
         </CardHeader>

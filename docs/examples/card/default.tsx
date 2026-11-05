@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
-/** A shell (the label strip) around a card (the content). Every block on a page is one. */
+/** The title above, the content in the card. Every block on a page is one. */
 export function CardDefault() {
   return (
     <Card className='w-full max-w-xl'>

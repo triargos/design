@@ -172,7 +172,7 @@ export function Preview({
     );
   }
   return (
-    <Card data-slot='preview' data-title={title} className='min-w-0'>
+    <Card variant='shell' data-slot='preview' data-title={title} className='min-w-0'>
       {title !== undefined && (
         <CardHeader className='py-2'>
           <CardTitle className='text-caption text-muted-foreground'>{title}</CardTitle>
@@ -276,7 +276,7 @@ export function ExampleSection({
 /** Labelled `SpecimenRow`s in one card, separated by hairlines. */
 export function SpecimenList({ children }: { children: ReactNode }) {
   return (
-    <Card>
+    <Card variant='shell'>
       <CardContent className='flex flex-col overflow-hidden'>{children}</CardContent>
     </Card>
   );
@@ -372,7 +372,7 @@ export function Matrix({
   const labelFont = useLabelFont();
   const grid = { gridTemplateColumns: `8rem repeat(${columns.length}, minmax(${columnWidth}, 1fr))` };
   return (
-    <Card>
+    <Card variant='shell'>
       <CardContent className='overflow-x-auto'>
         <div className='grid min-w-fit items-center gap-x-related' style={grid}>
           <span />
