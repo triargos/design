@@ -1,4 +1,5 @@
-import { Item, ItemContent, ItemDescription, ItemTitle } from '~/components/ui/item';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 import { StatusDot } from '~/components/ui/status-dot';
 
 /** Projects by type: the dot is the color the workspace picked, or a category when it picked none. */
@@ -10,19 +11,26 @@ const PROJECTS = [
 
 export function StatusDotDataColor() {
   return (
-    <div className='flex w-96 flex-col'>
-      {PROJECTS.map((project) => (
-        <Item key={project.name}>
-          <ItemContent>
-            <ItemTitle>{project.name}</ItemTitle>
-            <ItemDescription>{project.owner}</ItemDescription>
-          </ItemContent>
-          <span className='flex items-center gap-1.5 text-caption text-muted-foreground'>
-            <StatusDot color={project.color} />
-            {project.type}
-          </span>
-        </Item>
-      ))}
-    </div>
+    <Card className='w-full max-w-md'>
+      <CardHeader>
+        <CardTitle>Projects</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-hidden'>
+        <ItemList>
+          {PROJECTS.map((project) => (
+            <Item key={project.name}>
+              <ItemContent>
+                <ItemTitle>{project.name}</ItemTitle>
+                <ItemDescription>{project.owner}</ItemDescription>
+              </ItemContent>
+              <span className='flex items-center gap-control-gap text-caption text-muted-foreground'>
+                <StatusDot color={project.color} />
+                {project.type}
+              </span>
+            </Item>
+          ))}
+        </ItemList>
+      </CardContent>
+    </Card>
   );
 }
