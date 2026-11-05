@@ -252,21 +252,18 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
     <SelectPrimitive.Item
       data-slot='select-item'
       className={cn(
-        // A menu row: the text's line box centered in `--spacing-menu-item`. The check sits `menu-item-pad` from the end; the text
-        // stops a gap before it.
-        "relative flex w-full cursor-default items-center gap-row-gap rounded-inner py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] pr-[calc(var(--spacing-menu-item-pad)+var(--spacing-icon)+var(--spacing-control-gap))] pl-menu-item-pad text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-highlight data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
+        // A menu row: the text's line box centered in `--spacing-menu-item`. The check leads in its own icon-wide
+        // column, kept empty when unselected so labels line up, where a menu's checkbox item and `ComboboxItem` put it.
+        "grid w-full cursor-default grid-cols-[var(--spacing-icon)_minmax(0,1fr)] items-center gap-row-gap rounded-inner px-menu-item-pad py-[calc((var(--spacing-menu-item)-var(--text-control--line-height))/2)] text-control outline-hidden select-none data-disabled:pointer-events-none data-disabled:text-disabled-foreground data-highlighted:bg-highlight data-highlighted:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-icon [&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       {...props}>
-      <SelectPrimitive.ItemText className='flex min-w-0 flex-1 items-center gap-row-gap whitespace-nowrap'>
+      <SelectPrimitive.ItemIndicator className='col-start-1 flex'>
+        <IconCheck className='text-foreground' />
+      </SelectPrimitive.ItemIndicator>
+      <SelectPrimitive.ItemText className='col-start-2 flex min-w-0 items-center gap-row-gap whitespace-nowrap'>
         {children}
       </SelectPrimitive.ItemText>
-      <SelectPrimitive.ItemIndicator
-        render={
-          <span className='pointer-events-none absolute right-menu-item-pad flex size-icon-sm items-center justify-center' />
-        }>
-        <IconCheck className='size-icon' />
-      </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   );
 }

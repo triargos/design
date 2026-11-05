@@ -1,6 +1,6 @@
 import { Combobox as ComboboxPrimitive } from '@base-ui/react/combobox';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { IconCheck, IconPlus, IconSelector, IconX } from '@tabler/icons-react';
+import { IconCheck, IconChevronDown, IconPlus, IconX } from '@tabler/icons-react';
 import * as React from 'react';
 
 import { inputSurfaceVariants } from '~/components/ui/input';
@@ -357,14 +357,14 @@ function ComboboxValue(props: ComboboxPrimitive.Value.Props) {
 interface ComboboxInputProps extends ComboboxPrimitive.Input.Props {
   /** The clear button's accessible name. */
   readonly clearLabel?: string;
-  /** The ⇅ button's accessible name. */
+  /** The chevron button's accessible name. */
   readonly openLabel?: string;
 }
 
 /**
  * The field: Base UI's `InputGroup` on our `InputGroup` surface, so the popup anchors to the whole field, not the
- * native input. A ⇅ button opens the list; once there is a value, a clear button takes its place (Base UI unmounts
- * `Clear` while empty). `className` goes to the field.
+ * native input. A chevron button, the one `Select` shows, opens the list; once there is a value, a clear button takes
+ * its place (Base UI unmounts `Clear` while empty). `className` goes to the field.
  */
 function ComboboxInput({
   className,
@@ -395,7 +395,7 @@ function ComboboxInput({
           data-slot='input-group-button'
           className='group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent'
           disabled={disabled}>
-          <IconSelector className='pointer-events-none' />
+          <IconChevronDown className='pointer-events-none' />
         </InputGroupButton>
         <ComboboxPrimitive.Clear
           data-slot='combobox-clear'
