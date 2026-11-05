@@ -52,7 +52,7 @@ export default defineDocs({
           <>
             <Code>variant='shell'</Code>: one card tinted with the shell, the header a one-line label band on the tint
             and the content a panel below it. Keep descriptions to one sentence; long copy makes the shell read as a
-            gray block.
+            gray block. Around a table the header sits above the frame, since the column row is its band.
           </>
         }
         bare>
