@@ -316,19 +316,6 @@ function DrawerMenuGroup({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-/** A row's box and text, for `DrawerMenuItem` and `DrawerMenuRow`: the icon first, the label in a `<span>`. */
-const menuRowClassName = cn(
-  'flex min-h-(--drawer-menu-item-height) w-full items-center gap-(--drawer-menu-item-pad-x) rounded-(--drawer-menu-item-radius) px-(--drawer-menu-item-pad-x) text-[1rem] leading-6 text-popover-foreground select-none',
-  '[&>svg]:pointer-events-none [&>svg]:shrink-0 [&>svg:first-child]:size-icon-lg [&>svg:first-child]:text-muted-foreground',
-  '[&>span:not([data-slot])]:min-w-0 [&>span:not([data-slot])]:flex-1 [&>span:not([data-slot])]:truncate',
-);
-
-/** Hover, press, focus and disabled for a row that is a control. */
-const pressableRowClassName = cn(
-  'text-left outline-hidden transition-colors duration-feedback hover:bg-highlight focus-visible:ring-3 focus-visible:ring-ring/24 active:bg-highlight',
-  'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
-);
-
 /**
  * A menu row: an `icon-lg` icon, the label in a `<span>`, an optional `DrawerMenuValue`. A `<button>`, or a link
  * through `render`. `push` opens that `DrawerPage` and ends the row in a chevron. `intent='destructive'` colors icon
@@ -351,8 +338,11 @@ function DrawerMenuItem({
       {
         type: 'button',
         className: cn(
-          menuRowClassName,
-          pressableRowClassName,
+          'flex min-h-(--drawer-menu-item-height) w-full items-center gap-(--drawer-menu-item-pad-x) rounded-(--drawer-menu-item-radius) px-(--drawer-menu-item-pad-x) text-[1rem] leading-6 text-popover-foreground select-none',
+          '[&>svg]:pointer-events-none [&>svg]:shrink-0 [&>svg:first-child]:size-icon-lg [&>svg:first-child]:text-muted-foreground',
+          '[&>span:not([data-slot])]:min-w-0 [&>span:not([data-slot])]:flex-1 [&>span:not([data-slot])]:truncate',
+          'text-left outline-hidden transition-colors duration-feedback hover:bg-highlight focus-visible:ring-3 focus-visible:ring-ring/24 active:bg-highlight',
+          'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
           'data-[intent=destructive]:text-destructive data-[intent=destructive]:[&>svg:first-child]:text-destructive',
           className,
         ),
@@ -379,7 +369,18 @@ function DrawerMenuItem({
 
 /** A menu row that holds its own control (a `TabsRadioGroup` at the end) instead of being one. */
 function DrawerMenuRow({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='drawer-menu-row' className={cn(menuRowClassName, className)} {...props} />;
+  return (
+    <div
+      data-slot='drawer-menu-row'
+      className={cn(
+        'flex min-h-(--drawer-menu-item-height) w-full items-center gap-(--drawer-menu-item-pad-x) rounded-(--drawer-menu-item-radius) px-(--drawer-menu-item-pad-x) text-[1rem] leading-6 text-popover-foreground select-none',
+        '[&>svg]:pointer-events-none [&>svg]:shrink-0 [&>svg:first-child]:size-icon-lg [&>svg:first-child]:text-muted-foreground',
+        '[&>span:not([data-slot])]:min-w-0 [&>span:not([data-slot])]:flex-1 [&>span:not([data-slot])]:truncate',
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 /** What a row is set to now, at its end in `muted-foreground` (the current workspace). */
@@ -418,7 +419,8 @@ function DrawerOption({
       data-slot='drawer-option'
       className={cn(
         'group/drawer-option flex min-h-(--drawer-menu-item-height) w-full items-center gap-related rounded-(--drawer-option-radius) px-(--drawer-menu-item-pad-x) py-(--drawer-page-pad) text-[1rem] leading-6 text-popover-foreground select-none',
-        pressableRowClassName,
+        'text-left outline-hidden transition-colors duration-feedback hover:bg-highlight focus-visible:ring-3 focus-visible:ring-ring/24 active:bg-highlight',
+        'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
         className,
       )}
       {...props}>
