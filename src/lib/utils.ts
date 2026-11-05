@@ -6,7 +6,7 @@ import { extendTailwindMerge } from 'tailwind-merge';
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      text: ['title', 'heading', 'body', 'control', 'label', 'caption'],
+      text: ['title', 'heading', 'subheading', 'body', 'control', 'label', 'caption'],
       // Spacing roles, then the sizing scale (`tailwind.css`, Sizing).
       spacing: [
         'tight',
