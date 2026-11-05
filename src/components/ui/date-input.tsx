@@ -28,13 +28,19 @@ import { cn } from '~/lib/utils';
 
 // DateInput and TimeInput share one segmented field (react-aria's DateField/TimeField): the parts below are internal.
 
-/** A click on the field's padding or its decorative icon focuses the first segment. */
+/** Whether a press is on the field's padding or its decorative icon, not on a segment or the calendar button. */
+const isOnFieldPadding = (event: React.SyntheticEvent<HTMLElement>) =>
+  !(event.target as HTMLElement).closest('[role=spinbutton],button');
+
+/** A press on the padding keeps focus where it is until the click (no blur of the focused segment). */
+const holdFocus = (event: React.PointerEvent<HTMLElement>) => {
+  if (isOnFieldPadding(event)) event.preventDefault();
+};
+
+/** A click on the padding focuses the first segment: on click, since iOS opens the keyboard only for a focus inside one. */
 const focusFirstSegment = (event: React.MouseEvent<HTMLElement>) => {
-  if ((event.target as HTMLElement).closest('[role=spinbutton],button')) return;
-  const segment = event.currentTarget.querySelector<HTMLElement>('[role=spinbutton]:not([aria-disabled=true])');
-  if (!segment) return;
-  event.preventDefault();
-  segment.focus();
+  if (!isOnFieldPadding(event)) return;
+  event.currentTarget.querySelector<HTMLElement>('[role=spinbutton]:not([aria-disabled=true])')?.focus();
 };
 
 /**
@@ -229,7 +235,8 @@ function DateInput({
         validationBehavior='aria'
         shouldForceLeadingZeros
         {...labelledBy}
-        onMouseDown={focusFirstSegment}
+        onPointerDown={holdFocus}
+        onClick={focusFirstSegment}
         className={className}>
         {({ state }) => {
           const showPlaceholder =
@@ -317,7 +324,8 @@ function TimeInput({
         validationBehavior='aria'
         shouldForceLeadingZeros
         {...labelledBy}
-        onMouseDown={focusFirstSegment}
+        onPointerDown={holdFocus}
+        onClick={focusFirstSegment}
         className={className}>
         <SegmentsInput />
         <span

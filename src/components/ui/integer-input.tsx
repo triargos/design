@@ -221,11 +221,13 @@ function IntegerInput({
         </Button>
         <div
           data-slot='integer-input-field'
-          // A press anywhere on the field (the unit, the space around the number) focuses the number.
+          // A press anywhere on the field (the unit, the space around the number) focuses the number, on click: iOS
+          // opens the keyboard only for a focus inside a click.
           onPointerDown={(event) => {
-            if (event.target === inputRef.current) return;
-            event.preventDefault();
-            inputRef.current?.focus();
+            if (event.target !== inputRef.current) event.preventDefault();
+          }}
+          onClick={(event) => {
+            if (event.target !== inputRef.current) inputRef.current?.focus();
           }}
           className={cn(
             inputSurfaceVariants({ scope: 'group' }),
