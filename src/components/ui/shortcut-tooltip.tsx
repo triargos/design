@@ -41,7 +41,7 @@ function ShortcutTooltip({ label, shortcut, side, align, thenLabel, className, c
         <KbdGroup aria-hidden>
           {shortcut.map((step, index) => (
             <Fragment key={index}>
-              {index > 0 && <span className='text-muted-foreground'>{thenLabel ?? labels.shortcutThen}</span>}
+              {index > 0 && <span className='font-sans text-muted-foreground'>{thenLabel ?? labels.shortcutThen}</span>}
               {/* The caption's line height, so the keys don't make the tooltip taller than its text. */}
               <Kbd className='h-(--text-caption--line-height) min-w-(--text-caption--line-height)'>
                 {formatShortcut(step, { mac })}
