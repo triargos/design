@@ -21,7 +21,7 @@ function Slider<Value extends number | readonly number[]>({
       thumbAlignment='edge'
       aria-label={ariaLabel}
       {...props}>
-      <SliderPrimitive.Control className='relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-40 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col'>
+      <SliderPrimitive.Control className='relative flex w-full touch-none items-center select-none data-disabled:opacity-64 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-40 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col'>
         <SliderPrimitive.Track
           data-slot='slider-track'
           className='relative grow overflow-hidden rounded-track bg-muted data-[orientation=horizontal]:h-track data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-track'>
