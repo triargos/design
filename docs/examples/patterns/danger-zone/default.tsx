@@ -56,7 +56,7 @@ export function DangerZoneDefault() {
           <Item>
             <ItemContent>
               <ItemTitle>Delete</ItemTitle>
-              <ItemDescription>The project and all its tasks. This can’t be undone.</ItemDescription>
+              <ItemDescription>Deletes the project and its tasks for good.</ItemDescription>
             </ItemContent>
             <ItemActions>
               <AlertDialog onOpenChange={() => setValue('')}>

@@ -19,7 +19,7 @@ function Toggle({ className, size = 'default', ...props }: TogglePrimitive.Props
           emphasis: 'ghost',
           size,
           className: cn(
-            'data-pressed:bg-[color-mix(in_oklch,var(--intent-subtle),var(--intent)_8%)] data-pressed:hover:bg-[color-mix(in_oklch,var(--intent-subtle),var(--intent)_8%)]',
+            'data-pressed:bg-[color-mix(in_oklch,var(--intent-subtle),var(--intent)_8%)] data-pressed:hover:bg-[color-mix(in_oklch,var(--intent-subtle),var(--intent)_8%)] data-pressed:disabled:bg-disabled',
             typeof className === 'function' ? className(state) : className,
           ),
         })

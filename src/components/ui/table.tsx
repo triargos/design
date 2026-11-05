@@ -25,10 +25,12 @@ import { cn } from '~/lib/utils';
 //   on the card header's text.
 // - `card`: the table is the content of a shell card, in place of `CardContent`. Header and footer rows sit on
 //   the tint; the body is a card of its own between them, as `CardContent` is there: its `--edge` all round,
-//   `rounded-inner` corners. Put it straight in the shell: `<Card variant='shell'><Table variant='card'>…</Table></Card>`;
+//   `rounded-inner` corners. Put it straight in the shell: `<Card><Table variant='card'>…</Table></Card>`;
 //   a `CardHeader` there sits above the shell.
 // Beyond the markup:
-// - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
+// - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell). Its arrow sits
+//   after the label, or before it in a right-aligned column (`text-right`, `text-end`), so the label stays on the
+//   numbers' edge while the arrow is hidden.
 // - groups: `TableGroupRow`, a flat `muted` band across every column; with `onOpenChange` it folds its rows.
 // - a row that opens a page: `TableRowLink` in one cell; its click area covers the row (a `tr` cannot be a link).
 // - a long table: `Table virtualized items itemKey`, as `ItemList virtualized`: the rows in view render between two
@@ -396,7 +398,7 @@ function TableHead({
           type='button'
           onClick={onSort}
           className={cn(
-            'group/sort relative -mx-(--table-sort-pad-x) inline-flex items-center gap-control-gap-sm rounded-control-sm px-(--table-sort-pad-x) py-(--table-sort-pad-y) font-medium transition-colors duration-feedback outline-none hit-area hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24',
+            'group/sort relative -mx-(--table-sort-pad-x) inline-flex items-center gap-control-gap-sm rounded-control-sm in-[.text-right,.text-end]:flex-row-reverse px-(--table-sort-pad-x) py-(--table-sort-pad-y) font-medium transition-colors duration-feedback outline-none hit-area hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24',
             sort !== undefined && sort !== 'none' && 'text-foreground',
           )}>
           {children}

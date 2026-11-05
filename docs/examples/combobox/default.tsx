@@ -21,7 +21,7 @@ const PROJECTS: ReadonlyArray<SelectOption> = [
   'Summit',
 ].map((name) => ({ value: name.toLowerCase(), label: name }));
 
-/** Type to filter, Enter picks the first match; with a value, a clear button takes the place of the ⇅ button. */
+/** Type to filter, Enter picks the first match; with a value, a clear button takes the place of the chevron. */
 export function ComboboxDefault() {
   const [project, setProject] = useState<string | null>('beacon');
   return (

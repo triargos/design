@@ -22,7 +22,7 @@ const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD',
 /** CardHeader above the table; no footer, so the body runs to the card's bottom edge. */
 export function TableWithHeader() {
   return (
-    <Card variant='shell' className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <CardHeader
         actions={
           <Button size='icon-sm' aria-label='More'>
@@ -43,12 +43,12 @@ export function TableWithHeader() {
         <TableBody>
           {PAYMENTS.map((payment) => (
             <TableRow key={payment.id}>
-              <TableCell className='font-medium'>{payment.item}</TableCell>
+              <TableCell className='font-medium whitespace-nowrap'>{payment.item}</TableCell>
               <TableCell>
                 <Badge intent={STATUS[payment.status].intent}>{STATUS[payment.status].label}</Badge>
               </TableCell>
               <TableCell>{payment.group}</TableCell>
-              <TableCell className='text-right tabular-nums'>{usd.format(payment.amount)}</TableCell>
+              <TableCell className='text-right whitespace-nowrap tabular-nums'>{usd.format(payment.amount)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

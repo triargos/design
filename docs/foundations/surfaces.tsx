@@ -70,7 +70,7 @@ export default defineDocs({
       <FoundationSection title='Stack' description='Each layer shows the same fill classes.'>
         <div className='flex flex-col gap-6'>
           <Layer name='Page panel' owner={<Code>MainLayout · bg-background</Code>} />
-          <Card variant='shell'>
+          <Card>
             <CardHeader>
               <CardTitle>Card shell</CardTitle>
               <CardDescription>The title band sits on the tint; the content is a panel below it.</CardDescription>

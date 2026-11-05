@@ -53,7 +53,7 @@ const columns = column.columns([
   }),
   column.accessor('item', {
     header: 'Invoice',
-    cell: ({ getValue }) => <span className='font-medium'>{getValue()}</span>,
+    cell: ({ getValue }) => <span className='font-medium whitespace-nowrap'>{getValue()}</span>,
   }),
   column.accessor('status', {
     header: 'Status',
@@ -62,7 +62,7 @@ const columns = column.columns([
   column.accessor('group', { header: 'Project' }),
   column.accessor('amount', {
     header: () => <div className='text-right'>Amount</div>,
-    cell: ({ getValue }) => <div className='text-right tabular-nums'>{usd.format(getValue())}</div>,
+    cell: ({ getValue }) => <div className='text-right whitespace-nowrap tabular-nums'>{usd.format(getValue())}</div>,
   }),
 ]);
 
@@ -73,7 +73,7 @@ export function TableWithSelection() {
     (state) => ({ rowSelection: state.rowSelection }),
   );
   return (
-    <Card variant='shell' className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

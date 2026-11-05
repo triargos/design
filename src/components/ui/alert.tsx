@@ -15,7 +15,8 @@ type AlertProps = React.ComponentProps<'div'> & {
 /**
  * A notice inside a page, always `subtle`. Text only: the intent says what kind of notice it is, the first line says
  * the rest. One inset (`--alert-pad`) on every side; the text adds `tight` and trims its leading to the cap height and
- * the baseline, so it sits optically centered and level with an action. The corner stays below a card content corner,
+ * the baseline, so it sits optically centered and level with an action. Stacked on a phone, the action lines up with
+ * the text, not the box. The corner stays below a card content corner,
  * as a field's does. The text wraps at a readable measure (`max-w-prose`, no orphaned last word). The root reads its
  * parts (`has-data-[slot=…]`), so the layout needs no props.
  */
@@ -53,7 +54,7 @@ function AlertContent({ className, ...props }: React.ComponentProps<'div'>) {
 function AlertAction({ className, children, ...props }: React.ComponentProps<'div'>) {
   const intent = React.use(AlertIntentContext);
   return (
-    <div data-slot='alert-action' className={cn('shrink-0 sm:ml-auto', className)} {...props}>
+    <div data-slot='alert-action' className={cn('shrink-0 max-sm:ms-tight sm:ms-auto', className)} {...props}>
       <ButtonDefaults intent={intent} emphasis='solid' size='sm'>
         {children}
       </ButtonDefaults>

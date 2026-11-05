@@ -1,31 +1,73 @@
-import { DEFAULT_SIZING, type SizingToken, type SizingValues } from '~/lib/theme/sizing';
+import { DEFAULT_SIZING, type SizingToken } from '~/lib/theme/sizing';
 
 /**
  * The tunable scales and their defaults, as in `tailwind.css`. Shared by the foundation pages and the
  * docs customize panel (`site/customize.tsx`); it imports only the sizing tokens (`lib/theme/sizing.ts`).
+ * Every px here is read from there, so the docs cannot drift from the stylesheet.
  */
 
-export const SPACING_STEPS = [
-  { name: 'tight', px: 4 },
-  { name: 'related', px: 8 },
-  { name: 'group', px: 16 },
-  { name: 'card', px: 24 },
-  { name: 'page', px: 48 },
-  { name: 'section', px: 64 },
-] as const;
+/** A token's default in px (`9999` for a full round). */
+const defaultPx = (token: SizingToken): number => Number.parseFloat(DEFAULT_SIZING[token]);
+
+export const SPACING_STEPS = (['tight', 'related', 'group', 'card', 'page', 'section'] as const).map((name) => ({
+  name,
+  px: defaultPx(`--spacing-${name}`),
+}));
 
 export type SpacingStep = (typeof SPACING_STEPS)[number];
 export type SpacingStepName = SpacingStep['name'];
 
 /** Tracking and weight are fixed per role; size and line height (px) are tunable. */
 export const TYPE_ROLES = [
-  { name: 'title', px: 28, lineHeight: 36, tracking: '−0.02em', weight: 600 },
-  { name: 'heading', px: 20, lineHeight: 28, tracking: '−0.01em', weight: 600 },
-  { name: 'subheading', px: 16, lineHeight: 24, tracking: undefined, weight: 600 },
-  { name: 'body', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
-  { name: 'control', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
-  { name: 'label', px: 14, lineHeight: 16, tracking: undefined, weight: 500 },
-  { name: 'caption', px: 12, lineHeight: 16, tracking: undefined, weight: 400 },
+  {
+    name: 'title',
+    px: defaultPx('--text-title'),
+    lineHeight: defaultPx('--text-title--line-height'),
+    tracking: '−0.02em',
+    weight: 600,
+  },
+  {
+    name: 'heading',
+    px: defaultPx('--text-heading'),
+    lineHeight: defaultPx('--text-heading--line-height'),
+    tracking: '−0.01em',
+    weight: 600,
+  },
+  {
+    name: 'subheading',
+    px: defaultPx('--text-subheading'),
+    lineHeight: defaultPx('--text-subheading--line-height'),
+    tracking: undefined,
+    weight: 600,
+  },
+  {
+    name: 'body',
+    px: defaultPx('--text-body'),
+    lineHeight: defaultPx('--text-body--line-height'),
+    tracking: undefined,
+    weight: 400,
+  },
+  {
+    name: 'control',
+    px: defaultPx('--text-control'),
+    lineHeight: defaultPx('--text-control--line-height'),
+    tracking: undefined,
+    weight: 400,
+  },
+  {
+    name: 'label',
+    px: defaultPx('--text-label'),
+    lineHeight: defaultPx('--text-label--line-height'),
+    tracking: undefined,
+    weight: 500,
+  },
+  {
+    name: 'caption',
+    px: defaultPx('--text-caption'),
+    lineHeight: defaultPx('--text-caption--line-height'),
+    tracking: undefined,
+    weight: 400,
+  },
 ] as const;
 
 export type TypeRole = (typeof TYPE_ROLES)[number];
@@ -80,19 +122,19 @@ export const typeLineHeightToken = (role: TypeRole): TunableToken => ({
 
 /** The radius roles (`rounded-control`, `rounded-card`, …). The fixed steps (`rounded-sm` … `rounded-5xl`) do not tune. */
 export const RADIUS_ROLES = [
-  { name: 'control-xs', px: 4, use: 'Controls 16–20px: Kbd' },
-  { name: 'control-sm', px: 8, use: 'Controls 20–28px, badges' },
-  { name: 'control', px: 10, use: 'Controls 32–36px, fields' },
-  { name: 'control-lg', px: 12, use: 'Controls 40px' },
-  { name: 'popup', px: 16, use: 'Menus, popovers, selects' },
-  { name: 'card', px: 20, use: 'Card shell, Alert' },
-  { name: 'dialog', px: 20, use: 'Dialogs, sheets' },
-  { name: 'panel', px: 20, use: 'The page panel' },
-  { name: 'checkbox', px: 4, use: 'Checkbox: never a pill' },
-  { name: 'tooltip', px: 8, use: 'Tooltips, chart tooltip' },
-  { name: 'area', px: 10, use: 'Multi-line fields: Textarea, drop zone' },
-  { name: 'block', px: 12, use: 'Rows and blocks: Item, choice card' },
-  { name: 'track', px: 9999, use: 'Switch, slider, progress' },
+  { name: 'control-xs', px: defaultPx('--radius-control-xs'), use: 'Controls 16–20px: Kbd' },
+  { name: 'control-sm', px: defaultPx('--radius-control-sm'), use: 'Controls 20–28px, badges' },
+  { name: 'control', px: defaultPx('--radius-control'), use: 'Controls 32–36px, fields' },
+  { name: 'control-lg', px: defaultPx('--radius-control-lg'), use: 'Controls 40px' },
+  { name: 'popup', px: defaultPx('--radius-popup'), use: 'Menus, popovers, selects' },
+  { name: 'card', px: defaultPx('--radius-card'), use: 'Card shell, Alert' },
+  { name: 'dialog', px: defaultPx('--radius-dialog'), use: 'Dialogs, sheets' },
+  { name: 'panel', px: defaultPx('--radius-panel'), use: 'The page panel' },
+  { name: 'checkbox', px: defaultPx('--radius-checkbox'), use: 'Checkbox: never a pill' },
+  { name: 'tooltip', px: defaultPx('--radius-tooltip'), use: 'Tooltips, chart tooltip' },
+  { name: 'area', px: defaultPx('--radius-area'), use: 'Multi-line fields: Textarea, drop zone' },
+  { name: 'block', px: defaultPx('--radius-block'), use: 'Rows and blocks: Item, choice card' },
+  { name: 'track', px: defaultPx('--radius-track'), use: 'Switch, slider, progress' },
 ] as const;
 
 export type RadiusRole = (typeof RADIUS_ROLES)[number];
@@ -149,19 +191,7 @@ export const tokenValue = (globals: Record<string, unknown>, token: TunableToken
 export const spacingValue = (globals: Record<string, unknown>, step: SpacingStep): number =>
   tokenValue(globals, spacingToken(step));
 
-/**
- * The tunable tokens a sizing theme's values set, as globals (`{ 'spacing-control': 32 }`): what the panel and the
- * foundation pages show under that theme.
- */
-export const sizingGlobals = (values: SizingValues): Record<string, number> =>
-  Object.fromEntries(
-    TUNABLE_TOKENS.flatMap((token) => {
-      const value = values[`--${token.global}` as SizingToken];
-      return value === undefined ? [] : [[token.global, Number.parseFloat(value)]];
-    }),
-  );
-
-/** The given tuned variables, for an unlayered `<style>` that wins over `tailwind.css` and the sizing theme. */
+/** The given tuned variables, for an unlayered `<style>` that wins over `tailwind.css`. */
 export const tokenCss = (globals: Record<string, number>): string => {
   const declarations = TUNABLE_TOKENS.filter((token) => globals[token.global] !== undefined)
     .map((token) => `--${token.global}:${tokenValue(globals, token)}${token.unit};`)

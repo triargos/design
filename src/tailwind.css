@@ -36,11 +36,12 @@
   --thumb: oklch(1 0 0);
   --thumb-drop: oklch(0 0 0 / 0.1);
 
-  --chart-1: oklch(0.837 0.128 66.29);
-  --chart-2: oklch(0.705 0.213 47.604);
-  --chart-3: oklch(0.646 0.222 41.116);
-  --chart-4: oklch(0.553 0.195 38.402);
-  --chart-5: oklch(0.47 0.157 37.304);
+  /* Chart series: the first five category hues, so stacked and side-by-side series tell apart (one ramp did not). */
+  --chart-1: var(--category-1);
+  --chart-2: var(--category-2);
+  --chart-3: var(--category-3);
+  --chart-4: var(--category-4);
+  --chart-5: var(--category-5);
 }
 
 /* The neutral intent, from the text colors. Re-declared where they change: `.dark` and every `[data-surface]` (muted
@@ -226,7 +227,7 @@
      resolves on the element: something deeper in sets its own `--outer-inset`, its distance from the surface's edge. */
   --radius-inner: max(0px, calc(var(--outer-radius, 0px) - var(--outer-inset, 0px)));
   /* A button or chip seated in a field (`InputGroupButton`, a combobox chip, the file button): the field's height less
-     `field-inset` above and below. Inline, so it follows a density's or a subtree's `--spacing-control`. */
+     `field-inset` above and below. Inline, so it follows a subtree's `--spacing-control`. */
   --spacing-field-seat: calc(var(--spacing-control) - 2 * var(--spacing-field-inset));
 }
 
@@ -263,9 +264,9 @@
   /* Tracks and thumbs: switch, slider, progress. */
   --radius-track: calc(infinity * 1px);
 
-  /* Sizing (DESIGN.md, Sizing): every length a component draws is a token, so a sizing theme (`lib/theme/sizing.ts`)
-     re-declares them on `:root` or on a subtree. Literal values only, never a `var()` to another token: a theme scoped
-     to a subtree then changes exactly what it re-declares. A name reads thing first, then what about it: `control-pad`
+  /* Sizing (DESIGN.md, Sizing): every length a component draws is a token. One design: an app that needs another
+     length re-declares that one variable on `:root` or a subtree. Literal values only, never a `var()` to another
+     token, so a re-declared token changes exactly itself. A name reads thing first, then what about it: `control-pad`
      is a control's inline padding, `popup-inset` a popup's edge to its rows. Lengths one component owns are below, in
      Component sizing. */
 
@@ -279,7 +280,7 @@
      `related`, so what belongs together reads apart from its neighbours. */
   --spacing-group: 1rem;
   /* Inside a card: the content's padding, and the header, footer and flush rows on the same edge. */
-  --spacing-card: 1.25rem;
+  --spacing-card: 1rem;
   --spacing-page: 3rem;
   --spacing-section: 4rem;
 
@@ -321,6 +322,8 @@
   --spacing-picker: 0.75rem;
   --spacing-popup-inset: 0.25rem;
   --spacing-card-inset: 0.25rem;
+  /* A card shell's header and footer bands, above and below their text. */
+  --spacing-card-band: 0.75rem;
   --spacing-list-inset: 0.5rem;
 
   /* Marks: a slider's or progress bar's track thickness. */
@@ -613,8 +616,8 @@
   }
 }
 
-/* Component sizing: lengths one component owns, read as `w-(--switch-width)`. Literal values, like the scale above;
-   a sizing theme re-declares them too. Named component first, then what about it (`-height`, `-pad-x`, `-gap`,
+/* Component sizing: lengths one component owns, read as `w-(--switch-width)`. Literal values, like the scale above.
+   Named component first, then what about it (`-height`, `-pad-x`, `-gap`,
    `-inset`, `-size`, `-radius`), grouped by the same families. */
 :root {
   /* Controls. */
@@ -649,7 +652,7 @@
   /* `Item`: media, content and actions apart. */
   --item-gap: 0.75rem;
   /* `Sidebar`: a group label's inline padding; sub-menu rows and the sub-menu's block padding (the tree line follows). */
-  --sidebar-label-pad-x: 0.5rem;
+  --sidebar-label-pad-x: 0.75rem;
   --sidebar-sub-height: 1.75rem;
   --sidebar-sub-pad-y: 0.375rem;
   /* `BottomNav` "More" panel: icon to label in its rows. */
@@ -726,28 +729,28 @@
   --switch-thumb: 1rem;
   --switch-thumb-sm: 0.75rem;
   --switch-inset: 0.125rem;
-  --slider-thumb: 0.75rem;
+  --slider-thumb: 1rem;
   --stepper-indicator-size: 1.25rem;
   --timeline-marker-size: 1rem;
-  --timeline-step: 3rem;
+  --timeline-step: 1.5rem;
   --timeline-step-x: 2rem;
 }
 
 /* A color from data as an intent (`intent: 'data'` in `intentVariants`, `color` on `Badge`). The component sets
    `--data-color` from `style`; this derives the `--intent-*` set from it, so every emphasis keeps one rule. Solid is the
-   color itself with black or white on it by lightness; subtle a translucent tint with its text a deeper step of the color
+   color itself with black or white on it by lightness, cut where both reach 4.5:1 (OKLCH l ≈ 0.57; at 0.62 a mid purple
+   took white at 4.2:1); subtle a translucent tint with its text a deeper step of the color
    toward `--foreground`. */
 @utility intent-data {
   --intent-solid: var(--data-color);
-  --intent-solid-foreground: oklch(from var(--data-color) clamp(0, (0.62 - l) * 1000, 1) 0 0);
+  --intent-solid-foreground: oklch(from var(--data-color) clamp(0, (0.57 - l) * 1000, 1) 0 0);
   --intent-subtle: color-mix(in oklab, var(--data-color) var(--data-subtle-mix), transparent);
   --intent-subtle-foreground: color-mix(in oklab, var(--data-color) var(--data-foreground-mix), var(--foreground));
   --intent-border: color-mix(in oklab, var(--data-color) var(--data-border-mix), transparent);
   --intent: var(--intent-subtle-foreground);
 }
 
-/* On a phone a menu row is a touch target: 36, a step above the desktop's 32. A sizing theme (`sizingThemeCss`, a
-   later stylesheet) overrides it with its own rows. */
+/* On a phone a menu row is a touch target: 36, a step above the desktop's 32. */
 @media (width < 48rem) {
   :root {
     --spacing-menu-item: 2.25rem;

@@ -63,21 +63,25 @@ function CopyButton({
   };
 
   const text = typeof children === 'function' ? children(copied) : children;
+  // The live region sits beside the button, not in it: a button's content is its name, and screen readers may not
+  // announce a live region inside one. No `data-slot`, so a `ButtonGroup` around it ignores it.
   return (
-    <Button
-      data-slot='copy-button'
-      data-copied={copied || undefined}
-      size={size}
-      emphasis={emphasis}
-      {...props}
-      aria-label={text === undefined ? label : undefined}
-      onClick={() => void copy()}>
-      <CopyIconSwap copied={copied} />
-      {text}
+    <>
+      <Button
+        data-slot='copy-button'
+        data-copied={copied || undefined}
+        size={size}
+        emphasis={emphasis}
+        {...props}
+        aria-label={text === undefined ? label : undefined}
+        onClick={() => void copy()}>
+        <CopyIconSwap copied={copied} />
+        {text}
+      </Button>
       <span role='status' className='sr-only'>
         {copied ? copiedLabel : ''}
       </span>
-    </Button>
+    </>
   );
 }
 

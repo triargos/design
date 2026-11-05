@@ -105,7 +105,10 @@ function ChartTooltipContent({
   );
 }
 
-const ChartLegend = RechartsPrimitive.Legend;
+/** Recharts' legend, in series order: Recharts sorts it by name unless `itemSorter` is `null`. */
+function ChartLegend({ itemSorter = null, ...props }: React.ComponentProps<typeof RechartsPrimitive.Legend>) {
+  return <RechartsPrimitive.Legend itemSorter={itemSorter} {...props} />;
+}
 
 /** One color square and label per series. Recharts passes `payload` and `verticalAlign`. */
 function ChartLegendContent({
@@ -123,7 +126,7 @@ function ChartLegendContent({
   return (
     <div
       className={cn(
-        'flex items-center justify-center gap-group',
+        'flex flex-wrap items-center justify-center gap-x-group gap-y-related',
         verticalAlign === 'top' ? 'pb-group' : 'pt-group',
         className,
       )}>

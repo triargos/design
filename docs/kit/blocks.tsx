@@ -172,7 +172,7 @@ export function Preview({
     );
   }
   return (
-    <Card variant='shell' data-slot='preview' data-title={title} className='min-w-0'>
+    <Card data-slot='preview' data-title={title} className='min-w-0'>
       {title !== undefined && (
         <CardHeader className='py-2'>
           <CardTitle className='text-caption text-muted-foreground'>{title}</CardTitle>

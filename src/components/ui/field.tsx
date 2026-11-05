@@ -38,7 +38,7 @@ function FieldLegend({
   );
 }
 
-const fieldGroupVariants = cva('group/field-group @container/field-group flex w-full flex-col gap-group', {
+const fieldGroupVariants = cva('group/field-group flex w-full flex-col gap-group', {
   variants: {
     columns: {
       1: '',
@@ -64,8 +64,11 @@ const fieldVariants = cva('group/field flex w-full gap-group data-[invalid=true]
       // and its description are a block of their own.
       vertical: ['flex-col gap-related [&>*]:w-full [&>.sr-only]:w-auto'],
       horizontal: [
-        'flex-row items-center',
-        '[&>[data-slot=field-label]]:flex-auto',
+        // Wraps when the label and description would squeeze below `10rem`: the control drops under them.
+        'flex-row flex-wrap items-center',
+        '[&>[data-slot=field-label]]:flex-auto [&>[data-slot=field-content]]:flex-[1_1_10rem]',
+        // A checkbox or radio touches its label (`related`); a label and a control of their own sit a `group` apart.
+        '[&:has(>[role=checkbox],>[role=radio])]:gap-related',
         'has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-0.5',
         // A checkbox or radio sits on the label's first line; a switch centers on label + description. Beside any
         // other control (an input, a select), label + description center on it, so a label alone sits on the field's

@@ -142,13 +142,16 @@ const INTENT_HUE = { info: 267, success: 152, warning: 60 } as const;
 /**
  * Lightness and chroma of each intent role, per mode. `text` is the generator's status text step (light 50, dark 80).
  * `subtle` is a translucent tint with its text a deeper step of the hue, after Cloudflare Kumo's `Banner` (MIT).
- * `solid` carries white text. Warning's solid sits a little lighter and more saturated so it reads as orange, not brown.
+ * `solid` carries white text, except warning's: amber is too light for white (3.5:1), so it carries a deep step of its
+ * own hue (`solidText`), as Radix and Geist do. Warning's solid sits a little lighter and more saturated so it reads as
+ * orange, not brown.
  */
 const INTENT_STEP = {
   light: {
     text: { l: 50, c: 80 },
     solid: { l: 55, c: 72 },
     warningSolid: { l: 58, c: 80 },
+    warningSolidText: { l: 10, c: 16 },
     subtle: { l: 93, c: 14, a: 0.5 },
     subtleText: { l: 38, c: 70 },
     border: { l: 50, c: 70, a: 0.32 },
@@ -157,6 +160,7 @@ const INTENT_STEP = {
     text: { l: 80, c: 80 },
     solid: { l: 55, c: 72 },
     warningSolid: { l: 58, c: 80 },
+    warningSolidText: { l: 10, c: 16 },
     subtle: { l: 30, c: 50, a: 0.24 },
     subtleText: { l: 80, c: 55 },
     border: { l: 70, c: 60, a: 0.32 },
@@ -177,7 +181,8 @@ function intentVars(
   return {
     [`--${intent}`]: lch(step.text.l, step.text.c, hue),
     [`--${intent}-solid`]: lch(solid.l, solid.c, hue),
-    [`--${intent}-solid-foreground`]: lch(100, 0, 0),
+    [`--${intent}-solid-foreground`]:
+      intent === 'warning' ? lch(step.warningSolidText.l, step.warningSolidText.c, hue) : lch(100, 0, 0),
     [`--${intent}-subtle`]: lch(step.subtle.l, step.subtle.c, hue, step.subtle.a),
     [`--${intent}-subtle-foreground`]: lch(step.subtleText.l, step.subtleText.c, hue),
     [`--${intent}-border`]: lch(step.border.l, step.border.c, hue, step.border.a),

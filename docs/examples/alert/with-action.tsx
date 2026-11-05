@@ -3,7 +3,7 @@ import { Alert, AlertAction, AlertContent } from '~/components/ui/alert';
 
 export function AlertWithAction() {
   return (
-    <div className='flex w-full max-w-lg flex-col gap-2'>
+    <div className='flex w-full max-w-lg flex-col gap-related'>
       <Alert intent='destructive'>
         <AlertContent>
           <p className='font-medium'>Sync failed</p>

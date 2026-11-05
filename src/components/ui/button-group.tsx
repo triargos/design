@@ -4,17 +4,23 @@ import { Separator } from '~/components/ui/separator';
 
 import { cn } from '~/lib/utils';
 
-/** Buttons that act on one thing: inner corners go square, the outer ends keep the buttons' radius. */
-const buttonGroupVariants = cva('flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10', {
-  variants: {
-    orientation: {
-      horizontal:
-        '[&>[data-slot]:has(~[data-slot])]:rounded-r-none [&>[data-slot]~[data-slot]]:rounded-l-none [&>[data-slot]~[data-slot]]:border-l-0',
-      vertical:
-        'flex-col [&>[data-slot]:has(~[data-slot])]:rounded-b-none [&>[data-slot]~[data-slot]]:rounded-t-none [&>[data-slot]~[data-slot]]:border-t-0',
+/**
+ * Buttons that act on one thing: inner corners go square, the outer ends keep the buttons' radius. A pressed button
+ * stays full size (`scale-100!`): shrunk to 96%, it would open a gap at the seam.
+ */
+const buttonGroupVariants = cva(
+  'flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 *:active:scale-100!',
+  {
+    variants: {
+      orientation: {
+        horizontal:
+          '[&>[data-slot]:has(~[data-slot])]:rounded-r-none [&>[data-slot]~[data-slot]]:rounded-l-none [&>[data-slot]~[data-slot]]:border-l-0',
+        vertical:
+          'flex-col [&>[data-slot]:has(~[data-slot])]:rounded-b-none [&>[data-slot]~[data-slot]]:rounded-t-none [&>[data-slot]~[data-slot]]:border-t-0',
+      },
     },
   },
-});
+);
 
 function ButtonGroup({
   className,

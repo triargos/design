@@ -1,13 +1,11 @@
 // Keeps `src/lib/theme/sizing.ts` in step with `src/tailwind.css` (`pnpm sizing:check`). Fails when a token in the
-// `@theme` Sizing section or the Component sizing block is missing from `SIZING_TOKENS`, when a default differs, or
-// when a density, radius or style sets a token `SIZING_TOKENS` does not know. Node strips the types from `sizing.ts`.
+// `@theme` Sizing section or the Component sizing block is missing from `SIZING_TOKENS`, or when a default differs.
+// Node strips the types from `sizing.ts`.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = join(import.meta.dirname, '..');
-const { SIZING_TOKENS, DENSITIES, RADII, SIZING_STYLES, scaleDensity } = await import(
-  join(root, 'src/lib/theme/sizing.ts')
-);
+const { SIZING_TOKENS } = await import(join(root, 'src/lib/theme/sizing.ts'));
 const css = readFileSync(join(root, 'src/tailwind.css'), 'utf8');
 
 /** The declarations between two markers of `tailwind.css`. */
@@ -47,25 +45,8 @@ for (const [name, spec] of Object.entries(SIZING_TOKENS)) {
   if (!/^\d+px$/.test(spec.value)) errors.push(`${name}: default ${spec.value} is not whole px`);
 }
 
-const presets = [
-  ...Object.entries(DENSITIES).map(([name, values]) => [`density ${name}`, values]),
-  ...Object.entries(RADII).map(([name, values]) => [`radius ${name}`, values]),
-  ...Object.entries(SIZING_STYLES).flatMap(([name, style]) => [
-    [`style ${name} tokens`, style.tokens ?? {}],
-    [`style ${name} touch`, style.touch ?? {}],
-  ]),
-  ['scaleDensity(0.8, { type: true })', scaleDensity(0.8, { type: true })],
-  ['scaleDensity(1.25, { type: true })', scaleDensity(1.25, { type: true })],
-];
-for (const [preset, values] of presets) {
-  for (const [name, value] of Object.entries(values)) {
-    if (!(name in SIZING_TOKENS)) errors.push(`${preset}: unknown token ${name}`);
-    if (!/^\d+px$/.test(value)) errors.push(`${preset}: ${name} ${value} is not whole px`);
-  }
-}
-
 if (errors.length > 0) {
   console.error(`sizing.ts and tailwind.css differ:\n  ${errors.join('\n  ')}`);
   process.exit(1);
 }
-console.log(`sizing: ${Object.keys(SIZING_TOKENS).length} tokens match tailwind.css; ${presets.length} presets known`);
+console.log(`sizing: ${Object.keys(SIZING_TOKENS).length} tokens match tailwind.css`);

@@ -109,7 +109,7 @@ function buttonVariants({
     // A neutral ghost keeps its container's text color at rest: a muted toolbar sets `text-muted-foreground` once.
     intent === 'neutral' &&
       resolvedEmphasis === 'ghost' &&
-      'text-current hover:text-foreground aria-expanded:text-foreground aria-pressed:text-foreground',
+      'text-current hover:text-foreground aria-expanded:text-foreground aria-pressed:not-disabled:text-foreground',
     className,
   );
 }

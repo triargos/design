@@ -113,9 +113,8 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='dialog-header'
       className={cn(
-        // The end padding keeps the title clear of the ✕ (its inset, its width and 2px). Without a body, the header ends
-        // the dialog.
-        'flex flex-col gap-tight px-modal pt-modal pr-[calc(var(--spacing-modal)+(var(--spacing-control)+var(--text-heading--line-height))/2+2px)] pb-[calc(var(--spacing-group)-var(--spacing-tight))]',
+        // Without a body, the header ends the dialog.
+        'flex flex-col gap-tight px-modal pt-modal pb-[calc(var(--spacing-group)-var(--spacing-tight))]',
         'in-[[data-slot=dialog-content]:not(:has([data-slot=dialog-body]))]:pb-modal',
         className,
       )}
@@ -154,7 +153,15 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
 
 function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
-    <DialogPrimitive.Title data-slot='dialog-title' className={cn('text-heading text-balance', className)} {...props} />
+    <DialogPrimitive.Title
+      data-slot='dialog-title'
+      className={cn(
+        // Clears the ✕ (its width less its inset, and 2px); the description below it runs the full width.
+        'pr-[calc((var(--spacing-control)+var(--text-heading--line-height))/2+2px)] text-heading text-balance',
+        className,
+      )}
+      {...props}
+    />
   );
 }
 

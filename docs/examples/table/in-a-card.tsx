@@ -18,10 +18,10 @@ const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD',
 
 const total = usd.format(PAYMENTS.reduce((sum, payment) => sum + payment.amount, 0));
 
-/** `variant='card'` straight in a `Card variant='shell'`, in place of CardContent: header and footer rows on the shell. */
+/** `variant='card'` straight in a shell `Card`, in place of CardContent: header and footer rows on the shell. */
 export function TableInACard() {
   return (
-    <Card variant='shell' className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           <TableRow>
@@ -34,12 +34,12 @@ export function TableInACard() {
         <TableBody>
           {PAYMENTS.map((payment) => (
             <TableRow key={payment.id}>
-              <TableCell className='font-medium'>{payment.item}</TableCell>
+              <TableCell className='font-medium whitespace-nowrap'>{payment.item}</TableCell>
               <TableCell>
                 <Badge intent={STATUS[payment.status].intent}>{STATUS[payment.status].label}</Badge>
               </TableCell>
               <TableCell>{payment.group}</TableCell>
-              <TableCell className='text-right tabular-nums'>{usd.format(payment.amount)}</TableCell>
+              <TableCell className='text-right whitespace-nowrap tabular-nums'>{usd.format(payment.amount)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

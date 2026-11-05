@@ -33,7 +33,7 @@ export default defineDocs({
         title='Loading'
         description={
           <>
-            <Code>loading</Code>: the active step's indicator spins.
+            <Code>isLoading</Code>: the active step's indicator spins.
           </>
         }>
         <StepperLoading />

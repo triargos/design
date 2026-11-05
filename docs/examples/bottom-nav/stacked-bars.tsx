@@ -30,7 +30,7 @@ import {
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Checkbox } from '~/components/ui/checkbox';
-import { Field, FieldLabel } from '~/components/ui/field';
+import { Field, FieldGroup, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
 import { Item, ItemContent, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 import { Separator } from '~/components/ui/separator';
@@ -82,7 +82,7 @@ const TASKS = [
 /**
  * Two `ActionBar`s on one page, and "More" with nested groups. Rename the project: "Unsaved changes" docks (`priority={1}`). Select a task meanwhile:
  * the selection waits until the changes are saved or discarded. "Pill bar" sets `--bottom-nav-radius: 9999px`; off,
- * the bar takes the sizing theme's.
+ * the bar takes the default.
  */
 export function BottomNavStackedBars() {
   const [page, setPage] = useState('Tasks');
@@ -117,33 +117,37 @@ export function BottomNavStackedBars() {
         style={pill ? ({ '--bottom-nav-radius': '9999px' } as React.CSSProperties) : undefined}>
         <div className='flex h-full flex-col gap-page overflow-y-auto px-5 pt-10 pb-24'>
           <h1 className='text-title text-balance'>Project</h1>
-          <Field>
-            <FieldLabel htmlFor='stacked-bars-name'>Name</FieldLabel>
-            <Input id='stacked-bars-name' value={name} onChange={(event) => setName(event.target.value)} />
-          </Field>
-          <Field orientation='horizontal'>
-            <FieldLabel htmlFor='stacked-bars-pill'>Pill bar</FieldLabel>
-            <Switch id='stacked-bars-pill' checked={pill} onCheckedChange={setPill} />
-          </Field>
-          <Card>
-            <CardContent className='overflow-hidden'>
-              <ItemList aria-label='Tasks'>
-                {TASKS.map((task) => (
-                  <Item key={task.id} selected={selected.has(task.id)} render={<label />}>
-                    <ItemMedia>
-                      <Checkbox
-                        checked={selected.has(task.id)}
-                        onCheckedChange={(checked) => toggle(task.id, checked)}
-                      />
-                    </ItemMedia>
-                    <ItemContent>
-                      <ItemTitle>{task.title}</ItemTitle>
-                    </ItemContent>
-                  </Item>
-                ))}
-              </ItemList>
-            </CardContent>
-          </Card>
+          <div className='flex flex-col gap-group'>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor='stacked-bars-name'>Name</FieldLabel>
+                <Input id='stacked-bars-name' value={name} onChange={(event) => setName(event.target.value)} />
+              </Field>
+              <Field orientation='horizontal'>
+                <FieldLabel htmlFor='stacked-bars-pill'>Pill bar</FieldLabel>
+                <Switch id='stacked-bars-pill' checked={pill} onCheckedChange={setPill} />
+              </Field>
+            </FieldGroup>
+            <Card>
+              <CardContent className='overflow-hidden'>
+                <ItemList aria-label='Tasks'>
+                  {TASKS.map((task) => (
+                    <Item key={task.id} selected={selected.has(task.id)} render={<label />}>
+                      <ItemMedia>
+                        <Checkbox
+                          checked={selected.has(task.id)}
+                          onCheckedChange={(checked) => toggle(task.id, checked)}
+                        />
+                      </ItemMedia>
+                      <ItemContent>
+                        <ItemTitle>{task.title}</ItemTitle>
+                      </ItemContent>
+                    </Item>
+                  ))}
+                </ItemList>
+              </CardContent>
+            </Card>
+          </div>
           <ActionBar open={selected.size > 0} aria-label='Selection'>
             <span className='ps-2.5 whitespace-nowrap text-muted-foreground tabular-nums'>
               {lastCount.current} selected

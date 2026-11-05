@@ -10,7 +10,7 @@ const INTENTS = [
 
 export function AlertVariants() {
   return (
-    <div className='flex w-full max-w-md flex-col gap-2'>
+    <div className='flex w-full max-w-md flex-col gap-related'>
       {INTENTS.map(({ intent, title, body }) => (
         <Alert key={intent} intent={intent}>
           <AlertContent>

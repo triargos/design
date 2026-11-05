@@ -26,7 +26,7 @@ const inputSurfaceVariants = cva(
     // `rounded-inner` with their own `--outer-inset`). A multi-line field sets it to `--radius-area`.
     // The touch target sits under the field's content (`isolate`, `-z-1`): over it, it would catch every tap meant
     // for a date segment or an addon button.
-    'hit-area relative isolate after:-z-1 rounded-(--field-radius) border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--field-radius:var(--radius-control)] [--outer-radius:var(--field-radius)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
+    'hit-area relative isolate after:-z-1 rounded-(--field-radius) border border-(--field-edge) bg-surface [--field-edge:var(--edge-field)] bg-clip-padding shadow-field [--field-radius:var(--radius-control)] [--outer-radius:var(--field-radius)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
     'before:pointer-events-none before:absolute before:inset-0 before:rounded-[max(0px,calc(var(--field-radius)-1px))] before:shadow-field-edge',
     'transition-[background-color,border-color,box-shadow] duration-feedback outline-none',
   ],
@@ -36,31 +36,31 @@ const inputSurfaceVariants = cva(
         self: [
           'focus-visible:border-ring focus-visible:shadow-none focus-visible:ring-3 focus-visible:ring-ring/24',
           'aria-expanded:border-ring aria-expanded:shadow-none aria-expanded:ring-3 aria-expanded:ring-ring/24',
-          'aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
+          'aria-invalid:[--field-edge:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
           'focus-visible:aria-invalid:border-destructive/64 focus-visible:aria-invalid:ring-destructive/16 dark:focus-visible:aria-invalid:ring-destructive/24',
           'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-64 disabled:shadow-field-flat disabled:before:shadow-none',
           '[&:is([readonly],[data-readonly])]:text-muted-foreground [&:is([readonly],[data-readonly])]:shadow-field-flat',
-          '[&:is([readonly],[data-readonly])]:focus-visible:border-(--edge-field) [&:is([readonly],[data-readonly])]:focus-visible:shadow-field-flat [&:is([readonly],[data-readonly])]:focus-visible:ring-0',
+          '[&:is([readonly],[data-readonly])]:focus-visible:border-(--field-edge) [&:is([readonly],[data-readonly])]:focus-visible:shadow-field-flat [&:is([readonly],[data-readonly])]:focus-visible:ring-0',
         ],
         group: [
           'has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:shadow-none has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring/24',
           'has-[[data-slot=input-group-control][aria-expanded=true]]:border-ring has-[[data-slot=input-group-control][aria-expanded=true]]:shadow-none has-[[data-slot=input-group-control][aria-expanded=true]]:ring-3 has-[[data-slot=input-group-control][aria-expanded=true]]:ring-ring/24',
-          'has-[[data-slot][aria-invalid=true]]:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
+          'has-[[data-slot][aria-invalid=true]]:[--field-edge:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
           'has-[[data-slot][aria-invalid=true]:focus-visible]:border-destructive/64 has-[[data-slot][aria-invalid=true]:focus-visible]:ring-destructive/16 dark:has-[[data-slot][aria-invalid=true]:focus-visible]:ring-destructive/24',
           // Only the control dims the group: a busy submit button (disabled while sending) leaves the field as is.
           'has-[[data-slot=input-group-control]:disabled]:opacity-64 has-[[data-slot=input-group-control]:disabled]:shadow-field-flat has-[[data-slot=input-group-control]:disabled]:before:shadow-none',
           'has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:text-muted-foreground has-[[data-slot=input-group-control]:is([readonly],[data-readonly])]:shadow-field-flat',
-          'has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:border-(--edge-field) has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:shadow-field-flat has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:ring-0',
+          'has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:border-(--field-edge) has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:shadow-field-flat has-[[data-slot=input-group-control]:is([readonly],[data-readonly]):focus-visible]:ring-0',
         ],
         within: [
           'focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/24 focus-within:shadow-none',
-          'has-aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
+          'has-aria-invalid:[--field-edge:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
           'focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 dark:focus-within:has-aria-invalid:ring-destructive/24',
           // The wrapper itself may carry `aria-invalid` (`ComboboxChips`).
-          'aria-invalid:[--edge-field:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
+          'aria-invalid:[--field-edge:color-mix(in_oklch,var(--destructive)_40%,transparent)]',
           'focus-within:aria-invalid:border-destructive/64 focus-within:aria-invalid:ring-destructive/16 dark:focus-within:aria-invalid:ring-destructive/24',
           'has-[[readonly],[data-readonly]]:text-muted-foreground has-[[readonly],[data-readonly]]:shadow-field-flat',
-          'has-[[readonly],[data-readonly]]:focus-within:border-(--edge-field) has-[[readonly],[data-readonly]]:focus-within:shadow-field-flat has-[[readonly],[data-readonly]]:focus-within:ring-0',
+          'has-[[readonly],[data-readonly]]:focus-within:border-(--field-edge) has-[[readonly],[data-readonly]]:focus-within:shadow-field-flat has-[[readonly],[data-readonly]]:focus-within:ring-0',
           'has-disabled:opacity-64 has-disabled:shadow-field-flat has-disabled:before:shadow-none',
         ],
       },

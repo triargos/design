@@ -1,5 +1,5 @@
 import { IconArchive, IconCopy, IconDots, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 
 import { Alert, AlertAction, AlertContent } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
@@ -28,60 +28,16 @@ import { Textarea } from '~/components/ui/textarea';
 
 import {
   DEFAULT_SIZING,
-  DENSITIES,
-  type Density,
-  RADII,
-  type Radius,
-  scaleDensity,
   SIZING_GROUPS,
-  SIZING_STYLES,
   SIZING_TOKEN_NAMES,
   SIZING_TOKENS,
   type SizingGroup,
-  type SizingStyle,
-  type SizingTheme,
   type SizingToken,
-  type SizingValues,
-  sizingThemeCss,
-  sizingValues,
 } from '~/lib/theme/sizing';
 
-import { Code, FoundationPage, FoundationSection, Matrix, SpecimenList, SpecimenRow, StateCell } from '../kit/blocks';
+import { Code, FoundationPage, FoundationSection, Matrix, StateCell } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
 import { PaintCheck, PaintCheckGroup } from '../kit/paint-check';
-
-const STYLES: ReadonlyArray<{ name: SizingStyle; label: string; description: string }> = [
-  { name: 'pavo', label: 'Pavo', description: 'The default: 36px controls, 10px corners, 20px cards.' },
-  {
-    name: 'coss',
-    label: 'Coss',
-    description:
-      'coss ui: 32px controls and 28px menu rows on a desktop, one step bigger on a phone; 10px controls and popups.',
-  },
-  { name: 'dense', label: 'Dense', description: 'shadcn mira and nova: 28px controls, 13px control text.' },
-  { name: 'soft', label: 'Soft', description: 'shadcn maia: comfortable density, pill controls, round surfaces.' },
-];
-
-const DENSITY_NAMES = Object.keys(DENSITIES) as ReadonlyArray<Density>;
-const RADIUS_NAMES = Object.keys(RADII) as ReadonlyArray<Radius>;
-
-/**
- * Every token set, not only the theme's overrides: a demo must not inherit the sizing theme Customize puts on the page.
- */
-const complete = (theme: SizingTheme): SizingTheme => ({
-  ...theme,
-  tokens: { ...DEFAULT_SIZING, ...sizingValues(theme).base },
-});
-
-/** A subtree sized by `theme`: a `<style>` from `sizingThemeCss` on `[data-sizing=name]`. */
-function Sized({ name, theme, children }: { name: string; theme: SizingTheme; children: ReactNode }) {
-  return (
-    <div data-sizing={name} className='min-w-0'>
-      <style>{sizingThemeCss(complete(theme), `[data-sizing="${name}"]`)}</style>
-      {children}
-    </div>
-  );
-}
 
 const STATUSES = [
   { value: 'active', label: 'Active' },
@@ -149,10 +105,7 @@ function SettingsCard({ id }: { id: string }) {
   );
 }
 
-/**
- * A menu open on its trigger, in the sized subtree (`container`), so it takes the subtree's tokens. The stage holds the
- * trigger and five rows.
- */
+/** A menu open on its trigger, portalled into the stage (`container`) so it stays in place. The stage holds the trigger and five rows. */
 function OpenMenu() {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   return (
@@ -232,7 +185,7 @@ function Controls() {
   );
 }
 
-/** The same screen in every style: the settings card beside controls, a list, a table, an alert and an open menu. */
+/** One screen: the settings card beside controls, a list, a table, an alert and an open menu. */
 function SampleUI({ id }: { id: string }) {
   return (
     <div className='grid items-start gap-group md:grid-cols-2'>
@@ -273,7 +226,7 @@ function SampleUI({ id }: { id: string }) {
           </CardContent>
         </Card>
       </div>
-      <Card variant='shell' className='min-w-0'>
+      <Card className='min-w-0'>
         <Table variant='card'>
           <TableHeader>
             <TableRow>
@@ -299,32 +252,6 @@ function SampleUI({ id }: { id: string }) {
     </div>
   );
 }
-
-/** One matrix cell: a field, a button pair and the small controls. */
-function MiniSample({ id }: { id: string }) {
-  return (
-    <div className='flex w-full min-w-0 flex-col gap-related'>
-      <Input aria-label='Search' placeholder='Search' />
-      <div className='flex items-center gap-related'>
-        <Button intent='primary'>Save</Button>
-        <Button size='icon' aria-label='More'>
-          <IconDots />
-        </Button>
-      </div>
-      <div className='flex flex-wrap items-center gap-related'>
-        <Checkbox aria-label={`${id} done`} defaultChecked />
-        <Switch aria-label={`${id} public`} defaultChecked />
-        <Badge intent='success'>Done</Badge>
-      </div>
-    </div>
-  );
-}
-
-const controlHeight = (density: Density | SizingValues) =>
-  px(sizingValues({ density, radius: 'default' }).base['--spacing-control'] ?? DEFAULT_SIZING['--spacing-control']);
-
-/** `scaleDensity` factors shown beside the named densities. */
-const SCALES = [0.875, 1, 1.125] as const;
 
 /** The component sources, read at build time, to find which components use a token. */
 const COMPONENT_SOURCES = import.meta.glob<string>('../../src/components/ui/*.tsx', {
@@ -396,52 +323,6 @@ function TokenReference({ group }: { group: SizingGroup }) {
 
 const px = (value: string | undefined) => (value === '9999px' ? 'full' : value?.replace('px', ''));
 
-/** Token rows of a value table: one per token any column sets; a column that leaves it shows a dash. */
-function ValueTable({
-  columns,
-  defaults = false,
-}: {
-  columns: ReadonlyArray<{ name: string; values: SizingValues }>;
-  /** Add a column for the default value. */
-  defaults?: boolean;
-}) {
-  const tokens = SIZING_TOKEN_NAMES.filter((token) => columns.some((column) => column.values[token] !== undefined));
-  return (
-    <Card variant='shell'>
-      <Table variant='card'>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Token</TableHead>
-            {defaults && <TableHead className='text-right'>default</TableHead>}
-            {columns.map((column) => (
-              <TableHead key={column.name} className='text-right'>
-                {column.name}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {tokens.map((token: SizingToken) => (
-            <TableRow key={token}>
-              <TableCell className='font-medium whitespace-nowrap'>{token}</TableCell>
-              {defaults && (
-                <TableCell className='text-right text-muted-foreground tabular-nums'>
-                  {px(DEFAULT_SIZING[token])}
-                </TableCell>
-              )}
-              {columns.map((column) => (
-                <TableCell key={column.name} className='text-right tabular-nums'>
-                  {px(column.values[token]) ?? <span className='text-faint-foreground'>–</span>}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-}
-
 /** Every emphasis, at the intent it is used with. */
 const PAINT_ROWS: ReadonlyArray<{ intent: Intent; emphasis: Emphasis }> = EMPHASES.map((emphasis) => ({
   intent: emphasis === 'solid' ? 'primary' : 'neutral',
@@ -506,75 +387,18 @@ function ButtonPaintMatrix() {
 
 export default defineDocs({
   title: 'Sizing',
-  description: 'Two axes size every component: density and radius. A sizing theme sets them on the page or a subtree.',
+  description: 'One design: every length a component draws is a token in tailwind.css.',
   group: 'Foundations',
   Page: () => (
     <FoundationPage
       title='Sizing'
-      description='Two axes size every component: density (control heights, paddings, gaps, icons, card and dialog padding) and radius (every radius role). A sizing theme picks one of each, adds its own values and, on a phone (below 768px), its touch values; sizingThemeCss renders it for :root or a subtree. The hit area, the 16px field text on a phone, hairlines and layout widths never scale.'>
+      description='One design, no sizing themes: every length a component draws (control heights, paddings, gaps, icons, insets, radii, type) is a token in tailwind.css. An app that needs a different length re-declares that one CSS variable on :root or a subtree. The hit area, the 16px field text on a phone, hairlines and layout widths are not tokens.'>
       <FoundationSection
-        title='Styles'
-        description={
-          <>
-            Named sizing themes: a density, a radius and their own values. Each sample below is scoped with{' '}
-            <Code>sizingThemeCss(SIZING_STYLES.name, '[data-sizing=…]')</Code>. Pick one for every page in Customize.
-          </>
-        }>
-        <div className='flex flex-col gap-page'>
-          {STYLES.map((style) => (
-            <section key={style.name} className='flex flex-col gap-related'>
-              <div className='flex flex-col px-1'>
-                <h3 className='text-body font-medium'>{style.label}</h3>
-                <p className='text-caption text-muted-foreground'>
-                  {style.description} Density {SIZING_STYLES[style.name].density}, radius{' '}
-                  {SIZING_STYLES[style.name].radius}.
-                </p>
-              </div>
-              <Sized name={`style-${style.name}`} theme={SIZING_STYLES[style.name]}>
-                <div className='rounded-card border border-border bg-background p-group'>
-                  <SampleUI id={`sizing-${style.name}`} />
-                </div>
-              </Sized>
-            </section>
-          ))}
+        title='The design'
+        description='One screen at the default tokens, in this page’s theme and mode. Customize tunes any token live.'>
+        <div className='rounded-card border border-border bg-background p-group'>
+          <SampleUI id='sizing-sample' />
         </div>
-      </FoundationSection>
-
-      <FoundationSection
-        title='Density × radius'
-        description='The two axes alone, without a style’s own values. Density moves heights and room; radius moves shape.'>
-        <SpecimenList>
-          {DENSITY_NAMES.map((density) => (
-            <SpecimenRow key={density} name={density} meta={`${controlHeight(density)}px controls`}>
-              <div className='grid grid-cols-2 gap-group sm:grid-cols-4'>
-                {RADIUS_NAMES.map((radius) => (
-                  <div key={radius} className='flex min-w-0 flex-col gap-related'>
-                    <span className='text-caption text-muted-foreground'>{radius}</span>
-                    <Sized name={`${density}-${radius}`} theme={{ density, radius }}>
-                      <MiniSample id={`${density} ${radius}`} />
-                    </Sized>
-                  </div>
-                ))}
-              </div>
-            </SpecimenRow>
-          ))}
-          <SpecimenRow name='scale' meta='scaleDensity(factor), default radius'>
-            <div className='grid grid-cols-2 gap-group sm:grid-cols-4'>
-              {SCALES.map((factor) => (
-                <div key={factor} className='flex min-w-0 flex-col gap-related'>
-                  <span className='text-caption text-muted-foreground'>
-                    ×{factor} · {controlHeight(scaleDensity(factor))}px
-                  </span>
-                  <Sized
-                    name={`scale-${String(factor).replace('.', '-')}`}
-                    theme={{ density: scaleDensity(factor), radius: 'default' }}>
-                    <MiniSample id={`scale ${factor}`} />
-                  </Sized>
-                </div>
-              ))}
-            </div>
-          </SpecimenRow>
-        </SpecimenList>
       </FoundationSection>
 
       <FoundationSection
@@ -592,12 +416,7 @@ export default defineDocs({
 
       <FoundationSection
         title='Token reference'
-        description={
-          <>
-            Every token a sizing theme sets, by family, with the components that read it. A density of your own is any
-            of these: <Code>scaleDensity(0.9)</Code>, or a map of token to px.
-          </>
-        }>
+        description={<>Every token, by family, with its default and the components that read it.</>}>
         <div className='flex flex-col gap-page'>
           {(Object.keys(SIZING_GROUPS) as ReadonlyArray<SizingGroup>).map((group) => (
             <section key={group} className='flex flex-col gap-related'>
@@ -606,43 +425,6 @@ export default defineDocs({
             </section>
           ))}
         </div>
-      </FoundationSection>
-
-      <FoundationSection
-        title='Density'
-        description='What each density sets; a dash keeps the default. Type, page and section spacing stay.'>
-        <ValueTable
-          defaults
-          columns={DENSITY_NAMES.filter((name) => name !== 'default').map((name) => ({
-            name,
-            values: DENSITIES[name],
-          }))}
-        />
-      </FoundationSection>
-
-      <FoundationSection
-        title='Radius'
-        description='What each radius sets. Pill rounds single-line controls fully and caps surfaces, multi-line fields, blocks, tooltips and the checkbox; sharp squares the fixed steps too.'>
-        <ValueTable
-          defaults
-          columns={RADIUS_NAMES.filter((name) => name !== 'default').map((name) => ({ name, values: RADII[name] }))}
-        />
-      </FoundationSection>
-
-      <FoundationSection
-        title='Style values'
-        description='Each style’s values on top of its density and radius, then its touch values on a phone, below 768px.'>
-        <ValueTable
-          columns={STYLES.filter((style) => style.name !== 'pavo').flatMap((style) => {
-            const values = sizingValues(SIZING_STYLES[style.name]);
-            return Object.keys(values.touch).length > 0
-              ? [
-                  { name: style.label, values: values.base },
-                  { name: `${style.label} touch`, values: values.touch },
-                ]
-              : [{ name: style.label, values: values.base }];
-          })}
-        />
       </FoundationSection>
     </FoundationPage>
   ),

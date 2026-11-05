@@ -9,11 +9,11 @@ import { cn } from '~/lib/utils';
 /**
  * A label for a state or a count: an `intent` at `subtle` (the default), `solid` (needs action) or `outline` (quiet,
  * dense lists). `--badge-height` high, or `--badge-height-sm` at `size='sm'`; `shape='pill'` for a count or a filter chip. A link badge:
- * `render={<a href='…' />}`. A color from data (an organization's category or label color) is `color` instead of
+ * `render={<a href='…' />}`; it takes the hover fill and the focus ring a static badge leaves out. A color from data (an organization's category or label color) is `color` instead of
  * `intent`: any CSS color or `var(--category-N)`; every emphasis paints from it.
  */
 const badgeShape = cva(
-  'inline-flex shrink-0 items-center justify-center gap-control-gap-sm font-medium whitespace-nowrap',
+  'inline-flex shrink-0 items-center justify-center gap-control-gap-sm font-medium whitespace-nowrap outline-none focus-visible:ring-3 focus-visible:ring-ring/24',
   {
     variants: {
       size: {
@@ -51,7 +51,11 @@ function Badge({
     props: mergeProps<'span'>(
       {
         className: cn(
-          intentVariants({ intent: color === undefined ? intent : 'data', emphasis }),
+          intentVariants({
+            intent: color === undefined ? intent : 'data',
+            emphasis,
+            interactive: render !== undefined,
+          }),
           badgeShape({ size, shape }),
           className,
         ),

@@ -114,7 +114,7 @@ function TeamChips({ state }: { state: FieldState }) {
 const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldState) => ReactNode }> = [
   {
     name: 'Input',
-    meta: '32px, text-control; 36px and 16px below sm',
+    meta: '36px, text-control; 16px below md',
     render: (state) => (
       <Input
         placeholder='Maya Chen'
@@ -193,7 +193,7 @@ export default defineDocs({
     <FoundationPage
       title='Input'
       description='One field surface for every control that takes text or a choice: same height, edge, focus and error.'>
-      <ExampleSection title='Default' description='32px, text-control; 36px and 16px below sm, so iOS does not zoom.'>
+      <ExampleSection title='Default' description='36px, text-control; 16px below md, so iOS does not zoom.'>
         <InputDefault />
       </ExampleSection>
       <ExampleSection

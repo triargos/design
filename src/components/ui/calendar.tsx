@@ -103,7 +103,7 @@ function CalendarMonth({ mode }: { mode: 'single' | 'range' }) {
       </header>
       <CalendarGrid
         weekdayStyle='short'
-        className='-my-related border-separate border-spacing-x-0 border-spacing-y-(--spacing-related)'>
+        className='-my-tight border-separate border-spacing-x-0 border-spacing-y-(--spacing-tight)'>
         <CalendarGridHeader>
           {(day) => (
             <CalendarHeaderCell className='p-0 text-caption font-normal text-muted-foreground select-none'>

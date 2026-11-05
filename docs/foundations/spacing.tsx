@@ -64,7 +64,7 @@ const SamplePage = () => (
         </AlertContent>
       </Alert>
       <PageSection title='Team' description='Only admins see these details.'>
-        <Card variant='shell'>
+        <Card>
           <CardHeader>
             <CardTitle>Members</CardTitle>
             <CardDescription>They get every project update.</CardDescription>
@@ -76,7 +76,7 @@ const SamplePage = () => (
             </ItemList>
           </CardContent>
         </Card>
-        <Card variant='shell'>
+        <Card>
           <CardHeader>
             <CardTitle>Owner</CardTitle>
           </CardHeader>
@@ -88,7 +88,7 @@ const SamplePage = () => (
         </Card>
       </PageSection>
       <PageSection title='Documents'>
-        <Card variant='shell'>
+        <Card>
           <CardHeader>
             <CardTitle>Files</CardTitle>
           </CardHeader>

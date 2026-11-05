@@ -292,6 +292,9 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
 /**
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
  * under the pointer and ends in an `ItemChevron`; a `selected` row fills with `muted`.
+ *
+ * Below `sm` a row with a description sets its actions on a line of their own, end-aligned: beside them the description
+ * squeezes into its two-line clamp and hides what it says. The media and the text stay on the first line.
  */
 function Item({
   className,
@@ -306,6 +309,7 @@ function Item({
     props: mergeProps<'div'>(
       {
         className: cn(
+          'max-sm:has-[[data-slot=item-description]]:*:data-[slot=item-actions]:basis-full max-sm:has-[[data-slot=item-description]]:*:data-[slot=item-actions]:justify-end',
           'group/item flex w-full flex-wrap items-center gap-(--item-gap) rounded-block border border-transparent px-row-pad-x py-row-pad-y text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none in-data-[slot=item-list]:focus-visible:ring-inset data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
           className,
         ),

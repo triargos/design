@@ -7,10 +7,10 @@ const PROJECTS = [
   { name: 'Mobile app', due: 'Due next week', status: 'At risk', intent: 'warning' },
 ] as const;
 
-/** One card tinted with the shell: the header a title band, the content a panel below it. */
-export function CardShell() {
+/** The exception: the title above the card, on the page, as a section heading; no tint. */
+export function CardPlain() {
   return (
-    <Card variant='shell' className='w-full max-w-xl'>
+    <Card variant='plain' className='w-full max-w-xl'>
       <CardHeader>
         <CardTitle>Projects</CardTitle>
       </CardHeader>
