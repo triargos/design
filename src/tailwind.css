@@ -314,12 +314,13 @@
   --spacing-row-gap: 0.5rem;
 
   /* Surfaces: a surface's padding (`modal`: dialog, sheet; `popup`: popover; `picker`: calendar, color picker), and
-     its edge to the rows inside, also its `--outer-inset` (`popup-inset`: menus; `list-inset`: sidebar, bottom nav
-     panel, command list). */
+     its edge to the rows inside, also its `--outer-inset` (`popup-inset`: menus; `card-inset`: the card shell;
+     `list-inset`: sidebar, bottom nav panel, command list). */
   --spacing-modal: 1.5rem;
   --spacing-popup: 1rem;
   --spacing-picker: 0.75rem;
   --spacing-popup-inset: 0.25rem;
+  --spacing-card-inset: 0.25rem;
   --spacing-list-inset: 0.5rem;
 
   /* Marks: a slider's or progress bar's track thickness. */

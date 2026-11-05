@@ -42,6 +42,7 @@ const twMerge = extendTailwindMerge({
         'popup',
         'picker',
         'popup-inset',
+        'card-inset',
         'list-inset',
         'track',
       ],
