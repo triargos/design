@@ -19,7 +19,7 @@ function Timeline({ value = 1, orientation = 'vertical', className, ...props }: 
       <div
         data-slot='timeline'
         className={cn(
-          'group/timeline flex data-[orientation=horizontal]:w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col',
+          'group/timeline flex data-[orientation=horizontal]:w-full data-[orientation=horizontal]:flex-row data-[orientation=horizontal]:overflow-x-auto data-[orientation=vertical]:flex-col',
           className,
         )}
         data-orientation={orientation}
@@ -35,9 +35,9 @@ interface TimelineItemProps extends React.ComponentProps<'div'> {
 
 /**
  * An event: its marker and the line to the next event, then the children (`TimelineDate`, `TimelineTitle`,
- * `TimelineContent`). A reached event takes the brand edge; the line turns brand once the next one is reached. The
+ * `TimelineContent`: a date above a title in `body`, the content muted under it). A reached event takes the brand edge; the line turns brand once the next one is reached. The
  * marker column is `--timeline-marker-size` plus `--spacing-group` to the content; the line stops 2px short of each
- * marker.
+ * marker. A horizontal timeline scrolls when its events are narrower than `min-w-40` apiece.
  */
 function TimelineItem({ step, className, children, ...props }: TimelineItemProps) {
   const reachedStep = React.use(ReachedStepContext);
@@ -46,7 +46,7 @@ function TimelineItem({ step, className, children, ...props }: TimelineItemProps
     <div
       data-slot='timeline-item'
       className={cn(
-        'group/timeline-item relative flex flex-1 flex-col group-data-[orientation=horizontal]/timeline:mt-[calc(var(--timeline-marker-size)+var(--spacing-group))] not-last:group-data-[orientation=horizontal]/timeline:pe-(--timeline-step-x) group-data-[orientation=vertical]/timeline:ms-[calc(var(--timeline-marker-size)+var(--spacing-group))] not-last:group-data-[orientation=vertical]/timeline:pb-(--timeline-step)',
+        'group/timeline-item relative flex flex-1 flex-col gap-tight group-data-[orientation=horizontal]/timeline:min-w-40 group-data-[orientation=horizontal]/timeline:mt-[calc(var(--timeline-marker-size)+var(--spacing-group))] not-last:group-data-[orientation=horizontal]/timeline:pe-(--timeline-step-x) group-data-[orientation=vertical]/timeline:ms-[calc(var(--timeline-marker-size)+var(--spacing-group))] not-last:group-data-[orientation=vertical]/timeline:pb-(--timeline-step)',
         className,
       )}
       data-completed={step <= reachedStep || undefined}
@@ -75,7 +75,7 @@ function TimelineDate({ className, render, ...props }: useRender.ComponentProps<
     props: mergeProps<'time'>(
       {
         className: cn(
-          'mb-tight block text-caption font-medium text-muted-foreground max-sm:group-data-[orientation=vertical]/timeline:h-(--text-caption--line-height)',
+          'block text-caption text-muted-foreground max-sm:group-data-[orientation=vertical]/timeline:h-(--text-caption--line-height)',
           className,
         ),
       },
@@ -85,13 +85,13 @@ function TimelineDate({ className, render, ...props }: useRender.ComponentProps<
 }
 
 function TimelineTitle({ className, ...props }: React.ComponentProps<'h3'>) {
-  return <h3 data-slot='timeline-title' className={cn('text-caption text-muted-foreground', className)} {...props} />;
+  return (
+    <h3 data-slot='timeline-title' className={cn('text-body font-medium text-foreground', className)} {...props} />
+  );
 }
 
 function TimelineContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div data-slot='timeline-content' className={cn('mt-0.5 text-body text-muted-foreground', className)} {...props} />
-  );
+  return <div data-slot='timeline-content' className={cn('text-body text-muted-foreground', className)} {...props} />;
 }
 
 export { Timeline, TimelineContent, TimelineDate, TimelineItem, TimelineTitle };

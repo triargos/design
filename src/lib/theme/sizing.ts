@@ -204,7 +204,7 @@ export const SIZING_TOKENS = {
   '--slider-thumb': t('marks', '12px', 'Slider thumb'),
   '--stepper-indicator-size': t('marks', '20px', 'Stepper numbered indicator'),
   '--timeline-marker-size': t('marks', '16px', 'Timeline marker'),
-  '--timeline-step': t('marks', '48px', 'Timeline distance to the next event'),
+  '--timeline-step': t('marks', '24px', 'Timeline distance to the next event'),
   '--timeline-step-x': t('marks', '32px', 'Horizontal timeline distance to the next event'),
 } as const satisfies Record<`--${string}`, SizingTokenSpec>;
 
