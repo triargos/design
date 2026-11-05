@@ -24,9 +24,9 @@ import { cn } from '~/lib/utils';
 //   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `card` in,
 //   on the card header's text.
 // - `card`: the table is the content of a shell card, in place of `CardContent`. Header and footer rows sit on
-//   the tint; the body is the panel between them, as `CardContent` is there: 1px out on the sides so its edge lies on
-//   the frame's, its own edge and `rounded-block` corners only against the head and foot rows. Put it straight in the
-//   shell: `<Card variant='shell'><Table variant='card'>…</Table></Card>`.
+//   the tint; the body is the panel between them, as `CardContent` is there: its side edges on the frame's, its own
+//   edge and `rounded-block` corners only against the head and foot rows. Put it straight in the shell:
+//   `<Card variant='shell'><Table variant='card'>…</Table></Card>`; a `CardHeader` there sits above the frame.
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
 // - groups: `TableGroupRow`, a flat `muted` band across every column; with `onOpenChange` it folds its rows.
@@ -40,11 +40,14 @@ type TableSection = 'head' | 'body' | 'foot';
 const TableVariantContext = createContext<TableVariant>('default');
 
 /**
- * A `card` table in its shell: 1px out on the sides, so the body's side edges lie on the frame's (which clips them).
- * Without head or foot rows the body meets the frame's top or bottom, so it runs out there too and the frame's corner
- * clips it.
+ * A `card` table in its shell: the panel of the frame, as `CardContent` there, across the frame's full width. It clips
+ * 1px off every side, so the body's side edges, and its top or bottom edge without head or foot rows, lie on the
+ * frame's; the clip follows the frame's corner. A `CardFooter` below keeps the bottom edge, against the band.
  */
-const cardContainer = '-mx-px w-[calc(100%+2px)] [&:not(:has(thead))]:-mt-px [&:not(:has(tfoot))]:-mb-px';
+const cardContainer = [
+  'in-data-[variant=shell]:[clip-path:inset(1px_1px_var(--clip-bottom,1px)_1px_round_calc(var(--outer-radius)-1px))]',
+  '[&:has(+[data-slot=card-footer])]:[--clip-bottom:-1rem]',
+];
 const TableSectionContext = createContext<TableSection>('body');
 /** Set inside a virtualized table: the header sticks, the head row is ARIA row 1. */
 const TableVirtualizedContext = createContext(false);
