@@ -201,7 +201,7 @@ export const SIZING_TOKENS = {
   '--switch-thumb': t('marks', '16px', 'Switch thumb'),
   '--switch-thumb-sm': t('marks', '12px', 'Switch sm thumb'),
   '--switch-inset': t('marks', '2px', 'Switch track padding around the thumb'),
-  '--slider-thumb': t('marks', '12px', 'Slider thumb'),
+  '--slider-thumb': t('marks', '16px', 'Slider thumb'),
   '--stepper-indicator-size': t('marks', '20px', 'Stepper numbered indicator'),
   '--timeline-marker-size': t('marks', '16px', 'Timeline marker'),
   '--timeline-step': t('marks', '48px', 'Timeline distance to the next event'),

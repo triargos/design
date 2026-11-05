@@ -24,7 +24,7 @@ function Slider<Value extends number | readonly number[]>({
       <SliderPrimitive.Control className='relative flex w-full touch-none items-center select-none data-disabled:opacity-64 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-40 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col'>
         <SliderPrimitive.Track
           data-slot='slider-track'
-          className='relative grow overflow-hidden rounded-track bg-muted data-[orientation=horizontal]:h-track data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-track'>
+          className='relative grow overflow-hidden rounded-track bg-foreground/14 data-[orientation=horizontal]:h-track data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-track'>
           <SliderPrimitive.Indicator
             data-slot='slider-range'
             className='bg-primary-solid data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full'
