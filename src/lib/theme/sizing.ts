@@ -45,7 +45,7 @@ export const SIZING_TOKENS = {
     '16px',
     'Peer blocks; a heading and its content; a label beside its control; a chart and its legend; toasts apart',
   ),
-  '--spacing-card': t('spacing', '24px', 'A card’s padding, and its header, footer and flush rows'),
+  '--spacing-card': t('spacing', '20px', 'A card’s padding, and its header, footer and flush rows'),
   '--spacing-page': t('spacing', '48px', 'Page header to content (layout: no density moves it)'),
   '--spacing-section': t('spacing', '64px', 'Section to section (layout: no density moves it)'),
   // Controls.

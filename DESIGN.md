@@ -106,7 +106,7 @@ Six steps, named by relationship, each about twice the one before. What touches 
 | `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty` |
 | `related` | 8   | Items that touch: label → control, media → text, text → action | `Field` (label → control), page header actions, `ItemActions`, `Stepper`, `Progress`   |
 | `group`   | 16  | Peer blocks; a heading → its content; a label beside a control | Page header stack, sections, `FieldGroup`, horizontal `Field`, `Empty` media, toasts   |
-| `card`    | 24  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges   |
+| `card`    | 20  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges   |
 | `page`    | 48  | Page header → content                                          | Page pattern                                                                           |
 | `section` | 64  | Section ↔ section                                              | Page pattern                                                                           |
 
@@ -299,7 +299,7 @@ emphasis      solid · subtle · outline · ghost · raised      (intentVariants
 button        (none) neutral/raised · intent='primary' · emphasis='ghost' · intent='destructive' · destructive + subtle
 text          foreground · muted-foreground · faint-foreground · disabled-foreground
 type          title 28 · heading 20 · subheading 16 · body 14 · control 14 · label 14 · caption 12   (titles 600)
-spacing       tight 4 · related 8 · group 16 · card 24 · page 48 · section 64
+spacing       tight 4 · related 8 · group 16 · card 20 · page 48 · section 64
 radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 12 · card 20 · dialog 20 · panel 20 · rounded-inner
               checkbox 4 · tooltip 8 · area 10 · block 12 · track full
 sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 32 · size-icon 16 · sizingThemeCss(SIZING_STYLES.coss) · scaleDensity(0.9)
