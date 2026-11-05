@@ -13,7 +13,7 @@ export function PagePatternDefault() {
       <header className='flex flex-col gap-group'>
         <a
           href='#projects'
-          className='inline-flex min-h-6 items-center gap-1.5 self-start text-body text-muted-foreground transition-colors hover:text-foreground'>
+          className='-ms-1 inline-flex min-h-6 items-center gap-1.5 self-start text-body text-muted-foreground transition-colors hover:text-foreground'>
           <IconChevronLeft aria-hidden className='size-4' />
           Projects
         </a>
@@ -39,8 +39,8 @@ export function PagePatternDefault() {
           { title: 'Team', description: 'Only admins see these details.', card: 'Members' },
         ].map((section) => (
           <section key={section.title} className='flex flex-col gap-group'>
-            {/* The card's 1px edge + its `card` padding: the title starts on the cards' text. */}
-            <hgroup className='flex flex-col gap-tight px-[calc(var(--spacing-card)+1px)]'>
+            {/* The card's 1px edge, its `card-inset` and its `card` padding: the title starts on the cards' text. */}
+            <hgroup className='flex flex-col gap-tight px-[calc(var(--spacing-card)+var(--spacing-card-inset)+1px)]'>
               <h2 className='text-heading text-balance'>{section.title}</h2>
               <p className='text-body text-pretty text-muted-foreground'>{section.description}</p>
             </hgroup>
