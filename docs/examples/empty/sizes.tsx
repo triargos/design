@@ -4,9 +4,9 @@ import { Card, CardContent } from '~/components/ui/card';
 /** `sm` for a section inside a card. */
 export function EmptySizes() {
   return (
-    <div className='grid w-full max-w-2xl gap-4 sm:grid-cols-2'>
+    <div className='grid w-full max-w-2xl gap-group sm:grid-cols-2'>
       <Card>
-        <CardContent className='p-4'>
+        <CardContent>
           <Empty>
             <EmptyMedia />
             <EmptyTitle>No invoices</EmptyTitle>
@@ -15,7 +15,7 @@ export function EmptySizes() {
         </CardContent>
       </Card>
       <Card>
-        <CardContent className='p-4'>
+        <CardContent>
           <Empty size='sm'>
             <EmptyMedia />
             <EmptyTitle>No invoices</EmptyTitle>

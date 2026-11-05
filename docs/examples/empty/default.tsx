@@ -11,7 +11,7 @@ export function EmptyDefault() {
       <CardHeader>
         <CardTitle>Documents</CardTitle>
       </CardHeader>
-      <CardContent className='p-4'>
+      <CardContent>
         <Empty>
           <EmptyMedia />
           <EmptyTitle>No documents yet</EmptyTitle>

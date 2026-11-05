@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/com
 export function AlertInASection() {
   return (
     <section className='flex w-full max-w-2xl flex-col gap-group'>
-      <hgroup className='flex flex-col gap-tight px-[calc(var(--spacing-card)+1px)]'>
+      <hgroup className='flex flex-col gap-tight px-[calc(var(--spacing-card)+var(--spacing-card-inset)+1px)]'>
         <h2 className='text-heading text-balance'>Billing</h2>
         <p className='text-body text-pretty text-muted-foreground'>How the workspace pays.</p>
       </hgroup>

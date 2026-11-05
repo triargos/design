@@ -11,7 +11,7 @@ export function EmptyError() {
       <CardHeader>
         <CardTitle>Recent activity</CardTitle>
       </CardHeader>
-      <CardContent className='p-4'>
+      <CardContent>
         <Empty role='alert'>
           <EmptyMedia variant='icon'>
             <IconCloudOff />

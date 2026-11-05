@@ -112,7 +112,7 @@ Six steps, named by relationship, each about twice the one before. What touches 
 
 - A gap derived from two steps is a `calc` of their variables.
 - A card is a shell by default: its 16px title band sits inside the tint, one level under a section heading. `variant='plain'` is the exception, for a block whose title is itself a section heading (20px, above the surface); never under another heading, as two 20px headings in a row read as one level.
-- A `plain` card's `CardHeader`, and a shell's over a table, sits above the card, on its text edge: edge 1px + `card`. Other text outside a card that shares the edge pads the same: `px-[calc(var(--spacing-card)+1px)]`.
+- A `plain` card's `CardHeader`, and a shell's over a table, sits above the card, on its text edge: edge 1px + `card`. Other text outside a card that shares the edge pads the same: `px-[calc(var(--spacing-card)+1px)]`; over a shell it also adds `--spacing-card-inset`, as the shell's own title sits that far in (a section title above its card, the Page pattern).
 - Padding inside rows and controls (`Item`, `Alert`) follows the sizing tokens (`control-pad`, `row-pad-*`, `*-inset`; Sizing), not this scale, on the same 4px grid: 4, 8, 12, 16, 24.
 
 ## Shape

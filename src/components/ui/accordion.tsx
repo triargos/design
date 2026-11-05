@@ -39,7 +39,7 @@ function Accordion({
 const accordionItemVariants = cva('border-b border-border-subtle last:border-b-0', {
   variants: {
     variant: {
-      default: 'pb-[calc(var(--accordion-pad)/2)]',
+      default: '',
       // Directly in a card: the padding of a list row in one (`ItemListRow`). In an `ItemList` the row sets it.
       flush: [
         '[[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-x:var(--spacing-card)] [[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-y:calc(var(--spacing-card)/2)]',
@@ -92,8 +92,10 @@ const accordionTriggerVariants = cva(
   {
     variants: {
       variant: {
-        // `area`, not `control`: a long title wraps.
-        default: 'rounded-area px-(--accordion-pad) pt-(--accordion-pad) pb-[calc(var(--accordion-pad)/2)]',
+        // `area`, not `control`: a long title wraps. Even padding while closed, so the hover fill centers the title;
+        // open, half of it below, the content follows and its padding ends the row.
+        default:
+          'rounded-area p-(--accordion-pad) [transition:background-color_var(--transition-duration-feedback),padding-bottom_var(--transition-duration-move)_var(--ease-move)] hover:bg-row-hover data-panel-open:pb-[calc(var(--accordion-pad)/2)] motion-reduce:transition-none',
         // A list row's padding (`--list-row-pad-*`), else `card` in from the content's edge: on the header text, as
         // `ItemList` rows. Open, half a rule's padding below: the content follows, its padding ends the row; the
         // padding moves with the panel. The ring sits inside the row, which the card clips.
@@ -132,7 +134,7 @@ const accordionContentVariants = cva(
     variants: {
       variant: {
         default:
-          'ps-[calc(var(--accordion-pad)+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-(--accordion-content-pad-end) pb-[calc(var(--accordion-pad)/2)]',
+          'ps-[calc(var(--accordion-pad)+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-(--accordion-content-pad-end) pb-(--accordion-pad)',
         flush:
           'ps-[calc(var(--list-row-pad-x,var(--spacing-card))+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-[var(--list-row-pad-x,var(--spacing-card))] pb-[var(--list-row-pad-bottom,var(--accordion-flush-content-pad-bottom))] in-data-[slot=sheet-body]:ps-[calc(var(--spacing-modal)+var(--spacing-icon-lg)+var(--spacing-row-gap))] in-data-[slot=sheet-body]:pe-modal',
       },
