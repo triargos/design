@@ -651,9 +651,9 @@ function ComboboxChips({ className, ...props }: ComboboxPrimitive.Chips.Props) {
       data-slot='combobox-chips'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        // `control-xs` chips centered in a `control` row (the padding + the border); rows wrap a chip gap apart.
+        // Chips seated `field-inset` in (the padding + the border); rows wrap a chip gap apart.
         // Multi-line once they wrap: the area radius.
-        'flex min-h-control flex-wrap items-center gap-tight p-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] text-body [--field-radius:var(--radius-area)]',
+        'flex min-h-control flex-wrap items-center gap-tight p-[calc(var(--spacing-field-inset)-1px)] text-body [--field-radius:var(--radius-area)]',
         // Base UI marks the input `disabled` and chips `aria-disabled`; block the whole surface.
         'has-disabled:pointer-events-none has-disabled:cursor-not-allowed',
         className,
@@ -674,8 +674,8 @@ function ComboboxChip({ className, children, removeLabel: removeLabelProp, ...pr
     <ComboboxPrimitive.Chip
       data-slot='combobox-chip'
       className={cn(
-        // A flat 4% fill, no lift. `control-xs`, centered in the `control` row: `rounded-inner` follows the field's curve.
-        'flex h-control-xs w-fit items-center rounded-inner bg-foreground/4 pl-(--field-chip-pad-x) text-caption font-medium whitespace-nowrap text-foreground [--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)] aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed dark:bg-foreground/8',
+        // A flat 4% fill, no lift. `field-seat`, seated in the `control` row: `rounded-inner` follows the field's curve.
+        'flex h-field-seat w-fit items-center rounded-inner bg-foreground/4 pl-(--field-chip-pad-x) text-caption font-medium whitespace-nowrap text-foreground [--outer-inset:var(--spacing-field-inset)] aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed dark:bg-foreground/8',
         className,
       )}
       {...props}>
@@ -697,7 +697,7 @@ function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Pro
       data-slot='combobox-chip-input'
       // Text on the field's padding line when empty (`field-pad` less the chips' inset); a chip gap after a chip.
       className={cn(
-        'h-control-xs min-w-16 flex-1 pl-[calc(var(--spacing-field-pad)-calc((var(--spacing-control)-var(--spacing-control-xs))/2))] outline-none max-md:text-[1rem] placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-tight',
+        'h-field-seat min-w-16 flex-1 pl-[calc(var(--spacing-field-pad)-var(--spacing-field-inset))] outline-none max-md:text-[1rem] placeholder:text-faint-foreground [[data-slot=combobox-chip]+&]:pl-tight',
         className,
       )}
       {...props}

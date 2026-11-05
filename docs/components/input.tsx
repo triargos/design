@@ -137,7 +137,7 @@ const FIELDS: ReadonlyArray<{ name: string; meta: string; render: (state: FieldS
   { name: 'Select', meta: 'SelectTrigger', render: (state) => <TeamSelect state={state} /> },
   {
     name: 'Combobox chips',
-    meta: '32px chips, 4px in, rounded-inner',
+    meta: 'field-seat chips, field-inset in, rounded-inner',
     render: (state) => <TeamChips state={state} />,
   },
   {

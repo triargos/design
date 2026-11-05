@@ -31,6 +31,8 @@ const twMerge = extendTailwindMerge({
         'icon-lg',
         'field-pad',
         'field-pad-y',
+        'field-inset',
+        'field-seat',
         'menu-item',
         'menu-item-pad',
         'row-pad-x',

@@ -79,7 +79,7 @@ function DateField<T extends AriaDateValue>({
       data-slot='date-field'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-control w-full min-w-0 cursor-text items-center pr-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] pl-[calc(var(--spacing-field-pad)-1px)] text-control',
+        'flex h-control w-full min-w-0 cursor-text items-center pr-[calc(var(--spacing-field-inset)-1px)] pl-[calc(var(--spacing-field-pad)-1px)] text-control',
         'data-disabled:cursor-not-allowed data-disabled:opacity-64 data-disabled:shadow-field-flat data-disabled:before:shadow-none',
         className,
       )}
@@ -98,7 +98,7 @@ function TimeField<T extends AriaTimeValue>({
       data-slot='time-field'
       className={cn(
         inputSurfaceVariants({ scope: 'within' }),
-        'flex h-control w-full min-w-0 cursor-text items-center pr-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] pl-[calc(var(--spacing-field-pad)-1px)] text-control',
+        'flex h-control w-full min-w-0 cursor-text items-center pr-[calc(var(--spacing-field-inset)-1px)] pl-[calc(var(--spacing-field-pad)-1px)] text-control',
         'data-disabled:cursor-not-allowed data-disabled:opacity-64 data-disabled:shadow-field-flat data-disabled:before:shadow-none',
         className,
       )}
@@ -330,7 +330,7 @@ function TimeInput({
         <SegmentsInput />
         <span
           aria-hidden
-          className='flex size-control-xs shrink-0 items-center justify-center text-muted-foreground in-data-disabled:text-disabled-foreground [&_svg]:size-icon'>
+          className='flex size-field-seat shrink-0 items-center justify-center text-muted-foreground in-data-disabled:text-disabled-foreground [&_svg]:size-icon'>
           <IconClock />
         </span>
       </TimeField>

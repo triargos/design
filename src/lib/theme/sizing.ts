@@ -50,7 +50,7 @@ export const SIZING_TOKENS = {
   '--spacing-section': t('spacing', '64px', 'Section to section (layout: no density moves it)'),
   // Controls.
   '--spacing-control-2xs': t('controls', '20px', 'Kbd height'),
-  '--spacing-control-xs': t('controls', '24px', 'Button xs, buttons and chips inside a field'),
+  '--spacing-control-xs': t('controls', '24px', 'Button xs'),
   '--spacing-control-sm': t('controls', '32px', 'Button sm, tabs, sidebar rows'),
   '--spacing-control': t('controls', '36px', 'Button, fields, calendar day: the main control height'),
   '--spacing-control-lg': t('controls', '40px', 'Button lg, OTP slot'),
@@ -65,6 +65,7 @@ export const SIZING_TOKENS = {
   '--spacing-icon-lg': t('controls', '20px', 'Large icons: empty and alert media'),
   // Fields.
   '--spacing-field-pad': t('fields', '12px', 'Text inset in inputs, selects, textareas (less the border)'),
+  '--spacing-field-inset': t('fields', '4px', 'Field edge to a button or chip seated in it, border included'),
   '--spacing-field-pad-y': t('fields', '8px', 'Block padding of a multi-line field'),
   // Rows.
   '--spacing-menu-item': t('rows', '36px', 'Menu, select and combobox row height'),
@@ -128,8 +129,7 @@ export const SIZING_TOKENS = {
   '--tabs-inset': t('controls', '4px', 'Segmented track padding around the tabs'),
   '--action-bar-status-pad-x': t('controls', '12px', 'Action bar status inline padding'),
   // Component sizing: fields.
-  '--field-chip-pad-x': t('fields', '8px', 'Chips and raised buttons in a field: file button, combobox chip'),
-  '--field-button-pad-x': t('fields', '6px', 'Ghost xs button in a field'),
+  '--field-chip-pad-x': t('fields', '8px', 'Text buttons and chips in a field: file button, combobox chip'),
   '--textarea-min-height': t('fields', '60px', 'Textarea least height'),
   '--file-drop-zone-pad-x': t('fields', '24px', 'File drop zone inline padding'),
   '--file-drop-zone-pad-y': t('fields', '24px', 'File drop zone block padding'),
@@ -245,7 +245,6 @@ export const DENSITIES = {
     '--sidebar-sub-height': '24px',
     '--stepper-indicator-size': '18px',
     '--field-chip-pad-x': '6px',
-    '--field-button-pad-x': '4px',
     '--textarea-min-height': '52px',
     '--spacing-field-pad-y': '6px',
     '--file-drop-zone-pad-x': '20px',
@@ -306,7 +305,6 @@ export const DENSITIES = {
     '--sidebar-sub-height': '32px',
     '--stepper-indicator-size': '24px',
     '--field-chip-pad-x': '10px',
-    '--field-button-pad-x': '8px',
     '--textarea-min-height': '72px',
     '--spacing-field-pad-y': '10px',
     '--file-drop-zone-pad-x': '28px',

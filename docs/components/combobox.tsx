@@ -35,7 +35,8 @@ export default defineDocs({
         description={
           <>
             <Code>multiple</Code>: <Code>ComboboxChips</Code> &gt; <Code>ComboboxValue</Code> of{' '}
-            <Code>ComboboxChip</Code>s, then <Code>ComboboxChipsInput</Code>. 32px chips, 4px in.
+            <Code>ComboboxChip</Code>s, then <Code>ComboboxChipsInput</Code>. Chips seated like field buttons: 28px, 4px
+            in.
           </>
         }>
         <ComboboxMultiple />
