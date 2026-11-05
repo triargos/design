@@ -111,6 +111,7 @@ Six steps, named by relationship, each about twice the one before. What touches 
 | `section` | 64  | Section ↔ section                                              | Page pattern                                                                           |
 
 - A gap derived from two steps is a `calc` of their variables.
+- A plain card's title is a section title. Under another heading (a page section), cards take `variant='shell'`, whose 14px label band is the next level down; two 20px headings in a row read as one level.
 - A plain card's `CardHeader`, and a shell's over a table, sits above the card, on its text edge: edge 1px + `card`. Other text outside a card that shares the edge pads the same: `px-[calc(var(--spacing-card)+1px)]`.
 - Padding inside rows and controls (`Item`, `Alert`) follows the sizing tokens (`control-pad`, `row-pad-*`, `*-inset`; Sizing), not this scale, on the same 4px grid: 4, 8, 12, 16, 24. A sizing theme's density moves `group` and `card` too; `page` and `section` never.
 
