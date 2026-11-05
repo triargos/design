@@ -9,7 +9,7 @@ How big is it?                → size        default · sm · xs · lg (per com
 How dense, how round?         → sizing      density compact · default · comfortable × radius sharp · default · soft · pill
 Where does it sit?            → surface     page · shell · card · popup        ([data-surface])
 What is the text for?         → type role   title · heading · subheading · body · control · label · caption
-How far from its neighbour?   → spacing     tight · related · part · group · card · page · section
+How far from its neighbour?   → spacing     tight · related · group · card · page · section
 What shape is it?             → radius role control-xs · control-sm · control · control-lg · popup · card · dialog · panel
                                             checkbox · tooltip · area · block · track
 How high does it sit?         → elevation   flat · border · field · raised · popup · modal
@@ -83,15 +83,15 @@ Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), whic
 
 Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other t-shirt sizes do not compile. Emphasis is `font-medium` and tone is a text level; neither one is a new size. Titles are semibold: the step from a 600 title to 400 body carries the hierarchy as much as the size does.
 
-| Role              | px · weight            | Use                                                                                                                 | Owner                                                                |
-| ----------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `text-title`      | 28 / 36 · 600, −0.02em | Page title; a big number (`tabular-nums`)                                                                           | Page pattern, `StatValue`                                            |
-| `text-heading`    | 20 / 28 · 600, −0.01em | Section, card, dialog, sheet, empty titles                                                                          | Page pattern, `CardTitle`, `DialogTitle`, `SheetTitle`, `EmptyTitle` |
-| `text-subheading` | 16 / 24 · 600          | A title inside a card, under the card's heading: an empty state's                                                   | `EmptyTitle` in a card                                               |
-| `text-body`       | 14 / 21 · 400          | Reading text; descriptions (muted); row titles (medium). A shell card's strip sets 20px leading, its title semibold | `CardTitle` (shell), `ItemTitle`, `*Description`                     |
-| `text-control`    | 14 / 20 · 400          | Buttons, fields, menus, tabs, tables                                                                                | `Button`, `Input`, `SelectTrigger`, menu items, tabs                 |
-| `text-label`      | 14 / 16 · 500          | Form labels and legends, a progress label; 14px at every width                                                      | `FieldLabel`, `FieldTitle`, `FieldLegend`, `ProgressLabel`           |
-| `text-caption`    | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                                                  | `Badge`, `TooltipContent`                                            |
+| Role              | px · weight            | Use                                                                                             | Owner                                                                |
+| ----------------- | ---------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `text-title`      | 28 / 36 · 600, −0.02em | Page title; a big number (`tabular-nums`)                                                       | Page pattern, `StatValue`                                            |
+| `text-heading`    | 20 / 28 · 600, −0.01em | Section, card, dialog, sheet, empty titles                                                      | Page pattern, `CardTitle`, `DialogTitle`, `SheetTitle`, `EmptyTitle` |
+| `text-subheading` | 16 / 24 · 600          | A title inside a card, under the card's heading: an empty state's                               | `EmptyTitle` in a card                                               |
+| `text-body`       | 14 / 20 · 400          | Reading text; descriptions (muted); row titles (medium). A shell card's strip title is semibold | `CardTitle` (shell), `ItemTitle`, `*Description`                     |
+| `text-control`    | 14 / 20 · 400          | Buttons, fields, menus, tabs, tables                                                            | `Button`, `Input`, `SelectTrigger`, menu items, tabs                 |
+| `text-label`      | 14 / 16 · 500          | Form labels and legends, a progress label; 14px at every width                                  | `FieldLabel`, `FieldTitle`, `FieldLegend`, `ProgressLabel`           |
+| `text-caption`    | 12 / 16 · 400          | Meta, timestamps, badges, tooltips; menu and group labels (medium)                              | `Badge`, `TooltipContent`                                            |
 
 - Icons (Tabler, `@tabler/icons-react`) draw a 1.25px stroke at every size, the weight of their label (`svg.tabler-icon` in `tailwind.css`). Don't pass `strokeWidth`.
 - A phone is below `md` (768px), the breakpoint the layout switches at too (`BottomNav`, `useIsMobile`). There fields render 16px text (`max-md:text-[1rem]`, a `Drawer`'s rows 16 / 24), so iOS does not zoom on focus; labels stay 14 (`text-label`), so the value reads before its label, and a sizing theme's `touch` values apply. From `md` up: 14px. `sm` (640px) is only about room: where a dialog or sheet stops filling the screen.
@@ -99,21 +99,20 @@ Family: `Inter Variable`. The roles are the only sizes; `text-sm` and the other 
 
 ## Spacing
 
-Seven steps, named by relationship. Components own the gaps inside them; the page layout (the Page pattern) owns the gaps between them. Use the step name (`gap-group`, `p-group`), never its number.
+Six steps, named by relationship, each about twice the one before. What touches sits `related` (8); peer blocks sit a `group` (16) apart, twice that, so a group always reads apart from its neighbours. A gap between the two (12) blurs that line, so the scale has none. Components own the gaps inside them; the page layout (the Page pattern) owns the gaps between them. Use the step name (`gap-group`, `p-group`), never its number.
 
-| Step      | px  | Relationship                                                   | Owner                                                                                   |
-| --------- | --- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty`  |
-| `related` | 8   | Items that work together                                       | `Field` (label → control), page header actions, `ItemActions`                           |
-| `part`    | 12  | The parts of one component                                     | `Alert` text → action, horizontal `Field`, `Stepper`, `Progress`, `Empty` media, toasts |
-| `group`   | 16  | Peer blocks; a heading → its content; padding inside a surface | Page header stack, sections, `FieldGroup`, `DialogBody`, `SheetBody`                    |
-| `card`    | 20  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges    |
-| `page`    | 48  | Page header → content                                          | Page pattern                                                                            |
-| `section` | 64  | Section ↔ section                                              | Page pattern                                                                            |
+| Step      | px  | Relationship                                                   | Owner                                                                                  |
+| --------- | --- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `tight`   | 4   | A title and its description                                    | Page header and section titles, `ItemContent`, `FieldContent`, `DialogHeader`, `Empty` |
+| `related` | 8   | Items that touch: label → control, media → text, text → action | `Field` (label → control), page header actions, `ItemActions`, `Stepper`, `Progress`   |
+| `group`   | 16  | Peer blocks; a heading → its content; a label beside a control | Page header stack, sections, `FieldGroup`, horizontal `Field`, `Empty` media, toasts   |
+| `card`    | 24  | Padding inside a card; its header, footer and rows on one edge | `CardContent` (`p-card`), `CardHeader`, `CardFooter`, `ItemList` rows, `Table` edges   |
+| `page`    | 48  | Page header → content                                          | Page pattern                                                                           |
+| `section` | 64  | Section ↔ section                                              | Page pattern                                                                           |
 
 - A gap derived from two steps is a `calc` of their variables.
 - A plain card's `CardHeader` sits above the card, on its text edge: edge 1px + `card`. Other text outside a card that shares the edge pads the same, plus the shell's 4px over a shell card: `px-[calc(--spacing(1)+1px+var(--spacing-card))]`.
-- Padding inside rows and controls (`Item`, `Alert`, the card shell's inset) follows the sizing tokens (`control-pad`, `row-pad-*`, `*-inset`; Sizing), not this scale. A sizing theme's density moves `part`, `group` and `card` too; `page` and `section` never.
+- Padding inside rows and controls (`Item`, `Alert`, the card shell's inset) follows the sizing tokens (`control-pad`, `row-pad-*`, `*-inset`; Sizing), not this scale, on the same 4px grid: 4, 8, 12, 16, 24. A sizing theme's density moves `group` and `card` too; `page` and `section` never.
 
 ## Shape
 
@@ -139,7 +138,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 
 - Concentric corners: `inner = outer − inset`. The outer surface sets `--outer-radius` and `--outer-inset`; what sits inside takes `rounded-inner`. Owners: `Card` (shell content 4px in, plain content 1px in), popups (items 4px in), `InputGroup` buttons (4px in), combobox chips (4px in).
 - `Avatar` `shape='square'` is the one exception: its radius steps with its size (`rounded-xs` at 12px to `rounded-2xl` at 80px), an icon-like scale no role covers.
-- Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons in a card keep `rounded-control*`: a 10px field 21px into the 16px content is two layers, not a failed concentric pair.
+- Past about 12px of inset, the layers are separate and a control keeps its own role. Fields and buttons in a card keep `rounded-control*`: a 10px field 25px into the 20px card corner is two layers, not a failed concentric pair.
 - Control heights are tokens (Sizing): `h-control` and its steps, never `h-9`.
 
   | Control  | Heights                                                                                                              |
@@ -160,11 +159,11 @@ Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/the
 
 | Family   | Tokens (`@theme`, px)                                                                                                                                                                                 | Utility                                          |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| Spacing  | the roles, `tight` … `section` (Spacing)                                                                                                                                                              | `gap-part`, `p-card`                             |
+| Spacing  | the roles, `tight` … `section` (Spacing)                                                                                                                                                              | `gap-group`, `p-card`                            |
 | Controls | `control-2xs` … `control-lg` 20 · 24 · 32 · 36 · 40; `control-pad-xs` · `control-pad-sm` · `control-pad` 8 · 12 · 16; `control-gap-sm` · `control-gap` 4 · 6; `icon-xs` … `icon-lg` 12 · 14 · 16 · 20 | `h-control`, `px-control-pad`, `size-icon`       |
 | Fields   | `field-pad` 12 (less the border), `field-pad-y` 8 (multi-line)                                                                                                                                        | `px-[calc(var(--spacing-field-pad)-1px)]`        |
-| Rows     | `menu-item` · `menu-item-pad` 36 · 10 (menus, select, combobox); `row-pad-x` · `row-pad-y` 12 · 10 (`Item`, table cells); `row-gap` 8 (icon → label)                                                  | `min-h-menu-item`, `px-row-pad-x`, `gap-row-gap` |
-| Surfaces | `modal` 24, `popup` 10 (popover), `picker` 12 (calendar, color picker); `popup-inset` · `card-inset` 4 · 4, `list-inset` 8 (sidebar, command), each also the `--outer-inset`                          | `p-modal`, `p-popup-inset`                       |
+| Rows     | `menu-item` · `menu-item-pad` 36 · 8 (menus, select, combobox); `row-pad-x` · `row-pad-y` 12 · 12 (`Item`, table cells); `row-gap` 8 (icon → label)                                                   | `min-h-menu-item`, `px-row-pad-x`, `gap-row-gap` |
+| Surfaces | `modal` 24, `popup` 16 (popover), `picker` 12 (calendar, color picker); `popup-inset` · `card-inset` 4 · 4, `list-inset` 8 (sidebar, command), each also the `--outer-inset`                          | `p-modal`, `p-popup-inset`                       |
 | Marks    | `track` 4 (slider, progress)                                                                                                                                                                          | `h-track`                                        |
 
 - A length one component owns is a component token in the Component sizing block of `tailwind.css` (`--switch-thumb`, `--tooltip-pad-x`), read as `w-(--switch-thumb)`. Prefer the shared scale.
@@ -175,7 +174,7 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 
 | Axis      | Values                                                                                                                                                                                                                                                        |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `density` | `compact` (controls 32, card 16, group 12, switch 14) · `default` · `comfortable` (controls 40, card 24, group 20, icons 18, checkbox 18). Component tokens move with it                                                                                      |
+| `density` | `compact` (controls 32, card 16, group 12, switch 14) · `default` · `comfortable` (controls 40, card 32, group 24, icons 18, checkbox 18). Component tokens move with it                                                                                      |
 | `radius`  | `sharp` (all 0, the fixed steps too; checkbox and track 2) · `default` · `soft` (×1.2) · `pill` (`control-*` and tabs full; the rest capped). Component radii (`--tabs-radius`, `--alert-radius`, `--drawer-*-radius`) are literal: each radius sets them too |
 
 | Style (`SIZING_STYLES`) | Density · radius   | Its own                                                                                                                                                               |
@@ -298,7 +297,7 @@ emphasis      solid · subtle · outline · ghost · raised      (intentVariants
 button        (none) neutral/raised · intent='primary' · emphasis='ghost' · intent='destructive' · destructive + subtle
 text          foreground · muted-foreground · faint-foreground · disabled-foreground
 type          title 28 · heading 20 · subheading 16 · body 14 · control 14 · label 14 · caption 12   (titles 600)
-spacing       tight 4 · related 8 · part 12 · group 16 · card 20 · page 32 · section 48
+spacing       tight 4 · related 8 · group 16 · card 24 · page 48 · section 64
 radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · dialog 20 · panel 20 · rounded-inner
               checkbox 4 · tooltip 8 · area 10 · block 12 · track full
 sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 36 · size-icon 16 · sizingThemeCss(SIZING_STYLES.coss) · scaleDensity(0.9)
