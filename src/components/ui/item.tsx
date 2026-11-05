@@ -11,21 +11,29 @@ import { springEasing } from '~/lib/animate';
 import { cn } from '~/lib/utils';
 
 /**
- * A row of an `ItemList`: a list item around one `Item`. Every row pads `row-pad-x` (12) on every side, so whatever sits
- * at an edge (an icon tile, an avatar, a button, a chevron) is as far from the row's top and bottom as from its side. In
- * a card the row runs to the card's edge, as `Table flush` and `Accordion flush` rows do, so its hover fills to the edge;
- * it pads `card` at the sides, so its text starts where the header's does. The hairline below stops at the row's inline
- * padding, so it lines up with the row content instead of running into the card's rounded edge.
+ * A row of an `ItemList`: a list item around one `Item`. It sets the row's padding as `--list-row-pad-*`, which its `Item`
+ * and a `flush` `Accordion` in it read (`-y`: each side of a rule between rows; `-top`, `-bottom`: the row's own edges).
+ * Outside a card every row pads `row-pad-x` (12) on every side, so whatever sits at an edge (an icon tile, an avatar, a
+ * button, a chevron) is as far from the row's top and bottom as from its side.
+ *
+ * In a card one token sets them all, so the list sits in the card as content padded `p-card` does: the row runs to the
+ * card's edge (its hover fills to it) and pads `card` at the sides, so its text starts on the header's; the first row
+ * pads `card` above, the last `card` below; between rows each side of the hairline pads half of it, so rows sit `card`
+ * apart too. The hairline stops at the row's inline padding, on the text edge, clear of the card's rounded edge.
  */
-function ItemListRow({ last, ...props }: React.ComponentProps<'div'> & { last: boolean }) {
+function ItemListRow({ first, last, ...props }: React.ComponentProps<'div'> & { first: boolean; last: boolean }) {
   return (
     <div
       role='listitem'
       data-slot='item-list-row'
       className={cn(
-        '*:data-[slot=item]:p-row-pad-x in-data-[slot=card-content]:*:data-[slot=item]:px-card',
+        '[--list-row-pad-bottom:var(--spacing-row-pad-x)] [--list-row-pad-top:var(--spacing-row-pad-x)] [--list-row-pad-x:var(--spacing-row-pad-x)] [--list-row-pad-y:var(--spacing-row-pad-x)]',
+        'in-data-[slot=card-content]:[--list-row-pad-bottom:calc(var(--spacing-card)/2)] in-data-[slot=card-content]:[--list-row-pad-top:calc(var(--spacing-card)/2)] in-data-[slot=card-content]:[--list-row-pad-x:var(--spacing-card)] in-data-[slot=card-content]:[--list-row-pad-y:calc(var(--spacing-card)/2)]',
+        first && 'in-data-[slot=card-content]:[--list-row-pad-top:var(--spacing-card)]',
+        last && 'in-data-[slot=card-content]:[--list-row-pad-bottom:var(--spacing-card)]',
+        '*:data-[slot=item]:px-(--list-row-pad-x) *:data-[slot=item]:pt-(--list-row-pad-top) *:data-[slot=item]:pb-(--list-row-pad-bottom)',
         !last &&
-          'relative after:absolute after:right-row-pad-x after:bottom-0 after:left-row-pad-x after:h-px after:bg-border-subtle in-data-[slot=card-content]:after:right-card in-data-[slot=card-content]:after:left-card',
+          'relative after:absolute after:right-(--list-row-pad-x) after:bottom-0 after:left-(--list-row-pad-x) after:h-px after:bg-border-subtle',
       )}
       {...props}
     />
@@ -95,7 +103,10 @@ function StaticItemList({
     <div data-slot='item-list' className={cn('overflow-hidden', className)} style={style} {...props}>
       <div ref={rowsRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
         {rows.map((row, index) => (
-          <ItemListRow key={React.isValidElement(row) ? row.key : index} last={index === rows.length - 1}>
+          <ItemListRow
+            key={React.isValidElement(row) ? row.key : index}
+            first={index === 0}
+            last={index === rows.length - 1}>
             {row}
           </ItemListRow>
         ))}
@@ -208,6 +219,7 @@ function VirtualizedItemList<T>({
               data-index={row.index}
               aria-setsize={items.length}
               aria-posinset={row.index + 1}
+              first={row.index === 0}
               last={row.index === items.length - 1}>
               {children(items[row.index]!, row.index)}
             </ItemListRow>
@@ -240,7 +252,7 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
   return (
     <div data-slot='item-list' aria-hidden className={cn('overflow-hidden', className)} {...props}>
       {Array.from({ length: rows }, (_, index) => (
-        <ItemListRow key={index} role={undefined} last={index === rows - 1}>
+        <ItemListRow key={index} role={undefined} first={index === 0} last={index === rows - 1}>
           <Item className='flex-nowrap'>
             {media === 'icon' && (
               <ItemMedia variant='icon' className='bg-transparent'>

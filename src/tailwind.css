@@ -279,7 +279,7 @@
      `related`, so what belongs together reads apart from its neighbours. */
   --spacing-group: 1rem;
   /* Inside a card: the content's padding, and the header, footer and flush rows on the same edge. */
-  --spacing-card: 1.5rem;
+  --spacing-card: 1.25rem;
   --spacing-page: 3rem;
   --spacing-section: 4rem;
 
