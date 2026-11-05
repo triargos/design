@@ -111,7 +111,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
  * corners. `shell`: the header mirrored, on the shell.
  */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
-  const variant = use(CardVariantContext) ?? 'default';
+  const variant = use(CardVariantContext);
   const presence = usePresence<HTMLDivElement>(show);
   if (!presence.mounted) return null;
   return (
