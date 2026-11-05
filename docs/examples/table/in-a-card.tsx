@@ -34,12 +34,12 @@ export function TableInACard() {
         <TableBody>
           {PAYMENTS.map((payment) => (
             <TableRow key={payment.id}>
-              <TableCell className='font-medium'>{payment.item}</TableCell>
+              <TableCell className='font-medium whitespace-nowrap'>{payment.item}</TableCell>
               <TableCell>
                 <Badge intent={STATUS[payment.status].intent}>{STATUS[payment.status].label}</Badge>
               </TableCell>
               <TableCell>{payment.group}</TableCell>
-              <TableCell className='text-right tabular-nums'>{usd.format(payment.amount)}</TableCell>
+              <TableCell className='text-right whitespace-nowrap tabular-nums'>{usd.format(payment.amount)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
