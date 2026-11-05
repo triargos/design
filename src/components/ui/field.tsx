@@ -38,7 +38,7 @@ function FieldLegend({
   );
 }
 
-const fieldGroupVariants = cva('group/field-group @container/field-group flex w-full flex-col gap-group', {
+const fieldGroupVariants = cva('group/field-group flex w-full flex-col gap-group', {
   variants: {
     columns: {
       1: '',
