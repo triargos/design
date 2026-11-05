@@ -66,7 +66,7 @@ function AlertDialogContent({
           // Under an open nested dialog it steps back: smaller per level, dimmed by an overlay (`after:`).
           'transition-[scale] ease-move data-nested-dialog-open:scale-[calc(1-0.04*var(--nested-dialogs))] motion-reduce:data-nested-dialog-open:scale-100',
           'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-black/0 after:transition-colors after:duration-modal data-nested-dialog-open:after:bg-black/8',
-          'group/alert-dialog-content max-w-xs data-[size=default]:sm:max-w-sm',
+          'group/alert-dialog-content max-w-[min(20rem,calc(100%-2rem))] data-[size=default]:sm:max-w-sm',
           className,
         )}
         {...props}>
