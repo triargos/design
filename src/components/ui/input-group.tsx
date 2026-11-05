@@ -8,15 +8,20 @@ import { inputSurfaceVariants } from '~/components/ui/input';
 import { cn } from '~/lib/utils';
 
 /** A press on the group's own box (its padding, or the touch `hit-area` around it) focuses the control. */
-function InputGroup({ className, onPointerDown, ...props }: React.ComponentProps<'div'>) {
+function InputGroup({ className, onPointerDown, onClick, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='input-group'
       role='group'
+      // Focus moves on click, not pointerdown: iOS opens the keyboard only for a focus inside a click.
       onPointerDown={(event) => {
         onPointerDown?.(event);
         if (event.defaultPrevented || event.target !== event.currentTarget) return;
         event.preventDefault();
+      }}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented || event.target !== event.currentTarget) return;
         event.currentTarget.querySelector<HTMLElement>('[data-slot=input-group-control]')?.focus();
       }}
       className={cn(
