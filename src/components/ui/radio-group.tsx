@@ -1,6 +1,5 @@
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
-import { IconCheck } from '@tabler/icons-react';
 
 import { selectionControlVariants } from '~/components/ui/checkbox';
 
@@ -38,7 +37,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
 
 /**
  * A radio as a card, for a few choices that deserve room (a plan, a role). Unchecked it is the quiet shell fill;
- * checked it lifts to a card with a check in the brand hue. Inside a `RadioGroup`, which owns the value and the grid.
+ * checked it inverts (foreground fill, background text). Inside a `RadioGroup`, which owns the value and the grid.
  */
 function ChoiceCard({ className, children, ...props }: RadioPrimitive.Root.Props) {
   return (
@@ -48,17 +47,13 @@ function ChoiceCard({ className, children, ...props }: RadioPrimitive.Root.Props
         'group/choice-card flex min-h-(--choice-card-height) w-full items-center justify-between gap-related rounded-block bg-shell px-control-pad py-(--choice-card-pad-y) text-left text-body font-medium text-foreground outline-none',
         'transition-[background-color,box-shadow] duration-feedback hover:bg-muted',
         'focus-visible:ring-3 focus-visible:ring-ring/24',
-        'data-checked:bg-card data-checked:shadow-raised',
+        'data-checked:bg-foreground data-checked:text-background data-checked:hover:bg-foreground/90',
         'aria-invalid:inset-ring aria-invalid:inset-ring-destructive-border',
         'data-disabled:cursor-not-allowed data-disabled:bg-disabled data-disabled:text-disabled-foreground data-disabled:shadow-none',
         className,
       )}
       {...props}>
       <span className='min-w-0 truncate'>{children}</span>
-      <IconCheck
-        aria-hidden
-        className='size-icon shrink-0 text-primary opacity-0 transition-opacity duration-feedback group-data-checked/choice-card:opacity-100 group-data-disabled/choice-card:text-disabled-foreground'
-      />
     </RadioPrimitive.Root>
   );
 }

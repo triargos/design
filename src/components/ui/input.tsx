@@ -24,7 +24,9 @@ const inputSurfaceVariants = cva(
   [
     // `--field-radius` drives the box, the `::before` accent and `--outer-radius` (buttons and chips inside take
     // `rounded-inner` with their own `--outer-inset`). A multi-line field sets it to `--radius-area`.
-    'hit-area relative rounded-(--field-radius) border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--field-radius:var(--radius-control)] [--outer-radius:var(--field-radius)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
+    // The touch target sits under the field's content (`isolate`, `-z-1`): over it, it would catch every tap meant
+    // for a date segment or an addon button.
+    'hit-area relative isolate after:-z-1 rounded-(--field-radius) border border-(--edge-field) bg-surface bg-clip-padding shadow-field [--field-radius:var(--radius-control)] [--outer-radius:var(--field-radius)] dark:bg-[color-mix(in_oklab,var(--edge-field)_32%,transparent)]',
     'before:pointer-events-none before:absolute before:inset-0 before:rounded-[max(0px,calc(var(--field-radius)-1px))] before:shadow-field-edge',
     'transition-[background-color,border-color,box-shadow] duration-feedback outline-none',
   ],
@@ -88,10 +90,13 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-[calc(var(--spacing-field-inset)-2px)]',
         className,
       )}
+      // Focus moves on click, not pointerdown: iOS opens the keyboard only for a focus inside a click. The pointerdown
+      // keeps the press on the padding from blurring the input first.
       onPointerDown={(event) => {
-        if (event.target !== event.currentTarget) return;
-        event.preventDefault();
-        event.currentTarget.querySelector('input')?.focus();
+        if (event.target === event.currentTarget) event.preventDefault();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) event.currentTarget.querySelector('input')?.focus();
       }}>
       {/* Below `sm` the field renders 16px (`max-md:text-[1rem]`), so iOS does not zoom on focus; the input inherits it. */}
       <InputPrimitive
