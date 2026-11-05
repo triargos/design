@@ -3,7 +3,7 @@ import { DateInput, TimeInput } from '~/components/ui/date-input';
 /** Invalid and disabled, for a date and a time. */
 export function DateInputStates() {
   return (
-    <div className='grid w-fit grid-cols-2 gap-2'>
+    <div className='grid w-fit grid-cols-1 gap-2 sm:grid-cols-2'>
       <DateInput
         value='2025-03-14'
         onValueChange={() => undefined}
