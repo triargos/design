@@ -21,7 +21,6 @@ export function CardWithFooter() {
         </Field>
       </CardContent>
       <CardFooter show={dirty} className='flex items-center justify-end gap-related'>
-        <span className='text-body text-muted-foreground'>Unsaved changes</span>
         <Button intent='primary' onClick={() => setDirty(false)}>
           Save
         </Button>
