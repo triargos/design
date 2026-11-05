@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 
-/** One sentence; long copy makes the shell read as a gray block. */
+/** One sentence under the title. */
 export function CardWithDescription() {
   return (
     <Card className='w-full max-w-xl'>

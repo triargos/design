@@ -10,7 +10,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='List Page'
-      description='A page of one list: the title, the add action, a search when the list needs one, and the rows in a card. The add action lines up with the card’s edge, inset by the shell’s 4px.'>
+      description='A page of one list: the title, the add action, a search when the list needs one, and the rows in a card. The add action lines up with the card’s edge.'>
       <ExampleSection
         title='Default'
         description={

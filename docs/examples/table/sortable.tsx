@@ -33,7 +33,7 @@ export function TableSortable() {
   const rows = [...MEMBERS].sort((a, b) => (sort.dir === 'asc' ? 1 : -1) * compare[sort.key](a, b));
 
   return (
-    <Card className='w-full max-w-2xl'>
+    <Card variant='shell' className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           <TableRow>

@@ -41,7 +41,7 @@ export function TableScrollElement() {
             {MEMBERS.length} people in Acme. The list scrolls with the page.
           </p>
         </div>
-        <Card>
+        <Card variant='shell'>
           <Table
             virtualized
             variant='card'

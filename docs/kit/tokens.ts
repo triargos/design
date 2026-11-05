@@ -20,8 +20,9 @@ export type SpacingStepName = SpacingStep['name'];
 
 /** Tracking and weight are fixed per role; size and line height (px) are tunable. */
 export const TYPE_ROLES = [
-  { name: 'title', px: 28, lineHeight: 36, tracking: '−0.02em', weight: 500 },
-  { name: 'heading', px: 18, lineHeight: 24, tracking: '−0.01em', weight: 500 },
+  { name: 'title', px: 28, lineHeight: 36, tracking: '−0.02em', weight: 600 },
+  { name: 'heading', px: 20, lineHeight: 28, tracking: '−0.01em', weight: 600 },
+  { name: 'subheading', px: 16, lineHeight: 24, tracking: undefined, weight: 600 },
   { name: 'body', px: 14, lineHeight: 21, tracking: undefined, weight: 400 },
   { name: 'control', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
   { name: 'label', px: 14, lineHeight: 16, tracking: undefined, weight: 500 },

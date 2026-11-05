@@ -52,7 +52,9 @@ const buttonShape = cva(
         default:
           'h-control gap-control-gap rounded-control px-control-pad has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad)-2px)]',
         xs: "h-control-xs gap-control-gap-sm rounded-control-sm px-control-pad-xs text-caption has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-xs)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-xs)-2px)] [&_svg:not([class*='size-'])]:size-icon-xs",
-        sm: "h-control-sm gap-control-gap-sm rounded-control px-control-pad-sm text-caption has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-sm)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-sm)-2px)] [&_svg:not([class*='size-'])]:size-icon-sm",
+        // `sm` is shorter and tighter, not quieter: the label stays `control` (14px) and the icon `icon`, as at the default
+        // size; only `xs` drops to caption.
+        sm: 'h-control-sm gap-control-gap rounded-control px-control-pad-sm has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad-sm)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad-sm)-2px)]',
         lg: 'h-control-lg gap-control-gap rounded-control-lg px-control-pad has-data-[icon=inline-end]:pr-[calc(var(--spacing-control-pad)-2px)] has-data-[icon=inline-start]:pl-[calc(var(--spacing-control-pad)-2px)]',
         // Icon-only sizes match the text sizes, so a row of both lines up.
         'icon-sm': 'size-control-sm rounded-control',
