@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { INTENTS } from '~/components/ui/intent-variants';
 import { Item, ItemContent, ItemDescription, ItemList, ItemTitle } from '~/components/ui/item';
 
+import { BadgeAsLink } from '../examples/badge/as-link';
 import { BadgeCategories } from '../examples/badge/categories';
 import { BadgeDataColor } from '../examples/badge/data-color';
 import { BadgeDefault } from '../examples/badge/default';
@@ -88,6 +89,11 @@ export default defineDocs({
       <ExampleSection title='With count'>
         <BadgeWithCount />
       </ExampleSection>
+      <ExampleSection
+        title='As link'
+        description='render swaps the element; a link badge gets a hover fill and a focus ring.'>
+        <BadgeAsLink />
+      </ExampleSection>
 
       <FoundationSection title='Intent × emphasis'>
         <Matrix
@@ -148,7 +154,7 @@ export default defineDocs({
           </CardHeader>
           <CardContent className='overflow-hidden'>
             <ItemList>
-              <Item className='px-4'>
+              <Item>
                 <ItemContent>
                   <ItemTitle>Publish the pricing page</ItemTitle>
                   <ItemDescription>Website redesign · closed Mar 12</ItemDescription>
@@ -158,7 +164,7 @@ export default defineDocs({
                   Done
                 </Badge>
               </Item>
-              <Item className='px-4'>
+              <Item>
                 <ItemContent>
                   <ItemTitle>Sign the vendor contract</ItemTitle>
                   <ItemDescription>Operations · waiting on legal</ItemDescription>
@@ -167,7 +173,7 @@ export default defineDocs({
                   Needs review
                 </Badge>
               </Item>
-              <Item className='px-4'>
+              <Item>
                 <ItemContent>
                   <ItemTitle>Comments</ItemTitle>
                   <ItemDescription>Unread</ItemDescription>
