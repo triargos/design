@@ -275,11 +275,7 @@ export function ExampleSection({
 
 /** Labelled `SpecimenRow`s in one card, separated by hairlines. */
 export function SpecimenList({ children }: { children: ReactNode }) {
-  return (
-    <Card variant='shell'>
-      <CardContent className='flex flex-col overflow-hidden'>{children}</CardContent>
-    </Card>
-  );
+  return <CardContent className='flex flex-col overflow-hidden'>{children}</CardContent>;
 }
 
 const LABEL_HEIGHT = 20;
@@ -372,34 +368,32 @@ export function Matrix({
   const labelFont = useLabelFont();
   const grid = { gridTemplateColumns: `8rem repeat(${columns.length}, minmax(${columnWidth}, 1fr))` };
   return (
-    <Card variant='shell'>
-      <CardContent className='overflow-x-auto'>
-        <div className='grid min-w-fit items-center gap-x-related' style={grid}>
-          <span />
-          {columns.map((column) => (
-            <span key={column} className={cn('px-1 pt-group pb-related text-caption text-muted-foreground', labelFont)}>
-              {column}
-            </span>
-          ))}
-          {rows.map((row) => (
-            <div key={row.name} className='contents'>
-              <div className='flex flex-col border-t border-border-subtle py-related pl-group'>
-                <span className='text-body font-medium'>{row.name}</span>
-                {row.meta !== undefined && <span className='text-caption text-muted-foreground'>{row.meta}</span>}
-              </div>
-              {row.cells.map((cell, index) => (
-                // oxlint-disable-next-line react/no-array-index-key -- cells are positional, one per column.
-                <div
-                  key={index}
-                  className='flex min-w-0 items-center border-t border-border-subtle px-1 py-related last:pr-group'>
-                  {cell}
-                </div>
-              ))}
+    <CardContent className='overflow-x-auto'>
+      <div className='grid min-w-fit items-center gap-x-related' style={grid}>
+        <span />
+        {columns.map((column) => (
+          <span key={column} className={cn('px-1 pt-group pb-related text-caption text-muted-foreground', labelFont)}>
+            {column}
+          </span>
+        ))}
+        {rows.map((row) => (
+          <div key={row.name} className='contents'>
+            <div className='flex flex-col border-t border-border-subtle py-related pl-group'>
+              <span className='text-body font-medium'>{row.name}</span>
+              {row.meta !== undefined && <span className='text-caption text-muted-foreground'>{row.meta}</span>}
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+            {row.cells.map((cell, index) => (
+              // oxlint-disable-next-line react/no-array-index-key -- cells are positional, one per column.
+              <div
+                key={index}
+                className='flex min-w-0 items-center border-t border-border-subtle px-1 py-related last:pr-group'>
+                {cell}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </CardContent>
   );
 }
 
