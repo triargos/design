@@ -23,11 +23,12 @@ const buttonShape = cva(
   {
     variants: {
       emphasis: {
-        // A top-down gradient from 15% lighter to the fill, a 1px inset highlight (30% lighter) along the top edge, a
-        // 10% darker edge; hover lifts the gradient's top to the highlight shade. The fill stops at the edge; disabled has
-        // no edge, so its fill takes the whole box.
+        // A near-flat fill (6% lighter at the top), a 1px inset highlight along the top edge and a 10% darker edge,
+        // lifted by a small drop in its own color (`shadow-solid`), as coss's primary; pressed, the drop goes. Hover
+        // darkens the fill (`intentVariants`). The fill stops at the edge; disabled has no edge, so its fill takes the
+        // whole box.
         solid: [
-          'border-[color-mix(in_oklch,var(--intent-solid),black_10%)] bg-clip-padding bg-linear-to-b from-[color-mix(in_oklch,var(--intent-solid),white_15%)] to-(--intent-solid) shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--intent-solid),white_30%)] hover:from-[color-mix(in_oklch,var(--intent-solid),white_30%)]',
+          'border-[color-mix(in_oklch,var(--intent-solid),black_10%)] bg-clip-padding bg-linear-to-b from-[color-mix(in_oklch,var(--intent-solid),white_6%)] to-(--intent-solid) shadow-solid active:shadow-solid-pressed',
           'disabled:border-transparent disabled:bg-disabled disabled:bg-clip-border disabled:bg-none disabled:shadow-none',
         ],
         subtle: 'disabled:bg-disabled',

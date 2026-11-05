@@ -5,7 +5,7 @@ import { cn } from '~/lib/utils';
 
 /**
  * A flat track (`--switch-width`, `--switch-width-sm`) with the thumb (`--switch-thumb`, `--switch-thumb-sm`)
- * `--switch-inset` in; no edges, no shadows. Off: a 14% `foreground` veil (`neutral-subtle` is too faint for a white
+ * `--switch-inset` in; no edges, the thumb a small drop (`shadow-thumb`). Off: a 14% `foreground` veil (`neutral-subtle` is too faint for a white
  * thumb on a light page) and a white thumb. On: the brand fill. Hover strengthens the fill; a press stretches the thumb
  * 4px toward the other side (`--switch-stretch`). The thumb travels (`duration-move`); the fill changes as feedback.
  */
@@ -41,7 +41,7 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot='switch-thumb'
         className={cn(
-          'pointer-events-none block h-(--thumb-size) w-[calc(var(--thumb-size)+var(--switch-stretch))] rounded-track bg-thumb',
+          'pointer-events-none block h-(--thumb-size) w-[calc(var(--thumb-size)+var(--switch-stretch))] rounded-track bg-thumb shadow-thumb',
           'transition-[width,translate,background-color] duration-move ease-move motion-reduce:transition-none',
           'data-checked:translate-x-[calc(var(--track)-var(--switch-inset)*2-var(--thumb-size)-var(--switch-stretch))] data-checked:bg-primary-solid-foreground',
           'group-data-disabled/switch:bg-disabled-foreground group-data-disabled/switch:data-checked:bg-disabled-foreground',

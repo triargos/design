@@ -32,8 +32,9 @@
   --modal-drop-far: oklch(0 0 0 / 0.15);
   /* The hairline on a photo: pure black at 10% (white in dark), never a tinted neutral, which reads as dirt on the edge. */
   --image-edge: oklch(0 0 0 / 0.1);
-  /* The thumb of a switch or slider: white in both modes. */
+  /* The thumb of a switch or slider: white in both modes, a small drop under it. */
   --thumb: oklch(1 0 0);
+  --thumb-drop: oklch(0 0 0 / 0.1);
 
   --chart-1: oklch(0.837 0.128 66.29);
   --chart-2: oklch(0.705 0.213 47.604);
@@ -90,6 +91,7 @@
   --modal-drop-soft: transparent;
   --modal-drop-far: oklch(0 0 0 / 0.4);
   --image-edge: oklch(1 0 0 / 0.1);
+  --thumb-drop: oklch(0 0 0 / 0.3);
 }
 
 @theme inline {
@@ -189,6 +191,21 @@
     0 0 0 1px var(--edge), 0 -1px 0 0 var(--popup-edge-top), 0 1px 0 0 var(--popup-edge-bottom),
     0 10px 15px -3px var(--popup-drop), 0 4px 6px -4px var(--popup-drop);
   --shadow-modal: 0 0 0 1px var(--edge), 0 8px 40px 0 var(--modal-drop-soft), 0 12px 32px -16px var(--modal-drop-far);
+  /* A tooltip: the popup's ring and accent over a smaller drop, sized for a one-line chip. */
+  --shadow-tooltip:
+    0 0 0 1px var(--edge), 0 -1px 0 0 var(--popup-edge-top), 0 1px 0 0 var(--popup-edge-bottom),
+    0 4px 6px -1px var(--popup-drop), 0 2px 4px -2px var(--popup-drop);
+  /* A solid button: the top highlight and a small drop in its own color (`--intent-solid`, resolved on the button).
+     Pressed keeps the highlight alone. */
+  --shadow-solid:
+    inset 0 1px 0 0 color-mix(in oklch, var(--intent-solid), white 30%),
+    0 1px 2px 0 color-mix(in oklch, var(--intent-solid) 24%, transparent);
+  --shadow-solid-pressed: inset 0 1px 0 0 color-mix(in oklch, var(--intent-solid), white 30%);
+  /* An unchecked checkbox or radio: the field's lit edge and lift, without a `::before` (its `::after` is the target). */
+  --shadow-selection:
+    0 -1px 0 0 var(--edge-field-top), 0 1px 0 0 var(--edge-field-bottom), 0 1px 2px 0 var(--field-lift);
+  /* The thumb of a switch or slider: a small drop, so the white disc reads on a light track. */
+  --shadow-thumb: 0 1px 3px 0 var(--thumb-drop), 0 1px 2px -1px var(--thumb-drop);
 
   /* Re-declared per `[data-surface]` (`surfaceVars` in `lib/theme/theme-to-css.ts`). `field` is the quiet fill
      for file rows and inset boxes: opaque, so nested fills do not stack. Inputs sit on `surface` (`inputSurfaceVariants`). */
@@ -232,7 +249,7 @@
   --radius-control-sm: 8px;
   --radius-control: 10px;
   --radius-control-lg: 12px;
-  --radius-popup: 16px;
+  --radius-popup: 12px;
   --radius-card: 20px;
   --radius-dialog: 20px;
   --radius-panel: 20px;
@@ -290,7 +307,7 @@
 
   /* Rows: a menu item's height and inline padding (dropdown, context menu, select, combobox); a list or table row's
      padding (`Item`, table cells, flush accordion); icon to label in any row. */
-  --spacing-menu-item: 2.25rem;
+  --spacing-menu-item: 2rem;
   --spacing-menu-item-pad: 0.5rem;
   --spacing-row-pad-x: 0.75rem;
   --spacing-row-pad-y: 0.75rem;
@@ -726,6 +743,14 @@
   --intent-subtle-foreground: color-mix(in oklab, var(--data-color) var(--data-foreground-mix), var(--foreground));
   --intent-border: color-mix(in oklab, var(--data-color) var(--data-border-mix), transparent);
   --intent: var(--intent-subtle-foreground);
+}
+
+/* On a phone a menu row is a touch target: 36, a step above the desktop's 32. A sizing theme (`sizingThemeCss`, a
+   later stylesheet) overrides it with its own rows. */
+@media (width < 48rem) {
+  :root {
+    --spacing-menu-item: 2.25rem;
+  }
 }
 
 /* Touch hit area: a control under 44px grows an invisible 44px target on coarse pointers. Needs a positioned element. */
