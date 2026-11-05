@@ -66,7 +66,7 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
       <CommandPrimitive.Input
         data-slot='command-input'
         className={cn(
-          'h-full w-full min-w-0 bg-transparent text-body outline-hidden placeholder:text-faint-foreground disabled:cursor-not-allowed disabled:text-disabled-foreground',
+          'h-full w-full min-w-0 bg-transparent text-body outline-hidden max-md:text-[1rem] placeholder:text-faint-foreground disabled:cursor-not-allowed disabled:text-disabled-foreground',
           className,
         )}
         {...props}
@@ -140,7 +140,7 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) 
     <span
       data-slot='command-shortcut'
       className={cn(
-        'ml-auto text-caption tracking-widest text-muted-foreground group-data-[selected=true]/command-item:text-foreground',
+        'ml-auto text-caption tracking-widest text-muted-foreground pointer-coarse:hidden group-data-[selected=true]/command-item:text-foreground',
         className,
       )}
       {...props}

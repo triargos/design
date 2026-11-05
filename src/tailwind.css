@@ -651,7 +651,7 @@
   /* `Item`: media, content and actions apart. */
   --item-gap: 0.75rem;
   /* `Sidebar`: a group label's inline padding; sub-menu rows and the sub-menu's block padding (the tree line follows). */
-  --sidebar-label-pad-x: 0.5rem;
+  --sidebar-label-pad-x: 0.75rem;
   --sidebar-sub-height: 1.75rem;
   --sidebar-sub-pad-y: 0.375rem;
   /* `BottomNav` "More" panel: icon to label in its rows. */
