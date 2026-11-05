@@ -32,7 +32,8 @@ const tabsListVariants = cva('relative isolate flex w-fit max-w-full items-cente
   variants: {
     variant: {
       segmented: cn(segmentedTrack, 'bg-shell'),
-      underline: 'gap-group border-b border-border',
+      // The hairline runs the container's width, so in a card it spans the content and the tabs sit on it.
+      underline: 'w-full gap-group border-b border-border',
       pill: 'flex-wrap gap-control-gap',
       // The tab's own fill reads one step from the row it sits on, so the track tints with the text color.
       inline: cn(segmentedTrack, 'bg-foreground/6 [--tabs-inset:2px] [--tabs-radius:var(--radius-track)]'),
