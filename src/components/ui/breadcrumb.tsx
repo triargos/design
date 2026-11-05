@@ -41,7 +41,15 @@ function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProp
     defaultTagName: 'a',
     render: linkRender,
     state: { slot: 'breadcrumb-link' },
-    props: mergeProps<'a'>({ className: cn('transition-colors hover:text-foreground', className) }, props),
+    props: mergeProps<'a'>(
+      {
+        className: cn(
+          'relative rounded-control-xs outline-none hit-area transition-colors duration-feedback hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24',
+          className,
+        ),
+      },
+      props,
+    ),
   });
 }
 
@@ -62,7 +70,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       data-slot='breadcrumb-separator'
       role='presentation'
       aria-hidden='true'
-      className={cn('[&>svg]:size-icon-sm', className)}
+      className={cn('text-faint-foreground [&>svg]:size-icon-sm', className)}
       {...props}>
       {children ?? <IconChevronRight />}
     </li>
