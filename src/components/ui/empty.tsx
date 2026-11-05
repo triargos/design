@@ -66,7 +66,7 @@ const emptyMediaVariants = cva('flex shrink-0 items-center justify-center', {
       /** Three skeleton cards stacked front to back; they fan out on hover. */
       skeleton: 'mb-group w-full',
       /** One icon on a quiet tile. */
-      icon: "mb-part size-control-lg rounded-control-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-icon-lg",
+      icon: "mb-group size-control-lg rounded-control-lg bg-muted text-foreground [&_svg:not([class*='size-'])]:size-icon-lg",
     },
   },
   defaultVariants: { variant: 'skeleton' },

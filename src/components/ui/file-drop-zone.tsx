@@ -18,7 +18,7 @@ const fileDropZoneVariants = cva(
       size: {
         // Multi-line: the area radius. The `sm` row stays a single-line control.
         default:
-          'flex-col justify-center gap-part px-(--file-drop-zone-pad-x) py-(--file-drop-zone-pad-y) text-center [--field-radius:var(--radius-area)]',
+          'flex-col justify-center gap-related px-(--file-drop-zone-pad-x) py-(--file-drop-zone-pad-y) text-center [--field-radius:var(--radius-area)]',
         sm: 'min-h-control-lg justify-center gap-related border-dashed border-border bg-transparent px-(--file-drop-zone-sm-pad-x) py-(--file-drop-zone-sm-pad-y) text-body font-medium text-primary shadow-none hover:bg-field has-disabled:border-transparent has-disabled:hover:bg-disabled has-aria-invalid:border-destructive-border',
       },
     },

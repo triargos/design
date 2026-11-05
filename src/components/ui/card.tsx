@@ -72,7 +72,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
       <div
         data-slot='card-header'
         className={cn(
-          'row-start-1 flex flex-wrap items-center justify-between gap-x-group gap-y-part px-[calc(var(--spacing-card)+1px)] pb-group',
+          'row-start-1 flex flex-wrap items-center justify-between gap-x-group gap-y-related px-[calc(var(--spacing-card)+1px)] pb-group',
           className,
         )}
         {...props}>
@@ -151,9 +151,9 @@ function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
     <h2
       data-slot='card-title'
       className={cn(
-        // `default`: a section title, the heading role. `shell`: 14 / 20 semibold, a compact label for the strip,
-        // heavier than row titles.
-        variant === 'default' ? 'text-heading' : 'text-body leading-5 font-semibold',
+        // `default`: a section title, the heading role. `shell`: body semibold, a compact label for the strip, heavier
+        // than row titles.
+        variant === 'default' ? 'text-heading' : 'text-body font-semibold',
         'text-balance group-data-[intent=destructive]/card:text-destructive',
         className,
       )}
@@ -165,15 +165,10 @@ function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
 // overflow-hidden clips the selection highlight to the paragraph; without it the gap between wrapped lines is painted
 // to the page edge when a drag starts outside the text.
 function CardDescription({ className, ...props }: ComponentProps<'p'>) {
-  const variant = use(CardVariantContext) ?? 'default';
   return (
     <p
       data-slot='card-description'
-      className={cn(
-        'max-w-prose overflow-hidden text-body text-pretty text-muted-foreground',
-        variant === 'shell' && 'leading-5',
-        className,
-      )}
+      className={cn('max-w-prose overflow-hidden text-body text-pretty text-muted-foreground', className)}
       {...props}
     />
   );

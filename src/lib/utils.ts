@@ -11,7 +11,6 @@ const twMerge = extendTailwindMerge({
       spacing: [
         'tight',
         'related',
-        'part',
         'group',
         'card',
         'page',

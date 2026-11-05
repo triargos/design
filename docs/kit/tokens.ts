@@ -8,9 +8,8 @@ import { DEFAULT_SIZING, type SizingToken, type SizingValues } from '~/lib/theme
 export const SPACING_STEPS = [
   { name: 'tight', px: 4 },
   { name: 'related', px: 8 },
-  { name: 'part', px: 12 },
   { name: 'group', px: 16 },
-  { name: 'card', px: 20 },
+  { name: 'card', px: 24 },
   { name: 'page', px: 48 },
   { name: 'section', px: 64 },
 ] as const;
@@ -23,7 +22,7 @@ export const TYPE_ROLES = [
   { name: 'title', px: 28, lineHeight: 36, tracking: '−0.02em', weight: 600 },
   { name: 'heading', px: 20, lineHeight: 28, tracking: '−0.01em', weight: 600 },
   { name: 'subheading', px: 16, lineHeight: 24, tracking: undefined, weight: 600 },
-  { name: 'body', px: 14, lineHeight: 21, tracking: undefined, weight: 400 },
+  { name: 'body', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
   { name: 'control', px: 14, lineHeight: 20, tracking: undefined, weight: 400 },
   { name: 'label', px: 14, lineHeight: 16, tracking: undefined, weight: 500 },
   { name: 'caption', px: 12, lineHeight: 16, tracking: undefined, weight: 400 },

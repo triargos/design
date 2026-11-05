@@ -45,7 +45,7 @@ function ChoiceCard({ className, children, ...props }: RadioPrimitive.Root.Props
     <RadioPrimitive.Root
       data-slot='choice-card'
       className={cn(
-        'group/choice-card flex min-h-(--choice-card-height) w-full items-center justify-between gap-part rounded-block bg-shell px-control-pad py-(--choice-card-pad-y) text-left text-body font-medium text-foreground outline-none',
+        'group/choice-card flex min-h-(--choice-card-height) w-full items-center justify-between gap-related rounded-block bg-shell px-control-pad py-(--choice-card-pad-y) text-left text-body font-medium text-foreground outline-none',
         'transition-[background-color,box-shadow] duration-feedback hover:bg-muted',
         'focus-visible:ring-3 focus-visible:ring-ring/24',
         'data-checked:bg-card data-checked:shadow-raised',
