@@ -74,7 +74,7 @@ Values come from `brandingThemeCss(theme)` (`lib/theme/branding-theme.ts`), whic
 | `border-subtle` · `border` · `border-strong`                                   | Row separators · hairlines · edges that must read                                              |
 | `ring`                                                                         | Focus: `ring-3 ring-ring/24` on fields and controls alike                                      |
 | `sidebar*`                                                                     | The app frame behind the page panel                                                            |
-| `chart-1` … `chart-5`                                                          | Chart series: static, not branded, read as `var(--chart-N)`                                    |
+| `chart-1` … `chart-5`                                                          | Chart series: the first five category hues, read as `var(--chart-N)`                           |
 | `category-1` … `category-8`                                                    | Things told apart, not ranked: static, not branded, a step per mode. A data color or a swatch  |
 | `image-edge`                                                                   | The 1px hairline on a photo (`Avatar`): black at 10%, white in dark                            |
 | `thumb`                                                                        | Switch and slider thumb: white in both modes                                                   |
