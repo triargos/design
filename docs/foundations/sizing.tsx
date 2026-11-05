@@ -273,7 +273,7 @@ function SampleUI({ id }: { id: string }) {
           </CardContent>
         </Card>
       </div>
-      <Card variant='shell' className='min-w-0'>
+      <Card className='min-w-0'>
         <Table variant='card'>
           <TableHeader>
             <TableRow>
@@ -407,7 +407,7 @@ function ValueTable({
 }) {
   const tokens = SIZING_TOKEN_NAMES.filter((token) => columns.some((column) => column.values[token] !== undefined));
   return (
-    <Card variant='shell'>
+    <Card>
       <Table variant='card'>
         <TableHeader>
           <TableRow>

@@ -2,25 +2,25 @@ import { CardDefault } from '../examples/card/default';
 import { CardDestructive } from '../examples/card/destructive';
 import { CardEmpty } from '../examples/card/empty';
 import { CardNoHeader } from '../examples/card/no-header';
+import { CardPlain } from '../examples/card/plain';
 import { CardStacked } from '../examples/card/stacked';
 import { CardWithActions } from '../examples/card/with-actions';
 import { CardWithDescription } from '../examples/card/with-description';
-import { CardShell } from '../examples/card/shell';
 import { CardWithFooter } from '../examples/card/with-footer';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
 
 export default defineDocs({
   title: 'Card',
-  description: 'The content block: a titled card, or one in a tinted shell.',
+  description: 'The content block: a tinted shell with a title band, or a plain card titled above.',
   group: 'Components',
   Page: () => (
     <FoundationPage
       title='Card'
-      description='The content block. One markup, two looks: a plain card sets its header above the surface as the block’s title; variant="shell" sets it in a tinted shell: the header a title band inside the shell, the content a panel below it.'>
+      description='The content block. One markup, two looks: by default a tinted shell, the header a title band inside it and the content a panel below it; variant="plain" sets the header above the surface as the block’s title.'>
       <ExampleSection
         title='Default'
-        description='The header sits above the card, on the text edge of what is inside it.'
+        description='A tinted shell around the content, the header a title band on the tint. Keep descriptions to one sentence; long copy makes the shell read as a gray block.'
         bare>
         <CardDefault />
       </ExampleSection>
@@ -33,7 +33,7 @@ export default defineDocs({
         bare>
         <CardWithActions />
       </ExampleSection>
-      <ExampleSection title='No header' description='Content alone.' bare>
+      <ExampleSection title='No header' description='Content alone: without a header a shell draws no tint.' bare>
         <CardNoHeader />
       </ExampleSection>
       <ExampleSection
@@ -47,17 +47,16 @@ export default defineDocs({
         <CardWithFooter />
       </ExampleSection>
       <ExampleSection
-        title='Shell'
+        title='Plain'
         description={
           <>
-            <Code>variant='shell'</Code>: a tinted shell around the content, the header a title band on the tint and the
-            content a card inside it. Keep descriptions to one sentence; long copy makes the shell read as a gray block.
-            Around a table the header sits above the shell, since the column row is its band. Without a header a shell
-            draws no tint: the content stands alone as a plain surface.
+            <Code>variant='plain'</Code>, the exception: the header sits above the card, on the page, as a section
+            heading, on the text edge of what is inside it; the footer a muted band under a rule. A shell around a table
+            sets its header the same way, since the column row is its band.
           </>
         }
         bare>
-        <CardShell />
+        <CardPlain />
       </ExampleSection>
       <ExampleSection title='Stacked' description='Peer cards sit one group step apart, in a stack or in columns.' bare>
         <CardStacked />

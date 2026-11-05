@@ -25,7 +25,7 @@ import { cn } from '~/lib/utils';
 //   on the card header's text.
 // - `card`: the table is the content of a shell card, in place of `CardContent`. Header and footer rows sit on
 //   the tint; the body is a card of its own between them, as `CardContent` is there: its `--edge` all round,
-//   `rounded-inner` corners. Put it straight in the shell: `<Card variant='shell'><Table variant='card'>…</Table></Card>`;
+//   `rounded-inner` corners. Put it straight in the shell: `<Card><Table variant='card'>…</Table></Card>`;
 //   a `CardHeader` there sits above the shell.
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).

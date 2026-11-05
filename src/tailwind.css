@@ -279,7 +279,7 @@
      `related`, so what belongs together reads apart from its neighbours. */
   --spacing-group: 1rem;
   /* Inside a card: the content's padding, and the header, footer and flush rows on the same edge. */
-  --spacing-card: 1.25rem;
+  --spacing-card: 1rem;
   --spacing-page: 3rem;
   --spacing-section: 4rem;
 
@@ -321,6 +321,8 @@
   --spacing-picker: 0.75rem;
   --spacing-popup-inset: 0.25rem;
   --spacing-card-inset: 0.25rem;
+  /* A card shell's header and footer bands, above and below their text. */
+  --spacing-card-band: 0.75rem;
   --spacing-list-inset: 0.5rem;
 
   /* Marks: a slider's or progress bar's track thickness. */

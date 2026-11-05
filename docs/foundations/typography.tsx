@@ -125,7 +125,7 @@ export default defineDocs({
               <PageDescription>{paragraph}</PageDescription>
             </PageHeaderGroup>
             <PageSection title='Project details' description='Only admins see these details.'>
-              <Card variant='shell'>
+              <Card>
                 <CardHeader>
                   <CardTitle>Members</CardTitle>
                   <CardDescription>They get every project update.</CardDescription>

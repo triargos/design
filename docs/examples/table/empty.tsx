@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~
 /** No rows: one cell over every column holds an Empty. */
 export function TableEmpty() {
   return (
-    <Card variant='shell' className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           <TableRow>

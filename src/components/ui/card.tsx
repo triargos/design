@@ -7,38 +7,40 @@ import { cn } from '~/lib/utils';
 
 // Two variants, one markup: `Card` > `CardHeader` > `CardContent` > `CardFooter`.
 //
-// `default`: the header sits above the card, on the page, as a section title; the surface holds the content and the
-// footer. The card is a grid (header, content, footer rows) and its `::before`, a grid item over the content and footer
-// rows, draws the surface: no wrapper, so the parts stay siblings. Content and footer sit on one text edge, `card` in
-// from the 1px edge; the header pads the same, so its title starts on that edge.
-//
-// `shell`: a tinted shell (`--card-shell`, default `--shell`) around the content, the header and footer bands on the
-// tint. The same grid as `default`, its `::before` the tint. The content is a card of its own `card-inset` inside it:
+// `shell` (the default): a tinted shell (`--card-shell`, default `--shell`) around the content, the header and footer
+// bands on the tint. The card is a grid (header, panel, footer rows) and its `::before`, a grid item over the rows,
+// draws the tint: no wrapper, so the parts stay siblings. The content is a card of its own `card-inset` inside it:
 // its `--edge` all round, `shadow-card`, `rounded-inner`, so it stays concentric at any card radius or inset. Bands
 // pad `card` + 1px inside the inset, the content's text edge. Tables (`Table variant='card'`) and blocks that need
 // their label inside take it. Without a header (and not around a table) a shell draws no tint: the content stands
 // alone, as a plain surface.
 //
-// A table brings its own band, the column row, so a shell around one sets its header above the shell, as `default`
+// A table brings its own band, the column row, so a shell around one sets its header above the shell, as `plain`
 // does: one band on top, and the title stays a heading. The tint then starts at row 2.
+//
+// `plain`, the exception: the header sits above the card, on the page, as a section title; the surface holds the
+// content and the footer. The same grid, its `::before` the surface over the content and footer rows. Content and
+// footer sit on one text edge, `card` in from the 1px edge; the header pads the same, so its title starts on that edge.
+// The title floats `group` above an untinted surface, so the block reads looser than a shell: keep it for a block whose
+// title is a page section heading.
 //
 // Without a `Card` around it, `CardContent` draws its own surface at `rounded-card` (a list under a plain section
 // title).
 
-type CardVariant = 'default' | 'shell';
+type CardVariant = 'shell' | 'plain';
 
 /** The variant of the card around a part; `null` outside a card. */
 const CardVariantContext = createContext<CardVariant | null>(null);
 
 /**
- * A content block. `default`: the header is the block's title, above the card; the card holds content and footer.
- * `shell`: a tinted shell around the content, the header a title band inside it, or above it over a table. Without a
- * header (and not around a table) a shell draws no tint: the content is a plain surface. `intent='destructive'` marks
- * only the title.
+ * A content block. `shell` (the default): a tinted shell around the content, the header a title band inside it, or
+ * above it over a table. Without a header (and not around a table) a shell draws no tint: the content is a plain
+ * surface. `plain`: the header is the block's title, above the card; the card holds content and footer.
+ * `intent='destructive'` marks only the title.
  */
 function Card({
   className,
-  variant = 'default',
+  variant = 'shell',
   intent = 'neutral',
   ...props
 }: ComponentProps<'section'> & { variant?: CardVariant; intent?: 'neutral' | 'destructive' }) {
@@ -50,7 +52,7 @@ function Card({
         data-intent={intent}
         className={cn(
           'group/card rounded-card [--outer-radius:var(--radius-card)]',
-          variant === 'default'
+          variant === 'plain'
             ? [
                 // Every part in the one column: auto-placement would set a part beside the surface, never on it.
                 'grid grid-cols-1 grid-rows-[auto_auto_auto] *:col-start-1 [--outer-inset:1px]',
@@ -75,14 +77,14 @@ function Card({
 }
 
 /**
- * Title and description, `actions` at the end. `default`: the block's title on the page, `group` above the card,
- * actions centred on the text and wrapping below it on a narrow screen. `shell`: a title band on the tint, `group`
+ * Title and description, `actions` at the end. `plain`, and outside a card: the block's title on the page, `group` above the card,
+ * actions centred on the text and wrapping below it on a narrow screen. `shell`: a title band on the tint, `card-band`
  * above and below, the description `tight` under the title; keep it to one sentence. Both start `card` inside the
  * card's 1px edge, so the title starts on the content's text edge and the actions end where row actions do.
  */
 function CardHeader({ className, actions, children, ...props }: ComponentProps<'div'> & { actions?: ReactNode }) {
-  const variant = use(CardVariantContext) ?? 'default';
-  if (variant === 'default') {
+  const variant = use(CardVariantContext) ?? 'plain';
+  if (variant === 'plain') {
     return (
       <div
         data-slot='card-header'
@@ -96,7 +98,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
       </div>
     );
   }
-  // Over a table: above the shell, as `default` (the `group-has` classes).
+  // Over a table: above the shell, as `plain` (the `group-has` classes).
   const overTable = [
     'group-has-[>[data-slot=table-container]]/card:m-0 group-has-[>[data-slot=table-container]]/card:px-[calc(var(--spacing-card)+var(--spacing-card-inset)+1px)]',
     'group-has-[>[data-slot=table-container]]/card:pt-0 group-has-[>[data-slot=table-container]]/card:pb-group',
@@ -106,7 +108,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
       <div
         data-slot='card-header'
         className={cn(
-          'mx-card-inset mt-card-inset flex flex-col gap-tight px-[calc(var(--spacing-card)+1px)] py-group',
+          'mx-card-inset mt-card-inset flex flex-col gap-tight px-[calc(var(--spacing-card)+1px)] py-card-band',
           overTable,
           className,
         )}
@@ -119,7 +121,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
     <div
       data-slot='card-header'
       className={cn(
-        'mx-card-inset mt-card-inset flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-group',
+        'mx-card-inset mt-card-inset flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-card-band',
         overTable,
         className,
       )}
@@ -135,7 +137,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
 }
 
 /**
- * Springs open and closed with `show`. `default`: a `muted` band under a rule, as `DialogFooter`, in the card's bottom
+ * Springs open and closed with `show`. `plain`: a `muted` band under a rule, as `DialogFooter`, in the card's bottom
  * corners. `shell`: the header band mirrored, on the tint.
  */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
@@ -147,14 +149,14 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
     <div
       ref={presence.ref}
       data-slot='card-footer'
-      data-surface={variant === 'default' ? 'card' : undefined}
+      data-surface={variant === 'plain' ? 'card' : undefined}
       data-leaving={presence.leaving || undefined}
       className={cn(
         'grid grid-rows-[1fr] overflow-hidden transition-[grid-template-rows,opacity] duration-fold ease-spring-bounce',
         'data-leaving:opacity-0 data-leaving:duration-fold-sm data-leaving:ease-spring motion-safe:data-leaving:grid-rows-[0fr]',
         'motion-reduce:duration-fold-sm motion-reduce:ease-enter',
         presence.entering && 'starting:opacity-0 motion-safe:starting:grid-rows-[0fr]',
-        variant === 'default' && 'row-start-3 mx-px mb-px rounded-b-inner border-t bg-muted',
+        variant === 'plain' && 'row-start-3 mx-px mb-px rounded-b-inner border-t bg-muted',
         variant === 'shell' && 'mx-card-inset mb-card-inset',
       )}>
       {/* min-h-0: grid items default to min-height:auto and would refuse to collapse to 0fr. */}
@@ -163,7 +165,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
           before unmount. */}
         <div
           className={cn(
-            variant === 'shell' ? 'mx-[calc(var(--spacing-card)+1px)] my-group' : 'mx-card my-group',
+            variant === 'shell' ? 'mx-[calc(var(--spacing-card)+1px)] my-card-band' : 'mx-card my-card-band',
             className,
           )}
           {...props}>
@@ -175,14 +177,14 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
 }
 
 function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
-  const variant = use(CardVariantContext) ?? 'default';
+  const variant = use(CardVariantContext) ?? 'plain';
   return (
     <h2
       data-slot='card-title'
       className={cn(
-        // `default`, and a shell's over a table: a section title, the heading role. `shell`: the subheading, a step
+        // `plain`, and a shell's over a table: a section title, the heading role. `shell`: the subheading, a step
         // below a section title and above the 14px row titles.
-        variant === 'default'
+        variant === 'plain'
           ? 'text-heading'
           : 'text-subheading group-has-[>[data-slot=table-container]]/card:text-heading',
         'text-balance group-data-[intent=destructive]/card:text-destructive',
@@ -206,7 +208,7 @@ function CardDescription({ className, ...props }: ComponentProps<'p'>) {
 }
 
 /**
- * The card's content. In a `default` card it is a region of the surface: no padding of its own (`p-card` for text and
+ * The card's content. In a `plain` card it is a region of the surface: no padding of its own (`p-card` for text and
  * fields, none for a list that runs to the edge), 1px in from the surface's edge, corners that clip a list to the
  * card's. In a `shell` card it is that surface `card-inset` inside the tint, `rounded-inner` (see the top of this file).
  * Alone, or in a shell without a header, it is a surface of its own at `rounded-card`. Either way an `--edge` border
@@ -221,7 +223,7 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
     props: mergeProps<'div'>(
       {
         className: cn(
-          variant === 'default'
+          variant === 'plain'
             ? 'row-start-2 mx-px mt-px rounded-t-inner [&:not(:has(+[data-slot=card-footer]))]:mb-px [&:not(:has(+[data-slot=card-footer]))]:rounded-b-inner'
             : variant === 'shell'
               ? [

@@ -24,7 +24,7 @@ const PROJECTS = [
  */
 export function TableRowLinks() {
   return (
-    <Card variant='shell' className='w-full max-w-2xl'>
+    <Card className='w-full max-w-2xl'>
       <Table variant='card'>
         <TableHeader>
           <TableRow>

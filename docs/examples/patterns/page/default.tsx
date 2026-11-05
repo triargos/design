@@ -44,7 +44,7 @@ export function PagePatternDefault() {
               <h2 className='text-heading text-balance'>{section.title}</h2>
               <p className='text-body text-pretty text-muted-foreground'>{section.description}</p>
             </hgroup>
-            <Card variant='shell'>
+            <Card>
               <CardHeader>
                 <CardTitle>{section.card}</CardTitle>
               </CardHeader>
