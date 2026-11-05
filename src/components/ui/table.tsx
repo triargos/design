@@ -24,9 +24,9 @@ import { cn } from '~/lib/utils';
 //   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `card` in,
 //   on the card header's text.
 // - `card`: the table is the content of a shell card, in place of `CardContent`. Header and footer rows sit on
-//   the tint; the body is the panel between them, as `CardContent` is there: its side edges on the frame's, its own
-//   edge and `rounded-block` corners only against the head and foot rows. Put it straight in the shell:
-//   `<Card variant='shell'><Table variant='card'>…</Table></Card>`; a `CardHeader` there sits above the frame.
+//   the tint; the body is a card of its own between them, as `CardContent` is there: its `--edge` all round,
+//   `rounded-inner` corners. Put it straight in the shell: `<Card variant='shell'><Table variant='card'>…</Table></Card>`;
+//   a `CardHeader` there sits above the shell.
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
 // - groups: `TableGroupRow`, a flat `muted` band across every column; with `onOpenChange` it folds its rows.
@@ -39,14 +39,11 @@ type TableSection = 'head' | 'body' | 'foot';
 
 const TableVariantContext = createContext<TableVariant>('default');
 
-/**
- * A `card` table in its shell: the panel of the frame, as `CardContent` there, across the frame's full width. It clips
- * 1px off every side, so the body's side edges, and its top or bottom edge without head or foot rows, lie on the
- * frame's; the clip follows the frame's corner. A `CardFooter` below keeps the bottom edge, against the band.
- */
+/** A `card` table in its shell: `card-inset` inside the tint, as `CardContent` there; a `CardFooter` below takes the
+ * bottom inset. */
 const cardContainer = [
-  'in-data-[variant=shell]:[clip-path:inset(1px_1px_var(--clip-bottom,1px)_1px_round_calc(var(--outer-radius)-1px))]',
-  '[&:has(+[data-slot=card-footer])]:[--clip-bottom:-1rem]',
+  'in-data-[variant=shell]:m-card-inset in-data-[variant=shell]:w-auto',
+  '[&:has(+[data-slot=card-footer])]:mb-0',
 ];
 const TableSectionContext = createContext<TableSection>('body');
 /** Set inside a virtualized table: the header sticks, the head row is ARIA row 1. */
@@ -242,8 +239,8 @@ function TableSpacer({ edge, height, columnCount }: { edge: 'top' | 'bottom'; he
         className={cn(
           'p-0',
           variant === 'card' && 'border-x border-(--edge) bg-card bg-clip-padding',
-          variant === 'card' && edge === 'top' && 'rounded-t-block border-t',
-          variant === 'card' && edge === 'bottom' && 'rounded-b-block border-b',
+          variant === 'card' && edge === 'top' && 'rounded-t-inner border-t',
+          variant === 'card' && edge === 'bottom' && 'rounded-b-inner border-b',
         )}
         style={{ height }}
       />
@@ -426,9 +423,8 @@ function TableHead({
 
 // Card body: the cells are the panel, not the `tbody` (a `tbody` is no containing block in Safari, so a surface hung
 // on it lands on the table). Each cell fills with `bg-card`; the outer cells carry the `--edge` as a border, and
-// `bg-clip-padding` keeps the fill inside it. The side borders lie on the frame's and the frame clips them; the top and
-// bottom ones show against the head and foot rows. Separators are `border-subtle` (opaque, so the tint behind the
-// clipped border does not show). The first and last cell pad `card` inside the edge, on the head and foot cells'
+// `bg-clip-padding` keeps the fill inside it, so the edge sits on the tint, as `CardContent`'s does. Separators are
+// `border-subtle` (opaque, so the tint behind them does not show). The first and last cell pad `card` inside the edge, on the head and foot cells'
 // `card` + 1px. WebKit antialiases each cell's fill at fractional column
 // edges and the shell shows through as a seam; a 1px shadow in the fill color reaches under the next cell and closes it.
 // The fill is one variable, so hover and selection move fill and patch together.
@@ -449,8 +445,8 @@ const tableCellVariants = cva('py-row-pad-y align-middle', {
         'border-b border-b-border-subtle in-[tr:last-child]:border-b-(--edge)',
         'in-[tr:first-child]:border-t in-[tr:first-child]:border-t-(--edge)',
         'first:border-s first:border-s-(--edge) first:ps-card last:border-e last:border-e-(--edge) last:pe-card',
-        'in-[tr:first-child]:first:rounded-ss-block in-[tr:first-child]:last:rounded-se-block',
-        'in-[tr:last-child]:first:rounded-es-block in-[tr:last-child]:last:rounded-ee-block',
+        'in-[tr:first-child]:first:rounded-ss-inner in-[tr:first-child]:last:rounded-se-inner',
+        'in-[tr:last-child]:first:rounded-es-inner in-[tr:last-child]:last:rounded-ee-inner',
       ],
     },
     { variant: 'card', section: 'foot', className: 'py-(--table-foot-pad-y)' },

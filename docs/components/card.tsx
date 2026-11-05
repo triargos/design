@@ -12,12 +12,12 @@ import { defineDocs } from '../kit/docs';
 
 export default defineDocs({
   title: 'Card',
-  description: 'The content block: a titled card, or a framed one.',
+  description: 'The content block: a titled card, or one in a tinted shell.',
   group: 'Components',
   Page: () => (
     <FoundationPage
       title='Card'
-      description='The content block. One markup, two looks: a plain card sets its header above the surface as the block’s title; variant="shell" frames it: the header a label band inside the card, the content a panel below it.'>
+      description='The content block. One markup, two looks: a plain card sets its header above the surface as the block’s title; variant="shell" sets it in a tinted shell: the header a title band inside the shell, the content a panel below it.'>
       <ExampleSection
         title='Default'
         description='The header sits above the card, on the text edge of what is inside it.'
@@ -50,9 +50,10 @@ export default defineDocs({
         title='Shell'
         description={
           <>
-            <Code>variant='shell'</Code>: one card tinted with the shell, the header a one-line label band on the tint
-            and the content a panel below it. Keep descriptions to one sentence; long copy makes the shell read as a
-            gray block. Around a table the header sits above the frame, since the column row is its band.
+            <Code>variant='shell'</Code>: a tinted shell around the content, the header a title band on the tint and the
+            content a card inside it. Keep descriptions to one sentence; long copy makes the shell read as a gray block.
+            Around a table the header sits above the shell, since the column row is its band. Without a header a shell
+            draws no tint: the content stands alone as a plain surface.
           </>
         }
         bare>
