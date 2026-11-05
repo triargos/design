@@ -49,6 +49,7 @@ function Empty({ className, bordered, size, ...props }: VariantProps<typeof empt
     <LazyMotion features={loadMotionFeatures}>
       <m.div
         data-slot='empty'
+        data-size={size ?? 'default'}
         variants={containerMotion}
         initial={reduceMotion ? false : 'initial'}
         animate='animate'
@@ -120,7 +121,8 @@ function EmptyTitle({ className, ...props }: HTMLMotionProps<'div'>) {
     <m.div
       data-slot='empty-title'
       variants={itemMotion}
-      className={cn('text-heading text-balance', className)}
+      // In a card the card's heading sits above it, so the empty title takes the step under it.
+      className={cn('text-heading text-balance in-data-[slot=card-content]:text-subheading', className)}
       {...props}
     />
   );
@@ -132,7 +134,8 @@ function EmptyDescription({ className, ...props }: HTMLMotionProps<'p'>) {
       data-slot='empty-description'
       variants={itemMotion}
       className={cn(
-        'mt-tight max-w-sm text-body text-pretty text-muted-foreground',
+        // Balanced, not pretty: centered lines read as one block only when they are about as long as each other.
+        'mt-tight max-w-sm text-body text-balance text-muted-foreground',
         '[&>a]:font-medium [&>a]:text-foreground [&>a]:underline [&>a]:underline-offset-4',
         className,
       )}
@@ -141,13 +144,19 @@ function EmptyDescription({ className, ...props }: HTMLMotionProps<'p'>) {
   );
 }
 
-/** The next step: one or two buttons. Every failure offers at least one. */
+/**
+ * The next step: one or two buttons. Every failure offers at least one. It sits `group + related` below the text, more
+ * than the media sits above it, so media, title and description read as one block and the action as the step after.
+ */
 function EmptyContent({ className, ...props }: HTMLMotionProps<'div'>) {
   return (
     <m.div
       data-slot='empty-content'
       variants={itemMotion}
-      className={cn('mt-group flex min-w-0 flex-wrap items-center justify-center gap-related', className)}
+      className={cn(
+        'mt-[calc(var(--spacing-group)+var(--spacing-related))] flex min-w-0 flex-wrap items-center justify-center gap-related group-data-[size=sm]/empty:mt-group',
+        className,
+      )}
       {...props}
     />
   );
