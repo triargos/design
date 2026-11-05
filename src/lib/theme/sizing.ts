@@ -77,7 +77,6 @@ export const SIZING_TOKENS = {
   '--spacing-popup': t('surfaces', '16px', 'Popover padding'),
   '--spacing-picker': t('surfaces', '12px', 'Calendar and color picker padding'),
   '--spacing-popup-inset': t('surfaces', '4px', 'Menu and select popup edge to its rows'),
-  '--spacing-card-inset': t('surfaces', '4px', 'Card shell edge to its content'),
   '--spacing-list-inset': t('surfaces', '8px', 'Sidebar, bottom nav panel and command list edge to rows'),
   // Marks.
   '--spacing-track': t('marks', '4px', 'Slider and progress track thickness'),

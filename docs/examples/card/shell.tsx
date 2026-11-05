@@ -7,7 +7,7 @@ const PROJECTS = [
   { name: 'Mobile app', due: 'Due next week', status: 'At risk', intent: 'warning' },
 ] as const;
 
-/** The content framed in the shell, the header a label strip inside the frame. */
+/** One card tinted with the shell: the header a label band, the content a panel below it. */
 export function CardShell() {
   return (
     <Card variant='shell' className='w-full max-w-xl'>

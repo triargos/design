@@ -12,10 +12,12 @@ import { cn } from '~/lib/utils';
 // rows, draws the surface: no wrapper, so the parts stay siblings. Content and footer sit on one text edge, `card` in
 // from the 1px edge; the header pads the same, so its title starts on that edge.
 //
-// `shell`: a frame. A tinted shell (`--card-shell`, default `--shell`) wraps the content surface, the header a label
-// strip on the shell. Tables (`Table variant='card'`) and blocks that need their label inside take it. The shell is
-// `rounded-card` and sets `--outer-radius` / `--outer-inset` (`p-card-inset`); the content takes `rounded-inner`, so it
-// stays concentric at any tuned card radius or inset. What sits on the shell pads `card` + 1px, the content's text edge.
+// `shell`: a frame. One bordered card tinted with the shell (`--card-shell`, default `--shell`), the header and footer
+// bands on the tint and the content a `bg-card` panel between them. The content runs 1px out on the sides (`-mx-px`),
+// so its edge lies on the frame's, and the frame clips that column (`overflow-clip`, so a sticky table header still
+// sticks to the page): one edge on the sides, the content's own edge only where it meets a band, its corners rounded
+// there (`rounded-block`). At the frame's top or bottom it runs out there too and the frame's corner clips it. Tables
+// (`Table variant='card'`) and blocks that need their label inside take it. Bands pad `card`, the content's text edge.
 //
 // Without a `Card` around it, `CardContent` draws its own surface at `rounded-card` (a list under a plain section
 // title).
@@ -50,7 +52,7 @@ function Card({
                 // The surface: an `--edge` border inside the box, `bg-clip-padding` keeps the fill off it.
                 "before:col-start-1 before:row-start-2 before:row-end-4 before:rounded-card before:border before:border-(--edge) before:bg-card before:bg-clip-padding before:shadow-card before:content-['']",
               ]
-            : 'flex flex-col bg-(--card-shell) p-card-inset [--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)]',
+            : 'flex flex-col overflow-clip border border-(--edge) bg-(--card-shell) bg-clip-padding shadow-card [--card-shell:var(--shell)] [--outer-inset:1px]',
           className,
         )}
         {...props}
@@ -61,9 +63,9 @@ function Card({
 
 /**
  * Title and description, `actions` at the end. `default`: the block's title on the page, `group` above the card,
- * actions centred on the text and wrapping below it on a narrow screen. `shell`: a one-line label strip on the shell,
- * `group` above and below; keep descriptions to one sentence, long copy makes the shell read as a gray block. Both pad
- * `card` + 1px, so the title starts on the content's text edge and the actions end where row actions do.
+ * actions centred on the text and wrapping below it on a narrow screen. `shell`: a one-line label band on the tint,
+ * `group` above and below; keep descriptions to one sentence. Both start `card` inside the card's 1px edge, so the
+ * title starts on the content's text edge and the actions end where row actions do.
  */
 function CardHeader({ className, actions, children, ...props }: ComponentProps<'div'> & { actions?: ReactNode }) {
   const variant = use(CardVariantContext) ?? 'default';
@@ -83,7 +85,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
   }
   if (actions === undefined) {
     return (
-      <div data-slot='card-header' className={cn('px-[calc(var(--spacing-card)+1px)] py-group', className)} {...props}>
+      <div data-slot='card-header' className={cn('px-card py-group', className)} {...props}>
         {children}
       </div>
     );
@@ -91,10 +93,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
   return (
     <div
       data-slot='card-header'
-      className={cn(
-        'flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-group',
-        className,
-      )}
+      className={cn('flex items-center justify-between gap-group px-card py-group', className)}
       {...props}>
       <div className='min-w-0'>{children}</div>
       {/* Negative margin: `control-sm` actions overhang the title's 20px line instead of growing the strip, so a
@@ -108,10 +107,10 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
 
 /**
  * Springs open and closed with `show`. `default`: a `muted` band under a rule, as `DialogFooter`, in the card's bottom
- * corners. `shell`: the header mirrored, on the shell.
+ * corners. `shell`: the header band mirrored, on the tint.
  */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
-  const variant = use(CardVariantContext) ?? 'default';
+  const variant = use(CardVariantContext);
   const presence = usePresence<HTMLDivElement>(show);
   if (!presence.mounted) return null;
   return (
@@ -132,12 +131,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
       <div className='min-h-0 overflow-hidden'>
         {/* A margin on the child, not padding on the grid item: padding floors the grid track and the fold stalls
           before unmount. */}
-        <div
-          className={cn(
-            variant === 'default' ? 'mx-card my-group' : 'mb-group px-[calc(var(--spacing-card)+1px)] pt-group',
-            className,
-          )}
-          {...props}>
+        <div className={cn('mx-card my-group', className)} {...props}>
           {children}
         </div>
       </div>
@@ -177,9 +171,8 @@ function CardDescription({ className, ...props }: ComponentProps<'p'>) {
 /**
  * The card's content. In a `default` card it is a region of the surface: no padding of its own (`p-card` for text and
  * fields, none for a list that runs to the edge), 1px in from the surface's edge, corners that clip a list to the
- * card's. In a `shell` card, and alone, it is the surface: an `--edge` border inside the box (`bg-clip-padding` keeps
- * the fill off it, so the translucent edge sits on the shell), `shadow-card`. Its bottom radius stays fixed whether a
- * footer is mounted, so a footer's reveal never changes the content's shape mid-animation.
+ * card's. In a `shell` card it is the panel between the bands (see the top of this file). Alone it is a surface of its
+ * own: an `--edge` border inside the box (`bg-clip-padding` keeps the fill off it), `shadow-card`.
  */
 function CardContent({ className, render, ...props }: useRender.ComponentProps<'div'>) {
   const variant = use(CardVariantContext);
@@ -192,7 +185,9 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
         className: cn(
           variant === 'default'
             ? 'row-start-2 mx-px mt-px rounded-t-inner [&:not(:has(+[data-slot=card-footer]))]:mb-px [&:not(:has(+[data-slot=card-footer]))]:rounded-b-inner'
-            : 'rounded-[max(0px,calc(var(--outer-radius,var(--radius-card))-var(--outer-inset,0px)))] border border-(--edge) bg-card bg-clip-padding shadow-card',
+            : variant === 'shell'
+              ? '-mx-px border border-(--edge) bg-card bg-clip-padding first:-mt-px last:-mb-px not-first:rounded-t-block not-last:rounded-b-block'
+              : 'rounded-card border border-(--edge) bg-card bg-clip-padding shadow-card',
           className,
         ),
       },

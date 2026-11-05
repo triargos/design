@@ -94,9 +94,9 @@ function StaticItemList({
       data-slot='item-list'
       className={cn(
         'overflow-hidden transition-[height] duration-fold ease-spring motion-reduce:transition-none',
-        // In a plain card the rows sit `card` − `row-pad-x` in, so their text starts on the card's text edge, where the
+        // In a card the rows sit `card` − `row-pad-x` in, so their text starts on the card's text edge, where the
         // header above starts too, at any density. A margin: the springing height is the rows' own.
-        'group-data-[variant=default]/card:m-[calc(var(--spacing-card)-var(--spacing-row-pad-x))]',
+        'in-data-[slot=card-content]:m-[calc(var(--spacing-card)-var(--spacing-row-pad-x))]',
         className,
       )}
       style={bounds.height > 0 ? { ...style, height: bounds.height } : style}
@@ -153,7 +153,7 @@ function VirtualizedItemList<T>({
       className={cn(
         ownScroll &&
           'overflow-y-auto overscroll-contain outline-none focus-visible:ring-3 focus-visible:ring-ring/24 focus-visible:ring-inset',
-        'group-data-[variant=default]/card:m-[calc(var(--spacing-card)-var(--spacing-row-pad-x))]',
+        'in-data-[slot=card-content]:m-[calc(var(--spacing-card)-var(--spacing-row-pad-x))]',
         className,
       )}
       {...props}>
@@ -209,7 +209,7 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
       data-slot='item-list'
       aria-hidden
       className={cn(
-        'overflow-hidden group-data-[variant=default]/card:m-[calc(var(--spacing-card)-var(--spacing-row-pad-x))]',
+        'overflow-hidden in-data-[slot=card-content]:m-[calc(var(--spacing-card)-var(--spacing-row-pad-x))]',
         className,
       )}
       {...props}>

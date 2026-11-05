@@ -24,7 +24,8 @@ import { cn } from '~/lib/utils';
 //   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `card` in,
 //   on the card header's text.
 // - `card`: the table is the content of a shell card, in place of `CardContent`. Header and footer rows sit on
-//   the shell; the body is the card (`bg-card`, an `--edge` ring, `rounded-inner` corners). Put it straight in the
+//   the tint; the body is the panel between them, as `CardContent` is there: 1px out on the sides so its edge lies on
+//   the frame's, its own edge and `rounded-block` corners only against the head and foot rows. Put it straight in the
 //   shell: `<Card variant='shell'><Table variant='card'>…</Table></Card>`.
 // Beyond the markup:
 // - a sortable column: `TableHead sort onSort` (a button inside the header cell, `aria-sort` on the cell).
@@ -37,6 +38,13 @@ type TableVariant = 'default' | 'flush' | 'card';
 type TableSection = 'head' | 'body' | 'foot';
 
 const TableVariantContext = createContext<TableVariant>('default');
+
+/**
+ * A `card` table in its shell: 1px out on the sides, so the body's side edges lie on the frame's (which clips them).
+ * Without head or foot rows the body meets the frame's top or bottom, so it runs out there too and the frame's corner
+ * clips it.
+ */
+const cardContainer = '-mx-px w-[calc(100%+2px)] [&:not(:has(thead))]:-mt-px [&:not(:has(tfoot))]:-mb-px';
 const TableSectionContext = createContext<TableSection>('body');
 /** Set inside a virtualized table: the header sticks, the head row is ARIA row 1. */
 const TableVirtualizedContext = createContext(false);
@@ -96,7 +104,10 @@ function Table<T>(props: TableProps<T>) {
   const { className, variant = 'default', virtualized: _, ...rest } = props;
   return (
     <TableVariantContext value={variant}>
-      <div data-slot='table-container' data-variant={variant} className='relative w-full overflow-x-auto'>
+      <div
+        data-slot='table-container'
+        data-variant={variant}
+        className={cn('relative w-full overflow-x-auto', variant === 'card' && cardContainer)}>
         <table
           data-slot='table'
           className={cn(
@@ -176,7 +187,7 @@ function VirtualizedTable<T>({
             ownScroll
               ? 'overflow-auto overscroll-contain outline-none focus-visible:ring-3 focus-visible:ring-ring/24 focus-visible:ring-inset'
               : 'overflow-x-clip',
-            ownScroll && variant === 'card' && 'rounded-inner',
+            variant === 'card' && cardContainer,
             className,
           )}
           {...props}>
@@ -228,8 +239,8 @@ function TableSpacer({ edge, height, columnCount }: { edge: 'top' | 'bottom'; he
         className={cn(
           'p-0',
           variant === 'card' && 'border-x border-(--edge) bg-card bg-clip-padding',
-          variant === 'card' && edge === 'top' && 'rounded-t-inner border-t',
-          variant === 'card' && edge === 'bottom' && 'rounded-b-inner border-b',
+          variant === 'card' && edge === 'top' && 'rounded-t-block border-t',
+          variant === 'card' && edge === 'bottom' && 'rounded-b-block border-b',
         )}
         style={{ height }}
       />
@@ -410,11 +421,12 @@ function TableHead({
   );
 }
 
-// Card body: the cells are the card, not the `tbody` (a `tbody` is no containing block in Safari, so a surface hung on
-// it lands on the table). Each cell fills with `bg-card`; the outer cells carry the `--edge` ring as a border, and
-// `bg-clip-padding` keeps the fill inside it, so the ring sits on the shell, as `CardContent` does. Separators are
-// `border-subtle` (opaque, so the shell behind the clipped border does not show). The first and last cell pad `card`
-// inside the edge, on the head and foot cells' `card` + 1px. WebKit antialiases each cell's fill at fractional column
+// Card body: the cells are the panel, not the `tbody` (a `tbody` is no containing block in Safari, so a surface hung
+// on it lands on the table). Each cell fills with `bg-card`; the outer cells carry the `--edge` as a border, and
+// `bg-clip-padding` keeps the fill inside it. The side borders lie on the frame's and the frame clips them; the top and
+// bottom ones show against the head and foot rows. Separators are `border-subtle` (opaque, so the tint behind the
+// clipped border does not show). The first and last cell pad `card` inside the edge, on the head and foot cells'
+// `card` + 1px. WebKit antialiases each cell's fill at fractional column
 // edges and the shell shows through as a seam; a 1px shadow in the fill color reaches under the next cell and closes it.
 // The fill is one variable, so hover and selection move fill and patch together.
 const tableCellVariants = cva('py-row-pad-y align-middle', {
@@ -434,8 +446,8 @@ const tableCellVariants = cva('py-row-pad-y align-middle', {
         'border-b border-b-border-subtle in-[tr:last-child]:border-b-(--edge)',
         'in-[tr:first-child]:border-t in-[tr:first-child]:border-t-(--edge)',
         'first:border-s first:border-s-(--edge) first:ps-card last:border-e last:border-e-(--edge) last:pe-card',
-        'in-[tr:first-child]:first:rounded-ss-inner in-[tr:first-child]:last:rounded-se-inner',
-        'in-[tr:last-child]:first:rounded-es-inner in-[tr:last-child]:last:rounded-ee-inner',
+        'in-[tr:first-child]:first:rounded-ss-block in-[tr:first-child]:last:rounded-se-block',
+        'in-[tr:last-child]:first:rounded-es-block in-[tr:last-child]:last:rounded-ee-block',
       ],
     },
     { variant: 'card', section: 'foot', className: 'py-(--table-foot-pad-y)' },
