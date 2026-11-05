@@ -125,7 +125,7 @@ Fixed steps run from `rounded-xs` (2px) to `rounded-5xl` (24px). Write the role,
 | `rounded-control-sm` | 8    | Controls 20–28px (`Button` `xs`), badges                                |
 | `rounded-control`    | 10   | Controls 32–36px (`Button` `sm`, default, tabs), single-line fields     |
 | `rounded-control-lg` | 12   | Controls 40px (`Button` `lg`)                                           |
-| `rounded-popup`      | 16   | Menus, popovers, selects                                                |
+| `rounded-popup`      | 12   | Menus, popovers, selects                                                |
 | `rounded-card`       | 20   | `Card` (the surface, or the shell), `Alert`                             |
 | `rounded-dialog`     | 20   | Dialogs, sheets                                                         |
 | `rounded-panel`      | 20   | The page panel (the app frame, not a component)                         |
@@ -163,7 +163,7 @@ Tokens are grouped by family, in `tailwind.css` and in `SIZING_TOKENS` (`lib/the
 | Spacing  | the roles, `tight` … `section` (Spacing)                                                                                                                                                              | `gap-group`, `p-card`                            |
 | Controls | `control-2xs` … `control-lg` 20 · 24 · 32 · 36 · 40; `control-pad-xs` · `control-pad-sm` · `control-pad` 8 · 12 · 16; `control-gap-sm` · `control-gap` 4 · 6; `icon-xs` … `icon-lg` 12 · 14 · 16 · 20 | `h-control`, `px-control-pad`, `size-icon`       |
 | Fields   | `field-pad` 12 (less the border), `field-pad-y` 8 (multi-line), `field-inset` 4 (edge to a seated button or chip; `field-seat` = `control` − 2 × 4)                                                   | `px-[calc(var(--spacing-field-pad)-1px)]`        |
-| Rows     | `menu-item` · `menu-item-pad` 36 · 8 (menus, select, combobox); `row-pad-x` · `row-pad-y` 12 · 12 (`Item`, table cells); `row-gap` 8 (icon → label)                                                   | `min-h-menu-item`, `px-row-pad-x`, `gap-row-gap` |
+| Rows     | `menu-item` · `menu-item-pad` 32 · 8 (menus, select, combobox; 36 on a phone); `row-pad-x` · `row-pad-y` 12 · 12 (`Item`, table cells); `row-gap` 8 (icon → label)                                    | `min-h-menu-item`, `px-row-pad-x`, `gap-row-gap` |
 | Surfaces | `modal` 24, `popup` 16 (popover), `picker` 12 (calendar, color picker); `popup-inset` 4, `list-inset` 8 (sidebar, command), each also the `--outer-inset`                                             | `p-modal`, `p-popup-inset`                       |
 | Marks    | `track` 4 (slider, progress)                                                                                                                                                                          | `h-track`                                        |
 
@@ -202,10 +202,11 @@ A sizing theme (`SizingTheme`, `lib/theme/sizing.ts`) is a density and a radius,
 | Inverse    | `data-surface='inverse'` + `rounded-popup bg-popover shadow-popup`: the other mode's tokens, dark on a light page and light on a dark one                                                                            | `ActionBar`                                                                     |
 | Modal      | `rounded-dialog bg-popover shadow-modal`; header and body `--modal-inset` (24px) in, the footer a `muted` band under a rule; backdrop `black/32` + blur                                                              | `DialogContent`, `AlertDialogContent`, `SheetContent`                           |
 
-- Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`; `-drop` + `-drop-hover` without the ring, on a raised button's `--edge` border), `shadow-popup`, `shadow-modal`.
+- Elevations: `shadow-border` (ring only), `shadow-field` (+ `-edge`, `-flat`; drop only, on a field's `--edge-field` border), `shadow-card` (drop only, on a bordered card), `shadow-raised` (+ `-hover`; `-drop` + `-drop-hover` without the ring, on a raised button's `--edge` border), `shadow-popup` (`shadow-tooltip`: the same edge, a smaller drop), `shadow-modal`. Smaller pieces: `shadow-solid` (+ `-pressed`; a solid button's highlight and a drop in its own color), `shadow-selection` (an unchecked checkbox or radio, as a field), `shadow-thumb` (switch and slider thumbs).
 - Every elevation shares one edge: a translucent ring outside the fill (`--edge`), which takes the color of whatever is behind it. Higher levels add drop. A raised button is the exception: its edge is a border over its own fill, so on a saturated surface it still reads as the button's.
 - Fields and buttons draw their edge as a real border inside the box (a 36px field or button measures 36px, and so does its fill at every emphasis); a `::before` with `shadow-field-edge` lays the accent on it. Fields and popups weight the edge toward the light: heavier at the bottom in light mode, lit at the top in dark. Dark mode drops the shadow and keeps one white ring.
-- Borders are for structure (dividers, table rules, dashed drop zones) and state (focus, invalid), never for depth.
+- Borders are for structure (dividers, table rules, dashed drop zones) and state (focus, invalid), never for depth. `--border` is the text color, translucent (9% light, 8% dark), so a rule takes the surface it divides; `border-subtle` and `border-strong` are opaque.
+- Dark surfaces step lightly above the page (shell +4, card +6, popup +9, as coss): the white edge and the lit top carry the shape, the fill only hints at the level. A raised chip in dark is a 6% white veil (9% on hover).
 - Quiet fills and the text below `foreground` (`muted-`, `faint-`, `disabled-foreground`) re-declare per `[data-surface]`, so the same class reads one step from its surface and muted text keeps 4.5:1 on a popup. A surface without its `data-surface` reads the page's. Restyle a shell by setting its variable.
 - `[data-surface=inverse]` re-declares every color token from the other mode (`brandingThemeCss`), so components inside it need no changes. `dark:` variants still follow the page, and so do the edges and drops.
 
@@ -299,10 +300,10 @@ button        (none) neutral/raised · intent='primary' · emphasis='ghost' · i
 text          foreground · muted-foreground · faint-foreground · disabled-foreground
 type          title 28 · heading 20 · subheading 16 · body 14 · control 14 · label 14 · caption 12   (titles 600)
 spacing       tight 4 · related 8 · group 16 · card 24 · page 48 · section 64
-radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 16 · card 20 · dialog 20 · panel 20 · rounded-inner
+radius        control-xs 4 · control-sm 8 · control 10 · control-lg 12 · popup 12 · card 20 · dialog 20 · panel 20 · rounded-inner
               checkbox 4 · tooltip 8 · area 10 · block 12 · track full
-sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 36 · size-icon 16 · sizingThemeCss(SIZING_STYLES.coss) · scaleDensity(0.9)
-elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-modal
+sizing        h-control-2xs 20 · xs 24 · sm 32 · control 36 · lg 40 · menu-item 32 · size-icon 16 · sizingThemeCss(SIZING_STYLES.coss) · scaleDensity(0.9)
+elevation     shadow-border · shadow-field · shadow-card · shadow-raised · shadow-popup · shadow-tooltip · shadow-modal · shadow-solid · shadow-selection · shadow-thumb
 block         Card [variant='shell'] > CardHeader > CardContent [> ItemList [virtualized]] > CardFooter
 modal         DialogContent > DialogHeader · DialogBody · DialogFooter (muted band)
 motion        duration-enter 100 · feedback 150 · move 200 · modal 150 · drawer 560 · indicator 400 · press 300 · ease-enter · ease-move · ease-spring · ease-spring-bounce

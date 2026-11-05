@@ -47,7 +47,7 @@ const intentVariants = cva('', {
       ghost: 'bg-transparent text-(--intent-subtle-foreground)',
       // A chip lifted off its surface: white in light (raised surfaces clamp to white), a white veil in dark, inside a
       // translucent ring (`shadow-raised`). The ring and the dark veil take the color of whatever sits behind them.
-      raised: 'bg-card bg-clip-border text-(--intent-subtle-foreground) shadow-raised dark:bg-foreground/10',
+      raised: 'bg-card bg-clip-border text-(--intent-subtle-foreground) shadow-raised dark:bg-foreground/6',
     },
     /** Hover and open states, for controls. Static elements (badges, alerts) leave it off. */
     interactive: {
@@ -78,7 +78,7 @@ const intentVariants = cva('', {
       emphasis: 'raised',
       // Hover strengthens the ring rather than graying the fill, so the chip keeps the surface's tint around it.
       className:
-        'hover:shadow-raised-hover aria-expanded:shadow-raised-hover dark:hover:bg-foreground/14 dark:aria-expanded:bg-foreground/14',
+        'hover:shadow-raised-hover aria-expanded:shadow-raised-hover dark:hover:bg-foreground/9 dark:aria-expanded:bg-foreground/9',
     },
   ],
   defaultVariants: {

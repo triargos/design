@@ -158,7 +158,7 @@ function CommandFooter({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot='command-footer'
       className={cn(
         'flex h-(--command-footer-height) shrink-0 items-center justify-between gap-group border-t bg-muted px-[calc(var(--spacing-list-inset)+var(--spacing-row-pad-x))] text-caption text-muted-foreground',
-        '**:data-[slot=kbd]:bg-card **:data-[slot=kbd]:shadow-raised dark:**:data-[slot=kbd]:bg-foreground/10',
+        '**:data-[slot=kbd]:bg-card **:data-[slot=kbd]:shadow-raised dark:**:data-[slot=kbd]:bg-foreground/6',
         className,
       )}
       {...props}
