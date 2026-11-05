@@ -35,17 +35,17 @@ function InputGroup({ className, onPointerDown, ...props }: React.ComponentProps
 }
 
 const inputGroupAddonVariants = cva(
-  "flex h-auto cursor-text items-center justify-center gap-related py-[calc((var(--spacing-control)-var(--spacing-control-xs))/2)] text-body font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:text-disabled-foreground [&>kbd]:rounded-control-xs [&>svg:not([class*='size-'])]:size-icon",
+  "flex h-auto cursor-text items-center justify-center gap-related py-[calc(var(--spacing-field-inset)-1px)] text-body font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:text-disabled-foreground [&>kbd]:rounded-control-xs [&>svg:not([class*='size-'])]:size-icon",
   {
     variants: {
       align: {
         // Text and icons sit on the field's padding line (`--spacing-field-pad`). Buttons and keys sit as far from the
-        // side as from the top and bottom (padding + the 1px border), inside the field's corner: `control-xs` buttons
-        // centered, `rounded-inner`; a `control-2xs` `Kbd` centered, `rounded-control-xs`.
+        // side as from the top and bottom (padding + the 1px border), inside the field's corner: buttons `field-inset`
+        // in, `rounded-inner`; a `control-2xs` `Kbd` centered, `rounded-control-xs`.
         'inline-start':
-          'order-first pl-[calc(var(--spacing-field-pad)-1px)] has-[>button]:pl-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] has-[>kbd]:pl-[calc((var(--spacing-control)-var(--spacing-control-2xs))/2-1px)]',
+          'order-first pl-[calc(var(--spacing-field-pad)-1px)] has-[>button]:pl-[calc(var(--spacing-field-inset)-1px)] has-[>kbd]:pl-[calc((var(--spacing-control)-var(--spacing-control-2xs))/2-1px)]',
         'inline-end':
-          'order-last pr-[calc(var(--spacing-field-pad)-1px)] has-[>button]:pr-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-1px)] has-[>kbd]:pr-[calc((var(--spacing-control)-var(--spacing-control-2xs))/2-1px)]',
+          'order-last pr-[calc(var(--spacing-field-pad)-1px)] has-[>button]:pr-[calc(var(--spacing-field-inset)-1px)] has-[>kbd]:pr-[calc((var(--spacing-control)-var(--spacing-control-2xs))/2-1px)]',
         'block-start':
           'order-first w-full justify-start px-[calc(var(--spacing-field-pad)-1px)] pt-field-pad-y [.border-b]:pb-field-pad-y',
         'block-end':
@@ -81,21 +81,22 @@ function InputGroupAddon({
   );
 }
 
-// Ghost's translucent hover reads on the field fill; an open popup leaves the button unfilled, since the group shows
-// the open state. Radii are concentric with the field's corner (`rounded-inner`): a `control-xs` button centered in the
-// `control` field, as far in on every side; the addon sets the side inset. `action` is the field's own action (test
-// email, invite): a raised `control-xs` button, defaults to `type='submit'`.
+// Seated in the field: `field-seat` high, `field-inset` in from the edge on every side (the addon sets the side),
+// corners concentric with the field's (`rounded-inner`), so the button fills the field's end instead of floating in
+// it. Text sizes (`xs`, `action`) are a `subtle` fill, a button on the white field without a second raised surface;
+// `action` is the field's own submit (test email, invite) and defaults to `type='submit'`. Icons are ghost and muted,
+// the field's own toggles (show password, clear, the calendar); an open popup leaves one unfilled, since the group
+// shows the open state.
+const SEATED_TEXT = 'h-field-seat gap-control-gap-sm px-(--field-chip-pad-x)';
 const inputGroupButtonVariants = cva(
-  'flex items-center gap-related text-body text-muted-foreground shadow-none aria-expanded:bg-transparent aria-expanded:text-foreground',
+  'flex items-center rounded-inner text-control shadow-none [--outer-inset:var(--spacing-field-inset)]',
   {
     variants: {
       size: {
-        xs: "h-control-xs gap-control-gap-sm rounded-inner px-(--field-button-pad-x) [--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)] [&>svg:not([class*='size-'])]:size-icon-sm",
-        // Keeps the raised edge the ghost sizes drop: white on the white field reads only through it.
-        action:
-          'h-control-xs rounded-inner px-(--field-chip-pad-x) text-caption font-medium text-foreground shadow-raised [--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)]',
+        xs: SEATED_TEXT,
+        action: SEATED_TEXT,
         'icon-xs':
-          'size-control-xs rounded-inner p-0 [--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)] has-[>svg]:p-0',
+          'size-field-seat p-0 text-muted-foreground aria-expanded:bg-transparent aria-expanded:text-foreground has-[>svg]:p-0',
       },
     },
     defaultVariants: {
@@ -108,7 +109,7 @@ function InputGroupButton({
   className,
   size = 'xs',
   type = size === 'action' ? 'submit' : 'button',
-  emphasis = size === 'action' ? 'raised' : 'ghost',
+  emphasis = size === 'icon-xs' ? 'ghost' : 'subtle',
   ...props
 }: Omit<React.ComponentProps<typeof Button>, 'size'> & VariantProps<typeof inputGroupButtonVariants>) {
   return (

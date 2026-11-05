@@ -3,7 +3,7 @@ import { IconCopy, IconEye } from '@tabler/icons-react';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '~/components/ui/input-group';
 
 /**
- * An icon for a field-local toggle, text for a field-local action, `size='action'` for a field that submits on its
+ * A ghost icon for a field-local toggle, a filled text button for a field-local action, `size='action'` for a field that submits on its
  * own: a raised button 4px in.
  */
 export function InputGroupWithButton() {

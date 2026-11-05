@@ -33,8 +33,8 @@ export default defineDocs({
         title='With button'
         description={
           <>
-            An icon for a field-local toggle, text for a field-local action, <Code>size='action'</Code> for a field that
-            submits on its own.
+            A ghost icon for a field-local toggle, a filled text button for a field-local action,{' '}
+            <Code>size='action'</Code> for a field that submits on its own.
           </>
         }>
         <InputGroupWithButton />

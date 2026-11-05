@@ -71,9 +71,9 @@ const inputSurfaceVariants = cva(
 
 /**
  * `className` and `style` go to the field surface (size, layout, padding, font); every other prop, the ref included,
- * goes to the native input. A click on the surface's padding focuses the input. `type='file'`: the picker button is a
- * raised `--spacing-control-xs` chip centered in the field (`rounded-inner`), like an `InputGroupButton`; the file
- * name, or the empty note, is muted.
+ * goes to the native input. A click on the surface's padding focuses the input. `type='file'`: the picker button is
+ * seated in the field like an `InputGroupButton` (`field-seat`, `field-inset` in, `rounded-inner`, a `subtle` fill);
+ * the file name, or the empty note, is muted.
  */
 function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
   const nameCheck = useAccessibleNameCheck('Input', props.type !== 'hidden');
@@ -85,7 +85,7 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         inputSurfaceVariants({ scope: 'within' }),
         'flex h-control w-full min-w-0 cursor-text items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-md:text-[1rem]',
         // The chip's inset less the border and the input's 1px padding.
-        'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-[calc((var(--spacing-control)-var(--spacing-control-xs))/2-2px)]',
+        'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-[calc(var(--spacing-field-inset)-2px)]',
         className,
       )}
       onPointerDown={(event) => {
@@ -99,8 +99,8 @@ function Input({ className, style, ...props }: React.ComponentProps<'input'>) {
         {...nameCheck}
         className={cn(
           'h-full w-full min-w-0 flex-1 bg-transparent p-0 outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed',
-          '[&[type=file]]:h-auto [&[type=file]]:p-px [&[type=file]]:cursor-pointer [&[type=file]]:text-muted-foreground [&[type=file]]:[--outer-inset:calc((var(--spacing-control)-var(--spacing-control-xs))/2)]',
-          'file:me-related file:h-control-xs file:cursor-pointer file:rounded-inner file:border-0 file:bg-card file:px-(--field-chip-pad-x) file:text-caption file:font-medium file:text-foreground file:shadow-raised file:transition-shadow file:duration-feedback hover:file:shadow-raised-hover dark:file:bg-foreground/10',
+          '[&[type=file]]:h-auto [&[type=file]]:p-px [&[type=file]]:cursor-pointer [&[type=file]]:text-muted-foreground [&[type=file]]:[--outer-inset:var(--spacing-field-inset)]',
+          'file:me-related file:h-field-seat file:cursor-pointer file:rounded-inner file:border-0 file:bg-(--neutral-subtle) file:px-(--field-chip-pad-x) file:text-control file:font-medium file:text-(--neutral-subtle-foreground) file:transition-colors file:duration-feedback hover:file:bg-[color-mix(in_oklch,var(--neutral-subtle),var(--neutral)_8%)]',
         )}
         {...props}
       />
