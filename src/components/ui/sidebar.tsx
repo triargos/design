@@ -227,7 +227,7 @@ const sidebarMenuButtonVariants = cva(
     'hover:bg-highlight hover:text-sidebar-accent-foreground active:bg-foreground/10 active:text-sidebar-accent-foreground',
     'disabled:pointer-events-none disabled:text-disabled-foreground aria-disabled:pointer-events-none aria-disabled:text-disabled-foreground',
     // The current row is a raised chip, as `emphasis='raised'` paints one.
-    'aria-[current=page]:bg-card aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground aria-[current=page]:shadow-raised aria-[current=page]:hover:bg-card dark:aria-[current=page]:bg-foreground/10 dark:aria-[current=page]:hover:bg-foreground/10',
+    'aria-[current=page]:bg-card aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground aria-[current=page]:shadow-raised aria-[current=page]:hover:bg-card dark:aria-[current=page]:bg-foreground/6 dark:aria-[current=page]:hover:bg-foreground/6',
   ],
   {
     variants: {

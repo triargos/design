@@ -74,8 +74,8 @@ const indicatorVariants = cva(
   {
     variants: {
       variant: {
-        segmented: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/10',
-        inline: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/10',
+        segmented: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/6',
+        inline: 'rounded-(--tabs-radius) bg-card shadow-raised dark:bg-foreground/6',
         underline: 'after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full after:bg-foreground',
         pill: 'rounded-full bg-primary-solid',
       },

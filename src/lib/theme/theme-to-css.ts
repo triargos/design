@@ -19,22 +19,30 @@ const FIELD_STEP = { light: -3.5, dark: -2 };
 /** Fields carry less of the fill tint than the shell: on a white card the full tint reads as colored. */
 const FIELD_TINT_SCALE = 0.5;
 
+/**
+ * `--border` alpha: the title color, translucent, so a rule takes the surface it divides (a dark rule stays lighter
+ * than the card under it), after coss (black 8%, white 6%). Raised with the theme's contrast, as the generator's
+ * borders are. `--border-subtle` and `--border-strong` stay opaque: table cells clip their borders over the tint.
+ */
+const BORDER_ALPHA = { light: 0.09, dark: 0.08 };
+
 /** Light `--muted` lightness from its surface. The generator's `bgShade` (-5.5) read too gray; dark keeps `bgShade`. */
 const MUTED_STEP_LIGHT = -3;
 
 /**
  * Shell lightness from its surface. Light sits a step above the generator's `bgBaseHover` (-3.5), which read too gray;
- * dark `bgShade` (+1.8) left the shell invisible, so dark takes the same step as `DARK_SURFACE_STEP`.
+ * dark `bgShade` (+1.8) left the shell invisible, so dark sits between the page and the card (`DARK_SURFACE_STEP`).
  */
-const SHELL_STEP = { light: -2.5, dark: 5 };
+const SHELL_STEP = { light: -2.5, dark: 4 };
 
 /**
- * Dark surface lightness above the page. The generator's nesting steps (`elevatedTheme`, +3.7) leave dark cards
- * barely distinguishable from the page, so dark surfaces are generated from these fixed steps: page → shell (+5) →
- * card (+10) → popup (+14), a card in a popup above that, and a card on a card (+20) above the shell it sits in (+15).
- * Light keeps the generator's nesting (all raised surfaces clamp to white).
+ * Dark surface lightness above the page: page → shell (+4) → card (+6) → popup (+9), a card in a popup above that, and
+ * a card on a card (+12) above the shell it sits in (+10). Small steps, after coss (card about +2.5, popup +5): the
+ * white `--edge` and the lit top edge carry the shape, so the fill only hints at the level. The generator's nesting
+ * (`elevatedTheme`, +3.7) is too uneven to follow. Light keeps the generator's nesting (all raised surfaces clamp to
+ * white).
  */
-const DARK_SURFACE_STEP = { card: 10, popup: 14, popupCard: 18, cardCard: 20 };
+const DARK_SURFACE_STEP = { card: 6, popup: 9, popupCard: 12, cardCard: 12 };
 
 /** A theme on the page's base, `l` lighter, with the page's accent and contrast. */
 const raisedTheme = (page: Theme, l: number): Theme =>
@@ -68,7 +76,7 @@ function surfaceThemes(page: Theme): { card: Theme; cardCard: Theme; popup: Them
  * from its own theme, so `bg-muted` or `bg-field` keeps its step on the page, a card, or a popup. `--surface` is the
  * surface's own color. `--shell` is the tint wrapping a card (card shell, dialog shell, tab track). `--muted`,
  * `--shell` and `--field` add the `FillTint` to the surface's chroma and hue. The text levels below `--foreground`
- * re-declare too: a dark popup sits 14 above the page, and the page's muted text reads under 4.5:1 on it.
+ * re-declare too: a dark popup sits 9 above the page, and the page's muted text reads under 4.5:1 on it.
  */
 function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
   const { color } = theme;
@@ -80,7 +88,10 @@ function surfaceVars(theme: Theme, tint: FillTint): Record<string, string> {
   return {
     '--muted': theme.isDark ? tinted(fromCss(color.bgShade), tint) : step(MUTED_STEP_LIGHT, tint),
     '--border-subtle': color.bgBorderFaint,
-    '--border': color.bgBorder,
+    '--border': toCss(
+      theme.colorFormat,
+      adjustTo(fromCss(color.labelTitle), { a: BORDER_ALPHA[mode] * (1 + Math.max(theme.contrast - 30, 0) / 50) }),
+    ),
     '--border-strong': color.bgBorderStrong,
     '--surface': color.bgBase,
     '--shell': step(SHELL_STEP[mode], tint),
@@ -225,8 +236,12 @@ function primaryVars(theme: Theme): Record<string, string> {
 
 /**
  * Text below `--foreground` on a surface: `--muted-foreground`, then `--faint-foreground` (placeholders, shortcuts,
- * tertiary meta) and `--disabled-foreground`, each a mix of muted text toward the surface.
+ * tertiary meta) and `--disabled-foreground`, each a mix of muted text toward the surface. Light mixes faint less
+ * (`FAINT_MIX`): the mix runs in XYZ, so toward white it lightens fast, and 0.3 left placeholders at 2.5:1; 0.2 keeps
+ * them about 3:1, as coss's.
  */
+const FAINT_MIX = { light: 0.2, dark: 0.3 };
+
 function textLevelVars(theme: Theme): Record<string, string> {
   const { color } = theme;
   const muted = fromCss(color.labelMuted);
@@ -234,7 +249,7 @@ function textLevelVars(theme: Theme): Record<string, string> {
   const toward = (amount: number): Color => mix(muted, base, amount);
   return {
     '--muted-foreground': color.labelMuted,
-    '--faint-foreground': toCss(theme.colorFormat, toward(0.3)),
+    '--faint-foreground': toCss(theme.colorFormat, toward(FAINT_MIX[theme.isDark ? 'dark' : 'light'])),
     '--disabled-foreground': toCss(theme.colorFormat, toward(0.5)),
   };
 }
