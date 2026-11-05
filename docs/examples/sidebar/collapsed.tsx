@@ -71,7 +71,10 @@ export function SidebarCollapsed() {
                             {link.icon}
                             <span>{link.label}</span>
                             {'count' in link && (
-                              <Badge size='sm' shape='pill' className='absolute right-2 min-w-5 tabular-nums'>
+                              <Badge
+                                size='sm'
+                                shape='pill'
+                                className='absolute right-2 min-w-5 tabular-nums group-data-[collapsible=icon]:hidden'>
                                 {link.count}
                               </Badge>
                             )}
@@ -104,7 +107,7 @@ export function SidebarCollapsed() {
             <div className='absolute top-3 left-3'>
               <SidebarTrigger />
             </div>
-            <div className='px-5 pt-10 pb-28 md:px-10'>
+            <div className='px-5 pt-16 pb-28 md:px-10'>
               <div className='flex flex-col gap-page'>
                 <hgroup className='flex flex-col gap-tight'>
                   <h1 className='text-title text-balance'>Tasks</h1>

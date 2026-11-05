@@ -141,7 +141,7 @@ export const SIZING_TOKENS = {
   '--color-picker-hue': t('fields', '12px', 'Color picker hue bar thickness'),
   // Component sizing: rows.
   '--item-gap': t('rows', '12px', 'Item media, content and actions apart'),
-  '--sidebar-label-pad-x': t('rows', '8px', 'Sidebar group label inline padding'),
+  '--sidebar-label-pad-x': t('rows', '12px', 'Sidebar group label inline padding'),
   '--sidebar-sub-height': t('rows', '28px', 'Sidebar sub-menu row height'),
   '--sidebar-sub-pad-y': t('rows', '6px', 'Sidebar sub-menu block padding'),
   '--bottom-nav-gap': t('rows', '8px', 'Bottom nav "More" row icon to label'),

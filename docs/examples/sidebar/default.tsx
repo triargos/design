@@ -105,7 +105,7 @@ export function SidebarDefault() {
             <div className='absolute top-3 left-3'>
               <SidebarTrigger />
             </div>
-            <div className='px-5 pt-10 pb-28 md:px-10'>
+            <div className='px-5 pt-16 pb-28 md:px-10'>
               <div className='flex flex-col gap-page'>
                 <hgroup className='flex flex-col gap-tight'>
                   <h1 className='text-title text-balance'>Tasks</h1>
