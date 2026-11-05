@@ -17,7 +17,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='Card'
-      description='The content block. One markup, two looks: a plain card sets its header above the surface as the block’s title; variant="shell" frames the content, the header a label strip inside the frame.'>
+      description='The content block. One markup, two looks: a plain card sets its header above the surface as the block’s title; variant="shell" frames it: the header a label band inside the card, the content a panel below it.'>
       <ExampleSection
         title='Default'
         description='The header sits above the card, on the text edge of what is inside it.'
@@ -50,8 +50,9 @@ export default defineDocs({
         title='Shell'
         description={
           <>
-            <Code>variant='shell'</Code>: the content framed in a tinted shell, the header a one-line label strip on it.
-            Keep descriptions to one sentence; long copy makes the shell read as a gray block.
+            <Code>variant='shell'</Code>: one card tinted with the shell, the header a one-line label band on the tint
+            and the content a panel below it. Keep descriptions to one sentence; long copy makes the shell read as a
+            gray block. Around a table the header sits above the frame, since the column row is its band.
           </>
         }
         bare>

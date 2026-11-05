@@ -124,7 +124,7 @@ function ChartLegendContent({
     <div
       className={cn(
         'flex items-center justify-center gap-group',
-        verticalAlign === 'top' ? 'pb-part' : 'pt-part',
+        verticalAlign === 'top' ? 'pb-group' : 'pt-group',
         className,
       )}>
       {payload

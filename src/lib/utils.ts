@@ -11,7 +11,6 @@ const twMerge = extendTailwindMerge({
       spacing: [
         'tight',
         'related',
-        'part',
         'group',
         'card',
         'page',
@@ -41,7 +40,6 @@ const twMerge = extendTailwindMerge({
         'popup',
         'picker',
         'popup-inset',
-        'card-inset',
         'list-inset',
         'track',
       ],

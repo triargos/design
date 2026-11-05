@@ -61,7 +61,7 @@ function StepperItem({ step, className, children, ...props }: StepperItemProps) 
       className={cn(
         'group/step relative flex',
         'group-data-[orientation=horizontal]/stepper:items-center group-data-[orientation=horizontal]/stepper:gap-related group-data-[orientation=horizontal]/stepper:not-last:flex-1',
-        'group-data-[orientation=vertical]/stepper:items-start group-data-[orientation=vertical]/stepper:gap-part group-data-[orientation=vertical]/stepper:not-last:pb-group',
+        'group-data-[orientation=vertical]/stepper:items-start group-data-[orientation=vertical]/stepper:gap-related group-data-[orientation=vertical]/stepper:not-last:pb-group',
         className,
       )}
       data-slot='stepper-item'
@@ -80,7 +80,7 @@ function StepperItem({ step, className, children, ...props }: StepperItemProps) 
 }
 
 /**
- * `--stepper-indicator-size` (20px), so its centre sits on the first line of a `text-body` title (21px) without an
+ * `--stepper-indicator-size` (20px), so its centre sits on the first line of a `text-body` title (20px) without an
  * offset. Fills only, no rim:
  * todo `muted`, active `primary-subtle`, done `primary-solid`. A ring on a 20px circle antialiases unevenly in Safari
  * (see `RadioGroupItem`).

@@ -34,7 +34,7 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='With header'
-        description='CardHeader above the table; no footer, so the shell shows as a 4px rim below the body.'
+        description='CardHeader above the table; no footer, so the body runs to the card’s bottom edge.'
         bare>
         <TableWithHeader />
       </ExampleSection>

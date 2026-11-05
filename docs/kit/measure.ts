@@ -54,7 +54,8 @@ export const measureGaps = (root: Element): ReadonlyArray<GapBand> => {
       const height = Math.round(next.top - previous.bottom);
       const left = Math.max(previous.left, next.left);
       const right = Math.min(previous.right, next.right);
-      if (height <= 0 || right <= left) continue;
+      // 1px is an edge (a card's border between its header and content), not spacing.
+      if (height <= 1 || right <= left) continue;
       const top = Math.round(previous.bottom - origin.top);
       const key = `${top}:${left}:${height}`;
       if (!bands.has(key)) {

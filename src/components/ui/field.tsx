@@ -30,7 +30,7 @@ function FieldLegend({
       data-slot='field-legend'
       data-variant={variant}
       className={cn(
-        'data-[variant=label]:mb-part data-[variant=label]:text-label data-[variant=legend]:mb-group data-[variant=legend]:text-heading',
+        'data-[variant=label]:mb-related data-[variant=label]:text-label data-[variant=legend]:mb-group data-[variant=legend]:text-heading',
         className,
       )}
       {...props}
@@ -57,10 +57,11 @@ function FieldGroup({
   return <div data-slot='field-group' className={cn(fieldGroupVariants({ columns }), className)} {...props} />;
 }
 
-const fieldVariants = cva('group/field flex w-full gap-part data-[invalid=true]:text-destructive', {
+const fieldVariants = cva('group/field flex w-full gap-group data-[invalid=true]:text-destructive', {
   variants: {
     orientation: {
-      // `related`, not `--spacing-part`: a field has no solid border, so the eye adds its inner top space to the label gap.
+      // `related` above the control, `group` beside it: stacked, the label touches its control; side by side, the label
+      // and its description are a block of their own.
       vertical: ['flex-col gap-related [&>*]:w-full [&>.sr-only]:w-auto'],
       horizontal: [
         'flex-row items-center',

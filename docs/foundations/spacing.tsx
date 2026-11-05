@@ -19,18 +19,13 @@ const usage: Record<SpacingStepName, { relation: string; owners: string }> = {
     owners: 'Page header and section titles (title → description), ItemContent, FieldContent, DialogHeader, Empty',
   },
   related: {
-    relation: 'Items that work together',
-    owners: 'Field (label → control), page header actions, ItemActions',
-  },
-  part: {
-    relation:
-      'The parts of one component: a media or indicator and its text, text and its action, a label beside its control',
-    owners: 'Alert, horizontal Field, Stepper, Progress, Empty media, chart legend, stacked toasts',
+    relation: 'Items that touch: label → control, a media or indicator → its text, text → its action',
+    owners: 'Field (label → control), page header actions, ItemActions, Stepper, Progress, ChoiceCard',
   },
   group: {
-    relation: 'Peer blocks; a heading → its content; padding inside a dialog or sheet',
+    relation: 'Peer blocks; a heading → its content; a label beside its control; twice related',
     owners:
-      'Page header (back link → title), sections, FieldGroup, FieldSet, FieldLegend, CardHeader (top and bottom), DialogBody, SheetBody',
+      'Page header (back link → title), sections, FieldGroup, FieldSet, horizontal Field, CardHeader → card, Empty media, chart legend, stacked toasts',
   },
   card: {
     relation: 'Padding inside a card; its header, footer and flush rows on the same edge',
@@ -69,7 +64,7 @@ const SamplePage = () => (
         </AlertContent>
       </Alert>
       <PageSection title='Team' description='Only admins see these details.'>
-        <Card>
+        <Card variant='shell'>
           <CardHeader>
             <CardTitle>Members</CardTitle>
             <CardDescription>They get every project update.</CardDescription>
@@ -81,7 +76,7 @@ const SamplePage = () => (
             </ItemList>
           </CardContent>
         </Card>
-        <Card>
+        <Card variant='shell'>
           <CardHeader>
             <CardTitle>Owner</CardTitle>
           </CardHeader>
@@ -93,7 +88,7 @@ const SamplePage = () => (
         </Card>
       </PageSection>
       <PageSection title='Documents'>
-        <Card>
+        <Card variant='shell'>
           <CardHeader>
             <CardTitle>Files</CardTitle>
           </CardHeader>
@@ -118,7 +113,7 @@ export default defineDocs({
     return (
       <FoundationPage
         title='Spacing'
-        description='Seven steps, named by relationship. Peer blocks and a heading and its content share one gap; sections sit three times as far apart (48), and the page header between the two (32). Padding inside rows and controls follows the sizing tokens (Sizing), not this scale.'>
+        description='Six steps, named by relationship, each about twice the one before: 4 · 8 · 16 · 24 · 48 · 64. What touches sits related (8), peer blocks a group apart (16), so a group always reads apart from its neighbours. Padding inside rows and controls follows the sizing tokens (Sizing), on the same 4px grid.'>
         <FoundationSection
           title='Scale'
           description='Each gap is drawn at its real size. Tune the steps in Customize; every page follows.'>

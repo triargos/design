@@ -73,7 +73,7 @@ export default defineDocs({
           <Card variant='shell'>
             <CardHeader>
               <CardTitle>Card shell</CardTitle>
-              <CardDescription>The label strip sits on the shell, not on a second surface.</CardDescription>
+              <CardDescription>The label band sits on the tint; the content is a panel below it.</CardDescription>
             </CardHeader>
             <CardContent className='p-4'>
               <Layer name='Card' owner={<Code>CardContent</Code>}>

@@ -52,7 +52,7 @@ export function DrawerAccountMenu() {
       <DrawerContent aria-label='Account menu'>
         <DrawerStack initial='root'>
           <DrawerPage page='root'>
-            <div className='flex items-center gap-part px-related pb-related'>
+            <div className='flex items-center gap-related px-related pb-related'>
               <Avatar size='3xl'>
                 <AvatarFallback>AM</AvatarFallback>
               </Avatar>

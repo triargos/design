@@ -417,7 +417,7 @@ function DrawerOption({
       aria-checked={checked}
       data-slot='drawer-option'
       className={cn(
-        'group/drawer-option flex min-h-(--drawer-menu-item-height) w-full items-center gap-part rounded-(--drawer-option-radius) px-(--drawer-menu-item-pad-x) py-(--drawer-page-pad) text-[1rem] leading-6 text-popover-foreground select-none',
+        'group/drawer-option flex min-h-(--drawer-menu-item-height) w-full items-center gap-related rounded-(--drawer-option-radius) px-(--drawer-menu-item-pad-x) py-(--drawer-page-pad) text-[1rem] leading-6 text-popover-foreground select-none',
         pressableRowClassName,
         className,
       )}

@@ -100,7 +100,7 @@ interface PageSectionProps extends Omit<ComponentProps<'section'>, 'title'> {
 export const PageSection = ({ title, description, children, className, ...props }: PageSectionProps) => {
   return (
     <section data-slot='page-section' className={cn('flex flex-col gap-group', className)} {...props}>
-      <hgroup className={'space-y-tight px-[calc(--spacing(1)+1px+var(--spacing-group))]'}>
+      <hgroup className={'space-y-tight px-[calc(var(--spacing-card)+1px)]'}>
         <h2 className='text-heading text-balance'>{title}</h2>
         {description !== undefined && <p className='text-body text-pretty text-muted-foreground'>{description}</p>}
       </hgroup>

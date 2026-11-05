@@ -60,9 +60,9 @@ const toastClassName = cn([
   'bg-[color-mix(in_srgb,var(--popover),black_calc(1%*max(0,var(--toast-index,0))))] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),black_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover',
   '[transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s]',
   // Gap fill, so hovering between expanded toasts keeps them expanded
-  'after:absolute after:bottom-full after:left-0 after:h-[calc(var(--spacing-part)+1px)] after:w-full',
+  'after:absolute after:bottom-full after:left-0 after:h-[calc(var(--spacing-group)+1px)] after:w-full',
   '[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]',
-  '[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--spacing-part)*-1+var(--toast-swipe-movement-y))]',
+  '[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--spacing-group)*-1+var(--toast-swipe-movement-y))]',
   // Stacked
   'transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--toast-peek))-(var(--toast-shrink)*var(--toast-calc-height))))_scale(var(--toast-scale))]',
   'data-limited:opacity-0',
