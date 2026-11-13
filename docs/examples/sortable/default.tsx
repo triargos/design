@@ -65,7 +65,7 @@ export function SortableDefault() {
           <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
             <ItemList>
               {items.map((item) => (
-                <SortableItem key={item.id} id={item.id} render={<Item className='flex-nowrap bg-card' />}>
+                <SortableItem key={item.id} id={item.id} render={<Item className='bg-card' />}>
                   <ItemMedia>
                     <SortableItemHandle aria-label={`Move ${item.title}`} />
                   </ItemMedia>

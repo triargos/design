@@ -256,7 +256,7 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
     <div data-slot='item-list' aria-hidden className={cn('overflow-hidden', className)} {...props}>
       {Array.from({ length: rows }, (_, index) => (
         <ItemListRow key={index} role={undefined} first={index === 0} last={index === rows - 1}>
-          <Item className='flex-nowrap'>
+          <Item>
             {media === 'icon' && (
               <ItemMedia variant='icon' className='bg-transparent'>
                 <Skeleton className='size-full rounded-[inherit]' />
@@ -297,7 +297,8 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
  * under the pointer and ends in an `ItemChevron`; a `selected` row fills with `muted`.
  *
  * Below `sm` a row with a description sets its actions on a line of their own, end-aligned: beside them the description
- * squeezes into its two-line clamp and hides what it says. The media and the text stay on the first line.
+ * squeezes into its two-line clamp and hides what it says. The media and the text stay on the first line. Callers must
+ * not set `flex-nowrap`: the actions still take the full line and push the text to zero width.
  */
 function Item({
   className,
