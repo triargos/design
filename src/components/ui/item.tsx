@@ -32,8 +32,10 @@ function ItemListRow({ first, last, ...props }: React.ComponentProps<'div'> & { 
         first && 'in-data-[slot=card-content]:[--list-row-pad-top:var(--spacing-card)]',
         last && 'in-data-[slot=card-content]:[--list-row-pad-bottom:var(--spacing-card)]',
         '*:data-[slot=item]:px-(--list-row-pad-x) *:data-[slot=item]:pt-(--list-row-pad-top) *:data-[slot=item]:pb-(--list-row-pad-bottom)',
-        !last &&
-          'relative after:absolute after:right-(--list-row-pad-x) after:bottom-0 after:left-(--list-row-pad-x) after:h-px after:bg-border-subtle',
+        // The last row keeps its hairline, hidden: when a row comes or goes, a line fades in step with the list's
+        // spring instead of popping in one frame.
+        'relative after:absolute after:right-(--list-row-pad-x) after:bottom-0 after:left-(--list-row-pad-x) after:h-px after:bg-border-subtle after:transition-opacity after:duration-fold motion-reduce:after:transition-none',
+        last && 'after:opacity-0',
       )}
       {...props}
     />
@@ -78,10 +80,11 @@ type ItemListProps<T> = ItemListElementProps &
   );
 
 /**
- * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-hidden'`, which
- * clips the rows' fills to the card's corners. It springs its height when rows come and go or change size (reduced
- * motion: it jumps); a row that animates its own height, as an `Accordion` panel does, sets the pace instead.
- * `virtualized` for a long list. While the rows load, `ItemListSkeleton` stands in for it.
+ * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-clip'`, which
+ * clips the rows' fills to the card's corners. Not `overflow-hidden`: a box that hides can still scroll, so a row that
+ * focuses an input as it mounts, below the list's height mid-spring, scrolls it and the rows jump. It springs its
+ * height when rows come and go or change size (reduced motion: it jumps); a row that animates its own height, as an
+ * `Accordion` panel does, sets the pace instead. `virtualized` for a long list. While the rows load, `ItemListSkeleton` stands in for it.
  */
 function ItemList<T>(props: ItemListProps<T>) {
   if (props.virtualized) return <VirtualizedItemList {...props} />;
@@ -100,7 +103,7 @@ function StaticItemList({
   const rowsRef = useListFold();
   const rows = React.Children.toArray(children);
   return (
-    <div data-slot='item-list' className={cn('overflow-hidden', className)} style={style} {...props}>
+    <div data-slot='item-list' className={cn('overflow-clip', className)} style={style} {...props}>
       <div ref={rowsRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
         {rows.map((row, index) => (
           <ItemListRow
