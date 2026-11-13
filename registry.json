@@ -406,6 +406,7 @@
         "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
+        "@pavo/intent-variants",
         "@pavo/theme",
         "@pavo/use-presence",
         "@pavo/utils"

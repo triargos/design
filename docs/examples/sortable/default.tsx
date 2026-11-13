@@ -55,7 +55,7 @@ export function SortableDefault() {
       <CardHeader>
         <CardTitle>Task statuses</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         <DndContext
           id='sortable-statuses'
           sensors={sensors}
@@ -65,7 +65,7 @@ export function SortableDefault() {
           <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
             <ItemList>
               {items.map((item) => (
-                <SortableItem key={item.id} id={item.id} render={<Item className='bg-card' />}>
+                <SortableItem key={item.id} id={item.id} render={<Item />}>
                   <ItemMedia>
                     <SortableItemHandle aria-label={`Move ${item.title}`} />
                   </ItemMedia>

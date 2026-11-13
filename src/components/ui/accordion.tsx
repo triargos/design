@@ -6,8 +6,9 @@ import { cn } from '~/lib/utils';
 
 /**
  * `default`: sections on a page or in a padded card; the trigger is a rounded control. `flush`: rows to the edge of a
- * `CardContent className='overflow-hidden'` or a `SheetBody`, as `ItemList` rows are: square triggers that fill with
- * `row-hover`, the title on the card header's text. In a card, and in an `ItemList` row, an item pads as a list row
+ * `CardContent` or a `SheetBody`, as `ItemList` rows are: square triggers that fill with `row-hover`, the title on the
+ * card header's text; the first and last trigger round to the card's corners (`--edge-radius-top`, `-bottom`). In a
+ * card, and in an `ItemList` row, an item pads as a list row
  * does (`--list-row-pad-*`, see `ItemListRow`): `card` at the card's edges, half of it on each side of a rule.
  */
 type AccordionVariant = 'default' | 'flush';
@@ -45,6 +46,9 @@ const accordionItemVariants = cva('border-b border-border-subtle last:border-b-0
         '[[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-x:var(--spacing-card)] [[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-y:calc(var(--spacing-card)/2)]',
         '[[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-top:calc(var(--spacing-card)/2)] [[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-bottom:calc(var(--spacing-card)/2)]',
         '[[data-slot=card-content]>[data-slot=accordion]>&]:first:[--list-row-pad-top:var(--spacing-card)] [[data-slot=card-content]>[data-slot=accordion]>&]:last:[--list-row-pad-bottom:var(--spacing-card)]',
+        // The trigger's hover fill follows the card's corners: top on the first item, bottom on a closed last one.
+        '[[data-slot=card-content]>[data-slot=accordion]>&]:first:**:data-[slot=accordion-trigger]:rounded-t-(--edge-radius-top)',
+        '[[data-slot=card-content]>[data-slot=accordion]>&]:last:**:data-[slot=accordion-trigger]:not-data-panel-open:rounded-b-(--edge-radius-bottom)',
       ],
     },
   },
@@ -98,7 +102,7 @@ const accordionTriggerVariants = cva(
           'rounded-area p-(--accordion-pad) [transition:background-color_var(--transition-duration-feedback),padding-bottom_var(--transition-duration-move)_var(--ease-move)] hover:bg-row-hover data-panel-open:pb-[calc(var(--accordion-pad)/2)] motion-reduce:transition-none',
         // A list row's padding (`--list-row-pad-*`), else `card` in from the content's edge: on the header text, as
         // `ItemList` rows. Open, half a rule's padding below: the content follows, its padding ends the row; the
-        // padding moves with the panel. The ring sits inside the row, which the card clips.
+        // padding moves with the panel. The ring sits inside the row, clear of the card's edge.
         flush: [
           'items-center rounded-none px-[var(--list-row-pad-x,var(--spacing-card))] pt-[var(--list-row-pad-top,var(--spacing-row-pad-y))] pb-[var(--list-row-pad-bottom,var(--spacing-row-pad-y))] data-panel-open:pb-[var(--list-row-pad-y,var(--spacing-row-pad-y))]',
           '[transition:background-color_var(--transition-duration-feedback),padding-bottom_var(--transition-duration-move)_var(--ease-move)] hover:bg-row-hover focus-visible:ring-inset motion-reduce:transition-none in-data-[slot=sheet-body]:px-modal',

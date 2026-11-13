@@ -62,7 +62,7 @@ export function ListPageDefault() {
           </Button>
         </div>
         <Card>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             {shown.length > 0 ? (
               <ItemList aria-label='Members'>
                 {shown.map((member) => (

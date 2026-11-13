@@ -202,7 +202,7 @@ function SampleUI({ id }: { id: string }) {
           <CardHeader>
             <CardTitle>Members</CardTitle>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             <ItemList>
               <Item>
                 <ItemContent>
@@ -301,7 +301,7 @@ function TokenReference({ group }: { group: SizingGroup }) {
   const tokens = SIZING_TOKEN_NAMES.filter((token) => SIZING_TOKENS[token].group === group);
   return (
     <Card>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         {tokens.map((token) => (
           <div
             key={token}

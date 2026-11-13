@@ -31,7 +31,7 @@ export function ListPageWithoutSearch() {
         </Button>
       </header>
       <Card>
-        <CardContent className='overflow-hidden'>
+        <CardContent>
           <ItemList aria-label='Members'>
             {MEMBERS.map((member) => (
               <Item key={member.email}>

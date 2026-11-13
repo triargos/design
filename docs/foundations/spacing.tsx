@@ -69,7 +69,7 @@ const SamplePage = () => (
             <CardTitle>Members</CardTitle>
             <CardDescription>They get every project update.</CardDescription>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             <ItemList>
               <Row name='Anna Schmidt' detail='anna@example.com' />
               <Row name='Jonas Weber' detail='jonas@example.com' />
@@ -80,7 +80,7 @@ const SamplePage = () => (
           <CardHeader>
             <CardTitle>Owner</CardTitle>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             <ItemList>
               <Row name='Mia Chen' detail='Project lead' />
             </ItemList>
@@ -92,7 +92,7 @@ const SamplePage = () => (
           <CardHeader>
             <CardTitle>Files</CardTitle>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             <ItemList>
               <Row name='project-brief.pdf' detail='Uploaded March 12' />
             </ItemList>

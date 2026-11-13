@@ -8,7 +8,7 @@ export function ItemSelected() {
       <CardHeader>
         <CardTitle>Members</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-clip'>
+      <CardContent>
         <ItemList>
           <Item selected>
             <ItemContent>

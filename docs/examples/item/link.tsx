@@ -8,7 +8,7 @@ export function ItemLink() {
       <CardHeader>
         <CardTitle>Projects</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-clip'>
+      <CardContent>
         <ItemList>
           <Item render={<a href='#website-redesign' />}>
             <ItemContent>

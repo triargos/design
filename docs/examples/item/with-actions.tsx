@@ -17,7 +17,7 @@ export function ItemWithActions() {
       <CardHeader>
         <CardTitle>Members</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-clip'>
+      <CardContent>
         <ItemList>
           {MEMBERS.map((member) => (
             <Item key={member.email}>

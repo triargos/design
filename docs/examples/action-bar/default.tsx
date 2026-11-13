@@ -35,7 +35,7 @@ export function ActionBarDefault() {
         <CardHeader>
           <CardTitle>Files</CardTitle>
         </CardHeader>
-        <CardContent className='overflow-hidden'>
+        <CardContent>
           <ItemList>
             {FILES.map((file) => (
               <Item key={file.id} selected={selected.has(file.id)}>

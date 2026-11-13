@@ -152,7 +152,7 @@ export default defineDocs({
           <CardHeader>
             <CardTitle>Tasks</CardTitle>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             <ItemList>
               <Item>
                 <ItemContent>

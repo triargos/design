@@ -10,7 +10,7 @@ export function CommandStandalone() {
       <CardHeader>
         <CardTitle>Switch workspace</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         <Command>
           <CommandInput placeholder='Search workspaces' />
           <CommandList>

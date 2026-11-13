@@ -18,11 +18,8 @@ import { useLinkRender } from '~/components/ui/link';
 
 import { cn } from '~/lib/utils';
 
-// Markup for a TanStack Table (`useTable`, `table.FlexRender`) or a static table. Three variants:
+// Markup for a TanStack Table (`useTable`, `table.FlexRender`) or a static table. Two variants:
 // - `default`: a plain table; rows separated by hairlines.
-// - `flush`: `default` filling a card edge to edge, as an `ItemList` does:
-//   `<CardContent className='overflow-hidden'><Table variant='flush'>`. The first and last column sit `card` in,
-//   on the card header's text.
 // - `card`: the table is the content of a shell card, in place of `CardContent`. Header and footer rows sit on
 //   the tint; the body is a card of its own between them, as `CardContent` is there: its `--edge` all round,
 //   `rounded-inner` corners. Put it straight in the shell: `<Card><Table variant='card'>…</Table></Card>`;
@@ -36,7 +33,7 @@ import { cn } from '~/lib/utils';
 // - a long table: `Table virtualized items itemKey`, as `ItemList virtualized`: the rows in view render between two
 //   spacer rows, the header sticks, the columns are `table-fixed`.
 
-type TableVariant = 'default' | 'flush' | 'card';
+type TableVariant = 'default' | 'card';
 type TableSection = 'head' | 'body' | 'foot';
 
 const TableVariantContext = createContext<TableVariant>('default');
@@ -338,16 +335,14 @@ function TableRow({ className, selected = false, ref, ...props }: ComponentProps
   );
 }
 
-// Flush and card: the first and last cell line up with `CardHeader` text (`card` + the card's 1px edge in). Flush
-// cells sit inside the edge already; card head and foot cells sit on the shell, so they add the 1px. A checkbox column
-// shrinks to the box.
+// Card: the first and last cell line up with `CardHeader` text (`card` + the card's 1px edge in): head and foot cells
+// sit on the shell, so they add the 1px. A checkbox column shrinks to the box.
 const tableCellEdges = cva(
   'has-[[role=checkbox]]:w-px first:has-[[role=checkbox]]:pe-0 last:has-[[role=checkbox]]:ps-0',
   {
     variants: {
       variant: {
         default: 'px-row-pad-x',
-        flush: 'px-row-pad-x first:ps-card last:pe-card',
         card: 'px-row-pad-x first:ps-[calc(var(--spacing-card)+1px)] last:pe-[calc(var(--spacing-card)+1px)]',
       },
     },
@@ -361,7 +356,6 @@ const ariaSortOf = { asc: 'ascending', desc: 'descending', none: 'none' } as con
 // A sticky head cell paints the surface it sits on, so rows scroll under it; above every row control (`z-10`).
 const stickyHeadFill = {
   default: 'bg-background',
-  flush: 'bg-card',
   card: 'bg-(--card-shell)',
 } as const satisfies Record<TableVariant, string>;
 
@@ -432,7 +426,7 @@ function TableHead({
 // The fill is one variable, so hover and selection move fill and patch together.
 const tableCellVariants = cva('py-row-pad-y align-middle', {
   variants: {
-    variant: { default: '', flush: '', card: '' },
+    variant: { default: '', card: '' },
     section: { head: '', body: '', foot: '' },
   },
   compoundVariants: [

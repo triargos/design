@@ -32,7 +32,7 @@ export function CardWithActions() {
         }>
         <CardTitle>Members</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         <ItemList>
           {MEMBERS.map((member) => (
             <Item key={member.name}>

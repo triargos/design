@@ -1,9 +1,11 @@
 import { CardDefault } from '../examples/card/default';
 import { CardDestructive } from '../examples/card/destructive';
+import { CardEmphasis } from '../examples/card/emphasis';
 import { CardEmpty } from '../examples/card/empty';
 import { CardNoHeader } from '../examples/card/no-header';
 import { CardPlain } from '../examples/card/plain';
 import { CardStacked } from '../examples/card/stacked';
+import { CardStretched } from '../examples/card/stretched';
 import { CardWithActions } from '../examples/card/with-actions';
 import { CardWithDescription } from '../examples/card/with-description';
 import { CardWithFooter } from '../examples/card/with-footer';
@@ -65,12 +67,30 @@ export default defineDocs({
         title='Destructive'
         description={
           <>
-            <Code>intent='destructive'</Code> marks only the title. The action row stacks below sm, the button full
-            width.
+            <Code>intent='destructive'</Code> colors the title; the shell stays neutral. The action row stacks below sm,
+            the button full width.
           </>
         }
         bare>
         <CardDestructive />
+      </ExampleSection>
+      <ExampleSection
+        title='Emphasis'
+        description={
+          <>
+            <Code>intent</Code> colors the title (<Code>destructive</Code>, <Code>warning</Code>);{' '}
+            <Code>emphasis='subtle'</Code> tints the shell in it too. A list goes straight in the content: its rows
+            round to the corners.
+          </>
+        }
+        bare>
+        <CardEmphasis />
+      </ExampleSection>
+      <ExampleSection
+        title='Stretched'
+        description='Cards in a grid row take its height: the content grows, the header keeps its own. No class on the card.'
+        bare>
+        <CardStretched />
       </ExampleSection>
       <ExampleSection
         title='Empty'

@@ -1,6 +1,5 @@
 import { TableDefault } from '../examples/table/default';
 import { TableEmpty } from '../examples/table/empty';
-import { TableFlush } from '../examples/table/flush';
 import { TableGroupedRows } from '../examples/table/grouped-rows';
 import { TableInACard } from '../examples/table/in-a-card';
 import { TableRowLinks } from '../examples/table/row-links';
@@ -37,17 +36,6 @@ export default defineDocs({
         description='CardHeader above the table; no footer, so the body runs to the card’s bottom edge.'
         bare>
         <TableWithHeader />
-      </ExampleSection>
-      <ExampleSection
-        title='Flush'
-        description={
-          <>
-            <Code>variant='flush'</Code> inside CardContent with overflow-hidden: the header row sits in the card; first
-            and last column on the card title’s edge.
-          </>
-        }
-        bare>
-        <TableFlush />
       </ExampleSection>
       <ExampleSection
         title='With selection'

@@ -9,7 +9,7 @@ export function StatusDotWithLabel() {
       <CardHeader>
         <CardTitle>Members</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         <ItemList>
           <Item>
             <ItemContent>

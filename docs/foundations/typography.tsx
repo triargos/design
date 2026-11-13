@@ -130,7 +130,7 @@ export default defineDocs({
                   <CardTitle>Members</CardTitle>
                   <CardDescription>They get every project update.</CardDescription>
                 </CardHeader>
-                <CardContent className='overflow-hidden'>
+                <CardContent>
                   <ItemList>
                     <Item>
                       <ItemContent>
