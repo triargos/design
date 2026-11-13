@@ -10,7 +10,7 @@ export function ItemHeaderAndFooter() {
       <CardHeader>
         <CardTitle>Review requests</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent className='overflow-clip'>
         <ItemList>
           <Item>
             <ItemHeader>

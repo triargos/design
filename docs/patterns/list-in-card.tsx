@@ -1,3 +1,4 @@
+import { ListInCardAddRow } from '../examples/patterns/list-in-card/add-row';
 import { ListInCardDefault } from '../examples/patterns/list-in-card/default';
 import { ListInCardVirtualized } from '../examples/patterns/list-in-card/virtualized';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
@@ -10,9 +11,19 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='List in Card'
-      description='Every list on a page: CardContent with overflow-hidden around an ItemList. The header holds the add action; each row ends in a status and a ghost menu, on one column with the header action.'>
+      description='Every list on a page: CardContent with overflow-clip around an ItemList. The header holds the add action; each row ends in a status and a ghost menu, on one column with the header action.'>
       <ExampleSection title='Default' bare>
         <ListInCardDefault />
+      </ExampleSection>
+      <ExampleSection
+        title='Add row'
+        description={
+          <>
+            <Code>+</Code> opens a row whose input takes focus as it mounts; pressed again, it closes the row.
+          </>
+        }
+        bare>
+        <ListInCardAddRow />
       </ExampleSection>
       <ExampleSection
         title='Virtualized'

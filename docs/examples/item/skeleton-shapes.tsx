@@ -9,7 +9,7 @@ export function ItemSkeletonShapes() {
         <CardHeader>
           <CardTitle>Projects</CardTitle>
         </CardHeader>
-        <CardContent className='overflow-hidden'>
+        <CardContent className='overflow-clip'>
           <ItemListSkeleton rows={3} description={false} />
         </CardContent>
       </Card>
@@ -17,7 +17,7 @@ export function ItemSkeletonShapes() {
         <CardHeader>
           <CardTitle>Documents</CardTitle>
         </CardHeader>
-        <CardContent className='overflow-hidden'>
+        <CardContent className='overflow-clip'>
           <ItemListSkeleton rows={3} media='icon' />
         </CardContent>
       </Card>
@@ -25,7 +25,7 @@ export function ItemSkeletonShapes() {
         <CardHeader>
           <CardTitle>Members</CardTitle>
         </CardHeader>
-        <CardContent className='overflow-hidden'>
+        <CardContent className='overflow-clip'>
           <ItemListSkeleton rows={3} media='avatar' />
         </CardContent>
       </Card>

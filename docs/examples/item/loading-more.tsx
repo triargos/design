@@ -30,7 +30,7 @@ export function ItemLoadingMore() {
           {items.length} of {TOTAL} invoices
         </CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent className='overflow-clip'>
         <ItemList
           virtualized
           className='h-80'

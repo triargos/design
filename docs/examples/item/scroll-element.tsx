@@ -30,7 +30,7 @@ export function ItemScrollElement() {
           <CardHeader>
             <CardTitle>This week</CardTitle>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent className='overflow-clip'>
             <ItemList
               virtualized
               scrollElement={panel}

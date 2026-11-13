@@ -10,7 +10,7 @@ export function ItemWithMedia() {
       <CardHeader>
         <CardTitle>Documents</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent className='overflow-clip'>
         <ItemList>
           <Item>
             <ItemMedia variant='icon'>

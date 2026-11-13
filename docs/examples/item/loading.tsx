@@ -37,7 +37,7 @@ export function ItemLoading() {
         }>
         <CardTitle>Documents</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden' aria-busy={loading}>
+      <CardContent className='overflow-clip' aria-busy={loading}>
         {loading ? (
           <ItemListSkeleton rows={DOCUMENTS.length} media='icon' />
         ) : (
