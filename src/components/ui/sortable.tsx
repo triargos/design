@@ -1,5 +1,6 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
+import type { Modifier } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { IconGripVertical } from '@tabler/icons-react';
@@ -52,7 +53,7 @@ function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: Co
       type='button'
       aria-label={ariaLabel ?? labels.dragToReorder}
       className={cn(
-        'hit-area relative flex size-control-xs shrink-0 cursor-grab items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-mr-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-ml-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2+4px)]',
+        'hit-area relative flex size-control-xs shrink-0 cursor-grab touch-none items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-mr-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-ml-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2+4px)]',
         className,
       )}
       {...props}
@@ -63,4 +64,17 @@ function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: Co
   );
 }
 
-export { SortableItem, SortableItemHandle };
+/**
+ * A `DndContext` modifier: the dragged row moves only up and down, and only within its `ItemList`. Each row sits in a
+ * row wrapper of its own, so dnd-kit's `restrictToParentElement` would pin it in place.
+ */
+const restrictToItemList: Modifier = ({ transform, activatorEvent, draggingNodeRect }) => {
+  const list =
+    activatorEvent?.target instanceof Element ? activatorEvent.target.closest('[data-slot=item-list]') : null;
+  if (!list || !draggingNodeRect) return { ...transform, x: 0 };
+  const bounds = list.getBoundingClientRect();
+  const y = Math.min(Math.max(transform.y, bounds.top - draggingNodeRect.top), bounds.bottom - draggingNodeRect.bottom);
+  return { ...transform, x: 0, y };
+};
+
+export { restrictToItemList, SortableItem, SortableItemHandle };

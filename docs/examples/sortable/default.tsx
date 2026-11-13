@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Item, ItemActions, ItemContent, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
-import { SortableItem, SortableItemHandle } from '~/components/ui/sortable';
+import { restrictToItemList, SortableItem, SortableItemHandle } from '~/components/ui/sortable';
 import { StatusDot } from '~/components/ui/status-dot';
 
 const INITIAL = [
@@ -31,7 +31,8 @@ const INITIAL = [
 
 /**
  * `SortableContext` in an `ItemList`; each row a `SortableItem` rendered as the `Item`. Only the handle grabs, so the
- * rest of the row stays clickable. Drag, or Tab to the handle + Space, arrows, Space.
+ * rest of the row stays clickable; `restrictToItemList` keeps the row inside the list. Drag, or Tab to the handle +
+ * Space, arrows, Space.
  */
 export function SortableDefault() {
   const [items, setItems] = useState<ReadonlyArray<(typeof INITIAL)[number]>>(INITIAL);
@@ -55,7 +56,12 @@ export function SortableDefault() {
         <CardTitle>Task statuses</CardTitle>
       </CardHeader>
       <CardContent className='overflow-hidden'>
-        <DndContext id='sortable-statuses' sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <DndContext
+          id='sortable-statuses'
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToItemList]}
+          onDragEnd={onDragEnd}>
           <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
             <ItemList>
               {items.map((item) => (
