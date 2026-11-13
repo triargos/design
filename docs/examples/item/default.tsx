@@ -8,7 +8,7 @@ export function ItemDefault() {
       <CardHeader>
         <CardTitle>Projects</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent className='overflow-clip'>
         <ItemList>
           <Item>
             <ItemContent>

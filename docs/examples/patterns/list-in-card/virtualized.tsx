@@ -46,7 +46,7 @@ export function ListInCardVirtualized() {
         }>
         <CardTitle>{MEMBERS.length} members</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent className='overflow-clip'>
         <ItemList virtualized items={MEMBERS} itemKey={(member) => member.id} className='h-96'>
           {(member) => (
             <Item>
