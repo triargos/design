@@ -13,7 +13,8 @@
         "pavo/no-raw-color": "error",
         "pavo/no-dark-variant": "error",
         "pavo/no-arbitrary-size": "warn",
-        "pavo/no-overflow-on-card-content": "error"
+        "pavo/no-overflow-on-card-content": "error",
+        "pavo/no-inner-classes": "warn"
       }
     }
   ]

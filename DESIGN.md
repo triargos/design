@@ -64,7 +64,7 @@ Content of its own lays out in an element of its own inside the part (`<CardCont
 - **Surfaces publish their geometry; edge parts read it.** `CardContent` sets `--edge-radius-top` and `--edge-radius-bottom` (the radius of its padding area). A part that paints to the edge rounds its first and last fill from them: `ItemList` rows, `Accordion variant='flush'` triggers. No surface clips its content for its corners.
 - **Clipping belongs to the animation that needs it**, inside the part: `ItemList` clips its rows while it springs (`overflow-clip`, not `overflow-hidden`, which focus can scroll).
 - **A stretched card grows its content.** `Card` rows are `auto 1fr auto`: in a grid row the content takes the extra height, the header and footer keep theirs.
-- **Lint** (`pavo/no-overflow-on-card-content`) rejects `overflow-*` on `CardContent`; more of the table above follows step by step.
+- **Lint** (`pavo/no-overflow-on-card-content`) rejects `overflow-*` on `CardContent`; `pavo/no-inner-classes` warns on the "consumer never" column (`display`, `overflow-*`, `grid-*`, `flex-*`, `gap-*`, `items-*`, `justify-*`, padding, `rounded-*`, `bg-*`, `border*`, `shadow-*`) on any part imported from `~/components/ui/*`.
 
 ## Color
 
