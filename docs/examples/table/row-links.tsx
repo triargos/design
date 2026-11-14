@@ -46,7 +46,7 @@ export function TableRowLinks() {
               <TableCell>
                 <Badge intent={project.status.intent}>{project.status.label}</Badge>
               </TableCell>
-              <TableCell className='py-1'>
+              <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     render={

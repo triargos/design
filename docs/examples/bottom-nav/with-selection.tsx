@@ -24,6 +24,8 @@ import { Checkbox } from '~/components/ui/checkbox';
 import { Item, ItemContent, ItemDescription, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
 import { Separator } from '~/components/ui/separator';
 
+import { PhoneFrame } from '../../kit/phone-frame';
+
 const TABS = [
   { label: 'Home', icon: <IconHome /> },
   { label: 'Inbox', icon: <IconInbox /> },
@@ -60,7 +62,7 @@ export function BottomNavWithSelection() {
 
   return (
     <BottomNavProvider>
-      <div className='relative h-[640px] w-[375px] max-w-full overflow-hidden rounded-panel bg-background ring ring-border/50'>
+      <PhoneFrame>
         <div className='flex h-full flex-col gap-page overflow-y-auto px-5 pt-10 pb-24'>
           <h1 className='text-title text-balance'>Tasks</h1>
           <Card>
@@ -99,7 +101,7 @@ export function BottomNavWithSelection() {
             </Button>
           </ActionBar>
         </div>
-        <BottomNav className='absolute md:grid'>
+        <BottomNav>
           <BottomNavList>
             {TABS.map((tab) => (
               <BottomNavLink
@@ -119,7 +121,7 @@ export function BottomNavWithSelection() {
             <IconPlus />
           </BottomNavAction>
         </BottomNav>
-      </div>
+      </PhoneFrame>
     </BottomNavProvider>
   );
 }

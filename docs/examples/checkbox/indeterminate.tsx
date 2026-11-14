@@ -17,7 +17,7 @@ export function CheckboxIndeterminate() {
       return next;
     });
   return (
-    <FieldGroup className='w-64 gap-2'>
+    <FieldGroup gap='related' className='w-64'>
       <Field orientation='horizontal'>
         <Checkbox
           id='tasks-all'
@@ -27,18 +27,22 @@ export function CheckboxIndeterminate() {
         />
         <FieldLabel htmlFor='tasks-all'>All tasks</FieldLabel>
       </Field>
-      {TASKS.map((task, index) => (
-        <Field key={task} orientation='horizontal' className='pl-6'>
-          <Checkbox
-            id={`task-${index}`}
-            checked={selected.has(task)}
-            onCheckedChange={(checked) => toggle(task, checked)}
-          />
-          <FieldLabel htmlFor={`task-${index}`} className='font-normal'>
-            {task}
-          </FieldLabel>
-        </Field>
-      ))}
+      <div className='pl-6'>
+        <FieldGroup gap='related'>
+          {TASKS.map((task, index) => (
+            <Field key={task} orientation='horizontal'>
+              <Checkbox
+                id={`task-${index}`}
+                checked={selected.has(task)}
+                onCheckedChange={(checked) => toggle(task, checked)}
+              />
+              <FieldLabel htmlFor={`task-${index}`} className='font-normal'>
+                {task}
+              </FieldLabel>
+            </Field>
+          ))}
+        </FieldGroup>
+      </div>
     </FieldGroup>
   );
 }

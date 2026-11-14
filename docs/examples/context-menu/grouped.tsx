@@ -10,12 +10,12 @@ import {
   ContextMenuTrigger,
 } from '~/components/ui/context-menu';
 
+import { DemoArea } from '../../kit/demo-area';
+
 export function ContextMenuGrouped() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger className='flex h-40 w-72 items-center justify-center rounded-control-lg border border-dashed border-border text-body text-muted-foreground'>
-        Right-click the file
-      </ContextMenuTrigger>
+      <ContextMenuTrigger render={<DemoArea />}>Right-click the file</ContextMenuTrigger>
       <ContextMenuContent className='w-52'>
         <ContextMenuGroup>
           <ContextMenuLabel>File</ContextMenuLabel>

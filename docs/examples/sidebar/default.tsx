@@ -54,8 +54,8 @@ export function SidebarDefault() {
       <SidebarProvider className='h-full'>
         <div className='flex h-full min-h-0 w-full md:pt-3 md:pr-3 md:pb-3'>
           <Sidebar>
-            <SidebarHeader className='px-5 pt-group'>
-              <div className='flex items-center gap-2'>
+            <SidebarHeader>
+              <div className='flex items-center gap-2 px-3 pt-2'>
                 <span className='flex size-8 shrink-0 items-center justify-center rounded-control-sm bg-primary-solid text-caption font-medium text-primary-solid-foreground'>
                   AC
                 </span>
@@ -64,41 +64,43 @@ export function SidebarDefault() {
             </SidebarHeader>
             <SidebarContent>
               {GROUPS.map((group) => (
-                <SidebarGroup key={group.title} className='px-5'>
-                  <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                      {group.links.map((link) => (
-                        <SidebarMenuItem key={link.label}>
-                          <SidebarMenuButton current={link.current} className='relative w-full gap-3'>
-                            {link.icon}
-                            <span>{link.label}</span>
-                            {'count' in link && (
-                              <Badge size='sm' shape='pill' className='absolute right-2 min-w-5 tabular-nums'>
-                                {link.count}
-                              </Badge>
+                <SidebarGroup key={group.title}>
+                  <div className='px-3'>
+                    <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {group.links.map((link) => (
+                          <SidebarMenuItem key={link.label}>
+                            <SidebarMenuButton current={link.current} className='relative w-full gap-3'>
+                              {link.icon}
+                              <span>{link.label}</span>
+                              {'count' in link && (
+                                <Badge size='sm' shape='pill' className='absolute right-2 min-w-5 tabular-nums'>
+                                  {link.count}
+                                </Badge>
+                              )}
+                            </SidebarMenuButton>
+                            {'children' in link && (
+                              <SidebarMenuSub>
+                                {link.children.map((child, index) => (
+                                  <SidebarMenuSubItem key={child}>
+                                    <SidebarMenuSubButton current={index === 0}>
+                                      <span>{child}</span>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                ))}
+                              </SidebarMenuSub>
                             )}
-                          </SidebarMenuButton>
-                          {'children' in link && (
-                            <SidebarMenuSub>
-                              {link.children.map((child, index) => (
-                                <SidebarMenuSubItem key={child}>
-                                  <SidebarMenuSubButton current={index === 0}>
-                                    <span>{child}</span>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                              ))}
-                            </SidebarMenuSub>
-                          )}
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </div>
                 </SidebarGroup>
               ))}
             </SidebarContent>
-            <SidebarFooter className='px-5 pb-group'>
-              <span className='truncate text-caption text-muted-foreground'>Jordan Lee · Admin</span>
+            <SidebarFooter>
+              <span className='truncate px-3 pb-2 text-caption text-muted-foreground'>Jordan Lee · Admin</span>
             </SidebarFooter>
           </Sidebar>
           <div className='relative h-full min-w-0 flex-1 overflow-y-auto bg-background shadow-md ring ring-border/50 md:rounded-panel'>

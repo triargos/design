@@ -12,8 +12,19 @@
       "rules": {
         "pavo/no-raw-color": "error",
         "pavo/no-dark-variant": "error",
-        "pavo/no-arbitrary-size": "warn",
-        "pavo/no-inner-classes": "warn"
+        "pavo/no-arbitrary-size": "warn"
+      }
+    },
+    {
+      "files": ["docs/**/*.tsx"],
+      "rules": {
+        "pavo/no-compensating-classes": "error"
+      }
+    },
+    {
+      "files": ["src/components/ui/**"],
+      "rules": {
+        "pavo/no-reading-consumer-classes": "error"
       }
     }
   ]

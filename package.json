@@ -12,6 +12,7 @@
     "destroy": "alchemy destroy",
     "registry:build": "node scripts/registry.mjs && shadcn build --output public/r && node scripts/llms.mjs",
     "sizing:check": "node scripts/check-sizing.mjs",
+    "class:repeats": "node scripts/class-repeats.mjs",
     "typecheck": "tsc",
     "format": "oxfmt",
     "format:check": "oxfmt --check",

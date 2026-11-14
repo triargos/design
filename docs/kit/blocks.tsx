@@ -174,8 +174,8 @@ export function Preview({
   return (
     <Card data-slot='preview' data-title={title} className='min-w-0'>
       {title !== undefined && (
-        <CardHeader className='py-2'>
-          <CardTitle className='text-caption text-muted-foreground'>{title}</CardTitle>
+        <CardHeader>
+          <CardTitle className='-my-1 text-caption text-muted-foreground'>{title}</CardTitle>
         </CardHeader>
       )}
       <CardContent>
@@ -223,7 +223,7 @@ export function ExampleCode({ section }: { section: string }) {
           id={codeId}
           tabIndex={0}
           aria-label={`${section} code`}
-          className='max-h-120 overflow-auto rounded-inner border border-(--edge) bg-card p-group font-mono text-caption text-foreground'>
+          className='max-h-120 min-w-0 flex-1 overflow-auto rounded-inner border border-(--edge) bg-card p-group font-mono text-caption text-foreground'>
           <code>{source}</code>
         </pre>
       </CardFooter>

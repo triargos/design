@@ -36,6 +36,8 @@ import { Item, ItemContent, ItemList, ItemMedia, ItemTitle } from '~/components/
 import { Separator } from '~/components/ui/separator';
 import { Switch } from '~/components/ui/switch';
 
+import { PhoneFrame } from '../../kit/phone-frame';
+
 const TABS = [
   { label: 'Home', icon: <IconHome /> },
   { label: 'Inbox', icon: <IconInbox /> },
@@ -112,9 +114,7 @@ export function BottomNavStackedBars() {
 
   return (
     <BottomNavProvider>
-      <div
-        className='relative h-[640px] w-[375px] max-w-full overflow-hidden rounded-panel bg-background ring ring-border/50'
-        style={pill ? ({ '--bottom-nav-radius': '9999px' } as React.CSSProperties) : undefined}>
+      <PhoneFrame style={pill ? ({ '--bottom-nav-radius': '9999px' } as React.CSSProperties) : undefined}>
         <div className='flex h-full flex-col gap-page overflow-y-auto px-5 pt-10 pb-24'>
           <h1 className='text-title text-balance'>Project</h1>
           <div className='flex flex-col gap-group'>
@@ -185,7 +185,7 @@ export function BottomNavStackedBars() {
             </Button>
           </ActionBar>
         </div>
-        <BottomNav className='absolute md:grid'>
+        <BottomNav>
           <BottomNavList>
             {TABS.map((tab) => (
               <BottomNavLink
@@ -223,7 +223,7 @@ export function BottomNavStackedBars() {
             </BottomNavMore>
           </BottomNavList>
         </BottomNav>
-      </div>
+      </PhoneFrame>
     </BottomNavProvider>
   );
 }

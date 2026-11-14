@@ -21,6 +21,8 @@ import {
 } from '~/components/ui/bottom-nav';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
+import { PhoneFrame } from '../../kit/phone-frame';
+
 const TABS = [
   { label: 'Inbox', icon: <IconMail />, count: 2 },
   { label: 'Family', icon: <IconId /> },
@@ -49,7 +51,7 @@ export function BottomNavLabels() {
   };
 
   return (
-    <div className='relative h-[640px] w-[390px] max-w-full overflow-hidden rounded-panel bg-background ring ring-border/50'>
+    <PhoneFrame className='w-[390px]'>
       <div className='h-full overflow-y-auto px-4 pt-6 pb-36'>
         <div className='flex flex-col gap-page'>
           <h1 className='px-tight text-title text-balance'>{page}</h1>
@@ -65,7 +67,7 @@ export function BottomNavLabels() {
           </div>
         </div>
       </div>
-      <BottomNav className='absolute md:grid'>
+      <BottomNav>
         <BottomNavList labels fill>
           {TABS.map((tab) => (
             <BottomNavLink key={tab.label} href='#' current={page === tab.label} onClick={go(tab.label)}>
@@ -96,6 +98,6 @@ export function BottomNavLabels() {
           </BottomNavMore>
         </BottomNavList>
       </BottomNav>
-    </div>
+    </PhoneFrame>
   );
 }

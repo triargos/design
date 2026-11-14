@@ -7,7 +7,7 @@ export function CheckboxGroup() {
   return (
     <FieldSet className='max-w-md'>
       <FieldLegend>Notify me about</FieldLegend>
-      <FieldGroup className='gap-related'>
+      <FieldGroup gap='related'>
         {EVENTS.map((label, index) => (
           <Field key={label} orientation='horizontal'>
             <Checkbox id={`notify-${index}`} defaultChecked={index !== 2} />

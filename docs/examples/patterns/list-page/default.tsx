@@ -37,25 +37,27 @@ export function ListPageDefault() {
       </hgroup>
       <div className='flex flex-col gap-group'>
         <div className='flex flex-wrap items-center justify-between gap-related'>
-          <InputGroup className='bg-card sm:max-w-xs'>
-            <InputGroupAddon>
-              <IconSearch />
-            </InputGroupAddon>
-            <InputGroupInput
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              onKeyDown={(event) => event.key === 'Escape' && setQuery('')}
-              placeholder='Search by name, email or role'
-              aria-label='Search members'
-            />
-            {query !== '' && (
-              <InputGroupAddon align='inline-end'>
-                <InputGroupButton size='icon-xs' aria-label='Clear search' onClick={() => setQuery('')}>
-                  <IconX />
-                </InputGroupButton>
+          <div data-surface='card' className='w-full sm:max-w-xs'>
+            <InputGroup>
+              <InputGroupAddon>
+                <IconSearch />
               </InputGroupAddon>
-            )}
-          </InputGroup>
+              <InputGroupInput
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                onKeyDown={(event) => event.key === 'Escape' && setQuery('')}
+                placeholder='Search by name, email or role'
+                aria-label='Search members'
+              />
+              {query !== '' && (
+                <InputGroupAddon align='inline-end'>
+                  <InputGroupButton size='icon-xs' aria-label='Clear search' onClick={() => setQuery('')}>
+                    <IconX />
+                  </InputGroupButton>
+                </InputGroupAddon>
+              )}
+            </InputGroup>
+          </div>
           <Button intent='primary'>
             <IconPlus data-icon='inline-start' />
             Invite member

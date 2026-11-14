@@ -16,7 +16,7 @@ export function FieldLegendVariants() {
         </Field>
         <FieldSet>
           <FieldLegend>Notify me about</FieldLegend>
-          <FieldGroup className='gap-related'>
+          <FieldGroup gap='related'>
             {EVENTS.map((label, index) => (
               <Field key={label} orientation='horizontal'>
                 <Checkbox id={`legend-notify-${index}`} defaultChecked={index !== 2} />

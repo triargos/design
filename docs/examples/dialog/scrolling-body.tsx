@@ -26,7 +26,7 @@ export function DialogScrollingBody() {
           <DialogTitle>Privacy policy</DialogTitle>
           <DialogDescription>Last updated March 2025</DialogDescription>
         </DialogHeader>
-        <DialogBody className='max-h-80 overflow-y-auto'>
+        <DialogBody className='max-h-80'>
           <div className='flex flex-col gap-4'>
             {SECTIONS.map((section) => (
               <section key={section.title} className='flex flex-col gap-1'>

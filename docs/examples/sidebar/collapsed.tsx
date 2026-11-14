@@ -51,8 +51,8 @@ export function SidebarCollapsed() {
       <SidebarProvider className='h-full' defaultOpen={false}>
         <div className='flex h-full min-h-0 w-full md:pt-3 md:pr-3 md:pb-3'>
           <Sidebar collapsible='icon'>
-            <SidebarHeader className='px-5 pt-group group-data-[collapsible=icon]:px-2'>
-              <div className='flex items-center gap-2'>
+            <SidebarHeader>
+              <div className='flex items-center gap-2 px-3 pt-2 group-data-[collapsible=icon]:px-0'>
                 <span className='flex size-8 shrink-0 items-center justify-center rounded-control-sm bg-primary-solid text-caption font-medium text-primary-solid-foreground'>
                   AC
                 </span>
@@ -61,44 +61,45 @@ export function SidebarCollapsed() {
             </SidebarHeader>
             <SidebarContent>
               {GROUPS.map((group) => (
-                <SidebarGroup key={group.title} className='px-5 group-data-[collapsible=icon]:px-2'>
-                  <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                      {group.links.map((link) => (
-                        <SidebarMenuItem key={link.label}>
-                          <SidebarMenuButton current={link.current} className='relative w-full gap-3'>
-                            {link.icon}
-                            <span>{link.label}</span>
-                            {'count' in link && (
-                              <Badge
-                                size='sm'
-                                shape='pill'
-                                className='absolute right-2 min-w-5 tabular-nums group-data-[collapsible=icon]:hidden'>
-                                {link.count}
-                              </Badge>
+                <SidebarGroup key={group.title}>
+                  <div className='px-3 group-data-[collapsible=icon]:px-0'>
+                    <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {group.links.map((link) => (
+                          <SidebarMenuItem key={link.label}>
+                            <SidebarMenuButton current={link.current} className='relative w-full gap-3'>
+                              {link.icon}
+                              <span>{link.label}</span>
+                              {'count' in link && (
+                                <span className='absolute right-2 flex group-data-[collapsible=icon]:hidden'>
+                                  <Badge size='sm' shape='pill' className='min-w-5 tabular-nums'>
+                                    {link.count}
+                                  </Badge>
+                                </span>
+                              )}
+                            </SidebarMenuButton>
+                            {'children' in link && (
+                              <SidebarMenuSub>
+                                {link.children.map((child, index) => (
+                                  <SidebarMenuSubItem key={child}>
+                                    <SidebarMenuSubButton current={index === 0}>
+                                      <span>{child}</span>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                ))}
+                              </SidebarMenuSub>
                             )}
-                          </SidebarMenuButton>
-                          {'children' in link && (
-                            <SidebarMenuSub>
-                              {link.children.map((child, index) => (
-                                <SidebarMenuSubItem key={child}>
-                                  <SidebarMenuSubButton current={index === 0}>
-                                    <span>{child}</span>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                              ))}
-                            </SidebarMenuSub>
-                          )}
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </div>
                 </SidebarGroup>
               ))}
             </SidebarContent>
-            <SidebarFooter className='px-5 pb-group group-data-[collapsible=icon]:px-2'>
-              <span className='truncate text-caption text-muted-foreground group-data-[collapsible=icon]:hidden'>
+            <SidebarFooter>
+              <span className='truncate px-3 pb-2 text-caption text-muted-foreground group-data-[collapsible=icon]:hidden'>
                 Jordan Lee · Admin
               </span>
             </SidebarFooter>

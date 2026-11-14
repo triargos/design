@@ -51,14 +51,18 @@ const inputGroupAddonVariants = cva(
           'order-first pl-[calc(var(--spacing-field-pad)-1px)] has-[>button]:pl-[calc(var(--spacing-field-inset)-1px)] has-[>kbd]:pl-[calc((var(--spacing-control)-var(--spacing-control-2xs))/2-1px)]',
         'inline-end':
           'order-last pr-[calc(var(--spacing-field-pad)-1px)] has-[>button]:pr-[calc(var(--spacing-field-inset)-1px)] has-[>kbd]:pr-[calc((var(--spacing-control)-var(--spacing-control-2xs))/2-1px)]',
-        'block-start':
-          'order-first w-full justify-start px-[calc(var(--spacing-field-pad)-1px)] pt-field-pad-y [.border-b]:pb-field-pad-y',
-        'block-end':
-          'order-last w-full justify-start px-[calc(var(--spacing-field-pad)-1px)] pb-field-pad-y [.border-t]:pt-field-pad-y',
+        'block-start': 'order-first w-full justify-start px-[calc(var(--spacing-field-pad)-1px)] pt-field-pad-y',
+        'block-end': 'order-last w-full justify-start px-[calc(var(--spacing-field-pad)-1px)] pb-field-pad-y',
       },
+      divided: { true: '', false: '' },
     },
+    compoundVariants: [
+      { align: 'block-start', divided: true, className: 'border-b pb-field-pad-y' },
+      { align: 'block-end', divided: true, className: 'border-t pt-field-pad-y' },
+    ],
     defaultVariants: {
       align: 'inline-start',
+      divided: false,
     },
   },
 );
@@ -67,6 +71,7 @@ const inputGroupAddonVariants = cva(
 function InputGroupAddon({
   className,
   align = 'inline-start',
+  divided,
   onClick,
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
@@ -75,7 +80,7 @@ function InputGroupAddon({
       role='group'
       data-slot='input-group-addon'
       data-align={align}
-      className={cn(inputGroupAddonVariants({ align }), className)}
+      className={cn(inputGroupAddonVariants({ align, divided }), className)}
       {...props}
       onClick={(event) => {
         onClick?.(event);

@@ -35,10 +35,12 @@ function Members() {
     );
   }
   return (
-    <FadeIn animate={shouldFadeIn} render={<ul />} className='flex flex-col gap-0.5 text-body'>
-      {members.map((name) => (
-        <li key={name}>{name}</li>
-      ))}
+    <FadeIn animate={shouldFadeIn}>
+      <ul className='flex flex-col gap-0.5 text-body'>
+        {members.map((name) => (
+          <li key={name}>{name}</li>
+        ))}
+      </ul>
     </FadeIn>
   );
 }
