@@ -4,6 +4,7 @@ import * as React from 'react';
 import { inputSurfaceVariants } from '~/components/ui/input';
 
 import { useLocale } from '~/components/ui/locale';
+import { useFocusAfterCommit } from '~/hooks/use-focus-after-commit';
 import { cn } from '~/lib/utils';
 
 /** Odd and even run the same keyframes, so each new entry restarts the animation (as the toast upsert does). */
@@ -66,19 +67,20 @@ function InputOTP({
   const [entry, setEntry] = React.useState<InputOTPContextValue['entry']>(null);
   const [rejected, setRejected] = React.useState<InputOTPContextValue['rejected']>(null);
 
+  const focusAfterCommit = useFocusAfterCommit();
+
   const slots = () => Array.from(rootRef.current?.querySelectorAll<HTMLInputElement>(slotSelector) ?? []);
 
   React.useImperativeHandle(
     ref,
     () => ({
-      // Next frame: a reset in the same handler (`setValue('')` before `setError`) has rendered by then.
       focus: () =>
-        requestAnimationFrame(() => {
+        focusAfterCommit(() => {
           const inputs = slots();
-          (inputs.find((input) => input.value === '') ?? inputs.at(-1))?.focus();
+          return inputs.find((input) => input.value === '') ?? inputs.at(-1);
         }),
     }),
-    [],
+    [focusAfterCommit],
   );
 
   const handleValueChange: NonNullable<InputOTPProps['onValueChange']> = (next, details) => {
