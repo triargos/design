@@ -1,11 +1,25 @@
-import { mergeProps } from '@base-ui/react/merge-props';
-import { useRender } from '@base-ui/react/use-render';
-import type { Modifier } from '@dnd-kit/core';
-import { useSortable } from '@dnd-kit/sortable';
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { IconGripVertical } from '@tabler/icons-react';
-import { type ComponentProps, createContext, use } from 'react';
+import { type ComponentProps, createContext, type ReactNode, use, useId } from 'react';
 
+import { ItemListFrame, ItemListRow } from '~/components/ui/item';
 import { useLocale } from '~/components/ui/locale';
 import { cn } from '~/lib/utils';
 
@@ -14,29 +28,71 @@ const SortableItemHandleContext = createContext<Pick<
   'attributes' | 'listeners'
 > | null>(null);
 
-type SortableItemProps = useRender.ComponentProps<'div'> & { id: string };
+const SORTABLE_MODIFIERS = [restrictToVerticalAxis, restrictToParentElement];
+
+type SortableItemListProps<T> = Omit<ComponentProps<typeof ItemListFrame>, 'children'> & {
+  readonly items: ReadonlyArray<T>;
+  readonly itemKey: (item: T) => string;
+  /** The items in their new order, after a row is dropped in a new place. */
+  readonly onReorder: (items: T[]) => void;
+  /** A row: one `Item`, its handle a `SortableItemHandle`. */
+  readonly children: (item: T, index: number) => ReactNode;
+};
 
 /**
- * A row that can be dragged. In an `ItemList`, render it as the row itself (`render={<Item />}`) so the list's padding
- * and hairlines reach it. While it moves it lifts onto the popup surface, opaque, so the rows it passes do not show
- * through.
+ * An `ItemList` a person puts in order: each row moves by its `SortableItemHandle`, up and down within the list, so the
+ * rest of the row stays clickable. The pointer drags; the keyboard lifts with Space, moves with the arrows, drops with
+ * Space. The moving row lifts onto the popup surface, opaque, so the rows it passes do not show through.
  */
-function SortableItem({ id, render, ...props }: SortableItemProps) {
+function SortableItemList<T>({ items, itemKey, onReorder, children, ...props }: SortableItemListProps<T>) {
+  const id = useId();
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+  const keys = items.map(itemKey);
+  const reorderOnDrop = ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return;
+    onReorder(arrayMove([...items], keys.indexOf(String(active.id)), keys.indexOf(String(over.id))));
+  };
+
+  return (
+    <DndContext
+      id={id}
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      modifiers={SORTABLE_MODIFIERS}
+      onDragEnd={reorderOnDrop}>
+      <SortableContext items={keys} strategy={verticalListSortingStrategy}>
+        <ItemListFrame {...props}>
+          {items.map((item, index) => (
+            <SortableItemListRow
+              key={itemKey(item)}
+              id={itemKey(item)}
+              first={index === 0}
+              last={index === items.length - 1}>
+              {children(item, index)}
+            </SortableItemListRow>
+          ))}
+        </ItemListFrame>
+      </SortableContext>
+    </DndContext>
+  );
+}
+
+function SortableItemListRow({ id, ...props }: ComponentProps<typeof ItemListRow> & { id: string }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
-  const element = useRender({
-    render,
-    ref: setNodeRef,
-    props: mergeProps<'div'>(
-      {
-        className: cn('relative', isDragging && 'z-10 bg-popover shadow-popup'),
-        style: { transform: CSS.Translate.toString(transform), transition },
-      },
-      props,
-    ),
-  });
-
-  return <SortableItemHandleContext value={{ attributes, listeners }}>{element}</SortableItemHandleContext>;
+  return (
+    <SortableItemHandleContext value={{ attributes, listeners }}>
+      <ItemListRow
+        ref={setNodeRef}
+        className={cn(isDragging && 'z-10 bg-popover shadow-popup after:opacity-0')}
+        style={{ transform: CSS.Translate.toString(transform), transition }}
+        {...props}
+      />
+    </SortableItemHandleContext>
+  );
 }
 
 /**
@@ -64,17 +120,4 @@ function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: Co
   );
 }
 
-/**
- * A `DndContext` modifier: the dragged row moves only up and down, and only within its `ItemList`. Each row sits in a
- * row wrapper of its own, so dnd-kit's `restrictToParentElement` would pin it in place.
- */
-const restrictToItemList: Modifier = ({ transform, activatorEvent, draggingNodeRect }) => {
-  const list =
-    activatorEvent?.target instanceof Element ? activatorEvent.target.closest('[data-slot=item-list]') : null;
-  if (!list || !draggingNodeRect) return { ...transform, x: 0 };
-  const bounds = list.getBoundingClientRect();
-  const y = Math.min(Math.max(transform.y, bounds.top - draggingNodeRect.top), bounds.bottom - draggingNodeRect.bottom);
-  return { ...transform, x: 0, y };
-};
-
-export { restrictToItemList, SortableItem, SortableItemHandle };
+export { SortableItemHandle, SortableItemList };

@@ -22,7 +22,12 @@ import { cn } from '~/lib/utils';
  * apart too. The hairline stops at the row's inline padding, on the text edge, clear of the card's rounded edge. The
  * card clips a hover or selected fill to its corners.
  */
-function ItemListRow({ first, last, ...props }: React.ComponentProps<'div'> & { first: boolean; last: boolean }) {
+function ItemListRow({
+  first,
+  last,
+  className,
+  ...props
+}: React.ComponentProps<'div'> & { first: boolean; last: boolean }) {
   return (
     <div
       role='listitem'
@@ -37,6 +42,7 @@ function ItemListRow({ first, last, ...props }: React.ComponentProps<'div'> & { 
         // spring instead of popping in one frame.
         'relative after:absolute after:right-(--list-row-pad-x) after:bottom-0 after:left-(--list-row-pad-x) after:h-px after:bg-border-subtle after:transition-opacity after:duration-fold motion-reduce:after:transition-none',
         last && 'after:opacity-0',
+        className,
       )}
       {...props}
     />
@@ -91,32 +97,38 @@ function ItemList<T>(props: ItemListProps<T>) {
   return <StaticItemList {...rest} />;
 }
 
-function StaticItemList({
+function StaticItemList({ children, ...props }: ItemListElementProps & { children?: React.ReactNode }) {
+  const rows = React.Children.toArray(children);
+  return (
+    <ItemListFrame {...props}>
+      {rows.map((row, index) => (
+        <ItemListRow
+          key={React.isValidElement(row) ? row.key : index}
+          first={index === 0}
+          last={index === rows.length - 1}>
+          {row}
+        </ItemListRow>
+      ))}
+    </ItemListFrame>
+  );
+}
+
+/**
+ * An `ItemList` that takes its `ItemListRow`s as they are, for a list that renders its own rows (`SortableItemList`).
+ * It springs and clips as `ItemList` does.
+ */
+function ItemListFrame({
   className,
   children,
-  style,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...props
 }: ItemListElementProps & { children?: React.ReactNode }) {
   const rowsRef = useListFold();
-  const rows = React.Children.toArray(children);
   return (
-    <div
-      data-slot='item-list'
-      data-edge=''
-      className={cn('data-folding:overflow-clip', className)}
-      style={style}
-      {...props}>
+    <div data-slot='item-list' data-edge='' className={cn('data-folding:overflow-clip', className)} {...props}>
       <div ref={rowsRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
-        {rows.map((row, index) => (
-          <ItemListRow
-            key={React.isValidElement(row) ? row.key : index}
-            first={index === 0}
-            last={index === rows.length - 1}>
-            {row}
-          </ItemListRow>
-        ))}
+        {children}
       </div>
     </div>
   );
@@ -309,8 +321,9 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
  * under the pointer and ends in an `ItemChevron`; a `selected` row fills with `muted`.
  *
  * Below `sm` a row with a description sets its actions on a line of their own, end-aligned: beside them the description
- * squeezes into its two-line clamp and hides what it says. The media and the text stay on the first line. Callers must
- * not set `flex-nowrap`: the actions still take the full line and push the text to zero width.
+ * squeezes into its two-line clamp and hides what it says. The media and the text stay on the first line.
+ *
+ * With an `ItemMeta` in its actions the content keeps its natural width and the actions take the rest of the line.
  */
 function Item({
   className,
@@ -370,7 +383,10 @@ function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='item-content'
-      className={cn('flex min-w-0 flex-1 flex-col gap-tight [&+[data-slot=item-content]]:flex-none', className)}
+      className={cn(
+        'flex min-w-0 flex-1 flex-col gap-tight group-has-[[data-slot=item-meta]]/item:flex-initial [&+[data-slot=item-content]]:flex-none',
+        className,
+      )}
       {...props}
     />
   );
@@ -409,7 +425,27 @@ function ItemDescription({ className, ...props }: React.ComponentProps<'p'>) {
 }
 
 function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='item-actions' className={cn('flex items-center gap-related', className)} {...props} />;
+  return (
+    <div
+      data-slot='item-actions'
+      className={cn('flex items-center gap-related has-data-[slot=item-meta]:flex-1', className)}
+      {...props}
+    />
+  );
+}
+
+/**
+ * Muted text at the start of an `ItemActions` (a count, a date, a short note): it takes the line's free space, ends at
+ * the actions after it and truncates, so the actions stay at the row's end and the title keeps its width.
+ */
+function ItemMeta({ className, ...props }: React.ComponentProps<'span'>) {
+  return (
+    <span
+      data-slot='item-meta'
+      className={cn('w-0 min-w-0 flex-1 truncate text-end text-body text-muted-foreground', className)}
+      {...props}
+    />
+  );
 }
 
 /** The trailing arrow of a link row: it nudges right while the row is hovered or focused (reduced motion: it stays). */
@@ -454,10 +490,13 @@ function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
 export {
   Item,
   ItemList,
+  ItemListFrame,
+  ItemListRow,
   ItemListSkeleton,
   ItemMedia,
   ItemContent,
   ItemActions,
+  ItemMeta,
   ItemChevron,
   ItemTitle,
   ItemDescription,
