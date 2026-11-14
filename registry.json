@@ -131,6 +131,16 @@
       ]
     },
     {
+      "name": "use-focus-after-commit",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "src/hooks/use-focus-after-commit.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "use-mobile",
       "type": "registry:hook",
       "files": [
@@ -308,6 +318,7 @@
         "@pavo/link",
         "@pavo/locale",
         "@pavo/theme",
+        "@pavo/use-focus-after-commit",
         "@pavo/use-reduced-motion",
         "@pavo/utils"
       ],
@@ -615,6 +626,7 @@
         "@pavo/button",
         "@pavo/locale",
         "@pavo/theme",
+        "@pavo/use-focus-after-commit",
         "@pavo/use-overlay",
         "@pavo/use-reduced-motion",
         "@pavo/utils"
@@ -761,6 +773,7 @@
         "@pavo/input",
         "@pavo/locale",
         "@pavo/theme",
+        "@pavo/use-focus-after-commit",
         "@pavo/utils"
       ],
       "files": [

@@ -7,6 +7,7 @@ import * as React from 'react';
 import { Button } from '~/components/ui/button';
 
 import { useLocale } from '~/components/ui/locale';
+import { useFocusAfterCommit } from '~/hooks/use-focus-after-commit';
 import { OverlayOpenContext, useOverlayRoot, usePreservedContent } from '~/hooks/use-overlay';
 import { useReducedMotion } from '~/hooks/use-reduced-motion';
 import { animateTo, springEasing } from '~/lib/animate';
@@ -140,6 +141,7 @@ function DrawerStack({ initial, className, children, ...props }: React.Component
   /** 1 while pushing (rows come from the right), -1 while popping. */
   const direction = React.useRef<1 | -1>(1);
   const reduced = useReducedMotion();
+  const focusAfterCommit = useFocusAfterCommit();
   const current = history[history.length - 1]!;
 
   const value = React.useMemo<DrawerStackValue>(
@@ -150,15 +152,22 @@ function DrawerStack({ initial, className, children, ...props }: React.Component
         direction.current = 1;
         returnFocus.current.push(document.activeElement instanceof HTMLElement ? document.activeElement : null);
         setHistory((pages) => [...pages, page]);
+        focusAfterCommit(
+          () =>
+            ref.current?.querySelector<HTMLElement>(
+              `:scope > [data-page="${CSS.escape(page)}"] [data-slot=drawer-back]`,
+            ),
+          { preventScroll: true },
+        );
       },
       pop: () => {
         direction.current = -1;
         const back = returnFocus.current.pop();
         setHistory((pages) => (pages.length > 1 ? pages.slice(0, -1) : pages));
-        requestAnimationFrame(() => back?.focus({ preventScroll: true }));
+        focusAfterCommit(() => back, { preventScroll: true });
       },
     }),
-    [current, history],
+    [current, history, focusAfterCommit],
   );
 
   // The page that shows is in flow, so the first paint has its height; the explicit height animates the changes.
@@ -256,12 +265,7 @@ function DrawerPage({
   const { labels } = useLocale();
   const { current, history, pop } = useDrawerStack();
   const position = page === current ? 'current' : history.includes(page) ? 'behind' : 'ahead';
-  const backRef = React.useRef<HTMLButtonElement>(null);
   const titleId = React.useId();
-
-  React.useEffect(() => {
-    if (position === 'current' && history.length > 1) backRef.current?.focus({ preventScroll: true });
-  }, [position, history.length]);
 
   return (
     <div
@@ -281,7 +285,6 @@ function DrawerPage({
       {title !== undefined && (
         <div data-slot='drawer-page-header' className='relative flex h-control-lg shrink-0 items-center justify-center'>
           <Button
-            ref={backRef}
             emphasis='ghost'
             size='icon-lg'
             data-slot='drawer-back'

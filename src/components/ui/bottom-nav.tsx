@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 
 import { useLocale } from '~/components/ui/locale';
 import { useLinkRender } from '~/components/ui/link';
+import { useFocusAfterCommit } from '~/hooks/use-focus-after-commit';
 import { useReducedMotion } from '~/hooks/use-reduced-motion';
 import { animateTo, springEasing } from '~/lib/animate';
 import { cn } from '~/lib/utils';
@@ -155,13 +156,23 @@ function rowsOf(parent: Element | null) {
 }
 
 /** Back a page from `path`; focus returns to the row that opened the page left. */
-function backFrom(path: readonly string[], setPath: (path: readonly string[]) => void, shell: HTMLElement | null) {
+function backFrom({
+  path,
+  setPath,
+  shell,
+  focusAfterCommit,
+}: {
+  path: readonly string[];
+  setPath: (path: readonly string[]) => void;
+  shell: HTMLElement | null;
+  focusAfterCommit: ReturnType<typeof useFocusAfterCommit>;
+}) {
   const left = path.at(-1);
   setPath(path.slice(0, -1));
   if (left !== undefined)
-    requestAnimationFrame(() =>
-      shell?.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(left)}"]`)?.focus({ preventScroll: true }),
-    );
+    focusAfterCommit(() => shell?.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(left)}"]`), {
+      preventScroll: true,
+    });
 }
 
 /** Whether `element` holds the current page, or a group (`aria-current='true'`) that does. */
@@ -340,6 +351,7 @@ function BottomNavList({
     depth: 0,
   });
   const morphing = React.useRef(false);
+  const focusAfterCommit = useFocusAfterCommit();
   const refit = React.useRef<() => void>(() => {});
 
   // The tapped tab gives way once the page sets `aria-current`, on it or, after a redirect, on another tab.
@@ -375,14 +387,11 @@ function BottomNavList({
       if (event.key !== 'Escape') return;
       event.preventDefault();
       if (panelPath.length > 0) {
-        backFrom(panelPath, setPanelPath, shellRef.current);
+        backFrom({ path: panelPath, setPath: setPanelPath, shell: shellRef.current, focusAfterCommit });
         return;
       }
       setPanelOpen(false);
-      // Next frame: the tabs are inert until the close commits.
-      requestAnimationFrame(() =>
-        shellRef.current?.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(panelId)}"]`)?.focus(),
-      );
+      focusAfterCommit(() => shellRef.current?.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(panelId)}"]`));
     };
     document.addEventListener('pointerdown', outside);
     document.addEventListener('keydown', escape);
@@ -390,7 +399,7 @@ function BottomNavList({
       document.removeEventListener('pointerdown', outside);
       document.removeEventListener('keydown', escape);
     };
-  }, [panelOpen, setPanelOpen, panelId, panelPath, setPanelPath]);
+  }, [panelOpen, setPanelOpen, panelId, panelPath, setPanelPath, focusAfterCommit]);
 
   // The morph between layers. Before `useFitShell`: it pauses the fit while the shell morphs.
   React.useLayoutEffect(() => {
@@ -769,6 +778,7 @@ function BottomNavMore({
   const { panelOpen, setPanelOpen, setPanelPath, panel, panelId, optimisticCurrent } = useBar('BottomNavMore');
   const tab = React.useId();
   const holdsCurrent = useHoldsCurrent(panel);
+  const focusAfterCommit = useFocusAfterCommit();
 
   return (
     <>
@@ -781,12 +791,14 @@ function BottomNavMore({
         onClick={(event) => {
           if (!panelOpen) setPanelPath([]);
           setPanelOpen(!panelOpen);
-          // A keyboard click (`detail` 0): focus the first row once the panel is no longer inert.
-          if (event.detail === 0)
-            requestAnimationFrame(() => {
-              const page = panel === null ? null : activePage(panel);
-              page?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true });
-            });
+          const clickedByKeyboard = event.detail === 0;
+          if (clickedByKeyboard)
+            focusAfterCommit(
+              () => (panel === null ? null : activePage(panel))?.querySelector<HTMLElement>('a, button'),
+              {
+                preventScroll: true,
+              },
+            );
         }}>
         <IconDots />
         <span>{label}</span>
@@ -902,6 +914,7 @@ function BottomNavMoreGroup({
   const id = React.useId();
   const [page, setPage] = React.useState<HTMLDivElement | null>(null);
   const holdsCurrent = useHoldsCurrent(page);
+  const focusAfterCommit = useFocusAfterCommit();
 
   return (
     <>
@@ -914,7 +927,7 @@ function BottomNavMoreGroup({
         className={cn(moreRowClassName, className)}
         onClick={() => {
           setPanelPath([...panelPath, id]);
-          requestAnimationFrame(() => page?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true }));
+          focusAfterCommit(() => page?.querySelector<HTMLElement>('a, button'), { preventScroll: true });
         }}>
         {icon}
         <span>{label}</span>
@@ -928,7 +941,12 @@ function BottomNavMoreGroup({
               data-slot='bottom-nav-more-back'
               className={moreRowClassName}
               onClick={(event) =>
-                backFrom(panelPath, setPanelPath, event.currentTarget.closest('[data-slot=bottom-nav-shell]'))
+                backFrom({
+                  path: panelPath,
+                  setPath: setPanelPath,
+                  shell: event.currentTarget.closest('[data-slot=bottom-nav-shell]'),
+                  focusAfterCommit,
+                })
               }>
               <IconArrowLeft />
               <span>{backLabel}</span>
