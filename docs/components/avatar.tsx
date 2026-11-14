@@ -151,7 +151,7 @@ export default defineDocs({
           <CardHeader>
             <CardTitle>Members</CardTitle>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             <ItemList>
               {PEOPLE.slice(0, 2).map((person, index) => (
                 <Item key={person.name}>

@@ -15,7 +15,7 @@ export function StatusDotDataColor() {
       <CardHeader>
         <CardTitle>Projects</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         <ItemList>
           {PROJECTS.map((project) => (
             <Item key={project.name}>

@@ -115,7 +115,7 @@ export default defineDocs({
           <CardHeader>
             <CardTitle>In a row</CardTitle>
           </CardHeader>
-          <CardContent className='overflow-hidden'>
+          <CardContent>
             <ItemList>
               <Item>
                 <ItemMedia variant='icon'>

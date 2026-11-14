@@ -308,7 +308,7 @@ export default defineDocs({
               }>
               <CardTitle>Card header action</CardTitle>
             </CardHeader>
-            <CardContent className='overflow-hidden'>
+            <CardContent>
               <ItemList>
                 <Item className='px-4'>
                   <ItemContent>

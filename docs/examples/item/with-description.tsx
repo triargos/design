@@ -7,7 +7,7 @@ export function ItemWithDescription() {
       <CardHeader>
         <CardTitle>Members</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-clip'>
+      <CardContent>
         <ItemList>
           <Item>
             <ItemContent>

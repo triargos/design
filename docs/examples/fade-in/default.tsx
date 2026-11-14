@@ -34,7 +34,7 @@ export function FadeInDefault() {
         }>
         <CardTitle>My tasks</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         {loading ? (
           <div className='flex flex-col gap-group p-card'>
             {TASKS.map((task) => (

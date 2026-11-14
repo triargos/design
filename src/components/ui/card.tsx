@@ -2,6 +2,7 @@ import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { type ComponentProps, type ReactNode, createContext, use } from 'react';
 
+import type { Emphasis, Intent } from '~/components/ui/intent-variants';
 import { usePresence } from '~/hooks/use-presence';
 import { cn } from '~/lib/utils';
 
@@ -28,6 +29,14 @@ import { cn } from '~/lib/utils';
 // title).
 
 type CardVariant = 'shell' | 'plain';
+type CardIntent = Extract<Intent, 'neutral' | 'destructive' | 'warning'>;
+type CardEmphasis = Extract<Emphasis, 'ghost' | 'subtle'>;
+
+const subtleShell: Record<CardIntent, string> = {
+  neutral: '[--card-shell:var(--shell)]',
+  destructive: '[--card-shell:var(--destructive-subtle)]',
+  warning: '[--card-shell:var(--warning-subtle)]',
+};
 
 /** The variant of the card around a part; `null` outside a card. */
 const CardVariantContext = createContext<CardVariant | null>(null);
@@ -36,14 +45,16 @@ const CardVariantContext = createContext<CardVariant | null>(null);
  * A content block. `shell` (the default): a tinted shell around the content, the header a title band inside it, or
  * above it over a table. Without a header (and not around a table) a shell draws no tint: the content is a plain
  * surface. `plain`: the header is the block's title, above the card; the card holds content and footer.
- * `intent='destructive'` marks only the title.
+ * `intent` colors the title; `emphasis='subtle'` also tints the shell in it (`plain` has no shell to tint).
+ * Stretched by its parent (a `CardGrid` row), the card gives the extra height to the content row only.
  */
 function Card({
   className,
   variant = 'shell',
   intent = 'neutral',
+  emphasis = 'ghost',
   ...props
-}: ComponentProps<'section'> & { variant?: CardVariant; intent?: 'neutral' | 'destructive' }) {
+}: ComponentProps<'section'> & { variant?: CardVariant; intent?: CardIntent; emphasis?: CardEmphasis }) {
   return (
     <CardVariantContext value={variant}>
       <section
@@ -55,15 +66,16 @@ function Card({
           variant === 'plain'
             ? [
                 // Every part in the one column: auto-placement would set a part beside the surface, never on it.
-                'grid grid-cols-1 grid-rows-[auto_auto_auto] *:col-start-1 [--outer-inset:1px]',
+                'grid grid-cols-1 grid-rows-[auto_1fr_auto] *:col-start-1 [--outer-inset:1px]',
                 // The surface: an `--edge` border inside the box, `bg-clip-padding` keeps the fill off it.
                 "before:col-start-1 before:row-start-2 before:row-end-4 before:rounded-card before:border before:border-(--edge) before:bg-card before:bg-clip-padding before:shadow-card before:content-['']",
               ]
             : [
                 // Header, panel (`CardContent` or a table), footer: rows 1, 2, 3, each part placed, as the tint
                 // fills every cell and would push an auto-placed part below it.
-                'grid grid-cols-1 grid-rows-[auto_auto_auto] *:col-start-1 *:row-start-2 *:data-[slot=card-header]:row-start-1 *:data-[slot=card-footer]:row-start-3',
-                '[--card-shell:var(--shell)] [--outer-inset:var(--spacing-card-inset)]',
+                'grid grid-cols-1 grid-rows-[auto_1fr_auto] *:col-start-1 *:row-start-2 *:data-[slot=card-header]:row-start-1 *:data-[slot=card-footer]:row-start-3',
+                emphasis === 'subtle' ? subtleShell[intent] : subtleShell.neutral,
+                '[--outer-inset:var(--spacing-card-inset)]',
                 "before:col-start-1 before:row-start-1 before:row-end-4 before:rounded-card before:bg-(--card-shell) before:content-['']",
                 'has-[>[data-slot=table-container]]:before:row-start-2',
                 'not-has-[>[data-slot=card-header]]:not-has-[>[data-slot=table-container]]:before:hidden',
@@ -187,7 +199,7 @@ function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
         variant === 'plain'
           ? 'text-heading'
           : 'text-subheading group-has-[>[data-slot=table-container]]/card:text-heading',
-        'text-balance group-data-[intent=destructive]/card:text-destructive',
+        'text-balance group-data-[intent=destructive]/card:text-destructive group-data-[intent=warning]/card:text-warning',
         className,
       )}
       {...props}
@@ -223,15 +235,25 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
     props: mergeProps<'div'>(
       {
         className: cn(
+          // `--edge-radius-top` / `-bottom`: the corners of the box's padding area (its radius minus its 1px edge).
+          // Parts that paint to the edge (list rows, flush accordion triggers) round their fills from them.
           variant === 'plain'
-            ? 'row-start-2 mx-px mt-px rounded-t-inner [&:not(:has(+[data-slot=card-footer]))]:mb-px [&:not(:has(+[data-slot=card-footer]))]:rounded-b-inner'
+            ? [
+                'row-start-2 mx-px mt-px rounded-t-inner [--edge-radius-bottom:0px] [--edge-radius-top:max(0px,calc(var(--outer-radius)-var(--outer-inset)))]',
+                '[&:not(:has(+[data-slot=card-footer]))]:mb-px [&:not(:has(+[data-slot=card-footer]))]:rounded-b-inner [&:not(:has(+[data-slot=card-footer]))]:[--edge-radius-bottom:max(0px,calc(var(--outer-radius)-var(--outer-inset)))]',
+              ]
             : variant === 'shell'
               ? [
                   'mx-card-inset mt-card-inset mb-card-inset rounded-inner border border-(--edge) bg-card bg-clip-padding shadow-card',
+                  '[--edge-radius-bottom:max(0px,calc(var(--outer-radius)-var(--outer-inset)-1px))] [--edge-radius-top:max(0px,calc(var(--outer-radius)-var(--outer-inset)-1px))]',
                   '[[data-slot=card-header]+&]:mt-0 [&:has(+[data-slot=card-footer])]:mb-0',
                   '[[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:m-0 [[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:rounded-card',
+                  '[[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:[--edge-radius-bottom:calc(var(--radius-card)-1px)] [[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:[--edge-radius-top:calc(var(--radius-card)-1px)]',
                 ]
-              : 'rounded-card border border-(--edge) bg-card bg-clip-padding shadow-card',
+              : [
+                  'rounded-card border border-(--edge) bg-card bg-clip-padding shadow-card',
+                  '[--edge-radius-bottom:calc(var(--radius-card)-1px)] [--edge-radius-top:calc(var(--radius-card)-1px)]',
+                ],
           className,
         ),
       },

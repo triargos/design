@@ -19,7 +19,9 @@ import { cn } from '~/lib/utils';
  * In a card one token sets them all, so the list sits in the card as content padded `p-card` does: the row runs to the
  * card's edge (its hover fills to it) and pads `card` at the sides, so its text starts on the header's; the first row
  * pads `card` above, the last `card` below; between rows each side of the hairline pads half of it, so rows sit `card`
- * apart too. The hairline stops at the row's inline padding, on the text edge, clear of the card's rounded edge.
+ * apart too. The hairline stops at the row's inline padding, on the text edge, clear of the card's rounded edge. The
+ * first and last row round their `Item` to the card's corners (`--edge-radius-top`, `-bottom` from `CardContent`), so
+ * a hover or selected fill follows them without the card clipping it.
  */
 function ItemListRow({ first, last, ...props }: React.ComponentProps<'div'> & { first: boolean; last: boolean }) {
   return (
@@ -29,8 +31,10 @@ function ItemListRow({ first, last, ...props }: React.ComponentProps<'div'> & { 
       className={cn(
         '[--list-row-pad-bottom:var(--spacing-row-pad-x)] [--list-row-pad-top:var(--spacing-row-pad-x)] [--list-row-pad-x:var(--spacing-row-pad-x)] [--list-row-pad-y:var(--spacing-row-pad-x)]',
         'in-data-[slot=card-content]:[--list-row-pad-bottom:calc(var(--spacing-card)/2)] in-data-[slot=card-content]:[--list-row-pad-top:calc(var(--spacing-card)/2)] in-data-[slot=card-content]:[--list-row-pad-x:var(--spacing-card)] in-data-[slot=card-content]:[--list-row-pad-y:calc(var(--spacing-card)/2)]',
-        first && 'in-data-[slot=card-content]:[--list-row-pad-top:var(--spacing-card)]',
-        last && 'in-data-[slot=card-content]:[--list-row-pad-bottom:var(--spacing-card)]',
+        first &&
+          'in-data-[slot=card-content]:[--list-row-pad-top:var(--spacing-card)] in-data-[slot=card-content]:*:data-[slot=item]:rounded-t-(--edge-radius-top) in-data-[slot=card-content]:**:data-[slot=accordion-trigger]:rounded-t-(--edge-radius-top)',
+        last &&
+          'in-data-[slot=card-content]:[--list-row-pad-bottom:var(--spacing-card)] in-data-[slot=card-content]:*:data-[slot=item]:rounded-b-(--edge-radius-bottom) in-data-[slot=card-content]:**:data-[slot=accordion-trigger]:not-data-panel-open:rounded-b-(--edge-radius-bottom)',
         '*:data-[slot=item]:px-(--list-row-pad-x) *:data-[slot=item]:pt-(--list-row-pad-top) *:data-[slot=item]:pb-(--list-row-pad-bottom)',
         // The last row keeps its hairline, hidden: when a row comes or goes, a line fades in step with the list's
         // spring instead of popping in one frame.
@@ -80,11 +84,12 @@ type ItemListProps<T> = ItemListElementProps &
   );
 
 /**
- * Rows that run to the card's edge, hairlines between them: put it in `CardContent className='overflow-clip'`, which
- * clips the rows' fills to the card's corners. Not `overflow-hidden`: a box that hides can still scroll, so a row that
- * focuses an input as it mounts, below the list's height mid-spring, scrolls it and the rows jump. It springs its
- * height when rows come and go or change size (reduced motion: it jumps); a row that animates its own height, as an
- * `Accordion` panel does, sets the pace instead. `virtualized` for a long list. While the rows load, `ItemListSkeleton` stands in for it.
+ * Rows that run to the card's edge, hairlines between them: put it straight in a `CardContent`, no class; the first and
+ * last row round to the card's corners themselves. It springs its height when rows come and go or change size (reduced
+ * motion: it jumps); a row that animates its own height, as an `Accordion` panel does, sets the pace instead. The list
+ * clips its rows while it springs, with `overflow-clip`, not `overflow-hidden`: a box that hides can still scroll, so a
+ * row that focuses an input as it mounts, below the list's height mid-spring, would scroll it and the rows jump.
+ * `virtualized` for a long list. While the rows load, `ItemListSkeleton` stands in for it.
  */
 function ItemList<T>(props: ItemListProps<T>) {
   if (props.virtualized) return <VirtualizedItemList {...props} />;

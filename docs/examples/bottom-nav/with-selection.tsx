@@ -64,7 +64,7 @@ export function BottomNavWithSelection() {
         <div className='flex h-full flex-col gap-page overflow-y-auto px-5 pt-10 pb-24'>
           <h1 className='text-title text-balance'>Tasks</h1>
           <Card>
-            <CardContent className='overflow-hidden'>
+            <CardContent>
               <ItemList aria-label='Tasks'>
                 {TASKS.map((task) => (
                   <Item key={task.id} selected={selected.has(task.id)} render={<label />}>

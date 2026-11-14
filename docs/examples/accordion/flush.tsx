@@ -19,14 +19,14 @@ const QUESTIONS = [
   },
 ] as const;
 
-/** `variant='flush'` in `CardContent className='overflow-hidden'`: rows to the card edge, as an `ItemList`. */
+/** `variant='flush'` in `CardContent`: rows to the card edge, the first and last round to its corners, as an `ItemList`. */
 export function AccordionFlush() {
   return (
     <Card className='w-full max-w-md'>
       <CardHeader>
         <CardTitle>Questions</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         <Accordion variant='flush' defaultValue={['documents']}>
           {QUESTIONS.map((item) => (
             <AccordionItem key={item.value} value={item.value}>

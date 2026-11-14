@@ -11,7 +11,7 @@ export default defineDocs({
   Page: () => (
     <FoundationPage
       title='List in Card'
-      description='Every list on a page: CardContent with overflow-clip around an ItemList. The header holds the add action; each row ends in a status and a ghost menu, on one column with the header action.'>
+      description='Every list on a page: an ItemList straight in CardContent, no class. The header holds the add action; each row ends in a status and a ghost menu, on one column with the header action.'>
       <ExampleSection title='Default' bare>
         <ListInCardDefault />
       </ExampleSection>

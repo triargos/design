@@ -103,11 +103,53 @@ const noArbitrarySize = {
     ),
 };
 
+const OVERFLOW_UTILITY = /^overflow(?:-[xy])?-/;
+
+/** Every string and template piece under a node: a className is a literal, a template or `cn(…)` arguments. */
+function classTexts(node, found = []) {
+  if (!node || typeof node !== 'object') return found;
+  if (node.type === 'Literal' && typeof node.value === 'string') found.push([node, node.value]);
+  else if (node.type === 'TemplateElement') found.push([node, node.value.cooked ?? node.value.raw]);
+  for (const key of Object.keys(node)) {
+    if (key === 'parent') continue;
+    const child = node[key];
+    if (Array.isArray(child)) for (const item of child) classTexts(item, found);
+    else if (child && typeof child === 'object' && typeof child.type === 'string') classTexts(child, found);
+  }
+  return found;
+}
+
+const noOverflowOnCardContent = {
+  meta: {
+    type: 'problem',
+    docs: { description: 'CardContent composes without consumer classes; its parts round to its corners themselves.' },
+  },
+  create: (context) => ({
+    JSXOpeningElement(node) {
+      if (node.name.type !== 'JSXIdentifier' || node.name.name !== 'CardContent') return;
+      for (const attribute of node.attributes) {
+        if (attribute.type !== 'JSXAttribute' || !CLASS_ATTRIBUTES.has(attribute.name?.name)) continue;
+        for (const [textNode, text] of classTexts(attribute.value)) {
+          for (const className of text.split(/\s+/)) {
+            if (className !== '' && OVERFLOW_UTILITY.test(utilityOf(className))) {
+              context.report({
+                node: textNode,
+                message: `\`${className}\` on \`CardContent\`: parts round to the card's corners themselves; drop it (DESIGN.md, Composition).`,
+              });
+            }
+          }
+        }
+      }
+    },
+  }),
+};
+
 export default {
   meta: { name: 'pavo' },
   rules: {
     'no-raw-color': noRawColor,
     'no-dark-variant': noDarkVariant,
     'no-arbitrary-size': noArbitrarySize,
+    'no-overflow-on-card-content': noOverflowOnCardContent,
   },
 };

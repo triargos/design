@@ -25,7 +25,7 @@ export function ListInCardAddRow() {
         }>
         <CardTitle>Status</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-clip'>
+      <CardContent>
         <ItemList>
           {STATUSES.map((status, index) => (
             <Item key={status}>

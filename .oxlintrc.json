@@ -12,7 +12,8 @@
       "rules": {
         "pavo/no-raw-color": "error",
         "pavo/no-dark-variant": "error",
-        "pavo/no-arbitrary-size": "warn"
+        "pavo/no-arbitrary-size": "warn",
+        "pavo/no-overflow-on-card-content": "error"
       }
     }
   ]

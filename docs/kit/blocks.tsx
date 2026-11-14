@@ -275,7 +275,7 @@ export function ExampleSection({
 
 /** Labelled `SpecimenRow`s in one card, separated by hairlines. */
 export function SpecimenList({ children }: { children: ReactNode }) {
-  return <CardContent className='flex flex-col overflow-hidden'>{children}</CardContent>;
+  return <CardContent className='flex flex-col'>{children}</CardContent>;
 }
 
 const LABEL_HEIGHT = 20;
@@ -368,7 +368,7 @@ export function Matrix({
   const labelFont = useLabelFont();
   const grid = { gridTemplateColumns: `8rem repeat(${columns.length}, minmax(${columnWidth}, 1fr))` };
   return (
-    <CardContent className='overflow-x-auto'>
+    <CardContent>
       <div className='grid min-w-fit items-center gap-x-related' style={grid}>
         <span />
         {columns.map((column) => (

@@ -17,7 +17,7 @@ export function ItemVirtualized() {
       <CardHeader>
         <CardTitle>Activity</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-clip'>
+      <CardContent>
         <ItemList virtualized className='h-80' items={ACTIVITY} itemKey={(item) => item.id} estimatedItemSize={60}>
           {(item) => (
             <Item>

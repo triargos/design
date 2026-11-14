@@ -20,7 +20,7 @@ const MEMBERS = [
 ] as const;
 
 /**
- * Every list on a page: `CardContent className='overflow-clip'` around an `ItemList`. The header holds the
+ * Every list on a page: an `ItemList` straight in `CardContent`, no class. The header holds the
  * add action; each row ends in a status and a ghost menu, on one column with the header action.
  */
 export function ListInCardDefault() {
@@ -35,7 +35,7 @@ export function ListInCardDefault() {
         }>
         <CardTitle>Members</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-clip'>
+      <CardContent>
         <ItemList>
           {MEMBERS.map((member) => (
             <Item key={member.email}>

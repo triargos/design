@@ -129,7 +129,7 @@ export function BottomNavStackedBars() {
               </Field>
             </FieldGroup>
             <Card>
-              <CardContent className='overflow-hidden'>
+              <CardContent>
                 <ItemList aria-label='Tasks'>
                   {TASKS.map((task) => (
                     <Item key={task.id} selected={selected.has(task.id)} render={<label />}>

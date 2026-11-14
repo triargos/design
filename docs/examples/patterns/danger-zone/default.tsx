@@ -33,7 +33,7 @@ export function DangerZoneDefault() {
       <CardHeader>
         <CardTitle>Danger zone</CardTitle>
       </CardHeader>
-      <CardContent className='overflow-hidden'>
+      <CardContent>
         <ItemList>
           <Item>
             <ItemContent>
