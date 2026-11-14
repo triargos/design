@@ -102,7 +102,12 @@ function StaticItemList({
   const rowsRef = useListFold();
   const rows = React.Children.toArray(children);
   return (
-    <div data-slot='item-list' className={cn('data-folding:overflow-clip', className)} style={style} {...props}>
+    <div
+      data-slot='item-list'
+      data-edge=''
+      className={cn('data-folding:overflow-clip', className)}
+      style={style}
+      {...props}>
       <div ref={rowsRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
         {rows.map((row, index) => (
           <ItemListRow
@@ -202,6 +207,7 @@ function VirtualizedItemList<T>({
     <div
       ref={setContainer}
       data-slot='item-list'
+      data-edge=''
       // Its own scroll box is a tab stop, so the keyboard can scroll a list whose rows hold nothing focusable.
       tabIndex={ownScroll ? 0 : undefined}
       className={cn(
@@ -259,7 +265,7 @@ type ItemListSkeletonProps = Omit<React.ComponentProps<'div'>, 'children'> & {
  */
 function ItemListSkeleton({ rows = 3, media, description = true, className, ...props }: ItemListSkeletonProps) {
   return (
-    <div data-slot='item-list' aria-hidden className={className} {...props}>
+    <div data-slot='item-list' data-edge='' aria-hidden className={className} {...props}>
       {Array.from({ length: rows }, (_, index) => (
         <ItemListRow key={index} role={undefined} first={index === 0} last={index === rows - 1}>
           <Item>

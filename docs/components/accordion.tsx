@@ -1,7 +1,6 @@
 import { AccordionControlled } from '../examples/accordion/controlled';
 import { AccordionDefault } from '../examples/accordion/default';
 import { AccordionFlush } from '../examples/accordion/flush';
-import { AccordionInACard } from '../examples/accordion/in-a-card';
 import { AccordionInASheet } from '../examples/accordion/in-a-sheet';
 import { AccordionMultiple } from '../examples/accordion/multiple';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
@@ -44,9 +43,6 @@ export default defineDocs({
           </>
         }>
         <AccordionControlled />
-      </ExampleSection>
-      <ExampleSection title='In a card' bare>
-        <AccordionInACard />
       </ExampleSection>
       <ExampleSection
         title='In a sheet'

@@ -45,17 +45,15 @@ export function FadeInDefault() {
             ))}
           </div>
         ) : (
-          <FadeIn>
-            <ItemList>
-              {TASKS.map((task) => (
-                <Item key={task.id}>
-                  <ItemContent>
-                    <ItemTitle>{task.title}</ItemTitle>
-                    <ItemDescription>{task.project}</ItemDescription>
-                  </ItemContent>
-                </Item>
-              ))}
-            </ItemList>
+          <FadeIn render={<ItemList />}>
+            {TASKS.map((task) => (
+              <Item key={task.id}>
+                <ItemContent>
+                  <ItemTitle>{task.title}</ItemTitle>
+                  <ItemDescription>{task.project}</ItemDescription>
+                </ItemContent>
+              </Item>
+            ))}
           </FadeIn>
         )}
       </CardContent>

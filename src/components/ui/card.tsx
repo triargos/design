@@ -220,8 +220,8 @@ function CardDescription({ className, ...props }: ComponentProps<'p'>) {
 }
 
 /**
- * The card's content: padded `card`, and it clips what it holds to its corners. A part that runs to the edge (an
- * `ItemList`, also in a `FadeIn`; a `flush` `Accordion`; a `Command`) or pads itself (`Empty`) sits in it unpadded. In a `plain` card it is
+ * The card's content: padded `card`, and it clips what it holds to its corners. A part that runs to the edge or pads
+ * itself marks its root `data-edge` (`ItemList`, a `flush` `Accordion`, `Command`, `Empty`) and sits in it unpadded. In a `plain` card it is
  * a region of the surface, 1px in from the surface's edge. In a `shell` card it is that surface `card-inset` inside the
  * tint, `rounded-inner` (see the top of this file). Alone, or in a shell without a header, it is a surface of its own at
  * `rounded-card`. Either way an `--edge` border inside the box (`bg-clip-padding` keeps the fill off it), `shadow-card`.
@@ -238,7 +238,7 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
       {
         className: cn(
           'overflow-clip p-card',
-          'has-[>[data-slot=item-list]]:p-0 has-[>[data-slot=fade-in]>[data-slot=item-list]]:p-0 has-[>[data-slot=accordion][data-variant=flush]]:p-0 has-[>[data-slot=command]]:p-0 has-[>[data-slot=empty]]:p-0',
+          'has-[>[data-edge]]:p-0',
           variant === 'plain'
             ? [
                 'row-start-2 mx-px mt-px rounded-t-inner',

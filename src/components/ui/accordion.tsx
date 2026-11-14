@@ -24,6 +24,7 @@ function Accordion({
       <AccordionPrimitive.Root
         data-slot='accordion'
         data-variant={variant}
+        data-edge={variant === 'flush' ? '' : undefined}
         className={cn(
           'flex w-full flex-col',
           // In a sheet, run past the body's padding to the sheet's edge.

@@ -21,6 +21,7 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
   return (
     <CommandPrimitive
       data-slot='command'
+      data-edge=''
       className={cn(
         'flex size-full flex-col overflow-hidden bg-transparent text-popover-foreground [--outer-inset:var(--spacing-list-inset)] [--outer-radius:var(--radius-popup)] in-data-[slot=dialog-content]:[--outer-radius:var(--radius-dialog)]',
         className,

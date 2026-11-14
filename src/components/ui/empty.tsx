@@ -49,6 +49,7 @@ function Empty({ className, bordered, size, ...props }: VariantProps<typeof empt
     <LazyMotion features={loadMotionFeatures}>
       <m.div
         data-slot='empty'
+        data-edge=''
         data-size={size ?? 'default'}
         variants={containerMotion}
         initial={reduceMotion ? false : 'initial'}
