@@ -66,6 +66,7 @@ function ActionBarRow({ className, ...props }: React.ComponentProps<typeof m.div
       exit={reduced ? { opacity: 0, transition: fade } : leave}
       className={cn(
         'flex w-max shrink-0 items-center gap-related p-(--outer-inset) [&_[data-slot=button]]:rounded-inner',
+        '@max-lg:[&_[data-slot=button]:has(>svg+span)]:w-9 @max-lg:[&_[data-slot=button]:has(>svg+span)]:px-0 @max-lg:[&_[data-slot=button]>svg+span]:sr-only',
         !present && 'absolute top-1/2 left-1/2 -translate-1/2',
         className,
       )}
@@ -105,7 +106,8 @@ function Toolbar({ docked, className, ...props }: React.ComponentProps<typeof m.
  * the nav's width. Its row sits in from the corner by what brings a `control` button to the nav's height (`control-lg`
  * + 2 × `popup-inset`), and its buttons take `rounded-inner`, concentric with the shell (`--bottom-nav-radius`, here
  * too). Under a provider, several may be open: one shows (`priority`), the next takes its place when it closes. A
- * `status` replaces the actions once they ran; the shell springs to its size.
+ * `status` replaces the actions once they ran; the shell springs to its size. Below `@max-lg` a button of an icon and a
+ * `span` label shrinks to its icon, the label stays for screen readers.
  */
 function ActionBar({ open, priority = 0, status, className, children, 'aria-label': ariaLabel }: ActionBarProps) {
   const nav = useBottomNavDock();

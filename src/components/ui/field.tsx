@@ -38,23 +38,28 @@ function FieldLegend({
   );
 }
 
-const fieldGroupVariants = cva('group/field-group flex w-full flex-col gap-group', {
+const fieldGroupVariants = cva('group/field-group flex w-full flex-col', {
   variants: {
+    gap: {
+      group: 'gap-group',
+      related: 'gap-related',
+    },
     columns: {
       1: '',
       // Same gap as one column, both axes: the fields are peers whichever way they wrap.
       2: 'grid md:grid-cols-2',
     },
   },
-  defaultVariants: { columns: 1 },
+  defaultVariants: { gap: 'group', columns: 1 },
 });
 
 function FieldGroup({
   className,
+  gap,
   columns,
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof fieldGroupVariants>) {
-  return <div data-slot='field-group' className={cn(fieldGroupVariants({ columns }), className)} {...props} />;
+  return <div data-slot='field-group' className={cn(fieldGroupVariants({ gap, columns }), className)} {...props} />;
 }
 
 const fieldVariants = cva('group/field flex w-full gap-group data-[invalid=true]:text-destructive', {

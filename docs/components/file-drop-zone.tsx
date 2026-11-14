@@ -1,4 +1,5 @@
 import { IconPaperclip, IconUpload } from '@tabler/icons-react';
+import { type ReactNode, useEffect, useRef } from 'react';
 
 import { FileDropZone } from '~/components/ui/file-drop-zone';
 
@@ -30,20 +31,40 @@ const CompactBody = () => (
   </>
 );
 
-/** Drag-over is the zone's own state (`data-dragging`), forced here with the attribute. */
-const zone = (size: 'default' | 'sm', state: State) => (
-  <div key={size} className='w-full'>
+/** Drag-over is the zone's own state (`data-dragging`): a `dragenter` on the zone sets it, as a real drag does. */
+function DraggedOver({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    ref.current
+      ?.querySelector('[data-slot=file-drop-zone]')
+      ?.dispatchEvent(new DragEvent('dragenter', { bubbles: true, cancelable: true }));
+  }, []);
+  return (
+    <div ref={ref} className='w-full'>
+      {children}
+    </div>
+  );
+}
+
+const zone = (size: 'default' | 'sm', state: State) => {
+  const dropZone = (
     <FileDropZone
       size={size}
       onFiles={() => undefined}
       disabled={state === 'disabled'}
       aria-invalid={state === 'invalid'}
-      aria-label='Choose files'
-      className={state === 'drag-over' ? 'border-ring bg-background ring-3 ring-ring/24' : undefined}>
+      aria-label='Choose files'>
       {size === 'default' ? <DefaultBody /> : <CompactBody />}
     </FileDropZone>
-  </div>
-);
+  );
+  return state === 'drag-over' ? (
+    <DraggedOver key={size}>{dropZone}</DraggedOver>
+  ) : (
+    <div key={size} className='w-full'>
+      {dropZone}
+    </div>
+  );
+};
 
 export default defineDocs({
   title: 'File Drop Zone',

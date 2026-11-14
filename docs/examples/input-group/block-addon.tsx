@@ -7,7 +7,7 @@ export function InputGroupBlockAddon() {
   return (
     <InputGroup className='w-96'>
       <InputGroupTextarea placeholder='Add a comment' aria-label='Comment' />
-      <InputGroupAddon align='block-end' className='border-t'>
+      <InputGroupAddon align='block-end' divided>
         <InputGroupButton size='icon-xs' aria-label='Bold'>
           <IconBold />
         </InputGroupButton>

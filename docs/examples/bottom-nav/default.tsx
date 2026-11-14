@@ -27,6 +27,8 @@ import {
 } from '~/components/ui/bottom-nav';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 
+import { PhoneFrame } from '../../kit/phone-frame';
+
 const TABS = [
   { label: 'Home', icon: <IconHome /> },
   { label: 'Inbox', icon: <IconInbox />, count: 3 },
@@ -60,8 +62,8 @@ const MORE: readonly Entry[] = [
 /**
  * A phone frame: the nav floats over the scrolling panel, which keeps `pb-24` to clear it. Three tabs, the main action,
  * and "More": the bar morphs into a list of the rest, and "More" is current while that list holds the page. Settings
- * is a `BottomNavMoreGroup`, Appearance one inside it: each opens a page with a Back row. `absolute
- * md:grid` keeps the nav in this frame at desktop width; an app leaves it `fixed` and hidden from `md` up.
+ * is a `BottomNavMoreGroup`, Appearance one inside it: each opens a page with a Back row. `PhoneFrame` keeps the nav
+ * in the frame at desktop width; an app leaves it `fixed` and hidden from `md` up.
  */
 export function BottomNavDefault() {
   const [page, setPage] = useState('Tasks');
@@ -71,7 +73,7 @@ export function BottomNavDefault() {
   };
 
   return (
-    <div className='relative h-[640px] w-[375px] max-w-full overflow-hidden rounded-panel bg-background ring ring-border/50'>
+    <PhoneFrame>
       <div className='h-full overflow-y-auto px-5 pt-10 pb-24'>
         <div className='flex flex-col gap-page'>
           <h1 className='text-title text-balance'>{page}</h1>
@@ -87,7 +89,7 @@ export function BottomNavDefault() {
           </div>
         </div>
       </div>
-      <BottomNav className='absolute md:grid'>
+      <BottomNav>
         <BottomNavList>
           {TABS.map((tab) => (
             <BottomNavLink key={tab.label} href='#' current={page === tab.label} onClick={go(tab.label)}>
@@ -119,6 +121,6 @@ export function BottomNavDefault() {
           <IconPlus />
         </BottomNavAction>
       </BottomNav>
-    </div>
+    </PhoneFrame>
   );
 }

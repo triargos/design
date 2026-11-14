@@ -25,13 +25,9 @@ export function TabsInline() {
           </TabsRadio>
         </TabsRadioGroup>
       </div>
-      <TabsRadioGroup variant='inline' aria-label='Documents' value={view} onValueChange={setView} className='w-full'>
-        <TabsRadio value='forYou' className='flex-1'>
-          For you
-        </TabsRadio>
-        <TabsRadio value='uploads' className='flex-1'>
-          My uploads
-        </TabsRadio>
+      <TabsRadioGroup variant='inline' fill aria-label='Documents' value={view} onValueChange={setView}>
+        <TabsRadio value='forYou'>For you</TabsRadio>
+        <TabsRadio value='uploads'>My uploads</TabsRadio>
       </TabsRadioGroup>
     </div>
   );

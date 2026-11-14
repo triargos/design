@@ -20,7 +20,7 @@ export function CardWithFooter() {
           <Input id='card-name' defaultValue='Jordan Lee' onChange={() => setDirty(true)} />
         </Field>
       </CardContent>
-      <CardFooter show={dirty} className='flex items-center justify-end gap-related'>
+      <CardFooter show={dirty}>
         <Button intent='primary' onClick={() => setDirty(false)}>
           Save
         </Button>

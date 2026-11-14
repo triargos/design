@@ -288,7 +288,7 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
             )}
             {media === 'avatar' && (
               <ItemMedia>
-                <Skeleton className='size-10 rounded-full' />
+                <Skeleton circle className='size-10' />
               </ItemMedia>
             )}
             <ItemContent>

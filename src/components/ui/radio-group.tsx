@@ -1,13 +1,32 @@
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
+import { type VariantProps, cva } from 'class-variance-authority';
 
 import { selectionControlVariants } from '~/components/ui/checkbox';
 
 import { cn } from '~/lib/utils';
 
-function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
+const radioGroupVariants = cva('grid w-full gap-related', {
+  variants: {
+    columns: {
+      1: '',
+      2: 'sm:grid-cols-2',
+    },
+  },
+  defaultVariants: { columns: 1 },
+});
+
+function RadioGroup({
+  className,
+  columns,
+  ...props
+}: RadioGroupPrimitive.Props & VariantProps<typeof radioGroupVariants>) {
   return (
-    <RadioGroupPrimitive data-slot='radio-group' className={cn('grid w-full gap-related', className)} {...props} />
+    <RadioGroupPrimitive
+      data-slot='radio-group'
+      className={cn(radioGroupVariants({ columns }), className)}
+      {...props}
+    />
   );
 }
 

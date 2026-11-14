@@ -127,22 +127,17 @@ export function BulkSelectionDefault() {
           <IconX />
         </Button>
         <Separator orientation='vertical' className='my-1.5' />
-        {/* No `data-icon`: its padding would outweigh the square icon-only size below 32rem. */}
-        <Button className='@max-lg:w-9 @max-lg:px-0' onClick={() => setSent(true)}>
+        <Button onClick={() => setSent(true)}>
           <IconMail />
-          <span className='@max-lg:sr-only'>Send reminder</span>
+          <span>Send reminder</span>
         </Button>
-        <Button className='@max-lg:w-9 @max-lg:px-0'>
+        <Button>
           <IconDownload />
-          <span className='@max-lg:sr-only'>Export</span>
+          <span>Export</span>
         </Button>
-        <Button
-          intent='destructive'
-          emphasis='subtle'
-          className='@max-lg:w-9 @max-lg:px-0'
-          onClick={() => setConfirming(true)}>
+        <Button intent='destructive' emphasis='subtle' onClick={() => setConfirming(true)}>
           <IconTrash />
-          <span className='@max-lg:sr-only'>Delete…</span>
+          <span>Delete…</span>
         </Button>
       </ActionBar>
       <AlertDialog open={confirming} onOpenChange={setConfirming}>

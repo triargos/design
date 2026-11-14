@@ -5,7 +5,7 @@ import { Input } from '~/components/ui/input';
 export function InputGroupSideBySide() {
   return (
     <div className='flex w-96 items-center gap-2'>
-      <Input placeholder='name@example.com' aria-label='Email' className='flex-1' />
+      <Input placeholder='name@example.com' aria-label='Email' />
       <Button type='button'>Invite</Button>
     </div>
   );

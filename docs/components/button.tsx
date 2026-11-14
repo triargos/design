@@ -310,7 +310,7 @@ export default defineDocs({
             </CardHeader>
             <CardContent>
               <ItemList>
-                <Item className='px-4'>
+                <Item>
                   <ItemContent>
                     <ItemTitle>Website redesign</ItemTitle>
                     <ItemDescription>Row actions: ghost</ItemDescription>

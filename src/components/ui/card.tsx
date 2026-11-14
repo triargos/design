@@ -149,7 +149,7 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
 }
 
 /**
- * Springs open and closed with `show`. `plain`: a `muted` band under a rule, as `DialogFooter`, in the card's bottom
+ * Springs open and closed with `show`; its children sit in a row at the end (actions). `plain`: a `muted` band under a rule, as `DialogFooter`, in the card's bottom
  * corners. `shell`: the header band mirrored, on the tint.
  */
 function CardFooter({ className, show = true, children, ...props }: ComponentProps<'div'> & { show?: boolean }) {
@@ -177,6 +177,7 @@ function CardFooter({ className, show = true, children, ...props }: ComponentPro
           before unmount. */}
         <div
           className={cn(
+            'flex items-center justify-end gap-related',
             variant === 'shell' ? 'mx-[calc(var(--spacing-card)+1px)] my-card-band' : 'mx-card my-card-band',
             className,
           )}

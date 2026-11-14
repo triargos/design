@@ -97,7 +97,7 @@ function SettingsCard({ id }: { id: string }) {
           </Field>
         </FieldGroup>
       </CardContent>
-      <CardFooter className='flex justify-end gap-related'>
+      <CardFooter>
         <Button>Cancel</Button>
         <Button intent='primary'>Save</Button>
       </CardFooter>
