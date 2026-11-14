@@ -7,9 +7,8 @@ import { cn } from '~/lib/utils';
 /**
  * `default`: sections on a page or in a padded card; the trigger is a rounded control. `flush`: rows to the edge of a
  * `CardContent` or a `SheetBody`, as `ItemList` rows are: square triggers that fill with `row-hover`, the title on the
- * card header's text; the first and last trigger round to the card's corners (`--edge-radius-top`, `-bottom`). In a
- * card, and in an `ItemList` row, an item pads as a list row
- * does (`--list-row-pad-*`, see `ItemListRow`): `card` at the card's edges, half of it on each side of a rule.
+ * card header's text; the card clips the fills to its corners. An accordion in a card is always `flush`. In a card, and
+ * in an `ItemList` row, an item pads as a list row does (`--list-row-pad-*`, see `ItemListRow`): `card` at the card's edges, half of it on each side of a rule.
  */
 type AccordionVariant = 'default' | 'flush';
 
@@ -46,9 +45,6 @@ const accordionItemVariants = cva('border-b border-border-subtle last:border-b-0
         '[[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-x:var(--spacing-card)] [[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-y:calc(var(--spacing-card)/2)]',
         '[[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-top:calc(var(--spacing-card)/2)] [[data-slot=card-content]>[data-slot=accordion]>&]:[--list-row-pad-bottom:calc(var(--spacing-card)/2)]',
         '[[data-slot=card-content]>[data-slot=accordion]>&]:first:[--list-row-pad-top:var(--spacing-card)] [[data-slot=card-content]>[data-slot=accordion]>&]:last:[--list-row-pad-bottom:var(--spacing-card)]',
-        // The trigger's hover fill follows the card's corners: top on the first item, bottom on a closed last one.
-        '[[data-slot=card-content]>[data-slot=accordion]>&]:first:**:data-[slot=accordion-trigger]:rounded-t-(--edge-radius-top)',
-        '[[data-slot=card-content]>[data-slot=accordion]>&]:last:**:data-[slot=accordion-trigger]:not-data-panel-open:rounded-b-(--edge-radius-bottom)',
       ],
     },
   },

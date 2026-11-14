@@ -160,7 +160,7 @@ export default defineDocs({
                     <CardTitle>Contact</CardTitle>
                     <CardDescription>How your team reaches you.</CardDescription>
                   </CardHeader>
-                  <CardContent className='p-4'>
+                  <CardContent>
                     <FieldGroup>
                       <Field>
                         <FieldLabel htmlFor='spacing-email'>Email</FieldLabel>

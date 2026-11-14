@@ -14,13 +14,15 @@ export function StatInCard() {
       <CardHeader>
         <CardTitle>Invoices this quarter</CardTitle>
       </CardHeader>
-      <CardContent className='grid grid-cols-3 gap-group p-card'>
-        {STATS.map((stat) => (
-          <Stat key={stat.label}>
-            <StatValue>{stat.value}</StatValue>
-            <StatLabel>{stat.label}</StatLabel>
-          </Stat>
-        ))}
+      <CardContent>
+        <div className='grid grid-cols-3 gap-group'>
+          {STATS.map((stat) => (
+            <Stat key={stat.label}>
+              <StatValue>{stat.value}</StatValue>
+              <StatLabel>{stat.label}</StatLabel>
+            </Stat>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

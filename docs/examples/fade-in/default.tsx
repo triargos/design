@@ -36,7 +36,7 @@ export function FadeInDefault() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className='flex flex-col gap-group p-card'>
+          <div className='flex flex-col gap-group'>
             {TASKS.map((task) => (
               <div key={task.id} className='flex flex-col gap-2'>
                 <Skeleton className='h-3.5 w-2/5' />

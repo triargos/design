@@ -38,7 +38,7 @@ export function ChartDefault() {
       <CardHeader>
         <CardTitle>Tasks closed by team</CardTitle>
       </CardHeader>
-      <CardContent className='p-card'>
+      <CardContent>
         <ChartContainer config={config} className='aspect-auto h-64 w-full'>
           <BarChart data={DATA}>
             <CartesianGrid vertical={false} />

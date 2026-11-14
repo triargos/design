@@ -8,7 +8,7 @@ export function CardWithDescription() {
         <CardTitle>Notifications</CardTitle>
         <CardDescription>When we send you an email.</CardDescription>
       </CardHeader>
-      <CardContent className='p-card'>
+      <CardContent>
         <p className='text-body text-muted-foreground'>Card content.</p>
       </CardContent>
     </Card>

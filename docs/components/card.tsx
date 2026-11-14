@@ -31,7 +31,7 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='With actions'
-        description='Header actions are raised sm / icon-sm buttons; an action and its overflow menu join in a ButtonGroup. Row actions inside the list stay ghost. Both end on one column. A flush ItemList: CardContent with overflow-hidden.'
+        description='Header actions are raised sm / icon-sm buttons; an action and its overflow menu join in a ButtonGroup. Row actions inside the list stay ghost. Both end on one column. A list goes straight in CardContent, no class.'
         bare>
         <CardWithActions />
       </ExampleSection>
@@ -79,8 +79,8 @@ export default defineDocs({
         description={
           <>
             <Code>intent</Code> colors the title (<Code>destructive</Code>, <Code>warning</Code>);{' '}
-            <Code>emphasis='subtle'</Code> tints the shell in it too. A list goes straight in the content: its rows
-            round to the corners.
+            <Code>emphasis='subtle'</Code> tints the shell in it too. A list goes straight in the content: the card
+            clips its rows to the corners.
           </>
         }
         bare>

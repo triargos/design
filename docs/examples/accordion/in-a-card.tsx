@@ -25,8 +25,8 @@ export function AccordionInACard() {
       <CardHeader>
         <CardTitle>Questions</CardTitle>
       </CardHeader>
-      <CardContent className='p-2'>
-        <Accordion defaultValue={['invite']}>
+      <CardContent>
+        <Accordion variant='flush' defaultValue={['invite']}>
           {QUESTIONS.map((item) => (
             <AccordionItem key={item.value} value={item.value}>
               <AccordionTrigger>{item.question}</AccordionTrigger>

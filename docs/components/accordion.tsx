@@ -20,7 +20,7 @@ export default defineDocs({
         title='Flush'
         description={
           <>
-            <Code>variant='flush'</Code> in <Code>CardContent</Code>: rows to the card edge, rounded at its corners, a{' '}
+            <Code>variant='flush'</Code> in <Code>CardContent</Code>: rows to the card edge, clipped to its corners, a{' '}
             <Code>row-hover</Code> fill, the content indented to the title.
           </>
         }

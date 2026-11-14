@@ -220,11 +220,13 @@ function CardDescription({ className, ...props }: ComponentProps<'p'>) {
 }
 
 /**
- * The card's content. In a `plain` card it is a region of the surface: no padding of its own (`p-card` for text and
- * fields, none for a list that runs to the edge), 1px in from the surface's edge, corners that clip a list to the
- * card's. In a `shell` card it is that surface `card-inset` inside the tint, `rounded-inner` (see the top of this file).
- * Alone, or in a shell without a header, it is a surface of its own at `rounded-card`. Either way an `--edge` border
- * inside the box (`bg-clip-padding` keeps the fill off it), `shadow-card`.
+ * The card's content: padded `card`, and it clips what it holds to its corners. A part that runs to the edge (an
+ * `ItemList`, also in a `FadeIn`; a `flush` `Accordion`; a `Command`) or pads itself (`Empty`) sits in it unpadded. In a `plain` card it is
+ * a region of the surface, 1px in from the surface's edge. In a `shell` card it is that surface `card-inset` inside the
+ * tint, `rounded-inner` (see the top of this file). Alone, or in a shell without a header, it is a surface of its own at
+ * `rounded-card`. Either way an `--edge` border inside the box (`bg-clip-padding` keeps the fill off it), `shadow-card`.
+ * `overflow-clip`, not `overflow-hidden`: a hidden box still scrolls when focus moves into a clipped part, and a clip
+ * is no scroll container, so `sticky` inside keeps working.
  */
 function CardContent({ className, render, ...props }: useRender.ComponentProps<'div'>) {
   const variant = use(CardVariantContext);
@@ -235,25 +237,20 @@ function CardContent({ className, render, ...props }: useRender.ComponentProps<'
     props: mergeProps<'div'>(
       {
         className: cn(
-          // `--edge-radius-top` / `-bottom`: the corners of the box's padding area (its radius minus its 1px edge).
-          // Parts that paint to the edge (list rows, flush accordion triggers) round their fills from them.
+          'overflow-clip p-card',
+          'has-[>[data-slot=item-list]]:p-0 has-[>[data-slot=fade-in]>[data-slot=item-list]]:p-0 has-[>[data-slot=accordion][data-variant=flush]]:p-0 has-[>[data-slot=command]]:p-0 has-[>[data-slot=empty]]:p-0',
           variant === 'plain'
             ? [
-                'row-start-2 mx-px mt-px rounded-t-inner [--edge-radius-bottom:0px] [--edge-radius-top:max(0px,calc(var(--outer-radius)-var(--outer-inset)))]',
-                '[&:not(:has(+[data-slot=card-footer]))]:mb-px [&:not(:has(+[data-slot=card-footer]))]:rounded-b-inner [&:not(:has(+[data-slot=card-footer]))]:[--edge-radius-bottom:max(0px,calc(var(--outer-radius)-var(--outer-inset)))]',
+                'row-start-2 mx-px mt-px rounded-t-inner',
+                '[&:not(:has(+[data-slot=card-footer]))]:mb-px [&:not(:has(+[data-slot=card-footer]))]:rounded-b-inner',
               ]
             : variant === 'shell'
               ? [
                   'mx-card-inset mt-card-inset mb-card-inset rounded-inner border border-(--edge) bg-card bg-clip-padding shadow-card',
-                  '[--edge-radius-bottom:max(0px,calc(var(--outer-radius)-var(--outer-inset)-1px))] [--edge-radius-top:max(0px,calc(var(--outer-radius)-var(--outer-inset)-1px))]',
                   '[[data-slot=card-header]+&]:mt-0 [&:has(+[data-slot=card-footer])]:mb-0',
                   '[[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:m-0 [[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:rounded-card',
-                  '[[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:[--edge-radius-bottom:calc(var(--radius-card)-1px)] [[data-slot=card]:not(:has(>[data-slot=card-header]))>&]:[--edge-radius-top:calc(var(--radius-card)-1px)]',
                 ]
-              : [
-                  'rounded-card border border-(--edge) bg-card bg-clip-padding shadow-card',
-                  '[--edge-radius-bottom:calc(var(--radius-card)-1px)] [--edge-radius-top:calc(var(--radius-card)-1px)]',
-                ],
+              : 'rounded-card border border-(--edge) bg-card bg-clip-padding shadow-card',
           className,
         ),
       },

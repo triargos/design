@@ -59,7 +59,7 @@ function SettingsCard({ id }: { id: string }) {
         <CardTitle>Project</CardTitle>
         <CardDescription>Shown to everyone in the workspace.</CardDescription>
       </CardHeader>
-      <CardContent className='p-card'>
+      <CardContent>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor={`${id}-name`}>Name</FieldLabel>
@@ -366,19 +366,21 @@ function ButtonPaintMatrix() {
       />
       {/* A saturated surface, as in a hero: an edge over the surface would take its color and vanish. */}
       <Card>
-        <CardContent className='flex flex-wrap items-start gap-group p-group'>
-          {(['raised', 'outline'] as const).map((emphasis) =>
-            PAINT_COLUMNS.slice(0, 2).map(({ name, state }) => (
-              <StateCell key={`${emphasis}-${name}`} state={state}>
-                <PaintCheck backdrop='bg-primary-solid'>
-                  <Button emphasis={emphasis}>
-                    {emphasis === 'raised' ? 'Raised' : 'Outline'}
-                    {state === 'hover' ? ' · hover' : ''}
-                  </Button>
-                </PaintCheck>
-              </StateCell>
-            )),
-          )}
+        <CardContent>
+          <div className='flex flex-wrap items-start gap-group'>
+            {(['raised', 'outline'] as const).map((emphasis) =>
+              PAINT_COLUMNS.slice(0, 2).map(({ name, state }) => (
+                <StateCell key={`${emphasis}-${name}`} state={state}>
+                  <PaintCheck backdrop='bg-primary-solid'>
+                    <Button emphasis={emphasis}>
+                      {emphasis === 'raised' ? 'Raised' : 'Outline'}
+                      {state === 'hover' ? ' · hover' : ''}
+                    </Button>
+                  </PaintCheck>
+                </StateCell>
+              )),
+            )}
+          </div>
         </CardContent>
       </Card>
     </PaintCheckGroup>

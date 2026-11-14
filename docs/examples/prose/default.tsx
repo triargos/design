@@ -5,7 +5,7 @@ import { Prose } from '~/components/ui/prose';
 export function ProseDefault() {
   return (
     <Card className='w-full max-w-xl'>
-      <CardContent className='p-card'>
+      <CardContent>
         <Prose>
           <h1>Workspace update: March</h1>
           <p>
