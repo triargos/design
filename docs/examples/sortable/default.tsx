@@ -1,25 +1,10 @@
-import {
-  DndContext,
-  type DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  arrayMove,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 import { IconDots } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Item, ItemActions, ItemContent, ItemList, ItemMedia, ItemTitle } from '~/components/ui/item';
-import { restrictToItemList, SortableItem, SortableItemHandle } from '~/components/ui/sortable';
+import { Item, ItemActions, ItemContent, ItemMedia, ItemMeta, ItemTitle } from '~/components/ui/item';
+import { SortableItemHandle, SortableItemList } from '~/components/ui/sortable';
 import { StatusDot } from '~/components/ui/status-dot';
 
 const INITIAL = [
@@ -30,62 +15,42 @@ const INITIAL = [
 ] as const;
 
 /**
- * `SortableContext` in an `ItemList`; each row a `SortableItem` rendered as the `Item`. Only the handle grabs, so the
- * rest of the row stays clickable; `restrictToItemList` keeps the row inside the list. Drag, or Tab to the handle +
- * Space, arrows, Space.
+ * A `SortableItemList` in a card; each row an `Item` with a `SortableItemHandle` as its media. Only the handle grabs,
+ * so the rest of the row stays clickable. Drag, or Tab to the handle + Space, arrows, Space.
  */
 export function SortableDefault() {
-  const [items, setItems] = useState<ReadonlyArray<(typeof INITIAL)[number]>>(INITIAL);
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    if (!over || active.id === over.id) return;
-    setItems((current) =>
-      arrayMove(
-        [...current],
-        current.findIndex((item) => item.id === active.id),
-        current.findIndex((item) => item.id === over.id),
-      ),
-    );
-  };
+  const [statuses, setStatuses] = useState<ReadonlyArray<(typeof INITIAL)[number]>>(INITIAL);
   return (
     <Card className='w-full max-w-xl'>
       <CardHeader>
         <CardTitle>Task statuses</CardTitle>
       </CardHeader>
       <CardContent>
-        <DndContext
-          id='sortable-statuses'
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          modifiers={[restrictToItemList]}
-          onDragEnd={onDragEnd}>
-          <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
-            <ItemList>
-              {items.map((item) => (
-                <SortableItem key={item.id} id={item.id} render={<Item />}>
-                  <ItemMedia>
-                    <SortableItemHandle aria-label={`Move ${item.title}`} />
-                  </ItemMedia>
-                  <ItemContent className='flex-none'>
-                    <ItemTitle className='whitespace-nowrap'>
-                      <StatusDot intent={item.intent} />
-                      {item.title}
-                    </ItemTitle>
-                  </ItemContent>
-                  <ItemActions className='min-w-0 flex-1 justify-end'>
-                    <span className='truncate text-muted-foreground'>{item.description}</span>
-                    <Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${item.title}`}>
-                      <IconDots />
-                    </Button>
-                  </ItemActions>
-                </SortableItem>
-              ))}
-            </ItemList>
-          </SortableContext>
-        </DndContext>
+        <SortableItemList
+          items={statuses}
+          itemKey={(status) => status.id}
+          onReorder={setStatuses}
+          aria-label='Task statuses'>
+          {(status) => (
+            <Item>
+              <ItemMedia>
+                <SortableItemHandle aria-label={`Move ${status.title}`} />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>
+                  <StatusDot intent={status.intent} />
+                  <span>{status.title}</span>
+                </ItemTitle>
+              </ItemContent>
+              <ItemActions>
+                <ItemMeta>{status.description}</ItemMeta>
+                <Button emphasis='ghost' size='icon-sm' aria-label={`Actions for ${status.title}`}>
+                  <IconDots />
+                </Button>
+              </ItemActions>
+            </Item>
+          )}
+        </SortableItemList>
       </CardContent>
     </Card>
   );
