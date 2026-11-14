@@ -144,6 +144,43 @@ const noOverflowOnCardContent = {
   }),
 };
 
+const INNER_UTILITY =
+  /^(?:flex|grid|block|inline|contents|hidden|border|rounded|shadow|(?:inline|overflow|grid|flex|gap|items|justify|p|px|py|pt|pr|pb|pl|ps|pe|rounded|bg|border|shadow)-.+)$/;
+const BREAKPOINT_VARIANT = /(?:^|:)(?:max-)?(?:sm|md|lg|xl|2xl|@[\w-]+):/;
+
+const noInnerClasses = {
+  meta: {
+    type: 'suggestion',
+    docs: { description: 'A consumer places and sizes a part; it never changes the part inside.' },
+  },
+  create: (context) => {
+    const partNames = new Set();
+    return {
+      ImportDeclaration(node) {
+        if (!node.source.value.startsWith('~/components/ui/')) return;
+        for (const specifier of node.specifiers) partNames.add(specifier.local.name);
+      },
+      JSXOpeningElement(node) {
+        if (node.name.type !== 'JSXIdentifier' || !partNames.has(node.name.name)) return;
+        for (const attribute of node.attributes) {
+          if (attribute.type !== 'JSXAttribute' || !CLASS_ATTRIBUTES.has(attribute.name?.name)) continue;
+          for (const [textNode, text] of classTexts(attribute.value)) {
+            for (const className of text.split(/\s+/)) {
+              const utility = utilityOf(className);
+              const isResponsiveHidden = utility === 'hidden' && BREAKPOINT_VARIANT.test(className);
+              if (!INNER_UTILITY.test(utility) || isResponsiveHidden) continue;
+              context.report({
+                node: textNode,
+                message: `\`${className}\` on \`${node.name.name}\`: a part lays out its inside itself; a consumer only places and sizes it (DESIGN.md, Composition).`,
+              });
+            }
+          }
+        }
+      },
+    };
+  },
+};
+
 export default {
   meta: { name: 'pavo' },
   rules: {
@@ -151,5 +188,6 @@ export default {
     'no-dark-variant': noDarkVariant,
     'no-arbitrary-size': noArbitrarySize,
     'no-overflow-on-card-content': noOverflowOnCardContent,
+    'no-inner-classes': noInnerClasses,
   },
 };
