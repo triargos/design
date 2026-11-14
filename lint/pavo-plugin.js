@@ -174,8 +174,8 @@ const noCompensatingClasses = {
   },
 };
 
-/** The shadcn idiom: an icon's default size unless the caller sized it. */
-const ALLOWED_CLASS_READS = /\[class\*=(?:'size-'|"size-"|size-)\]/g;
+/** The shadcn idiom: an icon's default size and color unless the caller set them. */
+const ALLOWED_CLASS_READS = /\[class\*=(['"]?)(?:size|text)-\1\]/g;
 const CLASS_ATTRIBUTE_SELECTOR = /\[class[~*^$|]?=/;
 const OWN_OR_SIBLING_CLASS_SELECTOR = /^\[&?[+~]?\.[A-Za-z_-]/;
 
