@@ -12,8 +12,7 @@ export function RadioGroupChoiceCard() {
       aria-label='Plan'
       value={value}
       onValueChange={(next) => setValue(String(next))}
-      columns={2}
-      className='max-w-md'>
+      className='max-w-md sm:grid-cols-2'>
       {PLANS.map((plan) => (
         <ChoiceCard key={plan} value={plan}>
           {plan}

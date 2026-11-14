@@ -7,7 +7,7 @@ const PLANS = ['Free', 'Team', 'Business', 'Enterprise'] as const;
 export function RadioGroupInvalid() {
   return (
     <Field invalid className='max-w-md'>
-      <RadioGroup aria-label='Plan' columns={2}>
+      <RadioGroup aria-label='Plan' className='sm:grid-cols-2'>
         {PLANS.map((plan) => (
           <ChoiceCard key={plan} value={plan} aria-invalid>
             {plan}

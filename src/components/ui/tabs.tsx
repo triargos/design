@@ -186,18 +186,16 @@ const RadioContext = React.createContext<RadioState | null>(null);
 
 /**
  * A single choice drawn as tabs, `pill` by default. Every `TabsRadio` is a tab stop and Enter/Space select it — not the
- * roving-focus radio pattern, which hides all but one from Tab and swallows Enter. `fill`: the group spans its
- * container and the tabs share it evenly.
+ * roving-focus radio pattern, which hides all but one from Tab and swallows Enter.
  */
 function TabsRadioGroup({
   className,
   variant = 'pill',
-  fill = false,
   value,
   onValueChange,
   children,
   ...props
-}: Omit<React.ComponentProps<'div'>, 'onChange' | 'defaultValue'> & VariantProp & RadioState & { fill?: boolean }) {
+}: Omit<React.ComponentProps<'div'>, 'onChange' | 'defaultValue'> & VariantProp & RadioState) {
   return (
     <TabsVariantContext value={variant}>
       <RadioContext value={{ value, onValueChange }}>
@@ -205,12 +203,7 @@ function TabsRadioGroup({
           role='radiogroup'
           data-slot='tabs-list'
           data-variant={variant}
-          className={cn(
-            tabsListVariants({ variant }),
-            'w-auto',
-            fill && 'w-full *:data-[slot=tabs-trigger]:flex-1',
-            className,
-          )}
+          className={cn(tabsListVariants({ variant }), 'w-auto', className)}
           {...props}>
           <SlidingIndicator activeSelector='[aria-checked=true]' variant={variant} />
           {children}

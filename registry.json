@@ -997,8 +997,7 @@
       "name": "radio-group",
       "type": "registry:ui",
       "dependencies": [
-        "@base-ui/react@1.8.0",
-        "class-variance-authority@^0.7.1"
+        "@base-ui/react@1.8.0"
       ],
       "registryDependencies": [
         "@pavo/checkbox",

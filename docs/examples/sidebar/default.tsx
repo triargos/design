@@ -71,7 +71,7 @@ export function SidebarDefault() {
                       <SidebarMenu>
                         {group.links.map((link) => (
                           <SidebarMenuItem key={link.label}>
-                            <SidebarMenuButton current={link.current} className='relative w-full'>
+                            <SidebarMenuButton current={link.current} className='relative w-full gap-3'>
                               {link.icon}
                               <span>{link.label}</span>
                               {'count' in link && (

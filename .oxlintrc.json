@@ -18,7 +18,13 @@
     {
       "files": ["docs/**/*.tsx"],
       "rules": {
-        "pavo/no-inner-classes": "warn"
+        "pavo/no-compensating-classes": "error"
+      }
+    },
+    {
+      "files": ["src/components/ui/**"],
+      "rules": {
+        "pavo/no-reading-consumer-classes": "error"
       }
     }
   ]
