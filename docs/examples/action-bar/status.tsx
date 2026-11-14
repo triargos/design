@@ -28,7 +28,7 @@ export function ActionBarStatus() {
         <CardHeader>
           <CardTitle>Project</CardTitle>
         </CardHeader>
-        <CardContent className='p-card'>
+        <CardContent>
           <Field>
             <FieldLabel htmlFor='action-bar-name'>Name</FieldLabel>
             <Input id='action-bar-name' value={name} onChange={(event) => setName(event.target.value)} />

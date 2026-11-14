@@ -11,9 +11,11 @@ export function CardStacked() {
             <CardHeader>
               <CardTitle>{title}</CardTitle>
             </CardHeader>
-            <CardContent className='flex flex-col items-start gap-2 p-card'>
-              <Badge intent='success'>Active</Badge>
-              <p className='text-body text-muted-foreground'>Two cards side by side.</p>
+            <CardContent>
+              <div className='flex flex-col items-start gap-2'>
+                <Badge intent='success'>Active</Badge>
+                <p className='text-body text-muted-foreground'>Two cards side by side.</p>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -22,7 +24,7 @@ export function CardStacked() {
         <CardHeader>
           <CardTitle>Documents</CardTitle>
         </CardHeader>
-        <CardContent className='p-card'>
+        <CardContent>
           <p className='text-body text-muted-foreground'>One card across the full width.</p>
         </CardContent>
       </Card>

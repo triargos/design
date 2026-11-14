@@ -14,7 +14,7 @@ export function CardWithFooter() {
         <CardTitle>Profile</CardTitle>
         <CardDescription>How your teammates see you.</CardDescription>
       </CardHeader>
-      <CardContent className='p-card'>
+      <CardContent>
         <Field>
           <FieldLabel htmlFor='card-name'>Name</FieldLabel>
           <Input id='card-name' defaultValue='Jordan Lee' onChange={() => setDirty(true)} />

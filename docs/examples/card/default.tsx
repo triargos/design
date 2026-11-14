@@ -7,7 +7,7 @@ export function CardDefault() {
       <CardHeader>
         <CardTitle>Files</CardTitle>
       </CardHeader>
-      <CardContent className='p-card'>
+      <CardContent>
         <p className='text-body text-muted-foreground'>Card content.</p>
       </CardContent>
     </Card>

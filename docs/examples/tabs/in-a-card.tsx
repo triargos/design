@@ -7,7 +7,7 @@ export function TabsInACard() {
       <CardHeader>
         <CardTitle>Website redesign</CardTitle>
       </CardHeader>
-      <CardContent className='p-card'>
+      <CardContent>
         <Tabs defaultValue='details'>
           <TabsList variant='underline'>
             <TabsTrigger value='details'>Details</TabsTrigger>

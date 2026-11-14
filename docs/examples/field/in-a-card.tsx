@@ -17,7 +17,7 @@ export function FieldInACard() {
         <CardTitle>Profile</CardTitle>
         <CardDescription>What other members of the workspace see.</CardDescription>
       </CardHeader>
-      <CardContent className='p-card'>
+      <CardContent>
         <FieldGroup>
           <FieldGroup columns={2}>
             <Field>

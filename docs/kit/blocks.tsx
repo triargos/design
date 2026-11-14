@@ -178,7 +178,9 @@ export function Preview({
           <CardTitle className='text-caption text-muted-foreground'>{title}</CardTitle>
         </CardHeader>
       )}
-      <CardContent className={cn('flex flex-wrap items-center gap-related p-card', className)}>{children}</CardContent>
+      <CardContent>
+        <div className={cn('flex flex-wrap items-center gap-related', className)}>{children}</div>
+      </CardContent>
       {footer}
     </Card>
   );
@@ -275,7 +277,11 @@ export function ExampleSection({
 
 /** Labelled `SpecimenRow`s in one card, separated by hairlines. */
 export function SpecimenList({ children }: { children: ReactNode }) {
-  return <CardContent className='flex flex-col'>{children}</CardContent>;
+  return (
+    <CardContent>
+      <div className='flex flex-col'>{children}</div>
+    </CardContent>
+  );
 }
 
 const LABEL_HEIGHT = 20;
@@ -342,7 +348,7 @@ export function GapRuler({ show, children }: { show: boolean; children: ReactNod
 /** One labelled row of a `SpecimenList`: what it is and who owns it on the left, the rendered result on the right. */
 export function SpecimenRow({ name, meta, children }: { name: string; meta?: ReactNode; children: ReactNode }) {
   return (
-    <div className='grid gap-related border-t border-border p-group first:border-t-0 md:grid-cols-[11rem_1fr] md:items-center md:gap-group'>
+    <div className='grid gap-related border-t border-border py-group first:border-t-0 first:pt-0 last:pb-0 md:grid-cols-[11rem_1fr] md:items-center md:gap-group'>
       <div className='flex flex-col'>
         <span className='text-body font-medium'>{name}</span>
         {meta !== undefined && <span className='text-caption text-muted-foreground'>{meta}</span>}

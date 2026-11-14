@@ -129,8 +129,7 @@ function SheetBody({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot='sheet-body'
       className={cn(
         // `pt-tight` (with the header's `group − tight`) leaves room for a field's focus ring at the scroll edge.
-        // Padded, so rows inside never meet its corners: `--edge-radius-*` 0 stops a card's value from leaking in.
-        'flex min-h-0 flex-1 flex-col gap-group overflow-y-auto px-modal pt-tight pb-modal [--edge-radius-bottom:0px] [--edge-radius-top:0px]',
+        'flex min-h-0 flex-1 flex-col gap-group overflow-y-auto px-modal pt-tight pb-modal',
         'in-[[data-slot=sheet-content]:not(:has([data-slot=sheet-header]))]:pt-modal',
         className,
       )}

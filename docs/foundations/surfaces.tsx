@@ -75,7 +75,7 @@ export default defineDocs({
               <CardTitle>Card shell</CardTitle>
               <CardDescription>The title band sits on the tint; the content is a panel below it.</CardDescription>
             </CardHeader>
-            <CardContent className='p-4'>
+            <CardContent>
               <Layer name='Card' owner={<Code>CardContent</Code>}>
                 <div
                   data-surface='popup'

@@ -78,7 +78,9 @@ export default defineDocs({
                   }>
                   <CardTitle>Header action, aligned with row actions</CardTitle>
                 </CardHeader>
-                <CardContent className='p-card text-body text-muted-foreground'>Content, 4px in</CardContent>
+                <CardContent>
+                  <p className='text-body text-muted-foreground'>Content, 4px in</p>
+                </CardContent>
               </Card>
             </SpecimenRow>
             <SpecimenRow name='Alert' meta={<Code>rounded-card · action 6px in</Code>}>

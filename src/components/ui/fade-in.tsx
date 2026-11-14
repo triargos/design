@@ -12,13 +12,13 @@ type FadeInProps = useRender.ComponentProps<'div'> & {
 /**
  * Content that arrives after a load: it fades in over `duration-feedback` when it mounts, or when `animate` turns on.
  * Opacity only: the content lands where it stays, so nothing on the page shifts as it arrives, and reduced motion
- * needs no exception. No layout of its own: pass the gap through `className`, or `render` an element that has one.
+ * needs no exception. No layout of its own: `render` the part that arrives (`render={<ItemList />}`); it keeps its own
+ * slot.
  */
 function FadeIn({ animate = true, className, render, ...props }: FadeInProps) {
   return useRender({
     defaultTagName: 'div',
     render,
-    state: { slot: 'fade-in' },
     props: mergeProps<'div'>(
       {
         className: cn(animate && 'animate-in duration-feedback ease-enter fade-in-0', className),

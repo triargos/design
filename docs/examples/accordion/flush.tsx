@@ -19,7 +19,7 @@ const QUESTIONS = [
   },
 ] as const;
 
-/** `variant='flush'` in `CardContent`: rows to the card edge, the first and last round to its corners, as an `ItemList`. */
+/** `variant='flush'` in `CardContent`: rows to the card edge, as an `ItemList`; the card clips them to its corners. */
 export function AccordionFlush() {
   return (
     <Card className='w-full max-w-md'>
