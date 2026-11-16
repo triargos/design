@@ -13,7 +13,7 @@ export function ItemWithMedia() {
       <CardContent>
         <ItemList>
           <Item>
-            <ItemMedia variant='icon'>
+            <ItemMedia optional variant='icon'>
               <IconFileText />
             </ItemMedia>
             <ItemContent>
@@ -22,7 +22,7 @@ export function ItemWithMedia() {
             </ItemContent>
           </Item>
           <Item>
-            <ItemMedia variant='icon'>
+            <ItemMedia optional variant='icon'>
               <IconFileText />
             </ItemMedia>
             <ItemContent>

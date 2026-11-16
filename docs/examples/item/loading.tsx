@@ -44,7 +44,7 @@ export function ItemLoading() {
           <ItemList aria-label='Documents'>
             {DOCUMENTS.map((document) => (
               <Item key={document.id}>
-                <ItemMedia variant='icon'>
+                <ItemMedia optional variant='icon'>
                   <IconFileText />
                 </ItemMedia>
                 <ItemContent>

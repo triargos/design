@@ -118,7 +118,7 @@ export default defineDocs({
           <CardContent>
             <ItemList>
               <Item>
-                <ItemMedia variant='icon'>
+                <ItemMedia optional variant='icon'>
                   <IconKey />
                 </ItemMedia>
                 <ItemContent>

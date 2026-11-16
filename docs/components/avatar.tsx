@@ -155,7 +155,7 @@ export default defineDocs({
             <ItemList>
               {PEOPLE.slice(0, 2).map((person, index) => (
                 <Item key={person.name}>
-                  <ItemMedia>
+                  <ItemMedia optional>
                     <Avatar size='2xl'>
                       {index === 0 && <AvatarImage src={person.photo} alt={person.name} />}
                       <AvatarFallback>{getInitials(person.name)}</AvatarFallback>

@@ -14,7 +14,7 @@ export function ItemLongTitles() {
       <CardContent>
         <ItemList>
           <Item>
-            <ItemMedia variant='icon'>
+            <ItemMedia optional variant='icon'>
               <IconFileText />
             </ItemMedia>
             <ItemContent>
@@ -23,7 +23,7 @@ export function ItemLongTitles() {
             </ItemContent>
           </Item>
           <Item>
-            <ItemMedia variant='icon'>
+            <ItemMedia optional variant='icon'>
               <IconFileText />
             </ItemMedia>
             <ItemContent>

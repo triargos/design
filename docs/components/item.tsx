@@ -1,9 +1,11 @@
+import { ItemCompact } from '../examples/item/compact';
 import { ItemDefault } from '../examples/item/default';
 import { ItemHeaderAndFooter } from '../examples/item/header-and-footer';
 import { ItemLink } from '../examples/item/link';
 import { ItemLoading } from '../examples/item/loading';
 import { ItemLoadingMore } from '../examples/item/loading-more';
 import { ItemLongTitles } from '../examples/item/long-titles';
+import { ItemOnAPhone } from '../examples/item/on-a-phone';
 import { ItemSelected } from '../examples/item/selected';
 import { ItemSkeletonShapes } from '../examples/item/skeleton-shapes';
 import { ItemScrollElement } from '../examples/item/scroll-element';
@@ -45,6 +47,15 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection title='With actions' description='A status and a ghost menu button on the right.' bare>
         <ItemWithActions />
+      </ExampleSection>
+      <ExampleSection title='Compact' description='A title alone: the actions stay on the line, on a phone too.' bare>
+        <ItemCompact />
+      </ExampleSection>
+      <ExampleSection
+        title='On a phone'
+        description='A members card on a small (360px) and a large (440px) phone, and at 460px, where the media just shows.'
+        bare>
+        <ItemOnAPhone />
       </ExampleSection>
       <ExampleSection
         title='Long titles'

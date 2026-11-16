@@ -50,7 +50,7 @@ export function ListInCardVirtualized() {
         <ItemList virtualized items={MEMBERS} itemKey={(member) => member.id} className='h-96'>
           {(member) => (
             <Item>
-              <ItemMedia>
+              <ItemMedia optional>
                 <Avatar size='2xl'>
                   <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
                 </Avatar>

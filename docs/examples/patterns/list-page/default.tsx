@@ -69,7 +69,7 @@ export function ListPageDefault() {
               <ItemList aria-label='Members'>
                 {shown.map((member) => (
                   <Item key={member.email}>
-                    <ItemMedia>
+                    <ItemMedia optional>
                       <Avatar size='2xl'>
                         <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
                       </Avatar>

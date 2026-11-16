@@ -282,12 +282,12 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
         <ItemListRow key={index} role={undefined} first={index === 0} last={index === rows - 1}>
           <Item>
             {media === 'icon' && (
-              <ItemMedia variant='icon' className='bg-transparent'>
+              <ItemMedia variant='icon' optional className='bg-transparent'>
                 <Skeleton className='size-full rounded-[inherit]' />
               </ItemMedia>
             )}
             {media === 'avatar' && (
-              <ItemMedia>
+              <ItemMedia optional>
                 <Skeleton className='size-10 rounded-full' />
               </ItemMedia>
             )}
@@ -320,8 +320,9 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
  * under the pointer and ends in an `ItemChevron`; a `selected` row fills with `muted`.
  *
- * Below `sm` a row with a description sets its actions on a line of their own, end-aligned: beside them the description
- * squeezes into its two-line clamp and hides what it says. The media and the text stay on the first line.
+ * When the row runs short of room it gives up, in order: an `optional` media (below 24rem inside its padding), the
+ * text's full width (title and description truncate, down to 10rem), and only then the actions' place beside the text:
+ * they wrap under it, start-aligned.
  *
  * With an `ItemMeta` in its actions the content keeps its natural width and the actions take the rest of the line.
  */
@@ -338,8 +339,7 @@ function Item({
     props: mergeProps<'div'>(
       {
         className: cn(
-          'max-sm:has-[[data-slot=item-description]]:*:data-[slot=item-actions]:basis-full max-sm:has-[[data-slot=item-description]]:*:data-[slot=item-actions]:justify-end',
-          'group/item flex w-full flex-wrap items-center gap-(--item-gap) rounded-block border border-transparent px-row-pad-x py-row-pad-y text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none in-data-[slot=item-list]:focus-visible:ring-inset data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
+          '@container/item group/item flex w-full flex-wrap items-center gap-(--item-gap) rounded-block border border-transparent px-row-pad-x py-row-pad-y text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none in-data-[slot=item-list]:focus-visible:ring-inset data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
           className,
         ),
       },
@@ -367,24 +367,37 @@ const itemMediaVariants = cva('flex shrink-0 items-center justify-center gap-row
 function ItemMedia({
   className,
   variant = 'default',
+  optional = false,
   ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof itemMediaVariants>) {
+}: React.ComponentProps<'div'> &
+  VariantProps<typeof itemMediaVariants> & {
+    /**
+     * The row can do without it (an avatar, an icon, an image): it hides when the row is narrower than 24rem inside its
+     * padding. Never on a checkbox or a drag handle.
+     */
+    optional?: boolean;
+  }) {
   return (
     <div
       data-slot='item-media'
       data-variant={variant}
-      className={cn(itemMediaVariants({ variant }), className)}
+      className={cn(itemMediaVariants({ variant }), optional && '@max-sm/item:hidden', className)}
       {...props}
     />
   );
 }
 
+/**
+ * Asks for 10rem and takes the line's free room, truncating its text to fit: the row wraps on that ask, so the actions
+ * drop under the text once less than 10rem would be left beside them (as `Field`). Beside an `ItemMeta` it asks for its
+ * natural width instead.
+ */
 function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='item-content'
       className={cn(
-        'flex min-w-0 flex-1 flex-col gap-tight group-has-[[data-slot=item-meta]]/item:flex-initial [&+[data-slot=item-content]]:flex-none',
+        'flex min-w-0 flex-[1_1_10rem] flex-col gap-tight group-has-[[data-slot=item-meta]]/item:flex-initial [&+[data-slot=item-content]]:flex-none',
         className,
       )}
       {...props}
@@ -416,7 +429,7 @@ function ItemDescription({ className, ...props }: React.ComponentProps<'p'>) {
     <p
       data-slot='item-description'
       className={cn(
-        'line-clamp-2 text-left text-body font-normal text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary',
+        'line-clamp-2 text-left text-body wrap-break-word font-normal text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary',
         className,
       )}
       {...props}

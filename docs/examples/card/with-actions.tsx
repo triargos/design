@@ -36,7 +36,7 @@ export function CardWithActions() {
         <ItemList>
           {MEMBERS.map((member) => (
             <Item key={member.name}>
-              <ItemMedia variant='icon'>
+              <ItemMedia optional variant='icon'>
                 <IconUsers />
               </ItemMedia>
               <ItemContent>
