@@ -53,7 +53,7 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection
         title='On a phone'
-        description='A members card on a small (360px) and a large (440px) phone, and at 460px, where the media just shows.'
+        description='A members card on a small (360px) and a large (440px) phone. At 360px the actions of one row would wrap beside its avatar, so no row shows its media.'
         bare>
         <ItemOnAPhone />
       </ExampleSection>

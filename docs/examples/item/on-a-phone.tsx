@@ -11,7 +11,6 @@ import { PhoneFrame } from '../../kit/phone-frame';
 const PHONES = [
   { label: '360px · small Android', className: 'w-[360px]' },
   { label: '440px · large iPhone', className: 'w-[440px]' },
-  { label: '460px · media just shows', className: 'w-[460px]' },
 ];
 
 const MEMBERS = [
@@ -104,7 +103,7 @@ function Members() {
   );
 }
 
-/** A members card on a small and a large phone, and just wide enough for the media; each with a 16px page gutter. */
+/** A members card on a small and a large phone, each with a 16px page gutter. */
 export function ItemOnAPhone() {
   return (
     <div className='flex flex-wrap items-start gap-6'>

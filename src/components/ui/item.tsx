@@ -124,7 +124,10 @@ function ItemListFrame({
   'aria-labelledby': ariaLabelledBy,
   ...props
 }: ItemListElementProps & { children?: React.ReactNode }) {
-  const rowsRef = useListFold();
+  const rowsRef = React.useRef<HTMLDivElement>(null);
+  // Before the fold: it records the rows' height after the first decision and never springs it.
+  useMediaFit(rowsRef);
+  useListFold(rowsRef);
   return (
     <div data-slot='item-list' data-edge='' className={cn('data-folding:overflow-clip', className)} {...props}>
       <div ref={rowsRef} role='list' aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
@@ -146,8 +149,7 @@ const foldsItself = (animation: Animation) =>
  * otherwise, so it never clips a row. A resize from a row's own height animation passes through: a spring behind it
  * would trail the row and overshoot after it settled.
  */
-function useListFold() {
-  const rowsRef = React.useRef<HTMLDivElement>(null);
+function useListFold(rowsRef: React.RefObject<HTMLElement | null>) {
   const reduced = useReducedMotion();
   React.useLayoutEffect(() => {
     const rows = rowsRef.current;
@@ -179,8 +181,72 @@ function useListFold() {
       observer.disconnect();
       fold?.cancel();
     };
-  }, [reduced]);
-  return rowsRef;
+  }, [reduced, rowsRef]);
+}
+
+/** What the list decided, and at which width: a new width decides again. */
+type MediaFit = { readonly width: number; readonly media: 'shown' | 'hidden' };
+
+/**
+ * The list's next decision. It keeps a hidden media at the same width and measures in every other case: the first
+ * run, a new width, or new rows while the media still shows.
+ */
+const nextMediaFit = (previous: MediaFit | undefined, width: number, wraps: () => boolean): MediaFit =>
+  previous?.width === width && previous.media === 'hidden' ? previous : { width, media: wraps() ? 'hidden' : 'shown' };
+
+/** With the media shown: the row has an `optional` media and its actions start below its text. */
+const actionsWrapBesideMedia = (item: Element): boolean => {
+  const media = item.querySelector(':scope > [data-slot=item-media][data-optional]');
+  const content = item.querySelector(':scope > [data-slot=item-content]');
+  const actions = item.querySelector(':scope > [data-slot=item-actions]');
+  return (
+    media !== null &&
+    content !== null &&
+    actions !== null &&
+    actions.getBoundingClientRect().top >= content.getBoundingClientRect().bottom
+  );
+};
+
+/**
+ * Hides every `optional` media in the list (`data-media-hidden` on the list) once, with the media shown, one row's
+ * actions sit below its text. It decides again only when the list's width changes; until then a hidden media stays
+ * hidden, so rows that mount while scrolling cannot bring it back or flip it. Runs before paint: no frame shows the
+ * media it hides.
+ */
+function useMediaFit(rowsRef: React.RefObject<HTMLElement | null>) {
+  React.useLayoutEffect(() => {
+    const rows = rowsRef.current;
+    const list = rows?.parentElement;
+    if (!rows || !list) return;
+    let state: MediaFit | undefined;
+    const items = () => rows.querySelectorAll('[data-slot=item]');
+    const wraps = () => {
+      delete list.dataset.mediaHidden;
+      return [...items()].some(actionsWrapBesideMedia);
+    };
+    const fit = () => {
+      state = nextMediaFit(state, list.clientWidth, wraps);
+      list.toggleAttribute('data-media-hidden', state.media === 'hidden');
+    };
+    const resize = new ResizeObserver(fit);
+    const observeRows = () => {
+      for (const item of items()) resize.observe(item);
+    };
+    // A virtualized list mounts rows inside a box of fixed height: only a mutation tells it about them.
+    const mutation = new MutationObserver(() => {
+      observeRows();
+      fit();
+    });
+    fit();
+    resize.observe(list);
+    resize.observe(rows);
+    observeRows();
+    mutation.observe(rows, { childList: true, subtree: true });
+    return () => {
+      resize.disconnect();
+      mutation.disconnect();
+    };
+  }, [rowsRef]);
 }
 
 function VirtualizedItemList<T>({
@@ -203,6 +269,12 @@ function VirtualizedItemList<T>({
   const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
   const scroller = ownScroll ? container : scrollElement;
   const [list, setList] = React.useState<HTMLDivElement | null>(null);
+  const rowsRef = React.useRef<HTMLDivElement>(null);
+  const setRows = React.useCallback((element: HTMLDivElement | null) => {
+    rowsRef.current = element;
+    setList(element);
+  }, []);
+  useMediaFit(rowsRef);
   const { virtualizer, scrollMargin, sentinelRef } = useVirtualRows({
     items,
     itemKey,
@@ -229,7 +301,7 @@ function VirtualizedItemList<T>({
       )}
       {...props}>
       <div
-        ref={setList}
+        ref={setRows}
         role='list'
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
@@ -320,9 +392,10 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
  * under the pointer and ends in an `ItemChevron`; a `selected` row fills with `muted`.
  *
- * When the row runs short of room it gives up, in order: an `optional` media (below 24rem inside its padding), the
- * text's full width (title and description truncate, down to 10rem), and only then the actions' place beside the text:
- * they wrap under it, start-aligned.
+ * When the row runs short of room it gives up, in order: an `optional` media (in every row of its `ItemList`, once one
+ * row's actions would wrap beside it), the text's full width (the title ends in an ellipsis, the description at its
+ * second line, down to 10rem), and only then the actions' place beside the text: they move to a line of their own, at
+ * the row's start edge.
  *
  * With an `ItemMeta` in its actions the content keeps its natural width and the actions take the rest of the line.
  */
@@ -339,7 +412,7 @@ function Item({
     props: mergeProps<'div'>(
       {
         className: cn(
-          '@container/item group/item flex w-full flex-wrap items-center gap-(--item-gap) rounded-block border border-transparent px-row-pad-x py-row-pad-y text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none in-data-[slot=item-list]:focus-visible:ring-inset data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
+          'group/item flex w-full flex-wrap items-center gap-(--item-gap) rounded-block border border-transparent px-row-pad-x py-row-pad-y text-body transition-colors duration-feedback outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/24 in-data-[slot=item-list]:rounded-none in-data-[slot=item-list]:border-none in-data-[slot=item-list]:focus-visible:ring-inset data-selected:bg-muted [a]:no-underline [a]:hover:bg-row-hover',
           className,
         ),
       },
@@ -372,8 +445,9 @@ function ItemMedia({
 }: React.ComponentProps<'div'> &
   VariantProps<typeof itemMediaVariants> & {
     /**
-     * The row can do without it (an avatar, an icon, an image): it hides when the row is narrower than 24rem inside its
-     * padding. Never on a checkbox or a drag handle.
+     * The row can do without it (an avatar, an icon, an image): it hides in every row of its `ItemList` once one row's
+     * actions would wrap beside it. Outside an `ItemList` nothing measures, and it always shows. Never on a checkbox or a
+     * drag handle.
      */
     optional?: boolean;
   }) {
@@ -381,16 +455,17 @@ function ItemMedia({
     <div
       data-slot='item-media'
       data-variant={variant}
-      className={cn(itemMediaVariants({ variant }), optional && '@max-sm/item:hidden', className)}
+      data-optional={optional ? '' : undefined}
+      className={cn(itemMediaVariants({ variant }), optional && 'in-data-[media-hidden]:hidden', className)}
       {...props}
     />
   );
 }
 
 /**
- * Asks for 10rem and takes the line's free room, truncating its text to fit: the row wraps on that ask, so the actions
- * drop under the text once less than 10rem would be left beside them (as `Field`). Beside an `ItemMeta` it asks for its
- * natural width instead.
+ * Asks for 10rem and takes the line's free room, its title and description shortening to fit: the row wraps on that
+ * ask, so the actions move to a line of their own once less than 10rem would be left beside them (as `Field`). Beside
+ * an `ItemMeta` it asks for its natural width instead.
  */
 function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
