@@ -125,8 +125,8 @@ function ItemListFrame({
   ...props
 }: ItemListElementProps & { children?: React.ReactNode }) {
   const rowsRef = React.useRef<HTMLDivElement>(null);
-  // Before the fold: it records the rows' height after the first decision and never springs it.
-  useListFit(rowsRef);
+  // Before the fold: it records the rows' height with the needs set and never springs them.
+  useListNeeds(rowsRef, { keepMax: false });
   useListFold(rowsRef);
   return (
     <div data-slot='item-list' data-edge='' className={cn('data-folding:overflow-clip', className)} {...props}>
@@ -184,79 +184,75 @@ function useListFold(rowsRef: React.RefObject<HTMLElement | null>) {
   }, [reduced, rowsRef]);
 }
 
-/**
- * How every row of a list lays out, from the roomiest: all on one line; without its `optional` media; its actions on a
- * line of their own. The list takes the first that fits every row.
- */
-const LIST_FITS = ['full', 'without-media', 'stacked'] as const;
-type ListFit = (typeof LIST_FITS)[number];
+/** The width a row needs on one line, from its own parts: neither changes with the list's width. */
+type RowNeeds = { readonly full: number; readonly withoutMedia: number };
 
-/** What the list decided, and at which width: a new width decides again. */
-type ListFitState = { readonly width: number; readonly fit: ListFit };
+const NO_NEEDS: RowNeeds = { full: 0, withoutMedia: 0 };
 
-/** The more compact of two fits. */
-const compactest = (a: ListFit, b: ListFit): ListFit => (LIST_FITS.indexOf(a) >= LIST_FITS.indexOf(b) ? a : b);
+const widest = (a: RowNeeds, b: RowNeeds): RowNeeds => ({
+  full: Math.max(a.full, b.full),
+  withoutMedia: Math.max(a.withoutMedia, b.withoutMedia),
+});
 
-/**
- * The list's next decision. A new width measures afresh; at the same width the fit only grows more compact, so rows
- * that mount while scrolling cannot flip it back. `stacked` at the same width has nothing left to measure.
- */
-const nextListFit = (previous: ListFitState | undefined, width: number, measure: () => ListFit): ListFitState =>
-  previous?.width === width && previous.fit === 'stacked'
-    ? previous
-    : { width, fit: previous?.width === width ? compactest(previous.fit, measure()) : measure() };
-
-/** The row's actions start below its text. */
-const actionsWrap = (item: Element): boolean => {
-  const content = item.querySelector(':scope > [data-slot=item-content]');
-  const actions = item.querySelector(':scope > [data-slot=item-actions]');
-  return (
-    content !== null &&
-    actions !== null &&
-    actions.getBoundingClientRect().top >= content.getBoundingClientRect().bottom
-  );
+/** From the first child's start to the last child's end: the width the children take, whatever box holds them. */
+const childrenWidth = (element: Element, skip?: string): number => {
+  const boxes = [...element.children]
+    .filter((child) => skip === undefined || !child.matches(skip))
+    .map((child) => child.getBoundingClientRect());
+  return boxes.length === 0
+    ? 0
+    : Math.max(...boxes.map((box) => box.right)) - Math.min(...boxes.map((box) => box.left));
 };
 
 /**
- * Lays out every row of the list alike (`data-fit` on the list): the first of `LIST_FITS` in which no row's actions
- * wrap, else `stacked`. It decides again only when the list's width changes; until then the fit only grows more
- * compact. Runs before paint: no frame shows a fit it drops.
+ * A row's parts on its line, each at the width it needs: the content its `flex-basis` (10rem), the actions their
+ * children (also while the list stretches them; an `ItemMeta` counts nothing, it truncates), the rest its own box (an
+ * `optional` media measured while the list shows it).
  */
-function useListFit(rowsRef: React.RefObject<HTMLElement | null>) {
+const partWidth = (part: Element): number =>
+  part.matches('[data-slot=item-content]')
+    ? parseFloat(getComputedStyle(part).flexBasis) || 0
+    : part.matches('[data-slot=item-actions]')
+      ? childrenWidth(part, '[data-slot=item-meta]')
+      : part.getBoundingClientRect().width;
+
+const rowNeeds = (item: Element): RowNeeds => {
+  const gap = parseFloat(getComputedStyle(item).columnGap) || 0;
+  const parts = [...item.children].filter((part) => !part.matches('[data-slot=item-header], [data-slot=item-footer]'));
+  const line = (on: ReadonlyArray<Element>) =>
+    on.reduce((width, part) => width + partWidth(part), 0) + gap * Math.max(on.length - 1, 0);
+  return { full: line(parts), withoutMedia: line(parts.filter((part) => !part.matches('[data-optional]'))) };
+};
+
+/**
+ * Hands every row of the list the widths its widest row needs (`--item-need-full`, `--item-need-without-media` on the
+ * list); the rows' own CSS compares them with their width, so a resize needs no script. It measures the rows' parts,
+ * never the list's width: before paint, then when rows or their text change and when a font loads. `keepMax` keeps the
+ * widest row it has seen, for a list that renders only the rows in view: scrolling cannot loosen it.
+ */
+function useListNeeds(rowsRef: React.RefObject<HTMLElement | null>, { keepMax }: { readonly keepMax: boolean }) {
   React.useLayoutEffect(() => {
     const rows = rowsRef.current;
     const list = rows?.parentElement;
     if (!rows || !list) return;
-    let state: ListFitState | undefined;
-    const items = () => rows.querySelectorAll('[data-slot=item]');
-    const wrapsAt = (fit: ListFit) => {
-      list.dataset.fit = fit;
-      return [...items()].some(actionsWrap);
+    let needs = NO_NEEDS;
+    const measure = () => {
+      // Shows a hidden `optional` media for the measure: a tile has no children to measure it by. Same task, no paint.
+      list.dataset.measuring = '';
+      needs = [...rows.querySelectorAll('[data-slot=item]')].map(rowNeeds).reduce(widest, keepMax ? needs : NO_NEEDS);
+      delete list.dataset.measuring;
+      list.style.setProperty('--item-need-full', `${needs.full}px`);
+      list.style.setProperty('--item-need-without-media', `${needs.withoutMedia}px`);
     };
-    const measure = (): ListFit => LIST_FITS.find((fit) => fit === 'stacked' || !wrapsAt(fit)) ?? 'stacked';
-    const fit = () => {
-      state = nextListFit(state, list.clientWidth, measure);
-      list.dataset.fit = state.fit;
-    };
-    const resize = new ResizeObserver(fit);
-    const observeRows = () => {
-      for (const item of items()) resize.observe(item);
-    };
-    // A virtualized list mounts rows inside a box of fixed height: only a mutation tells it about them.
-    const mutation = new MutationObserver(() => {
-      observeRows();
-      fit();
-    });
-    fit();
-    resize.observe(list);
-    resize.observe(rows);
-    observeRows();
-    mutation.observe(rows, { childList: true, subtree: true });
+    const mutation = new MutationObserver(measure);
+    measure();
+    mutation.observe(rows, { childList: true, characterData: true, subtree: true });
+    document.fonts.addEventListener('loadingdone', measure);
     return () => {
-      resize.disconnect();
       mutation.disconnect();
+      document.fonts.removeEventListener('loadingdone', measure);
     };
-  }, [rowsRef]);
+  }, [rowsRef, keepMax]);
 }
 
 function VirtualizedItemList<T>({
@@ -284,7 +280,7 @@ function VirtualizedItemList<T>({
     rowsRef.current = element;
     setList(element);
   }, []);
-  useListFit(rowsRef);
+  useListNeeds(rowsRef, { keepMax: true });
   const { virtualizer, scrollMargin, sentinelRef } = useVirtualRows({
     items,
     itemKey,
@@ -364,12 +360,12 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
         <ItemListRow key={index} role={undefined} first={index === 0} last={index === rows - 1}>
           <Item>
             {media === 'icon' && (
-              <ItemMedia variant='icon' optional className='bg-transparent'>
+              <ItemMedia variant='icon' className='bg-transparent'>
                 <Skeleton className='size-full rounded-[inherit]' />
               </ItemMedia>
             )}
             {media === 'avatar' && (
-              <ItemMedia optional>
+              <ItemMedia>
                 <Skeleton className='size-10 rounded-full' />
               </ItemMedia>
             )}
@@ -455,8 +451,8 @@ function ItemMedia({
   VariantProps<typeof itemMediaVariants> & {
     /**
      * The row can do without it (an avatar, an icon, an image): it hides in every row of its `ItemList` once one row's
-     * actions would not fit beside its text with it. Outside an `ItemList` nothing measures, and it always shows. Never on
-     * a checkbox or a drag handle.
+     * actions would not fit beside its text with it. Outside an `ItemList` nothing measures, and it always shows. It is
+     * decoration, shown or not: hidden from assistive tech and inert, so never a checkbox, a drag handle or a link.
      */
     optional?: boolean;
   }) {
@@ -465,9 +461,13 @@ function ItemMedia({
       data-slot='item-media'
       data-variant={variant}
       data-optional={optional ? '' : undefined}
+      aria-hidden={optional || undefined}
+      inert={optional || undefined}
       className={cn(
         itemMediaVariants({ variant }),
-        optional && 'in-data-[fit=without-media]:hidden in-data-[fit=stacked]:hidden',
+        // Narrower than the list's widest row needs with its media: no width, and no gap after it.
+        optional &&
+          'max-w-[clamp(0px,(100%_-_var(--item-need-full,0px))_*_1000,999px)] overflow-clip me-[clamp(calc(-1_*_var(--item-gap)),(100%_-_var(--item-need-full,0px))_*_1000,0px)] in-data-measuring:max-w-none in-data-measuring:me-0',
         className,
       )}
       {...props}
@@ -477,8 +477,8 @@ function ItemMedia({
 
 /**
  * Asks for 10rem and takes the line's free room, its title and description shortening to fit: the row wraps on that
- * ask (as `Field`), which is how its `ItemList` sees that the actions no longer fit beside it. Beside an `ItemMeta` it
- * asks for its natural width instead.
+ * ask (as `Field`), and its `ItemList` reads the same ask as the text's share of a row. Beside an `ItemMeta` it asks for
+ * its natural width instead.
  */
 function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -530,7 +530,8 @@ function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot='item-actions'
       className={cn(
-        'flex items-center gap-related in-data-[fit=stacked]:basis-full has-data-[slot=item-meta]:flex-1',
+        // Narrower than the list's widest row needs without media: the whole line, in every row.
+        'flex min-w-[clamp(0%,(var(--item-need-without-media,0px)_-_100%)_*_1000,100%)] items-center gap-related has-data-[slot=item-meta]:flex-1',
         className,
       )}
       {...props}
