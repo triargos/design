@@ -150,3 +150,30 @@ No automated tests (UI layout; CLAUDE.md: check UI by hand). `tsc`, `pnpm lint`,
 | Sortable page, desktop + 390px                          | unchanged; grip never hides                                                                                               |
 | List in Card → Virtualized at 390px, scrolled           | media decision does not flip while scrolling                                                                              |
 | Long titles example (icons) on desktop                  | icons visible (no actions → never hides)                                                                                  |
+
+## Revision: the whole list stacks its actions too
+
+Rows wrapping one after another looked restless, so rule 2 is list-wide too. `useMediaFit` became `useListFit`:
+
+```ts
+/** From the roomiest: all on one line; without `optional` media; actions on a line of their own. */
+const LIST_FITS = ['full', 'without-media', 'stacked'] as const;
+type ListFit = (typeof LIST_FITS)[number];
+type ListFitState = { readonly width: number; readonly fit: ListFit };
+
+/** New width: measure afresh. Same width: only more compact (`stacked` has nothing left to measure). */
+const nextListFit = (previous: ListFitState | undefined, width: number, measure: () => ListFit): ListFitState =>
+  previous?.width === width && previous.fit === 'stacked'
+    ? previous
+    : { width, fit: previous?.width === width ? compactest(previous.fit, measure()) : measure() };
+
+// measure: the first fit in which no row's actions sit below its text, else 'stacked'
+const measure = (): ListFit => LIST_FITS.find((fit) => fit === 'stacked' || !wrapsAt(fit)) ?? 'stacked';
+```
+
+- `data-fit` on the list replaces `data-media-hidden`.
+- `ItemMedia optional`: `in-data-[fit=without-media]:hidden in-data-[fit=stacked]:hidden`.
+- `ItemActions`: `in-data-[fit=stacked]:basis-full`.
+- Every row counts, with or without `optional` media.
+
+Verified (slider sweep, 8px steps): `full` ≥ 448px, `without-media` 400–440px, `stacked` ≤ 392px, the same down and up.

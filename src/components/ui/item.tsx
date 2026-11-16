@@ -126,7 +126,7 @@ function ItemListFrame({
 }: ItemListElementProps & { children?: React.ReactNode }) {
   const rowsRef = React.useRef<HTMLDivElement>(null);
   // Before the fold: it records the rows' height after the first decision and never springs it.
-  useMediaFit(rowsRef);
+  useListFit(rowsRef);
   useListFold(rowsRef);
   return (
     <div data-slot='item-list' data-edge='' className={cn('data-folding:overflow-clip', className)} {...props}>
@@ -184,23 +184,33 @@ function useListFold(rowsRef: React.RefObject<HTMLElement | null>) {
   }, [reduced, rowsRef]);
 }
 
+/**
+ * How every row of a list lays out, from the roomiest: all on one line; without its `optional` media; its actions on a
+ * line of their own. The list takes the first that fits every row.
+ */
+const LIST_FITS = ['full', 'without-media', 'stacked'] as const;
+type ListFit = (typeof LIST_FITS)[number];
+
 /** What the list decided, and at which width: a new width decides again. */
-type MediaFit = { readonly width: number; readonly media: 'shown' | 'hidden' };
+type ListFitState = { readonly width: number; readonly fit: ListFit };
+
+/** The more compact of two fits. */
+const compactest = (a: ListFit, b: ListFit): ListFit => (LIST_FITS.indexOf(a) >= LIST_FITS.indexOf(b) ? a : b);
 
 /**
- * The list's next decision. It keeps a hidden media at the same width and measures in every other case: the first
- * run, a new width, or new rows while the media still shows.
+ * The list's next decision. A new width measures afresh; at the same width the fit only grows more compact, so rows
+ * that mount while scrolling cannot flip it back. `stacked` at the same width has nothing left to measure.
  */
-const nextMediaFit = (previous: MediaFit | undefined, width: number, wraps: () => boolean): MediaFit =>
-  previous?.width === width && previous.media === 'hidden' ? previous : { width, media: wraps() ? 'hidden' : 'shown' };
+const nextListFit = (previous: ListFitState | undefined, width: number, measure: () => ListFit): ListFitState =>
+  previous?.width === width && previous.fit === 'stacked'
+    ? previous
+    : { width, fit: previous?.width === width ? compactest(previous.fit, measure()) : measure() };
 
-/** With the media shown: the row has an `optional` media and its actions start below its text. */
-const actionsWrapBesideMedia = (item: Element): boolean => {
-  const media = item.querySelector(':scope > [data-slot=item-media][data-optional]');
+/** The row's actions start below its text. */
+const actionsWrap = (item: Element): boolean => {
   const content = item.querySelector(':scope > [data-slot=item-content]');
   const actions = item.querySelector(':scope > [data-slot=item-actions]');
   return (
-    media !== null &&
     content !== null &&
     actions !== null &&
     actions.getBoundingClientRect().top >= content.getBoundingClientRect().bottom
@@ -208,25 +218,25 @@ const actionsWrapBesideMedia = (item: Element): boolean => {
 };
 
 /**
- * Hides every `optional` media in the list (`data-media-hidden` on the list) once, with the media shown, one row's
- * actions sit below its text. It decides again only when the list's width changes; until then a hidden media stays
- * hidden, so rows that mount while scrolling cannot bring it back or flip it. Runs before paint: no frame shows the
- * media it hides.
+ * Lays out every row of the list alike (`data-fit` on the list): the first of `LIST_FITS` in which no row's actions
+ * wrap, else `stacked`. It decides again only when the list's width changes; until then the fit only grows more
+ * compact. Runs before paint: no frame shows a fit it drops.
  */
-function useMediaFit(rowsRef: React.RefObject<HTMLElement | null>) {
+function useListFit(rowsRef: React.RefObject<HTMLElement | null>) {
   React.useLayoutEffect(() => {
     const rows = rowsRef.current;
     const list = rows?.parentElement;
     if (!rows || !list) return;
-    let state: MediaFit | undefined;
+    let state: ListFitState | undefined;
     const items = () => rows.querySelectorAll('[data-slot=item]');
-    const wraps = () => {
-      delete list.dataset.mediaHidden;
-      return [...items()].some(actionsWrapBesideMedia);
+    const wrapsAt = (fit: ListFit) => {
+      list.dataset.fit = fit;
+      return [...items()].some(actionsWrap);
     };
+    const measure = (): ListFit => LIST_FITS.find((fit) => fit === 'stacked' || !wrapsAt(fit)) ?? 'stacked';
     const fit = () => {
-      state = nextMediaFit(state, list.clientWidth, wraps);
-      list.toggleAttribute('data-media-hidden', state.media === 'hidden');
+      state = nextListFit(state, list.clientWidth, measure);
+      list.dataset.fit = state.fit;
     };
     const resize = new ResizeObserver(fit);
     const observeRows = () => {
@@ -274,7 +284,7 @@ function VirtualizedItemList<T>({
     rowsRef.current = element;
     setList(element);
   }, []);
-  useMediaFit(rowsRef);
+  useListFit(rowsRef);
   const { virtualizer, scrollMargin, sentinelRef } = useVirtualRows({
     items,
     itemKey,
@@ -392,10 +402,9 @@ function ItemListSkeleton({ rows = 3, media, description = true, className, ...p
  * A row: media, content, actions. In an `ItemList` it loses its own corners and edge. A link row fills with `row-hover`
  * under the pointer and ends in an `ItemChevron`; a `selected` row fills with `muted`.
  *
- * When the row runs short of room it gives up, in order: an `optional` media (in every row of its `ItemList`, once one
- * row's actions would wrap beside it), the text's full width (the title ends in an ellipsis, the description at its
- * second line, down to 10rem), and only then the actions' place beside the text: they move to a line of their own, at
- * the row's start edge.
+ * In an `ItemList` every row lays out alike. Short of room the list gives up, in order: the text's full width (the
+ * title ends in an ellipsis, the description at its second line, down to 10rem), its `optional` media, and then the
+ * actions' place beside the text: in every row they move to a line of their own, at the row's start edge.
  *
  * With an `ItemMeta` in its actions the content keeps its natural width and the actions take the rest of the line.
  */
@@ -446,8 +455,8 @@ function ItemMedia({
   VariantProps<typeof itemMediaVariants> & {
     /**
      * The row can do without it (an avatar, an icon, an image): it hides in every row of its `ItemList` once one row's
-     * actions would wrap beside it. Outside an `ItemList` nothing measures, and it always shows. Never on a checkbox or a
-     * drag handle.
+     * actions would not fit beside its text with it. Outside an `ItemList` nothing measures, and it always shows. Never on
+     * a checkbox or a drag handle.
      */
     optional?: boolean;
   }) {
@@ -456,7 +465,11 @@ function ItemMedia({
       data-slot='item-media'
       data-variant={variant}
       data-optional={optional ? '' : undefined}
-      className={cn(itemMediaVariants({ variant }), optional && 'in-data-[media-hidden]:hidden', className)}
+      className={cn(
+        itemMediaVariants({ variant }),
+        optional && 'in-data-[fit=without-media]:hidden in-data-[fit=stacked]:hidden',
+        className,
+      )}
       {...props}
     />
   );
@@ -464,8 +477,8 @@ function ItemMedia({
 
 /**
  * Asks for 10rem and takes the line's free room, its title and description shortening to fit: the row wraps on that
- * ask, so the actions move to a line of their own once less than 10rem would be left beside them (as `Field`). Beside
- * an `ItemMeta` it asks for its natural width instead.
+ * ask (as `Field`), which is how its `ItemList` sees that the actions no longer fit beside it. Beside an `ItemMeta` it
+ * asks for its natural width instead.
  */
 function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -516,7 +529,10 @@ function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='item-actions'
-      className={cn('flex items-center gap-related has-data-[slot=item-meta]:flex-1', className)}
+      className={cn(
+        'flex items-center gap-related in-data-[fit=stacked]:basis-full has-data-[slot=item-meta]:flex-1',
+        className,
+      )}
       {...props}
     />
   );

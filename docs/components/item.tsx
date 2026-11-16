@@ -1,11 +1,10 @@
-import { ItemCompact } from '../examples/item/compact';
 import { ItemDefault } from '../examples/item/default';
 import { ItemHeaderAndFooter } from '../examples/item/header-and-footer';
 import { ItemLink } from '../examples/item/link';
 import { ItemLoading } from '../examples/item/loading';
 import { ItemLoadingMore } from '../examples/item/loading-more';
 import { ItemLongTitles } from '../examples/item/long-titles';
-import { ItemOnAPhone } from '../examples/item/on-a-phone';
+import { ItemNarrowLists } from '../examples/item/narrow-lists';
 import { ItemSelected } from '../examples/item/selected';
 import { ItemSkeletonShapes } from '../examples/item/skeleton-shapes';
 import { ItemScrollElement } from '../examples/item/scroll-element';
@@ -48,14 +47,11 @@ export default defineDocs({
       <ExampleSection title='With actions' description='A status and a ghost menu button on the right.' bare>
         <ItemWithActions />
       </ExampleSection>
-      <ExampleSection title='Compact' description='A title alone: the actions stay on the line, on a phone too.' bare>
-        <ItemCompact />
-      </ExampleSection>
       <ExampleSection
-        title='On a phone'
-        description='A members card on a small (360px) and a large (440px) phone. At 360px the actions of one row would wrap beside its avatar, so no row shows its media.'
+        title='Narrow lists'
+        description='Drag the width: every row lays out alike. The list truncates the text, then hides every optional media, and only then moves the actions of every row to a line of their own.'
         bare>
-        <ItemOnAPhone />
+        <ItemNarrowLists />
       </ExampleSection>
       <ExampleSection
         title='Long titles'
