@@ -3,6 +3,7 @@ import { AccordionDefault } from '../examples/accordion/default';
 import { AccordionFlush } from '../examples/accordion/flush';
 import { AccordionInASheet } from '../examples/accordion/in-a-sheet';
 import { AccordionMultiple } from '../examples/accordion/multiple';
+import { AccordionWithActions } from '../examples/accordion/with-actions';
 import { Code, ExampleSection, FoundationPage } from '../kit/blocks';
 import { defineDocs } from '../kit/docs';
 
@@ -43,6 +44,16 @@ export default defineDocs({
           </>
         }>
         <AccordionControlled />
+      </ExampleSection>
+      <ExampleSection
+        title='With actions'
+        description={
+          <>
+            <Code>actions</Code> on the trigger: the item's buttons beside it, not in it. Open, an <Code>ItemList</Code>{' '}
+            starts on the row's edge.
+          </>
+        }>
+        <AccordionWithActions />
       </ExampleSection>
       <ExampleSection
         title='In a sheet'

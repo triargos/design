@@ -109,13 +109,38 @@ const accordionTriggerVariants = cva(
   },
 );
 
-function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.Trigger.Props) {
+/**
+ * `actions`: buttons for the item (edit, delete) on the trigger's line, beside it, not in it: a button inside a button
+ * is invalid. A row with actions holds several targets, so it does not fill under the pointer (as an `Item` with
+ * actions); the trigger still opens it on a click.
+ */
+function AccordionTrigger({
+  className,
+  children,
+  actions,
+  ...props
+}: AccordionPrimitive.Trigger.Props & { actions?: React.ReactNode }) {
   const variant = React.use(AccordionVariantContext);
+  // What React renders as nothing is no actions: `actions={canEdit && <Button />}` keeps the plain trigger.
+  const hasActions = actions != null && typeof actions !== 'boolean' && actions !== '';
   return (
-    <AccordionPrimitive.Header className='flex min-w-0'>
+    <AccordionPrimitive.Header
+      className={cn(
+        'flex min-w-0',
+        // The trigger's focus ring goes round the whole line, the actions in it, not round the trigger alone.
+        hasActions && [
+          'items-center has-[[data-slot=accordion-trigger]:focus-visible]:ring-3 has-[[data-slot=accordion-trigger]:focus-visible]:ring-ring/24',
+          variant === 'flush' ? 'has-[[data-slot=accordion-trigger]:focus-visible]:ring-inset' : 'rounded-area',
+        ],
+      )}>
       <AccordionPrimitive.Trigger
         data-slot='accordion-trigger'
-        className={cn(accordionTriggerVariants({ variant }), className)}
+        className={cn(
+          accordionTriggerVariants({ variant }),
+          // No fill (see above), the ring on the line; the actions end the row with its padding.
+          hasActions && 'min-w-0 pe-0 hover:bg-transparent focus-visible:ring-0',
+          className,
+        )}
         {...props}>
         <span
           data-slot='accordion-trigger-icon'
@@ -124,6 +149,18 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
         </span>
         {children}
       </AccordionPrimitive.Trigger>
+      {hasActions && (
+        <div
+          data-slot='accordion-actions'
+          className={cn(
+            'flex shrink-0 items-center gap-tight ps-related',
+            variant === 'flush'
+              ? 'pe-[var(--list-row-pad-x,var(--spacing-card))] in-data-[slot=sheet-body]:pe-modal'
+              : 'pe-(--accordion-pad)',
+          )}>
+          {actions}
+        </div>
+      )}
     </AccordionPrimitive.Header>
   );
 }
@@ -136,8 +173,9 @@ const accordionContentVariants = cva(
       variant: {
         default:
           'ps-[calc(var(--accordion-pad)+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-(--accordion-content-pad-end) pb-(--accordion-pad)',
+        // An `ItemList` in it starts on the row's edge, under the indicator: its rows need the width.
         flush:
-          'ps-[calc(var(--list-row-pad-x,var(--spacing-card))+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-[var(--list-row-pad-x,var(--spacing-card))] pb-[var(--list-row-pad-bottom,var(--accordion-flush-content-pad-bottom))] in-data-[slot=sheet-body]:ps-[calc(var(--spacing-modal)+var(--spacing-icon-lg)+var(--spacing-row-gap))] in-data-[slot=sheet-body]:pe-modal',
+          'has-[[data-slot=item-list]]:ps-[var(--list-row-pad-x,var(--spacing-card))] ps-[calc(var(--list-row-pad-x,var(--spacing-card))+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-[var(--list-row-pad-x,var(--spacing-card))] pb-[var(--list-row-pad-bottom,var(--accordion-flush-content-pad-bottom))] in-data-[slot=sheet-body]:ps-[calc(var(--spacing-modal)+var(--spacing-icon-lg)+var(--spacing-row-gap))] in-data-[slot=sheet-body]:pe-modal',
       },
     },
   },
