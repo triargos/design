@@ -124,13 +124,21 @@ function AccordionTrigger({
   // What React renders as nothing is no actions: `actions={canEdit && <Button />}` keeps the plain trigger.
   const hasActions = actions != null && typeof actions !== 'boolean' && actions !== '';
   return (
-    <AccordionPrimitive.Header className={cn('flex min-w-0', hasActions && 'items-center')}>
+    <AccordionPrimitive.Header
+      className={cn(
+        'flex min-w-0',
+        // The trigger's focus ring goes round the whole line, the actions in it, not round the trigger alone.
+        hasActions && [
+          'items-center has-[[data-slot=accordion-trigger]:focus-visible]:ring-3 has-[[data-slot=accordion-trigger]:focus-visible]:ring-ring/24',
+          variant === 'flush' ? 'has-[[data-slot=accordion-trigger]:focus-visible]:ring-inset' : 'rounded-area',
+        ],
+      )}>
       <AccordionPrimitive.Trigger
         data-slot='accordion-trigger'
         className={cn(
           accordionTriggerVariants({ variant }),
-          // No fill (see above); the actions end the row with its padding.
-          hasActions && 'min-w-0 pe-0 hover:bg-transparent',
+          // No fill (see above), the ring on the line; the actions end the row with its padding.
+          hasActions && 'min-w-0 pe-0 hover:bg-transparent focus-visible:ring-0',
           className,
         )}
         {...props}>
