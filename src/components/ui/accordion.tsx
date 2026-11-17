@@ -121,14 +121,16 @@ function AccordionTrigger({
   ...props
 }: AccordionPrimitive.Trigger.Props & { actions?: React.ReactNode }) {
   const variant = React.use(AccordionVariantContext);
+  // What React renders as nothing is no actions: `actions={canEdit && <Button />}` keeps the plain trigger.
+  const hasActions = actions != null && typeof actions !== 'boolean' && actions !== '';
   return (
-    <AccordionPrimitive.Header className={cn('flex min-w-0', actions != null && 'items-center')}>
+    <AccordionPrimitive.Header className={cn('flex min-w-0', hasActions && 'items-center')}>
       <AccordionPrimitive.Trigger
         data-slot='accordion-trigger'
         className={cn(
           accordionTriggerVariants({ variant }),
           // No fill (see above); the actions end the row with its padding.
-          actions != null && 'min-w-0 pe-0 hover:bg-transparent',
+          hasActions && 'min-w-0 pe-0 hover:bg-transparent',
           className,
         )}
         {...props}>
@@ -139,7 +141,7 @@ function AccordionTrigger({
         </span>
         {children}
       </AccordionPrimitive.Trigger>
-      {actions != null && (
+      {hasActions && (
         <div
           data-slot='accordion-actions'
           className={cn(
