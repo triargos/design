@@ -133,12 +133,13 @@ function CardHeader({ className, actions, children, ...props }: ComponentProps<'
     <div
       data-slot='card-header'
       className={cn(
-        'mx-card-inset mt-card-inset flex items-center justify-between gap-group px-[calc(var(--spacing-card)+1px)] py-card-band',
+        'mx-card-inset mt-card-inset flex flex-wrap items-center justify-between gap-x-group gap-y-related px-[calc(var(--spacing-card)+1px)] py-card-band',
         overTable,
         className,
       )}
       {...props}>
-      <div className='flex min-w-0 flex-col gap-tight'>{children}</div>
+      {/* Its own width, not a fixed basis: a short title keeps its actions beside it, a long one wraps them below. */}
+      <div className='flex min-w-0 flex-auto flex-col gap-tight'>{children}</div>
       {/* Negative margin: `control-sm` actions overhang the title's 24px line instead of growing the band, so a
           header is as tall with actions as without. Above a table the title is a heading, tall enough for them. */}
       <div className='-my-[calc((var(--spacing-control-sm)-1.5rem)/2)] flex shrink-0 items-center gap-related group-has-[>[data-slot=table-container]]/card:my-0'>
