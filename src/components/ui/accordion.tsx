@@ -111,7 +111,8 @@ const accordionTriggerVariants = cva(
 
 /**
  * `actions`: buttons for the item (edit, delete) on the trigger's line, beside it, not in it: a button inside a button
- * is invalid. The row fills under the pointer as one, the actions with it.
+ * is invalid. A row with actions holds several targets, so it does not fill under the pointer (as an `Item` with
+ * actions); the trigger still opens it on a click.
  */
 function AccordionTrigger({
   className,
@@ -121,19 +122,12 @@ function AccordionTrigger({
 }: AccordionPrimitive.Trigger.Props & { actions?: React.ReactNode }) {
   const variant = React.use(AccordionVariantContext);
   return (
-    <AccordionPrimitive.Header
-      className={cn(
-        'flex min-w-0',
-        actions != null && [
-          'items-center transition-colors duration-feedback has-[[data-slot=accordion-trigger]:hover]:bg-row-hover motion-reduce:transition-none',
-          variant === 'default' && 'rounded-area',
-        ],
-      )}>
+    <AccordionPrimitive.Header className={cn('flex min-w-0', actions != null && 'items-center')}>
       <AccordionPrimitive.Trigger
         data-slot='accordion-trigger'
         className={cn(
           accordionTriggerVariants({ variant }),
-          // The header fills instead; the actions end the row with its padding.
+          // No fill (see above); the actions end the row with its padding.
           actions != null && 'min-w-0 pe-0 hover:bg-transparent',
           className,
         )}
