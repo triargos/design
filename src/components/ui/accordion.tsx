@@ -109,13 +109,34 @@ const accordionTriggerVariants = cva(
   },
 );
 
-function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.Trigger.Props) {
+/**
+ * `actions`: buttons for the item (edit, delete) on the trigger's line, beside it, not in it: a button inside a button
+ * is invalid. The row fills under the pointer as one, the actions with it.
+ */
+function AccordionTrigger({
+  className,
+  children,
+  actions,
+  ...props
+}: AccordionPrimitive.Trigger.Props & { actions?: React.ReactNode }) {
   const variant = React.use(AccordionVariantContext);
   return (
-    <AccordionPrimitive.Header className='flex min-w-0'>
+    <AccordionPrimitive.Header
+      className={cn(
+        'flex min-w-0',
+        actions != null && [
+          'items-center transition-colors duration-feedback has-[[data-slot=accordion-trigger]:hover]:bg-row-hover motion-reduce:transition-none',
+          variant === 'default' && 'rounded-area',
+        ],
+      )}>
       <AccordionPrimitive.Trigger
         data-slot='accordion-trigger'
-        className={cn(accordionTriggerVariants({ variant }), className)}
+        className={cn(
+          accordionTriggerVariants({ variant }),
+          // The header fills instead; the actions end the row with its padding.
+          actions != null && 'min-w-0 pe-0 hover:bg-transparent',
+          className,
+        )}
         {...props}>
         <span
           data-slot='accordion-trigger-icon'
@@ -124,6 +145,18 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
         </span>
         {children}
       </AccordionPrimitive.Trigger>
+      {actions != null && (
+        <div
+          data-slot='accordion-actions'
+          className={cn(
+            'flex shrink-0 items-center gap-tight ps-related',
+            variant === 'flush'
+              ? 'pe-[var(--list-row-pad-x,var(--spacing-card))] in-data-[slot=sheet-body]:pe-modal'
+              : 'pe-(--accordion-pad)',
+          )}>
+          {actions}
+        </div>
+      )}
     </AccordionPrimitive.Header>
   );
 }
@@ -136,8 +169,9 @@ const accordionContentVariants = cva(
       variant: {
         default:
           'ps-[calc(var(--accordion-pad)+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-(--accordion-content-pad-end) pb-(--accordion-pad)',
+        // An `ItemList` in it starts on the row's edge, under the indicator: its rows need the width.
         flush:
-          'ps-[calc(var(--list-row-pad-x,var(--spacing-card))+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-[var(--list-row-pad-x,var(--spacing-card))] pb-[var(--list-row-pad-bottom,var(--accordion-flush-content-pad-bottom))] in-data-[slot=sheet-body]:ps-[calc(var(--spacing-modal)+var(--spacing-icon-lg)+var(--spacing-row-gap))] in-data-[slot=sheet-body]:pe-modal',
+          'has-[[data-slot=item-list]]:ps-[var(--list-row-pad-x,var(--spacing-card))] ps-[calc(var(--list-row-pad-x,var(--spacing-card))+var(--spacing-icon-lg)+var(--spacing-row-gap))] pe-[var(--list-row-pad-x,var(--spacing-card))] pb-[var(--list-row-pad-bottom,var(--accordion-flush-content-pad-bottom))] in-data-[slot=sheet-body]:ps-[calc(var(--spacing-modal)+var(--spacing-icon-lg)+var(--spacing-row-gap))] in-data-[slot=sheet-body]:pe-modal',
       },
     },
   },

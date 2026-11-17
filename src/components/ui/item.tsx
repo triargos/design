@@ -37,6 +37,9 @@ function ItemListRow({
         'in-data-[slot=card-content]:[--list-row-pad-bottom:calc(var(--spacing-card)/2)] in-data-[slot=card-content]:[--list-row-pad-top:calc(var(--spacing-card)/2)] in-data-[slot=card-content]:[--list-row-pad-x:var(--spacing-card)] in-data-[slot=card-content]:[--list-row-pad-y:calc(var(--spacing-card)/2)]',
         first && 'in-data-[slot=card-content]:[--list-row-pad-top:var(--spacing-card)]',
         last && 'in-data-[slot=card-content]:[--list-row-pad-bottom:var(--spacing-card)]',
+        // In an accordion's content the item is already inset: rows sit half a card apart and run to its edges.
+        '[[data-slot=accordion-content]_&]:[--list-row-pad-x:0px] [[data-slot=accordion-content]_&]:[--list-row-pad-y:calc(var(--spacing-card)/2)]',
+        '[[data-slot=accordion-content]_&]:[--list-row-pad-top:calc(var(--spacing-card)/2)] [[data-slot=accordion-content]_&]:[--list-row-pad-bottom:calc(var(--spacing-card)/2)]',
         '*:data-[slot=item]:px-(--list-row-pad-x) *:data-[slot=item]:pt-(--list-row-pad-top) *:data-[slot=item]:pb-(--list-row-pad-bottom)',
         // The last row keeps its hairline, hidden: when a row comes or goes, a line fades in step with the list's
         // spring instead of popping in one frame.

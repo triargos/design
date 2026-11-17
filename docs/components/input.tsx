@@ -28,6 +28,7 @@ import { cn } from '~/lib/utils';
 
 import { InputDefault } from '../examples/input/default';
 import { InputFile } from '../examples/input/file';
+import { InputPlain } from '../examples/input/plain';
 import { InputStates } from '../examples/input/states';
 import { InputWithLabel } from '../examples/input/with-label';
 import { Code, ExampleSection, FoundationPage, FoundationSection, SpecimenList, SpecimenRow } from '../kit/blocks';
@@ -207,6 +208,16 @@ export default defineDocs({
       </ExampleSection>
       <ExampleSection title='File'>
         <InputFile />
+      </ExampleSection>
+      <ExampleSection
+        title='Plain'
+        description={
+          <>
+            <Code>variant='plain'</Code>: a value in a list edited in place reads as text and shows as the field on
+            hover and focus.
+          </>
+        }>
+        <InputPlain />
       </ExampleSection>
       <ExampleSection
         title='States'

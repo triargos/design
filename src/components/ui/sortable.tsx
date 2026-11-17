@@ -98,7 +98,8 @@ function SortableItemListRow({ id, ...props }: ComponentProps<typeof ItemListRow
 /**
  * The grip; name the row in its `aria-label` (`Move Design review`). As an `ItemMedia`, it pulls in so the dots, not
  * the button, sit on the row's content edge (the grip glyph's 4px side bearing on the start), and lays out at the icon's
- * height so it centres on the title's line.
+ * height so it centres on the title's line. In an accordion's content, whose rows run to its edge, it does not pull out
+ * at the start: the button sits inside the row.
  */
 function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: ComponentProps<'button'>) {
   const { labels } = useLocale();
@@ -109,7 +110,7 @@ function SortableItemHandle({ className, 'aria-label': ariaLabel, ...props }: Co
       type='button'
       aria-label={ariaLabel ?? labels.dragToReorder}
       className={cn(
-        'hit-area relative flex size-control-xs shrink-0 cursor-grab touch-none items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-mr-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-ml-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2+4px)]',
+        'hit-area relative flex size-control-xs shrink-0 cursor-grab touch-none items-center justify-center rounded-control-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/24 active:cursor-grabbing in-data-[slot=item-media]:-my-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-mr-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2)] in-data-[slot=item-media]:-ml-[calc((var(--spacing-control-xs)-var(--spacing-icon))/2+4px)] [[data-slot=accordion-content]_&]:ml-0',
         className,
       )}
       {...props}
