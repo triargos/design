@@ -3,7 +3,10 @@ import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
 import { useAccessibleNameCheck } from '~/hooks/use-accessible-name-check';
+import type { Emphasis } from '~/components/ui/intent-variants';
 import { cn } from '~/lib/utils';
+
+type InputEmphasis = Extract<Emphasis, 'raised' | 'ghost'>;
 
 /**
  * `scope` is structural:
@@ -80,14 +83,14 @@ const inputSurfaceVariants = cva(
 function Input({
   className,
   style,
-  variant = 'default',
+  emphasis = 'raised',
   ...props
 }: React.ComponentProps<'input'> & {
   /**
-   * `plain`: reads as text in a row of editable values (a list edited in place) and shows as the field on hover and
+   * `ghost`: reads as text in a row of editable values (a list edited in place) and shows as the field on hover and
    * focus; an invalid one keeps its edge.
    */
-  variant?: 'default' | 'plain';
+  emphasis?: InputEmphasis;
 }) {
   const nameCheck = useAccessibleNameCheck('Input', props.type !== 'hidden');
   return (
@@ -99,7 +102,7 @@ function Input({
         'flex h-control w-full min-w-0 cursor-text items-center px-[calc(var(--spacing-field-pad)-1px)] text-control max-md:text-[1rem]',
         // The chip's inset less the border and the input's 1px padding.
         'has-[[type=file]]:cursor-pointer has-[[type=file]]:pl-[calc(var(--spacing-field-inset)-2px)]',
-        variant === 'plain' &&
+        emphasis === 'ghost' &&
           'not-hover:not-focus-within:not-has-aria-invalid:border-transparent not-hover:not-focus-within:not-has-aria-invalid:bg-transparent not-hover:not-focus-within:not-has-aria-invalid:shadow-none not-hover:not-focus-within:not-has-aria-invalid:before:shadow-none',
         className,
       )}

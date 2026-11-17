@@ -14,7 +14,7 @@ const LISTS = [
 
 /**
  * `actions` on the trigger: the item's buttons on its line, beside the trigger. Open, an `ItemList` starts on the
- * row's edge; `Input variant='plain'` edits the values in place.
+ * row's edge; `Input emphasis='ghost'` edits the values in place.
  */
 export function AccordionWithActions() {
   return (
@@ -47,7 +47,7 @@ export function AccordionWithActions() {
                         <SortableItemHandle aria-label={`Move ${value}`} />
                       </ItemMedia>
                       <ItemContent>
-                        <Input variant='plain' aria-label='Value' defaultValue={value} />
+                        <Input emphasis='ghost' aria-label='Value' defaultValue={value} />
                       </ItemContent>
                       <ItemActions>
                         <Button intent='neutral' emphasis='ghost' size='icon-sm' aria-label={`Delete ${value}`}>
